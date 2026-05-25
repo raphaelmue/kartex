@@ -142,65 +142,65 @@ Deferred to a future release. Not in the current roadmap.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| AUTH-01 | — | Pending |
-| AUTH-02 | — | Pending |
-| AUTH-03 | — | Pending |
-| AUTH-04 | — | Pending |
-| AUTH-05 | — | Pending |
-| ADMN-01 | — | Pending |
-| ADMN-02 | — | Pending |
-| ADMN-03 | — | Pending |
-| DECK-01 | — | Pending |
-| DECK-02 | — | Pending |
-| DECK-03 | — | Pending |
-| DECK-04 | — | Pending |
-| DECK-05 | — | Pending |
-| CARD-01 | — | Pending |
-| CARD-02 | — | Pending |
-| CARD-03 | — | Pending |
-| CARD-04 | — | Pending |
-| CARD-05 | — | Pending |
-| CARD-06 | — | Pending |
-| CARD-07 | — | Pending |
-| CARD-08 | — | Pending |
-| CARD-09 | — | Pending |
-| CARD-10 | — | Pending |
-| CARD-11 | — | Pending |
-| CARD-12 | — | Pending |
-| STDY-01 | — | Pending |
-| STDY-02 | — | Pending |
-| STDY-03 | — | Pending |
-| STDY-04 | — | Pending |
-| STDY-05 | — | Pending |
-| STDY-06 | — | Pending |
-| STDY-07 | — | Pending |
-| IMPT-01 | — | Pending |
-| IMPT-02 | — | Pending |
-| IMPT-03 | — | Pending |
-| IMPT-04 | — | Pending |
-| IMPT-05 | — | Pending |
-| MDIA-01 | — | Pending |
-| MDIA-02 | — | Pending |
-| MDIA-03 | — | Pending |
-| MDIA-04 | — | Pending |
-| SHAR-01 | — | Pending |
-| SHAR-02 | — | Pending |
-| SHAR-03 | — | Pending |
-| SHAR-04 | — | Pending |
-| SHAR-05 | — | Pending |
-| SHAR-06 | — | Pending |
-| INFR-01 | — | Pending |
-| INFR-02 | — | Pending |
-| INFR-03 | — | Pending |
-| INFR-04 | — | Pending |
-| INFR-05 | — | Pending |
-| INFR-06 | — | Pending |
+| AUTH-01 | Phase 1 | Pending |
+| AUTH-02 | Phase 1 | Pending |
+| AUTH-03 | Phase 1 | Pending |
+| AUTH-04 | Phase 1 | Pending |
+| AUTH-05 | Phase 1 | Pending |
+| ADMN-01 | Phase 1 | Pending |
+| ADMN-02 | Phase 1 | Pending |
+| ADMN-03 | Phase 1 | Pending |
+| DECK-01 | Phase 2 | Pending |
+| DECK-02 | Phase 2 | Pending |
+| DECK-03 | Phase 2 | Pending |
+| DECK-04 | Phase 2 | Pending |
+| DECK-05 | Phase 2 | Pending |
+| CARD-01 | Phase 2 | Pending |
+| CARD-02 | Phase 2 | Pending |
+| CARD-03 | Phase 2 | Pending |
+| CARD-04 | Phase 2 | Pending |
+| CARD-05 | Phase 2 | Pending |
+| CARD-06 | Phase 3 | Pending |
+| CARD-07 | Phase 3 | Pending |
+| CARD-08 | Phase 3 | Pending |
+| CARD-09 | Phase 3 | Pending |
+| CARD-10 | Phase 3 | Pending |
+| CARD-11 | Phase 3 | Pending |
+| CARD-12 | Phase 3 | Pending |
+| STDY-01 | Phase 4 | Pending |
+| STDY-02 | Phase 4 | Pending |
+| STDY-03 | Phase 4 | Pending |
+| STDY-04 | Phase 4 | Pending |
+| STDY-05 | Phase 4 | Pending |
+| STDY-06 | Phase 4 | Pending |
+| STDY-07 | Phase 4 | Pending |
+| IMPT-01 | Phase 5 | Pending |
+| IMPT-02 | Phase 5 | Pending |
+| IMPT-03 | Phase 5 | Pending |
+| IMPT-04 | Phase 5 | Pending |
+| IMPT-05 | Phase 5 | Pending |
+| MDIA-01 | Phase 5 | Pending |
+| MDIA-02 | Phase 5 | Pending |
+| MDIA-03 | Phase 5 | Pending |
+| MDIA-04 | Phase 5 | Pending |
+| SHAR-01 | Phase 6 | Pending |
+| SHAR-02 | Phase 6 | Pending |
+| SHAR-03 | Phase 6 | Pending |
+| SHAR-04 | Phase 6 | Pending |
+| SHAR-05 | Phase 6 | Pending |
+| SHAR-06 | Phase 6 | Pending |
+| INFR-01 | Phase 1 | Pending |
+| INFR-02 | Phase 1 | Pending |
+| INFR-03 | Phase 1 | Pending |
+| INFR-04 | Phase 1 | Pending |
+| INFR-05 | Phase 1 | Pending |
+| INFR-06 | Phase 1 | Pending |
 
 **Coverage:**
 - v1 requirements: 53 total
-- Mapped to phases: 0 (pending roadmap)
-- Unmapped: 53 ⚠️
+- Mapped to phases: 53 ✓
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-05-25*
-*Last updated: 2026-05-25 after initial definition*
+*Last updated: 2026-05-25 after roadmap creation (6 phases)*
