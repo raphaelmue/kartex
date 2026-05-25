@@ -1,3 +1,4 @@
+import type { Context } from 'hono'
 import { Hono } from 'hono'
 import { getCookie, setCookie, deleteCookie } from 'hono/cookie'
 import bcrypt from 'bcryptjs'
@@ -18,10 +19,8 @@ function isProd(): boolean {
   return process.env.NODE_ENV === 'production'
 }
 
-type HonoContext = Parameters<Parameters<typeof auth.post>[1]>[0]
-
 function setAuthCookies(
-  c: HonoContext,
+  c: Context,
   accessToken: string,
   refreshToken: string,
 ): void {
