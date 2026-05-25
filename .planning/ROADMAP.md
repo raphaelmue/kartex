@@ -32,12 +32,12 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. A logged-in user's session survives a browser refresh (refresh token) and they can log out to end the session
   4. The access token is transparently refreshed in the background; the user is never asked to log in again within the 30-day window
   5. An admin can generate invite codes, view all users, and change a user's role or deactivate their account via the /admin page
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 01-01: Monorepo scaffold (pnpm workspaces, apps/frontend, apps/backend, packages/shared, Prisma schema, Docker Compose skeleton)
-- [ ] 01-02: Backend auth routes (register, login, logout, refresh) + JWT middleware + rate limiting + CORS
-- [ ] 01-03: Frontend auth pages (login, register) + session management + admin panel (/admin)
+- [ ] 01-01-PLAN.md — Yarn workspace root + all package.json + tsconfig files + full Prisma schema + initial migration + Docker Compose + multi-stage Dockerfile
+- [ ] 01-02-PLAN.md — Shared Zod schemas (@kartex/shared) + backend auth routes (register/login/logout/refresh/me) + admin routes + JWT middleware + rate limiter + seed + Hono entrypoint
+- [ ] 01-03-PLAN.md — Tailwind + shadcn/ui init (7 components) + api.ts (silent refresh) + AuthContext + route guards + AppShell sidebar + LoginPage + RegisterPage + AdminPage + React Router v6
 **UI hint**: yes
 
 ### Phase 2: Deck & Card Management
