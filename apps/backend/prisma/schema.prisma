@@ -1,0 +1,130 @@
+// Kartex Prisma Schema
+// datasource: PostgreSQL 16
+// generator: prisma-client-js
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+// ─── Enums ───────────────────────────────────────────────────────────────────
+
+enum Role {
+  ADMIN
+  USER
+}
+
+enum Visibility {
+  PRIVATE
+  SHARED
+  PUBLIC
+}
+
+enum Permission {
+  READ
+  EDIT
+}
+
+// ─── Models ──────────────────────────────────────────────────────────────────
+
+model User {
+  id            String         @id @default(cuid())
+  username      String         @unique
+  passwordHash  String
+  role          Role           @default(USER)
+  isActive      Boolean        @default(true)
+  createdAt     DateTime       @default(now())
+
+  refreshTokens RefreshToken[]
+  inviteCodeUsed InviteCode?
+  decks         Deck[]
+  sharedDecks   DeckShare[]
+  progress      CardProgress[]
+}
+
+model InviteCode {
+  id        String    @id @default(cuid())
+  code      String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  usedById  String?   @unique
+  usedBy    User?     @relation(fields: [usedById], references: [id])
+  createdAt DateTime  @default(now())
+}
+
+model RefreshToken {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  tokenHash String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+model Deck {
+  id          String      @id @default(cuid())
+  ownerId     String
+  owner       User        @relation(fields: [ownerId], references: [id])
+  title       String
+  description String?
+  visibility  Visibility  @default(PRIVATE)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  cards  Card[]
+  shares DeckShare[]
+}
+
+model DeckShare {
+  id               String     @id @default(cuid())
+  deckId           String
+  deck             Deck       @relation(fields: [deckId], references: [id])
+  sharedWithUserId String
+  sharedWithUser   User       @relation(fields: [sharedWithUserId], references: [id])
+  permission       Permission @default(READ)
+
+  @@unique([deckId, sharedWithUserId])
+}
+
+model Card {
+  id           String         @id @default(cuid())
+  deckId       String
+  deck         Deck           @relation(fields: [deckId], references: [id])
+  frontContent String
+  backContent  String
+  tags         String[]
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  progress CardProgress[]
+}
+
+model CardProgress {
+  id           String    @id @default(cuid())
+  userId       String
+  user         User      @relation(fields: [userId], references: [id])
+  cardId       String
+  card         Card      @relation(fields: [cardId], references: [id])
+  easeFactor   Float     @default(2.5)
+  interval     Int       @default(1)
+  repetitions  Int       @default(0)
+  nextReview   DateTime  @default(now())
+  lastReviewed DateTime?
+
+  @@unique([userId, cardId])
+}
+
+model Media {
+  id          String   @id @default(cuid())
+  ownerId     String
+  filename    String
+  mimeType    String
+  storagePath String
+  sizeBytes   Int
+  createdAt   DateTime @default(now())
+}
