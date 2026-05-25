@@ -35,9 +35,20 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans**: 3 plans
 
 Plans:
+
+**Wave 1** (no dependencies):
 - [ ] 01-01-PLAN.md — Yarn workspace root + all package.json + tsconfig files + full Prisma schema + initial migration + Docker Compose + multi-stage Dockerfile
+
+**Wave 2** *(blocked on Wave 1 completion — needs prisma generate output + yarn install)*:
 - [ ] 01-02-PLAN.md — Shared Zod schemas (@kartex/shared) + backend auth routes (register/login/logout/refresh/me) + admin routes + JWT middleware + rate limiter + seed + Hono entrypoint
+
+**Wave 3** *(blocked on Wave 2 completion — needs @kartex/shared Zod schemas)*:
 - [ ] 01-03-PLAN.md — Tailwind + shadcn/ui init (7 components) + api.ts (silent refresh) + AuthContext + route guards + AppShell sidebar + LoginPage + RegisterPage + AdminPage + React Router v6
+
+Cross-cutting constraints:
+- Yarn Berry 4.x with nodeLinker: node-modules (D-04) — enforced in all plans
+- All secrets via .env only — never hardcoded (INFR-06)
+- JWT stored in httpOnly cookie — never in localStorage or JSON response body
 **UI hint**: yes
 
 ### Phase 2: Deck & Card Management
@@ -141,7 +152,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation & Auth | 0/3 | Not started | - |
+| 1. Foundation & Auth | 0/3 | Ready to execute | - |
 | 2. Deck & Card Management | 0/3 | Not started | - |
 | 3. Rich Content Rendering | 0/3 | Not started | - |
 | 4. Study Loops | 0/3 | Not started | - |
