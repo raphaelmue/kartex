@@ -1,0 +1,141 @@
+import { Hono } from 'hono'
+import { prisma } from '../lib/prisma.js'
+
+const admin = new Hono()
+
+// ─── GET /users ───────────────────────────────────────────────────────────────
+
+admin.get('/users', async (c) => {
+  const users = await prisma.user.findMany({
+    select: {
+      id: true,
+      username: true,
+      role: true,
+      isActive: true,
+      createdAt: true,
+    },
+    orderBy: { createdAt: 'asc' },
+  })
+
+  return c.json(users, 200)
+})
+
+// ─── PATCH /users/:id ─────────────────────────────────────────────────────────
+
+admin.patch('/users/:id', async (c) => {
+  const { id } = c.req.param()
+  const authenticatedUserId = c.get('userId')
+
+  let body: { role?: string; isActive?: boolean }
+  try {
+    body = await c.req.json()
+  } catch {
+    return c.json({ error: 'Invalid request body.' }, 400)
+  }
+
+  // Validate role if provided
+  if (body.role !== undefined && body.role !== 'ADMIN' && body.role !== 'USER') {
+    return c.json({ error: 'role must be "ADMIN" or "USER".' }, 400)
+  }
+
+  // Validate isActive if provided
+  if (body.isActive !== undefined && typeof body.isActive !== 'boolean') {
+    return c.json({ error: 'isActive must be a boolean.' }, 400)
+  }
+
+  // T-02-08: Prevent admin self-deactivation
+  if (id === authenticatedUserId && body.isActive === false) {
+    return c.json({ error: 'Cannot deactivate your own account.' }, 400)
+  }
+
+  // Check user exists
+  const existing = await prisma.user.findUnique({ where: { id } })
+  if (!existing) {
+    return c.json({ error: 'User not found.' }, 404)
+  }
+
+  const data: { role?: 'ADMIN' | 'USER'; isActive?: boolean } = {}
+  if (body.role !== undefined) data.role = body.role as 'ADMIN' | 'USER'
+  if (body.isActive !== undefined) data.isActive = body.isActive
+
+  const updated = await prisma.user.update({
+    where: { id },
+    data,
+    select: {
+      id: true,
+      username: true,
+      role: true,
+      isActive: true,
+      createdAt: true,
+    },
+  })
+
+  return c.json(updated, 200)
+})
+
+// ─── GET /invite-codes ────────────────────────────────────────────────────────
+
+admin.get('/invite-codes', async (c) => {
+  const codes = await prisma.inviteCode.findMany({
+    include: {
+      usedBy: {
+        select: { username: true },
+      },
+    },
+    orderBy: { createdAt: 'desc' },
+  })
+
+  return c.json(codes, 200)
+})
+
+// ─── POST /invite-codes ───────────────────────────────────────────────────────
+
+admin.post('/invite-codes', async (c) => {
+  let body: { expiryDays?: unknown } = {}
+  try {
+    body = await c.req.json()
+  } catch {
+    // Empty body is fine — use defaults
+  }
+
+  // D-09: Configurable expiry, default 7 days
+  const expiryDays = body.expiryDays !== undefined ? Number(body.expiryDays) : 7
+  if (!Number.isInteger(expiryDays) || expiryDays < 1 || expiryDays > 365) {
+    return c.json({ error: 'expiryDays must be an integer between 1 and 365.' }, 400)
+  }
+
+  const code = crypto
+    .randomUUID()
+    .replace(/-/g, '')
+    .slice(0, 12)
+    .toUpperCase()
+  const expiresAt = new Date(Date.now() + expiryDays * 24 * 60 * 60 * 1000)
+
+  const inviteCode = await prisma.inviteCode.create({
+    data: { code, expiresAt },
+    select: { id: true, code: true, expiresAt: true, createdAt: true },
+  })
+
+  return c.json(inviteCode, 200)
+})
+
+// ─── DELETE /invite-codes/:id ─────────────────────────────────────────────────
+
+admin.delete('/invite-codes/:id', async (c) => {
+  const { id } = c.req.param()
+
+  const inviteCode = await prisma.inviteCode.findUnique({ where: { id } })
+  if (!inviteCode) {
+    return c.json({ error: 'Invite code not found.' }, 404)
+  }
+
+  if (inviteCode.usedAt !== null) {
+    return c.json({ error: 'Cannot delete a used invite code.' }, 400)
+  }
+
+  await prisma.inviteCode.delete({ where: { id } })
+
+  return c.json({ message: 'Invite code deleted.' }, 200)
+})
+
+export { admin as adminRouter }
