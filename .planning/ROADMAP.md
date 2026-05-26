@@ -70,7 +70,7 @@ Plans:
 - [x] 02-01-PLAN.md — Zod schemas (deck.ts, card.ts) in @kartex/shared + Prisma cascade deletes migration + Hono deck router + Hono card sub-router + backend index.ts registration
 
 **Wave 2** *(blocked on Wave 1 completion — needs @kartex/shared types)*:
-- [ ] 02-02-PLAN.md — Install react-markdown, remark-gfm, @radix-ui/react-dialog/tabs/select + shadcn dialog/tabs/select components + KartexRenderer component
+- [x] 02-02-PLAN.md — Install react-markdown, remark-gfm, @radix-ui/react-dialog/tabs/select + shadcn dialog/tabs/select components + KartexRenderer component
 
 **Wave 3** *(blocked on Wave 2 completion — needs ui components and KartexRenderer)*:
 - [ ] 02-03-PLAN.md — DecksPage (/decks) + DeckFormModal + DeckDetailPage (/decks/:id) + CardEditorModal + App.tsx route wiring
@@ -160,7 +160,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation & Auth | 3/3 | Complete | 2026-05-26 |
-| 2. Deck & Card Management | 1/3 | In progress | - |
+| 2. Deck & Card Management | 2/3 | In progress | - |
 | 3. Rich Content Rendering | 0/3 | Not started | - |
 | 4. Study Loops | 0/3 | Not started | - |
 | 5. Import Pipeline | 0/3 | Not started | - |

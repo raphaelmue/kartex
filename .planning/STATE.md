@@ -10,9 +10,9 @@ See: .planning/PROJECT.md (updated 2026-05-25)
 ## Current Position
 
 Phase: 2 of 6 (Deck & Card Management)
-Plan: 1 of 3 in current phase
-Status: In progress — plan 02-01 complete; 2 plans remaining
-Last activity: 2026-05-26 — 02-01 executed: deck/card CRUD API, cascade migration, shared Zod schemas
+Plan: 2 of 3 in current phase
+Status: In progress — plan 02-02 complete; 1 plan remaining
+Last activity: 2026-05-26 — 02-02 executed: react-markdown + shadcn dialog/tabs/select + KartexRenderer component
 
 Progress: [████████████████░░░░] 17% (1/6 phases complete, phase 2 in progress)
 
@@ -28,9 +28,10 @@ Progress: [████████████████░░░░] 17% (1/
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 1 | 3/3 | ~18 min | ~6 min |
+| 2 | 1/3 | ~2 min | ~2 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01, 01-02, 01-03
+- Last 5 plans: 01-01, 01-02, 01-03, 02-01, 02-02
 - Trend: on track
 
 *Updated after each plan completion*
@@ -46,6 +47,8 @@ Recent decisions affecting current work:
 - Init: Videos as external links only (no self-hosted video storage)
 - Init: httpOnly JWT cookies, 15-min access + 30-day refresh token
 - Init: Invite-only registration (no open sign-up)
+- 02-02: KartexRenderer named export (not default) — consumers use import { KartexRenderer } from '@/components/KartexRenderer'
+- 02-02: XSS safety: allowDangerousHtml not enabled in react-markdown v10 (T-02-07 accepted)
 
 ### Pending Todos
 
@@ -64,5 +67,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-05-26
-Stopped at: Completed 02-01-PLAN.md — deck/card CRUD API live
-Resume file: .planning/phases/02-deck-card-management/02-02-PLAN.md
+Stopped at: Completed 02-02-PLAN.md — react-markdown + shadcn dialog/tabs/select + KartexRenderer
+Resume file: .planning/phases/02-deck-card-management/02-03-PLAN.md
