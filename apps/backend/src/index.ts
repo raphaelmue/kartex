@@ -6,6 +6,7 @@ import { cors } from 'hono/cors'
 import { authMiddleware, requireAdmin } from './middleware/auth.js'
 import { authRouter } from './routes/auth.js'
 import { adminRouter } from './routes/admin.js'
+import { decksRouter } from './routes/decks.js'
 import { seedAdminIfNeeded } from './lib/seed.js'
 
 const app = new Hono()
@@ -30,7 +31,10 @@ app.route('/api/auth', authRouter)
 // ─── 4. JWT auth middleware on all remaining /api/* routes (INFR-03) ──────────
 app.use('/api/*', authMiddleware)
 
-// ─── 5. Admin routes (JWT + ADMIN role required) ──────────────────────────────
+// ─── 5. Deck + Card routes (JWT required — inherited from step 4) ─────────────
+app.route('/api/decks', decksRouter)
+
+// ─── 6. Admin routes (JWT + ADMIN role required) ──────────────────────────────
 app.use('/api/admin/*', requireAdmin)
 app.route('/api/admin', adminRouter)
 
