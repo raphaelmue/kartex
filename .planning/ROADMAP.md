@@ -37,13 +37,13 @@ Decimal phases appear between their surrounding integers in numeric order.
 Plans:
 
 **Wave 1** (no dependencies):
-- [ ] 01-01-PLAN.md — Yarn workspace root + all package.json + tsconfig files + full Prisma schema + initial migration + Docker Compose + multi-stage Dockerfile
+- [x] 01-01-PLAN.md — Yarn workspace root + all package.json + tsconfig files + full Prisma schema + initial migration + Docker Compose + multi-stage Dockerfile
 
 **Wave 2** *(blocked on Wave 1 completion — needs prisma generate output + yarn install)*:
-- [ ] 01-02-PLAN.md — Shared Zod schemas (@kartex/shared) + backend auth routes (register/login/logout/refresh/me) + admin routes + JWT middleware + rate limiter + seed + Hono entrypoint
+- [x] 01-02-PLAN.md — Shared Zod schemas (@kartex/shared) + backend auth routes (register/login/logout/refresh/me) + admin routes + JWT middleware + rate limiter + seed + Hono entrypoint
 
 **Wave 3** *(blocked on Wave 2 completion — needs @kartex/shared Zod schemas)*:
-- [ ] 01-03-PLAN.md — Tailwind + shadcn/ui init (7 components) + api.ts (silent refresh) + AuthContext + route guards + AppShell sidebar + LoginPage + RegisterPage + AdminPage + React Router v6
+- [x] 01-03-PLAN.md — Tailwind + shadcn/ui init (7 components) + api.ts (silent refresh) + AuthContext + route guards + AppShell sidebar + LoginPage + RegisterPage + AdminPage + React Router v6
 
 Cross-cutting constraints:
 - Yarn Berry 4.x with nodeLinker: node-modules (D-04) — enforced in all plans
