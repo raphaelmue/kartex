@@ -47,7 +47,7 @@ RUN yarn workspace @kartex/backend prisma generate
 RUN yarn workspace @kartex/backend build
 
 # ─── Stage 3: Production image ────────────────────────────────────────────────
-FROM node:22-slim AS production
+FROM node:22-alpine AS production
 
 WORKDIR /app
 
