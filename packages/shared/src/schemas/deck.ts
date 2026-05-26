@@ -1,0 +1,23 @@
+import { z } from 'zod'
+
+export const CreateDeckSchema = z.object({
+  title: z.string().min(1, 'Title is required.').max(200),
+  description: z.string().max(2000).optional(),
+  visibility: z.enum(['PRIVATE', 'SHARED', 'PUBLIC']).default('PRIVATE'),
+})
+export type CreateDeckInput = z.infer<typeof CreateDeckSchema>
+
+export const UpdateDeckSchema = CreateDeckSchema.partial()
+export type UpdateDeckInput = z.infer<typeof UpdateDeckSchema>
+
+export const DeckSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  description: z.string().nullable(),
+  visibility: z.enum(['PRIVATE', 'SHARED', 'PUBLIC']),
+  ownerId: z.string(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+  _count: z.object({ cards: z.number() }).optional(),
+})
+export type Deck = z.infer<typeof DeckSchema>

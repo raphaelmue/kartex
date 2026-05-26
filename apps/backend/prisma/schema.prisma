@@ -94,7 +94,7 @@ model DeckShare {
 model Card {
   id           String         @id @default(cuid())
   deckId       String
-  deck         Deck           @relation(fields: [deckId], references: [id])
+  deck         Deck           @relation(fields: [deckId], references: [id], onDelete: Cascade)
   frontContent String
   backContent  String
   tags         String[]
@@ -109,7 +109,7 @@ model CardProgress {
   userId       String
   user         User      @relation(fields: [userId], references: [id])
   cardId       String
-  card         Card      @relation(fields: [cardId], references: [id])
+  card         Card      @relation(fields: [cardId], references: [id], onDelete: Cascade)
   easeFactor   Float     @default(2.5)
   interval     Int       @default(1)
   repetitions  Int       @default(0)
