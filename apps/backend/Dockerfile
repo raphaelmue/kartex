@@ -53,6 +53,8 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 
+RUN apk add --no-cache openssl
+
 # Install production dependencies only
 COPY package.json ./
 COPY .yarnrc.yml ./
