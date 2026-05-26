@@ -13,7 +13,7 @@ COPY packages/shared/package.json packages/shared/
 COPY apps/backend/package.json apps/backend/
 
 RUN corepack enable && corepack prepare yarn@4.6.0 --activate
-RUN yarn install --immutable
+RUN yarn install
 
 # Copy source
 COPY apps/frontend/ apps/frontend/
@@ -34,7 +34,7 @@ COPY apps/backend/package.json apps/backend/
 COPY packages/shared/package.json packages/shared/
 
 RUN corepack enable && corepack prepare yarn@4.6.0 --activate
-RUN yarn install --immutable
+RUN yarn install
 
 # Copy source
 COPY apps/backend/ apps/backend/
