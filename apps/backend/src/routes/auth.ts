@@ -4,7 +4,7 @@ import { getCookie, setCookie, deleteCookie } from 'hono/cookie'
 import bcrypt from 'bcryptjs'
 import { LoginSchema, RegisterSchema } from '@kartex/shared'
 import { prisma } from '../lib/prisma.js'
-import { signToken, verifyToken } from '../lib/jwt.js'
+import { signToken } from '../lib/jwt.js'
 import { authMiddleware } from '../middleware/auth.js'
 import { rateLimitMiddleware } from '../middleware/rateLimit.js'
 
@@ -142,8 +142,9 @@ auth.post('/logout', async (c) => {
   }
 
   const prod = isProd()
-  deleteCookie(c, 'access_token', { path: '/' })
-  deleteCookie(c, 'refresh_token', { path: '/' })
+  const sameSite = prod ? 'Strict' : 'Lax'
+  deleteCookie(c, 'access_token', { path: '/', secure: prod, sameSite })
+  deleteCookie(c, 'refresh_token', { path: '/', secure: prod, sameSite })
 
   return c.json({ message: 'Logged out.' }, 200)
 })

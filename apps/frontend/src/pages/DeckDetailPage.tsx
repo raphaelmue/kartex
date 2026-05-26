@@ -90,14 +90,16 @@ export function DeckDetailPage() {
     try {
       const res = await api.get(`/api/decks/${deckId}/cards`)
       if (res.ok) setCards(await res.json())
+      else toast.error('Failed to load cards. Please try again.')
     } catch {
-      // silently ignore
+      toast.error('Could not reach the server. Check your connection.')
     }
   }
 
   useEffect(() => {
     void fetchDeck()
     void fetchCards()
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- fetch fns are component-scoped; deckId is the only meaningful dep
   }, [deckId])
 
   const handleDeleteDeck = async () => {

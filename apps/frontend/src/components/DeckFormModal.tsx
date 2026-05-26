@@ -65,6 +65,7 @@ export function DeckFormModal({ open, onOpenChange, deck, onSuccess }: DeckFormM
         visibility: deck?.visibility ?? 'PRIVATE',
       })
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- form is stable (react-hook-form internal ref)
   }, [open, deck])
 
   const onSubmit = async (data: DeckFormInput) => {

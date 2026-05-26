@@ -69,6 +69,7 @@ export function CardEditorModal({
       })
       setTagInput(card?.tags.join(', ') ?? '')
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- form is stable (react-hook-form internal ref)
   }, [open, card])
 
   const onSubmit = async (data: CardFormInput) => {
