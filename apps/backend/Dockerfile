@@ -40,6 +40,9 @@ RUN yarn install
 COPY apps/backend/ apps/backend/
 COPY packages/shared/ packages/shared/
 
+# Build shared package first (backend imports it at runtime)
+RUN yarn workspace @kartex/shared build
+
 # Generate Prisma client for the target platform
 RUN yarn workspace @kartex/backend prisma generate
 
@@ -64,6 +67,9 @@ COPY packages/shared/package.json packages/shared/
 
 RUN corepack enable && corepack prepare yarn@4.6.0 --activate && \
     yarn workspaces focus @kartex/backend --production
+
+# Copy compiled shared package (backend imports it at runtime)
+COPY --from=backend-builder /build/packages/shared/dist/ ./packages/shared/dist/
 
 # Copy compiled backend
 COPY --from=backend-builder /build/apps/backend/dist/ ./apps/backend/dist/
