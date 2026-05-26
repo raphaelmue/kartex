@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-05-25)
 Phase: 2 of 6 (Deck & Card Management) — COMPLETE
 Plan: 3 of 3 in phase 2 — all plans done
 Status: Phase 2 complete; ready to begin Phase 3
-Last activity: 2026-05-26 — 02-03 executed: DecksPage, DeckDetailPage, DeckFormModal, CardEditorModal, App.tsx routes wired
+Last activity: 2026-05-26 — Completed quick task 260526-001: quality baseline (ESLint/Prettier, code smell fixes, decisions recorded)
 
 Progress: [████████████████████░░░░] 33% (2/6 phases complete)
 
@@ -58,6 +58,12 @@ None yet.
 ### Blockers/Concerns
 
 None yet.
+
+### Quick Tasks Completed
+
+| # | Description | Date | Commit | Directory |
+|---|-------------|------|--------|-----------|
+| 260526-001 | Quality baseline: ESLint/Prettier, code smell fixes, decisions recorded | 2026-05-26 | 372837e | [260526-001-quality-baseline](.planning/quick/260526-001-quality-baseline/) |
 
 ## Deferred Items
 
