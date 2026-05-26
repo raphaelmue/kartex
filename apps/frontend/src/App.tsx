@@ -7,6 +7,8 @@ import { AppShell } from '@/components/AppShell'
 import { ProtectedRoute } from '@/components/ProtectedRoute'
 import { AuthProvider } from '@/context/AuthContext'
 import { AdminPage } from '@/pages/AdminPage'
+import { DeckDetailPage } from '@/pages/DeckDetailPage'
+import { DecksPage } from '@/pages/DecksPage'
 import { LoginPage } from '@/pages/LoginPage'
 import { RegisterPage } from '@/pages/RegisterPage'
 
@@ -35,7 +37,8 @@ function App() {
         <Route element={<ProtectedRoute />}>
           <Route element={<AppShell />}>
             <Route path="/dashboard" element={<ComingSoon title="Dashboard" />} />
-            <Route path="/decks" element={<ComingSoon title="Decks" />} />
+            <Route path="/decks" element={<DecksPage />} />
+            <Route path="/decks/:id" element={<DeckDetailPage />} />
             <Route path="/import" element={<ComingSoon title="Import" />} />
             <Route path="/explore" element={<ComingSoon title="Explore" />} />
             <Route path="/settings" element={<ComingSoon title="Settings" />} />

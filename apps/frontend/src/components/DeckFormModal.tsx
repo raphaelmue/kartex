@@ -2,10 +2,9 @@ import { useEffect } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
+import { z } from 'zod'
 import {
-  CreateDeckInput,
   CreateDeckSchema,
-  UpdateDeckSchema,
   Deck,
 } from '@kartex/shared'
 import { api } from '@/lib/api'
@@ -34,6 +33,9 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 
+// Use input type so zodResolver generic matches (visibility has .default())
+type DeckFormInput = z.input<typeof CreateDeckSchema>
+
 interface DeckFormModalProps {
   open: boolean
   onOpenChange: (open: boolean) => void
@@ -44,8 +46,8 @@ interface DeckFormModalProps {
 export function DeckFormModal({ open, onOpenChange, deck, onSuccess }: DeckFormModalProps) {
   const isEdit = Boolean(deck)
 
-  const form = useForm<CreateDeckInput>({
-    resolver: zodResolver(isEdit ? UpdateDeckSchema : CreateDeckSchema),
+  const form = useForm<DeckFormInput>({
+    resolver: zodResolver(CreateDeckSchema),
     defaultValues: {
       title: deck?.title ?? '',
       description: deck?.description ?? '',
@@ -65,7 +67,7 @@ export function DeckFormModal({ open, onOpenChange, deck, onSuccess }: DeckFormM
     }
   }, [open, deck])
 
-  const onSubmit = async (data: CreateDeckInput) => {
+  const onSubmit = async (data: DeckFormInput) => {
     try {
       const res = isEdit
         ? await api.patch(`/api/decks/${deck!.id}`, data)
