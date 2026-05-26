@@ -13,7 +13,7 @@ Kartex is built in six vertical phases, each leaving the app in a usable state. 
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation & Auth** - Monorepo scaffold, Docker Compose baseline, JWT auth with invite-code registration, admin user management
-- [ ] **Phase 2: Deck & Card Management** - Full CRUD for decks and cards (text/Markdown only), tags, deck visibility
+- [x] **Phase 2: Deck & Card Management** - Full CRUD for decks and cards (text/Markdown only), tags, deck visibility
 - [ ] **Phase 3: Rich Content Rendering** - KaTeX math, Typst WASM, image/audio/video/code rendering on cards
 - [ ] **Phase 4: Study Loops** - SM-2 spaced repetition, deck mode, exam mode, dashboard with stats
 - [ ] **Phase 5: Import Pipeline** - `.kartex` file parser, preview UI, zip bundle with bundled media, MDIA validation
@@ -73,7 +73,7 @@ Plans:
 - [x] 02-02-PLAN.md — Install react-markdown, remark-gfm, @radix-ui/react-dialog/tabs/select + shadcn dialog/tabs/select components + KartexRenderer component
 
 **Wave 3** *(blocked on Wave 2 completion — needs ui components and KartexRenderer)*:
-- [ ] 02-03-PLAN.md — DecksPage (/decks) + DeckFormModal + DeckDetailPage (/decks/:id) + CardEditorModal + App.tsx route wiring
+- [x] 02-03-PLAN.md — DecksPage (/decks) + DeckFormModal + DeckDetailPage (/decks/:id) + CardEditorModal + App.tsx route wiring
 
 **UI hint**: yes
 
@@ -160,7 +160,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation & Auth | 3/3 | Complete | 2026-05-26 |
-| 2. Deck & Card Management | 2/3 | In progress | - |
+| 2. Deck & Card Management | 3/3 | Complete | 2026-05-26 |
 | 3. Rich Content Rendering | 0/3 | Not started | - |
 | 4. Study Loops | 0/3 | Not started | - |
 | 5. Import Pipeline | 0/3 | Not started | - |
