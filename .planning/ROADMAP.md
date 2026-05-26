@@ -4,6 +4,20 @@
 
 Kartex is built in six vertical phases, each leaving the app in a usable state. Starting from a deployable monorepo skeleton with auth, the project adds deck and card CRUD, rich multimedia rendering, spaced-repetition study loops, `.kartex` file import, and finally sharing/explore and full production Docker Compose. Every phase can be used by a real user before the next begins.
 
+## Quality Policy (cross-cutting)
+
+**Tests per phase (Option A — active from Phase 3):**
+Each phase ships tests for its own new logic. Minimum coverage targets:
+- Pure functions (SM-2, `.kartex` parser, Zod edge cases) → unit tests with Vitest
+- Hono route handlers → in-process integration tests via `hono/testing`
+- React components — critical paths only (not snapshot tests)
+
+**Baseline tooling (installed before Phase 3):**
+- ESLint (flat config + typescript-eslint + eslint-plugin-react-hooks)
+- Prettier (via eslint-config-prettier)
+- `yarn lint` and `yarn format` run across all workspaces
+- CI gate: `typecheck` + `lint` + `test` + `build` on every push (GitHub Actions, added in Phase 6)
+
 ## Phases
 
 **Phase Numbering:**

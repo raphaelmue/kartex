@@ -100,6 +100,8 @@ A user can open their dashboard, see their due cards, and complete a spaced-repe
 | httpOnly JWT cookies | Protects tokens from XSS; access token 15 min + refresh token 30 days | — Pending |
 | Videos as external links only | No self-hosted video storage needed; simplifies Docker volumes; YouTube/Vimeo embeds sufficient | — Pending |
 | PostgreSQL 16 | Robust relational storage; Prisma provides type-safe access; arrays for card tags | — Pending |
+| Tests per phase (Option A) | Each phase ships tests for its own code — unit tests for pure logic (SM-2, parser), component/integration tests for critical paths. Vitest is the runner (Vite-native). Applied starting Phase 3. | — Active |
+| ESLint + Prettier as baseline | Linting (ESLint flat config + typescript-eslint) and formatting (Prettier) installed as cross-cutting baseline before Phase 3. `yarn lint` and `yarn format` run across all workspaces. | — Active |
 
 ## Evolution
 
