@@ -51,8 +51,9 @@ export function DecksPage() {
     try {
       const res = await api.get('/api/decks')
       if (res.ok) setDecks(await res.json())
+      else toast.error('Failed to load decks. Please try again.')
     } catch {
-      // silently ignore on load
+      toast.error('Could not reach the server. Check your connection.')
     }
   }
 

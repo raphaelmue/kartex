@@ -69,8 +69,8 @@ export function DeckFormModal({ open, onOpenChange, deck, onSuccess }: DeckFormM
 
   const onSubmit = async (data: DeckFormInput) => {
     try {
-      const res = isEdit
-        ? await api.patch(`/api/decks/${deck!.id}`, data)
+      const res = isEdit && deck
+        ? await api.patch(`/api/decks/${deck.id}`, data)
         : await api.post('/api/decks', data)
       if (res.ok) {
         toast.success(isEdit ? 'Deck updated' : 'Deck created')

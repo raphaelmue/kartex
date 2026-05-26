@@ -75,8 +75,8 @@ export function CardEditorModal({
     const tags = tagInput.split(',').map((t) => t.trim()).filter(Boolean)
     const payload = { ...data, tags }
     try {
-      const res = isEdit
-        ? await api.patch(`/api/decks/${deckId}/cards/${card!.id}`, payload)
+      const res = isEdit && card
+        ? await api.patch(`/api/decks/${deckId}/cards/${card.id}`, payload)
         : await api.post(`/api/decks/${deckId}/cards`, payload)
       if (res.ok) {
         toast.success(isEdit ? 'Card updated' : 'Card added')
