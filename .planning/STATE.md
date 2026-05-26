@@ -74,5 +74,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-05-26
-Stopped at: Completed 02-03-PLAN.md — DecksPage, DeckDetailPage, DeckFormModal, CardEditorModal, App.tsx routes
-Resume file: .planning/phases/03-card-rendering-study/03-01-PLAN.md
+Stopped at: Phase 3 context gathered — media upload UI, Typst loading, video embed, render errors
+Resume file: .planning/phases/03-rich-content-rendering/03-CONTEXT.md
