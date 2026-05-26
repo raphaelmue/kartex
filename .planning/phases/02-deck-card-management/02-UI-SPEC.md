@@ -1,7 +1,8 @@
 ---
 phase: 2
 slug: deck-card-management
-status: draft
+status: approved
+reviewed_at: 2026-05-26
 shadcn_initialized: true
 preset: "style=default, baseColor=neutral, cssVariables=true"
 created: 2026-05-26
@@ -51,7 +52,6 @@ Declared values (all multiples of 4, matching Tailwind 4px base unit):
 | 3xl | 64px | Not used in this phase |
 
 Exceptions:
-- Touch targets on Edit/Delete buttons in the card table: minimum 36px height (shadcn `size="sm"` default — acceptable for desktop-first app targeting 2-5 users)
 - Sidebar width: 240px (w-60, established in Phase 1 AppShell — do not change)
 - Main content area: p-8 (32px) padding on all sides (established in Phase 1 AppShell — do not change)
 
@@ -61,16 +61,20 @@ Exceptions:
 
 All type roles use the system font stack via Tailwind defaults. No custom font is installed.
 
+**Allowed weights: exactly 2 — 400 (normal) and 700 (bold).**
+
 | Role | Size | Weight | Line Height | Tailwind Class |
 |------|------|--------|-------------|----------------|
 | Body | 14px | 400 | 1.5 | `text-sm` |
-| Label | 14px | 500 | 1.0 | `text-sm font-medium` |
+| Label | 14px | 400 | 1.0 | `text-sm text-muted-foreground` |
 | Heading (page) | 24px | 700 | 1.2 | `text-2xl font-bold` |
-| Heading (section) | 18px | 600 | 1.3 | `text-lg font-semibold` |
+| Heading (section) | 18px | 700 | 1.3 | `text-lg font-bold` |
 
 Notes:
+- Label is distinguished from Body by color (`text-muted-foreground`) and context, not weight. Do not use `font-medium`.
+- Section headings use `font-bold` (700), not `font-semibold` (600). This matches the AdminPage heading pattern and keeps weights to exactly 2.
 - Page heading (`text-2xl font-bold`) matches AdminPage established pattern: `<h2 className="text-2xl font-bold">Admin</h2>`
-- Card title in deck tiles uses `text-lg font-semibold` (shadcn `CardTitle` default)
+- Card title in deck tiles uses `text-lg font-bold` (override shadcn `CardTitle` default `font-semibold` to comply with 2-weight rule)
 - Table cell content uses `text-sm` (14px, 400)
 - Truncated text (deck descriptions, card front content in table) uses `line-clamp-2` or `truncate` as context requires
 - Markdown prose in KartexRenderer Preview tab: `prose prose-sm max-w-none dark:prose-invert` (Tailwind Typography plugin pattern — see RESEARCH.md Pattern 5)
@@ -110,6 +114,20 @@ inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium {color cla
 
 ---
 
+## Focal Points
+
+### /decks — Deck List Page
+- **Primary focal point:** Deck grid tiles (the 3-column responsive grid of shadcn Card components)
+- **Primary action anchor:** "New Deck" CTA button, top-right of the page heading row
+- Visual hierarchy: page heading + CTA row draws the eye first; deck grid fills below; empty state occupies the grid area when no decks exist
+
+### /decks/:id — Deck Detail Page
+- **Primary focal point:** Card table (shadcn Table listing all cards in the deck)
+- **Primary action anchor:** "Add Card" CTA button, positioned below the card table
+- Visual hierarchy: deck name heading at top; description + visibility badge below; card table as the dominant content block; "Add Card" anchors the bottom of the content zone
+
+---
+
 ## Component Inventory
 
 ### /decks — Deck List Page
@@ -122,7 +140,7 @@ inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium {color cla
 | New Deck button | shadcn `Button` | `variant="default"` — positioned top-right of heading row, label: "New Deck" |
 | Deck grid container | CSS grid | `grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6` |
 | Deck tile | shadcn `Card` | `CardHeader` + `CardContent` + `CardFooter` |
-| Deck tile — title | `CardTitle` | `text-lg font-semibold`, max 2 lines (`line-clamp-2`) |
+| Deck tile — title | `CardTitle` | `text-lg font-bold`, max 2 lines (`line-clamp-2`) |
 | Deck tile — description | `CardDescription` | `text-sm text-muted-foreground`, max 2 lines (`line-clamp-2`) |
 | Deck tile — card count | inline text | `text-sm text-muted-foreground` — "{N} cards" |
 | Deck tile — visibility badge | inline `<span>` | Follows badge pattern above (Private/Shared/Public colors) |
@@ -327,12 +345,14 @@ No third-party registries declared for this phase. Registry vetting gate not app
 | Modal widths | Claude's Discretion | max-w-md for deck form, max-w-2xl for card editor |
 | Textarea heights | Claude's Discretion | 8 rows (~192px) for card editor textareas |
 | Visibility badge colors | CONTEXT.md specifics | Muted/blue/green per state |
-| Destructive confirmation pattern | Codebase (AdminPage.tsx) | Inline inline confirmation, not a separate modal |
+| Destructive confirmation pattern | Codebase (AdminPage.tsx) | Inline confirmation, not a separate modal |
 | Heading typography | Codebase (AdminPage.tsx) | text-2xl font-bold established in Phase 1 |
 | Badge structure | Codebase (AdminPage.tsx) | inline-flex rounded-full pattern |
 | CSS tokens | apps/frontend/src/index.css | All color values from existing CSS variables |
 | Spacing | apps/frontend/tailwind.config.ts + AppShell | p-8 main, w-60 sidebar — do not change |
 | Design system tool | apps/frontend/components.json | shadcn/ui, neutral base, confirmed |
+| Typography weights | Checker revision 2026-05-26 | Collapsed to 2 weights (400, 700); Label uses color not weight; section headings use font-bold |
+| Focal points | Checker revision 2026-05-26 | Added explicit focal point + primary action anchor for /decks and /decks/:id |
 
 ---
 
