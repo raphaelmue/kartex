@@ -102,12 +102,19 @@ Plans:
   3. An image uploaded to the media volume and referenced on a card is visible inline on the card face
   4. An audio file uploaded to the media volume plays via a native HTML audio player embedded in the card
   5. An external video link (YouTube/Vimeo) renders as an embedded player, and a fenced code block renders with syntax highlighting
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 03-01: KaTeX integration (inline + block math) + highlight.js code blocks in the Kartex renderer
-- [ ] 03-02: Typst WASM integration (typst.ts) + `#typst` block parser in the renderer
-- [ ] 03-03: Image and audio upload API + media volume wiring + external video embed rendering
+
+**Wave 1** (no dependencies):
+- [ ] 03-01-PLAN.md — Vitest test infrastructure (Wave 0) + KaTeX plugin chain (remark-math + rehype-katex) + rehype-highlight + global CSS imports in main.tsx (CARD-06, CARD-07, CARD-12)
+
+**Wave 2** *(blocked on Wave 1 completion — needs test infrastructure + KartexRenderer base)*:
+- [ ] 03-02-PLAN.md — Typst WASM packages + vite-plugin-wasm + vite.config.ts extension + typst.ts lazy singleton + KartexRenderer #typst block handler (CARD-08)
+
+**Wave 3** *(blocked on Wave 2 completion — both plans touch KartexRenderer.tsx)*:
+- [ ] 03-03-PLAN.md — MediaUploadResponseSchema + backend media router (POST upload + GET serve, split auth) + STORAGE_PATH env var + KartexRenderer media:// image/audio + YouTube iframe + MediaUploadToolbar + CardEditorModal integration (CARD-09, CARD-10, CARD-11)
+
 **UI hint**: yes
 
 ### Phase 4: Study Loops
