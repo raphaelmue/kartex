@@ -12,7 +12,7 @@ Kartex is built in six vertical phases, each leaving the app in a usable state. 
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Foundation & Auth** - Monorepo scaffold, Docker Compose baseline, JWT auth with invite-code registration, admin user management
+- [x] **Phase 1: Foundation & Auth** - Monorepo scaffold, Docker Compose baseline, JWT auth with invite-code registration, admin user management
 - [ ] **Phase 2: Deck & Card Management** - Full CRUD for decks and cards (text/Markdown only), tags, deck visibility
 - [ ] **Phase 3: Rich Content Rendering** - KaTeX math, Typst WASM, image/audio/video/code rendering on cards
 - [ ] **Phase 4: Study Loops** - SM-2 spaced repetition, deck mode, exam mode, dashboard with stats
@@ -62,12 +62,19 @@ Cross-cutting constraints:
   3. User can edit or delete a deck (and all its cards), and edit or delete individual cards
   4. User can tag a card with freeform labels and cards with a given tag are distinguishable
   5. User can set deck visibility to private, shared, or public (UI accepts the setting; sharing enforcement comes in Phase 6)
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 02-01: Deck API (CRUD + visibility) + shared Zod schemas for Deck/Card
-- [ ] 02-02: Card API (CRUD + tags) + Kartex Markdown-only renderer component
-- [ ] 02-03: Frontend deck list, deck detail, card editor UI pages
+
+**Wave 1** (no dependencies):
+- [ ] 02-01-PLAN.md — Zod schemas (deck.ts, card.ts) in @kartex/shared + Prisma cascade deletes migration + Hono deck router + Hono card sub-router + backend index.ts registration
+
+**Wave 2** *(blocked on Wave 1 completion — needs @kartex/shared types)*:
+- [ ] 02-02-PLAN.md — Install react-markdown, remark-gfm, @radix-ui/react-dialog/tabs/select + shadcn dialog/tabs/select components + KartexRenderer component
+
+**Wave 3** *(blocked on Wave 2 completion — needs ui components and KartexRenderer)*:
+- [ ] 02-03-PLAN.md — DecksPage (/decks) + DeckFormModal + DeckDetailPage (/decks/:id) + CardEditorModal + App.tsx route wiring
+
 **UI hint**: yes
 
 ### Phase 3: Rich Content Rendering
@@ -152,7 +159,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation & Auth | 0/3 | Ready to execute | - |
+| 1. Foundation & Auth | 3/3 | Complete | 2026-05-26 |
 | 2. Deck & Card Management | 0/3 | Not started | - |
 | 3. Rich Content Rendering | 0/3 | Not started | - |
 | 4. Study Loops | 0/3 | Not started | - |
