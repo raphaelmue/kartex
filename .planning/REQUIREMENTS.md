@@ -37,9 +37,9 @@
 - [ ] **CARD-06**: Card content renders inline math expressions (`$...$`) via KaTeX
 - [ ] **CARD-07**: Card content renders block math expressions (`$$...$$`) via KaTeX
 - [ ] **CARD-08**: Card content renders `#typst` blocks via Typst WASM (typst.ts)
-- [ ] **CARD-09**: Card content renders inline images (PNG, JPEG, WebP, GIF) from uploaded media
-- [ ] **CARD-10**: Card content renders audio files (MP3, OGG, WAV) with a native HTML audio player
-- [ ] **CARD-11**: Card content renders external video links (YouTube, Vimeo) as embedded players
+- [x] **CARD-09**: Card content renders inline images (PNG, JPEG, WebP, GIF) from uploaded media
+- [x] **CARD-10**: Card content renders audio files (MP3, OGG, WAV) with a native HTML audio player
+- [x] **CARD-11**: Card content renders external video links (YouTube, Vimeo) as embedded players
 - [ ] **CARD-12**: Card content renders fenced code blocks with syntax highlighting (highlight.js)
 
 ### Study & Learning (STDY)
@@ -163,9 +163,9 @@ Deferred to a future release. Not in the current roadmap.
 | CARD-06 | Phase 3 | Pending |
 | CARD-07 | Phase 3 | Pending |
 | CARD-08 | Phase 3 | Pending |
-| CARD-09 | Phase 3 | Pending |
-| CARD-10 | Phase 3 | Pending |
-| CARD-11 | Phase 3 | Pending |
+| CARD-09 | Phase 3 | Complete (03-03) |
+| CARD-10 | Phase 3 | Complete (03-03) |
+| CARD-11 | Phase 3 | Complete (03-03) |
 | CARD-12 | Phase 3 | Pending |
 | STDY-01 | Phase 4 | Pending |
 | STDY-02 | Phase 4 | Pending |

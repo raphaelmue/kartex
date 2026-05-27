@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-05-25)
 
 ## Current Position
 
-Phase: 3 of 6 (Rich Content Rendering) — IN PROGRESS
-Plan: 2 of 3 in phase 3 — 03-02 complete 2026-05-27
-Status: Phase 3 executing — Wave 3 (03-03) next
-Last activity: 2026-05-27 — 03-02 complete (Typst WASM singleton + KartexRenderer #typst handler)
+Phase: 3 of 6 (Rich Content Rendering) — COMPLETE
+Plan: 3 of 3 in phase 3 — 03-03 complete 2026-05-27
+Status: Phase 3 complete — all 3 plans done. Next: Phase 4
+Last activity: 2026-05-27 — 03-03 complete (media pipeline: upload, serve, render)
 
-Progress: [████████████████████░░░░] 33% (2/6 phases complete, 2/3 plans in phase 3)
+Progress: [████████████████████░░░░] 50% (3/6 phases complete, 3/3 plans in phase 3)
 
 ## Performance Metrics
 
@@ -29,7 +29,7 @@ Progress: [████████████████████░░░
 |-------|-------|-------|----------|
 | 1 | 3/3 | ~18 min | ~6 min |
 | 2 | 3/3 | ~20 min | ~7 min |
-| 3 | 2/3 | ~12 min (ongoing) | ~6 min |
+| 3 | 3/3 | ~19 min | ~6 min |
 
 **Recent Trend:**
 - Last 5 plans: 02-02, 02-03, 03-01, 03-02
@@ -56,6 +56,8 @@ Recent decisions affecting current work:
 - 03-01: rehypeKatex before rehypeHighlight in rehypePlugins array (plugin order matters per RESEARCH.md Pitfall 2)
 - 03-02: vi.hoisted() required for mock variables used inside vi.mock() factory — Vitest hoists vi.mock() but not const declarations
 - 03-02: kartexComponents handles both p and h6 for #typst detection — Markdown may parse '#typst' as h6 or p depending on context (Pitfall 8)
+- 03-03: react-markdown v10 defaultUrlTransform strips unknown protocols (returns ''). Custom kartexUrlTransform required to pass media:// through to img/a component handlers.
+- 03-03: Split Hono router strategy for media: mediaPublicRouter (GET) before authMiddleware, mediaRouter (POST /upload) after — minimum viable auth split for browser img/audio src resolution
 
 ### Pending Todos
 
@@ -80,5 +82,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-05-27
-Stopped at: 03-02 complete — Typst WASM singleton + KartexRenderer #typst handler. Next: 03-03 (media upload)
-Resume file: .planning/phases/03-rich-content-rendering/03-03-PLAN.md
+Stopped at: 03-03 complete — media pipeline (upload, serve, render). Phase 3 complete. Next: Phase 4
+Resume file: None — Phase 3 complete

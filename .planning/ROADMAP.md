@@ -28,7 +28,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation & Auth** - Monorepo scaffold, Docker Compose baseline, JWT auth with invite-code registration, admin user management
 - [x] **Phase 2: Deck & Card Management** - Full CRUD for decks and cards (text/Markdown only), tags, deck visibility
-- [ ] **Phase 3: Rich Content Rendering** - KaTeX math, Typst WASM, image/audio/video/code rendering on cards
+- [x] **Phase 3: Rich Content Rendering** - KaTeX math, Typst WASM, image/audio/video/code rendering on cards
 - [ ] **Phase 4: Study Loops** - SM-2 spaced repetition, deck mode, exam mode, dashboard with stats
 - [ ] **Phase 5: Import Pipeline** - `.kartex` file parser, preview UI, zip bundle with bundled media, MDIA validation
 - [ ] **Phase 6: Sharing, Explore & Production Deploy** - Deck sharing, fork, /explore page, full Nginx TLS Docker Compose
@@ -113,7 +113,7 @@ Plans:
 - [x] 03-02-PLAN.md — Typst WASM packages + vite-plugin-wasm + vite.config.ts extension + typst.ts lazy singleton + KartexRenderer #typst block handler (CARD-08)
 
 **Wave 3** *(blocked on Wave 2 completion — both plans touch KartexRenderer.tsx)*:
-- [ ] 03-03-PLAN.md — MediaUploadResponseSchema + backend media router (POST upload + GET serve, split auth) + STORAGE_PATH env var + KartexRenderer media:// image/audio + YouTube iframe + MediaUploadToolbar + CardEditorModal integration (CARD-09, CARD-10, CARD-11)
+- [x] 03-03-PLAN.md — MediaUploadResponseSchema + backend media router (POST upload + GET serve, split auth) + STORAGE_PATH env var + KartexRenderer media:// image/audio + YouTube iframe + MediaUploadToolbar + CardEditorModal integration (CARD-09, CARD-10, CARD-11)
 
 **UI hint**: yes
 
@@ -182,7 +182,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 |-------|----------------|--------|-----------|
 | 1. Foundation & Auth | 3/3 | Complete | 2026-05-26 |
 | 2. Deck & Card Management | 3/3 | Complete | 2026-05-26 |
-| 3. Rich Content Rendering | 2/3 | In progress | - |
+| 3. Rich Content Rendering | 3/3 | Complete | 2026-05-27 |
 | 4. Study Loops | 0/3 | Not started | - |
 | 5. Import Pipeline | 0/3 | Not started | - |
 | 6. Sharing, Explore & Production Deploy | 0/3 | Not started | - |
