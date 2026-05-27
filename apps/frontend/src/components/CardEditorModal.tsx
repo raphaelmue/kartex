@@ -62,8 +62,8 @@ export function CardEditorModal({
   const { isSubmitting } = form.formState
 
   // Refs for cursor-position media insertion (D-03)
-  const frontRef = useRef<HTMLTextAreaElement>(null)
-  const backRef = useRef<HTMLTextAreaElement>(null)
+  const frontRef = useRef<HTMLTextAreaElement | null>(null)
+  const backRef = useRef<HTMLTextAreaElement | null>(null)
 
   useEffect(() => {
     if (open) {
@@ -107,7 +107,9 @@ export function CardEditorModal({
             <FormField
               control={form.control}
               name="frontContent"
-              render={({ field }) => (
+              render={({ field }) => {
+                const { ref: fieldRef, ...restField } = field
+                return (
                 <FormItem>
                   <FormLabel>Front</FormLabel>
                   <MediaUploadToolbar
@@ -122,11 +124,11 @@ export function CardEditorModal({
                     <TabsContent value="edit">
                       <FormControl>
                         <textarea
-                          ref={frontRef}
+                          ref={(el) => { fieldRef(el); frontRef.current = el }}
                           className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm font-mono ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                           placeholder="Front side content (Markdown)"
                           rows={8}
-                          {...field}
+                          {...restField}
                         />
                       </FormControl>
                     </TabsContent>
@@ -138,12 +140,14 @@ export function CardEditorModal({
                   </Tabs>
                   <FormMessage />
                 </FormItem>
-              )}
+              )}}
             />
             <FormField
               control={form.control}
               name="backContent"
-              render={({ field }) => (
+              render={({ field }) => {
+                const { ref: fieldRef, ...restField } = field
+                return (
                 <FormItem>
                   <FormLabel>Back</FormLabel>
                   <MediaUploadToolbar
@@ -158,11 +162,11 @@ export function CardEditorModal({
                     <TabsContent value="edit">
                       <FormControl>
                         <textarea
-                          ref={backRef}
+                          ref={(el) => { fieldRef(el); backRef.current = el }}
                           className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm font-mono ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                           placeholder="Back side content (Markdown)"
                           rows={8}
-                          {...field}
+                          {...restField}
                         />
                       </FormControl>
                     </TabsContent>
@@ -174,7 +178,7 @@ export function CardEditorModal({
                   </Tabs>
                   <FormMessage />
                 </FormItem>
-              )}
+              )}}
             />
             <div className="space-y-2">
               <Label htmlFor="tag-input">Tags (comma-separated, optional)</Label>
