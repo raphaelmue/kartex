@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
@@ -9,6 +9,7 @@ import {
 } from '@kartex/shared'
 import { api } from '@/lib/api'
 import { KartexRenderer } from '@/components/KartexRenderer'
+import { MediaUploadToolbar } from '@/components/MediaUploadToolbar'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -60,6 +61,10 @@ export function CardEditorModal({
   })
   const { isSubmitting } = form.formState
 
+  // Refs for cursor-position media insertion (D-03)
+  const frontRef = useRef<HTMLTextAreaElement>(null)
+  const backRef = useRef<HTMLTextAreaElement>(null)
+
   useEffect(() => {
     if (open) {
       form.reset({
@@ -105,6 +110,10 @@ export function CardEditorModal({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Front</FormLabel>
+                  <MediaUploadToolbar
+                    fieldRef={frontRef}
+                    onInsert={(val) => field.onChange(val)}
+                  />
                   <Tabs defaultValue="edit">
                     <TabsList>
                       <TabsTrigger value="edit">Edit</TabsTrigger>
@@ -113,6 +122,7 @@ export function CardEditorModal({
                     <TabsContent value="edit">
                       <FormControl>
                         <textarea
+                          ref={frontRef}
                           className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm font-mono ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                           placeholder="Front side content (Markdown)"
                           rows={8}
@@ -136,6 +146,10 @@ export function CardEditorModal({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Back</FormLabel>
+                  <MediaUploadToolbar
+                    fieldRef={backRef}
+                    onInsert={(val) => field.onChange(val)}
+                  />
                   <Tabs defaultValue="edit">
                     <TabsList>
                       <TabsTrigger value="edit">Edit</TabsTrigger>
@@ -144,6 +158,7 @@ export function CardEditorModal({
                     <TabsContent value="edit">
                       <FormControl>
                         <textarea
+                          ref={backRef}
                           className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm font-mono ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                           placeholder="Back side content (Markdown)"
                           rows={8}
