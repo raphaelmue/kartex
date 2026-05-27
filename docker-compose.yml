@@ -12,6 +12,7 @@ services:
       ADMIN_PASSWORD: ${ADMIN_PASSWORD}
       ALLOWED_ORIGIN: ${ALLOWED_ORIGIN:-http://localhost:5173}
       NODE_ENV: production
+      STORAGE_PATH: /app/media
     depends_on:
       db:
         condition: service_healthy

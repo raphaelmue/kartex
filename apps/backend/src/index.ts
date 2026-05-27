@@ -7,6 +7,7 @@ import { authMiddleware, requireAdmin } from './middleware/auth.js'
 import { authRouter } from './routes/auth.js'
 import { adminRouter } from './routes/admin.js'
 import { decksRouter } from './routes/decks.js'
+import { mediaRouter, mediaPublicRouter } from './routes/media.js'
 import { seedAdminIfNeeded } from './lib/seed.js'
 
 const app = new Hono()
@@ -28,11 +29,19 @@ app.use(
 // ─── 3. Auth routes (no JWT required for register/login/logout/refresh) ───────
 app.route('/api/auth', authRouter)
 
+// ─── 3b. Media public route (GET only — no auth required for img/audio src) ───
+//         Must be registered BEFORE authMiddleware so browsers can load media
+//         files via <img src> and <audio src> without a cookie (T-03-MEDIA-AUTH).
+app.route('/api/media', mediaPublicRouter)
+
 // ─── 4. JWT auth middleware on all remaining /api/* routes (INFR-03) ──────────
 app.use('/api/*', authMiddleware)
 
 // ─── 5. Deck + Card routes (JWT required — inherited from step 4) ─────────────
 app.route('/api/decks', decksRouter)
+
+// ─── 5b. Media protected route (POST /upload — auth required) ────────────────
+app.route('/api/media', mediaRouter)
 
 // ─── 6. Admin routes (JWT + ADMIN role required) ──────────────────────────────
 app.use('/api/admin/*', requireAdmin)
