@@ -1,10 +1,13 @@
-import { render } from '@testing-library/react'
+import { render, waitFor } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 import { KartexRenderer } from '@/components/KartexRenderer'
 
-// Mock Typst module — WASM cannot initialize in jsdom environment
+// Mock Typst module — WASM cannot initialize in jsdom environment.
+// Default: resolves with a mock SVG string. Individual tests can override via
+// mockResolvedValueOnce / mockRejectedValueOnce.
+const mockRenderTypstToSvg = vi.fn().mockResolvedValue('<svg>mock</svg>')
 vi.mock('@/lib/typst', () => ({
-  renderTypstToSvg: vi.fn().mockResolvedValue('<svg>mock</svg>'),
+  renderTypstToSvg: mockRenderTypstToSvg,
 }))
 
 // --- CARD-06: Inline math rendering ---
@@ -40,12 +43,28 @@ describe('CARD-12: code syntax highlighting', () => {
   })
 })
 
-// --- CARD-08: Typst block rendering (stub — implemented in 03-02) ---
+// --- CARD-08: Typst block rendering ---
 describe('CARD-08: Typst block rendering', () => {
-  // TODO: implemented in 03-02
-  it('renders typst block as SVG (placeholder)', () => {
-    // Stub: Typst WASM rendering is implemented in plan 03-02
-    expect(true).toBe(true)
+  it('renders #typst block as SVG after async render', async () => {
+    mockRenderTypstToSvg.mockResolvedValueOnce('<svg>mock</svg>')
+    const { container } = render(
+      <KartexRenderer content={"#typst\n$a + b = c$"} />,
+    )
+    // Initially shows spinner/loading state
+    await waitFor(() => {
+      // After async render, the mock SVG should appear in the DOM
+      expect(container.innerHTML).toContain('mock')
+    })
+  })
+
+  it('renders RenderErrorBlock when Typst compilation fails', async () => {
+    mockRenderTypstToSvg.mockRejectedValueOnce(new Error('compile error'))
+    const { container } = render(
+      <KartexRenderer content={"#typst\n$a + b = c$"} />,
+    )
+    await waitFor(() => {
+      expect(container.innerHTML).toContain('Typst render error')
+    })
   })
 })
 
