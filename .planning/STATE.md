@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-05-25)
 
 **Core value:** A user can open their dashboard, see their due cards, and complete a spaced-repetition study session — that loop must always work.
-**Current focus:** Phase 3 — Card Rendering & Study Engine
+**Current focus:** Phase 3 — Rich Content Rendering
 
 ## Current Position
 
-Phase: 2 of 6 (Deck & Card Management) — COMPLETE
-Plan: 3 of 3 in phase 2 — all plans done
-Status: Phase 2 complete; ready to begin Phase 3
-Last activity: 2026-05-26 — Completed quick task 260526-001: quality baseline (ESLint/Prettier, code smell fixes, decisions recorded)
+Phase: 3 of 6 (Rich Content Rendering) — IN PROGRESS
+Plan: 1 of 3 in phase 3 — 03-01 complete 2026-05-27
+Status: Phase 3 executing — Wave 2 (03-02) next
+Last activity: 2026-05-27 — 03-01 complete (Vitest + KaTeX + highlight.js)
 
-Progress: [████████████████████░░░░] 33% (2/6 phases complete)
+Progress: [████████████████████░░░░] 33% (2/6 phases complete, 1/3 plans in phase 3)
 
 ## Performance Metrics
 
@@ -29,9 +29,10 @@ Progress: [████████████████████░░░
 |-------|-------|-------|----------|
 | 1 | 3/3 | ~18 min | ~6 min |
 | 2 | 3/3 | ~20 min | ~7 min |
+| 3 | 1/3 | ~7 min (ongoing) | ~7 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-03, 02-01, 02-02, 02-03
+- Last 5 plans: 02-01, 02-02, 02-03, 03-01
 - Trend: on track
 
 *Updated after each plan completion*
@@ -50,6 +51,9 @@ Recent decisions affecting current work:
 - 02-02: KartexRenderer named export (not default) — consumers use import { KartexRenderer } from '@/components/KartexRenderer'
 - 02-02: XSS safety: allowDangerousHtml not enabled in react-markdown v10 (T-02-07 accepted)
 - 02-03: Use z.input<typeof Schema> instead of z.infer<> for useForm type when schema has .default() fields — matches zodResolver generic expectations
+- 03-01: Pinned vitest@2.1.9 (not 4.x) — Vitest 4.x requires Vite ^6.0; project uses Vite 5.x
+- 03-01: Block math requires $$ on its own lines for remark-math display mode (single-line $$ = inline mode)
+- 03-01: rehypeKatex before rehypeHighlight in rehypePlugins array (plugin order matters per RESEARCH.md Pitfall 2)
 
 ### Pending Todos
 
@@ -73,6 +77,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-05-26
-Stopped at: Phase 3 context gathered — media upload UI, Typst loading, video embed, render errors
-Resume file: .planning/phases/03-rich-content-rendering/03-CONTEXT.md
+Last session: 2026-05-27
+Stopped at: 03-01 complete — Vitest infrastructure + KaTeX + highlight.js. Next: 03-02 (Typst WASM)
+Resume file: .planning/phases/03-rich-content-rendering/03-02-PLAN.md

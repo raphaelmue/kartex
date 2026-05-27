@@ -107,7 +107,7 @@ Plans:
 Plans:
 
 **Wave 1** (no dependencies):
-- [ ] 03-01-PLAN.md — Vitest test infrastructure (Wave 0) + KaTeX plugin chain (remark-math + rehype-katex) + rehype-highlight + global CSS imports in main.tsx (CARD-06, CARD-07, CARD-12)
+- [x] 03-01-PLAN.md — Vitest test infrastructure (Wave 0) + KaTeX plugin chain (remark-math + rehype-katex) + rehype-highlight + global CSS imports in main.tsx (CARD-06, CARD-07, CARD-12)
 
 **Wave 2** *(blocked on Wave 1 completion — needs test infrastructure + KartexRenderer base)*:
 - [ ] 03-02-PLAN.md — Typst WASM packages + vite-plugin-wasm + vite.config.ts extension + typst.ts lazy singleton + KartexRenderer #typst block handler (CARD-08)
@@ -182,7 +182,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 |-------|----------------|--------|-----------|
 | 1. Foundation & Auth | 3/3 | Complete | 2026-05-26 |
 | 2. Deck & Card Management | 3/3 | Complete | 2026-05-26 |
-| 3. Rich Content Rendering | 0/3 | Not started | - |
+| 3. Rich Content Rendering | 1/3 | In progress | - |
 | 4. Study Loops | 0/3 | Not started | - |
 | 5. Import Pipeline | 0/3 | Not started | - |
 | 6. Sharing, Explore & Production Deploy | 0/3 | Not started | - |
