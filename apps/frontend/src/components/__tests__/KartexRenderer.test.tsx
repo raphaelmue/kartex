@@ -70,29 +70,58 @@ describe('CARD-08: Typst block rendering', () => {
   })
 })
 
-// --- CARD-09: media:// image rendering (stub — implemented in 03-03) ---
+// --- CARD-09: media:// image rendering ---
 describe('CARD-09: media:// image rendering', () => {
-  // TODO: implemented in 03-03
-  it('rewrites media:// image src (placeholder)', () => {
-    // Stub: media:// URL rewriting is implemented in plan 03-03
-    expect(true).toBe(true)
+  it('rewrites media:// image src to /api/media/ URL', () => {
+    const { container } = render(
+      <KartexRenderer content="![cat](media://carnot.png)" />,
+    )
+    const img = container.querySelector('img')
+    expect(img).not.toBeNull()
+    expect(img?.src).toContain('/api/media/carnot.png')
+    expect(img?.src).not.toContain('media://')
+  })
+
+  it('passes through non-media:// image src unchanged', () => {
+    const { container } = render(
+      <KartexRenderer content="![alt](https://example.com/img.png)" />,
+    )
+    const img = container.querySelector('img')
+    expect(img?.src).toBe('https://example.com/img.png')
   })
 })
 
-// --- CARD-10: Audio player rendering (stub — implemented in 03-03) ---
+// --- CARD-10: Audio player rendering ---
 describe('CARD-10: audio player rendering', () => {
-  // TODO: implemented in 03-03
-  it('renders audio player for media:// audio link (placeholder)', () => {
-    // Stub: audio player rendering is implemented in plan 03-03
-    expect(true).toBe(true)
+  it('renders audio element with controls for media:// audio link', () => {
+    const { container } = render(
+      <KartexRenderer content="[audio](media://lecture.mp3)" />,
+    )
+    const audio = container.querySelector('audio')
+    expect(audio).not.toBeNull()
+    expect(audio?.hasAttribute('controls')).toBe(true)
+    expect(audio?.src).toContain('/api/media/lecture.mp3')
   })
 })
 
-// --- CARD-11: YouTube embed rendering (stub — implemented in 03-03) ---
+// --- CARD-11: YouTube embed rendering ---
 describe('CARD-11: YouTube embed rendering', () => {
-  // TODO: implemented in 03-03
-  it('renders YouTube embed iframe (placeholder)', () => {
-    // Stub: YouTube embed rendering is implemented in plan 03-03
-    expect(true).toBe(true)
+  it('renders iframe for youtube.com/watch URL', () => {
+    const { container } = render(
+      <KartexRenderer content="[video](https://youtube.com/watch?v=dQw4w9WgXcQ)" />,
+    )
+    const iframe = container.querySelector('iframe')
+    expect(iframe).not.toBeNull()
+    expect(iframe?.src).toContain('youtube.com/embed/dQw4w9WgXcQ')
+  })
+
+  it('renders anchor (not iframe) for non-YouTube links', () => {
+    const { container } = render(
+      <KartexRenderer content="[link](https://example.com)" />,
+    )
+    const iframe = container.querySelector('iframe')
+    const anchor = container.querySelector('a')
+    expect(iframe).toBeNull()
+    expect(anchor?.href).toBe('https://example.com/')
   })
 })
