@@ -3,9 +3,11 @@ import { describe, expect, it, vi } from 'vitest'
 import { KartexRenderer } from '@/components/KartexRenderer'
 
 // Mock Typst module — WASM cannot initialize in jsdom environment.
-// Default: resolves with a mock SVG string. Individual tests can override via
-// mockResolvedValueOnce / mockRejectedValueOnce.
-const mockRenderTypstToSvg = vi.fn().mockResolvedValue('<svg>mock</svg>')
+// vi.mock is hoisted to top of file; use vi.hoisted() so the mock variable
+// is also available at hoist time.
+const mockRenderTypstToSvg = vi.hoisted(() =>
+  vi.fn().mockResolvedValue('<svg>mock</svg>'),
+)
 vi.mock('@/lib/typst', () => ({
   renderTypstToSvg: mockRenderTypstToSvg,
 }))
