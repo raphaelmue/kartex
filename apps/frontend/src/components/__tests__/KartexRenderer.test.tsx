@@ -11,7 +11,6 @@ vi.mock('@/lib/typst', () => ({
 describe('CARD-06: inline math rendering', () => {
   it('renders inline math', () => {
     const { container } = render(<KartexRenderer content="$x^2$" />)
-    // Expects a KaTeX-rendered element — will FAIL (RED) until Task 2 wires rehype-katex
     expect(container.querySelector('.katex')).not.toBeNull()
   })
 })
@@ -19,8 +18,10 @@ describe('CARD-06: inline math rendering', () => {
 // --- CARD-07: Block math rendering ---
 describe('CARD-07: block math rendering', () => {
   it('renders block math', () => {
-    const { container } = render(<KartexRenderer content="$$\\int f(x)dx$$" />)
-    // Expects a KaTeX display-mode element — will FAIL (RED) until Task 2 wires rehype-katex
+    // remark-math requires $$ on their own lines for display/block mode
+    const { container } = render(
+      <KartexRenderer content={"$$\n\\int f(x)dx\n$$"} />,
+    )
     expect(container.querySelector('.katex-display')).not.toBeNull()
   })
 })
@@ -31,7 +32,6 @@ describe('CARD-12: code syntax highlighting', () => {
     const { container } = render(
       <KartexRenderer content={'```js\nconst x = 1\n```'} />,
     )
-    // Expects highlight.js classes — will FAIL (RED) until Task 2 wires rehype-highlight
     const codeEl = container.querySelector('code')
     const hasHighlightClass =
       codeEl?.className.includes('hljs') ||
