@@ -1,5 +1,5 @@
 ---
-status: diagnosed
+status: complete
 phase: 03-rich-content-rendering
 source: [03-VERIFICATION.md]
 started: 2026-05-27T16:50:00Z
@@ -42,9 +42,13 @@ blocked: 0
 ## Gaps
 
 - truth: "Typst WASM expression renders as an inline SVG without a page reload"
-  status: failed
+  status: fixed
   reason: "User reported: did not pass. I saw the rendering, but then it disappeared and no formula was displayed. Instead a huge space was visible in the preview."
   severity: major
   test: 1
-  artifacts: []
+  root_cause: "@myriaddreamin/typst.ts, typst-ts-web-compiler, typst-ts-renderer were declared in package.json and resolved in yarn.lock but never materialized in node_modules — a missing `yarn install` step. WASM module load failed silently at runtime, leaving only an empty div."
+  fix: "Ran `yarn install` from monorepo root — 69 packages added (107 MiB). All three @myriaddreamin packages now present in node_modules."
+  artifacts:
+    - apps/frontend/package.json
+    - yarn.lock
   missing: []
