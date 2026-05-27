@@ -27,14 +27,21 @@ mediaPublic.get('/:filename', async (c) => {
     return c.json({ error: 'Not found.' }, 404)
   }
 
-  let bytes: Buffer
+  let rawBytes: Buffer
   try {
-    bytes = await readFile(fullPath)
+    rawBytes = await readFile(fullPath)
   } catch {
     return c.json({ error: 'Not found.' }, 404)
   }
 
-  return c.newResponse(bytes, 200, { 'Content-Type': media.mimeType })
+  // Buffer.buffer is typed as ArrayBufferLike; slice() creates an owned ArrayBuffer
+  // safe to cast — Node.js readFile never uses SharedArrayBuffer
+  const responseBody = rawBytes.buffer.slice(
+    rawBytes.byteOffset,
+    rawBytes.byteOffset + rawBytes.byteLength,
+  ) as ArrayBuffer
+
+  return c.newResponse(responseBody, 200, { 'Content-Type': media.mimeType })
 })
 
 // ─── Protected router — POST /upload (auth required) ─────────────────────────
@@ -58,7 +65,7 @@ media.post('/upload', async (c) => {
   const filename = randomUUID() + ext
   const fullPath = join(storagePath, filename)
 
-  await writeFile(fullPath, Buffer.from(await file.arrayBuffer()))
+  await writeFile(fullPath, new Uint8Array(await file.arrayBuffer()))
 
   await prisma.media.create({
     data: {
