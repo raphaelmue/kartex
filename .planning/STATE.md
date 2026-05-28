@@ -10,9 +10,9 @@ See: .planning/PROJECT.md (updated 2026-05-25)
 ## Current Position
 
 Phase: 5 of 6 (Import Pipeline) — Executing (3 plans, 3 waves)
-Plan: 1 of 3 in phase 5
-Status: Phase 5 executing — Wave 2 starting (05-02 import API)
-Last activity: 2026-05-28 — 05-01 complete (parseKartex TDD, 10/10 tests green)
+Plan: 2 of 3 in phase 5
+Status: Phase 5 executing — Wave 3 starting (05-03 import UI)
+Last activity: 2026-05-28 — 05-02 complete (import API, bodyLimit + magic validation + Prisma tx)
 
 Progress: [█████████████████████████] 67% (4/6 phases complete)
 
