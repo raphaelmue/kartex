@@ -152,12 +152,19 @@ Plans:
   3. Confirming import creates a new deck and all cards in the database; bundled media files are stored on the Docker volume
   4. Uploading a file that is too large (over the configured max) or has an invalid MIME type or magic bytes is rejected with a clear error
   5. The configurable max upload size is controlled via an environment variable (default 10 MB)
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 05-01: `.kartex` parser (deck header, card blocks, tags, math, Typst, media references) in packages/shared
-- [ ] 05-02: Import API (`.kartex` upload, `.kartex.zip` extraction, MIME+magic validation, media storage, deck creation)
-- [ ] 05-03: Import page UI (file upload, preview with full Kartex renderer, confirm/cancel flow)
+
+**Wave 1** (no dependencies):
+- [ ] 05-01-PLAN.md — `parseKartex()` pure function in packages/shared/src/lib/kartex-parser.ts + five Zod schemas in packages/shared/src/schemas/import.ts + barrel exports + 10 unit tests (TDD: RED then GREEN)
+
+**Wave 2** *(blocked on Wave 1 — needs parseKartex from @kartex/shared)*:
+- [ ] 05-02-PLAN.md — Install unzipper + file-type + @types/unzipper + yaml + Hono importRouter (GET /api/import/config + POST /api/import with bodyLimit, MIME/magic validation, zip extraction, Prisma transaction) + register in index.ts
+
+**Wave 3** *(blocked on Wave 2 — needs /api/import endpoint)*:
+- [ ] 05-03-PLAN.md — shadcn alert + progress install + api.postForm() helper + useImport hook (4-state machine) + ImportPage (UPLOAD/PARSING/PREVIEW/SUCCESS, LazyCard IntersectionObserver, amber warnings banner, deck name input) + App.tsx /import route wiring
+
 **UI hint**: yes
 
 ### Phase 6: Sharing, Explore & Production Deploy
