@@ -10,6 +10,7 @@ import { decksRouter } from './routes/decks.js'
 import { mediaRouter, mediaPublicRouter } from './routes/media.js'
 import { studyRouter } from './routes/study.js'
 import { dashboardRouter } from './routes/dashboard.js'
+import { importRouter } from './routes/import.js'
 import { seedAdminIfNeeded } from './lib/seed.js'
 
 const app = new Hono()
@@ -48,6 +49,9 @@ app.route('/api/media', mediaRouter)
 // ─── 5c. Study + Dashboard routes (JWT required — inherited from step 4) ──────
 app.route('/api/study', studyRouter)
 app.route('/api/dashboard', dashboardRouter)
+
+// ─── 5d. Import route (JWT required — inherited from step 4) ──────────────────
+app.route('/api/import', importRouter)
 
 // ─── 6. Admin routes (JWT + ADMIN role required) ──────────────────────────────
 app.use('/api/admin/*', requireAdmin)
