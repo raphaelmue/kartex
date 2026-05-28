@@ -9,10 +9,10 @@ See: .planning/PROJECT.md (updated 2026-05-25)
 
 ## Current Position
 
-Phase: 4 of 6 (Study Loops) — IN PROGRESS (UI-SPEC approved, ready for planning)
+Phase: 4 of 6 (Study Loops) — READY TO EXECUTE (3 plans planned, verified)
 Plan: 0 of 3 in phase 4
-Status: Phase 4 UI-SPEC approved — ready for planning
-Last activity: 2026-05-28 — Phase 4 UI design contract approved (dashboard, study session, mode selector)
+Status: Phase 4 planned — ready to execute
+Last activity: 2026-05-28 — Phase 4 plans created and verified (04-01 SM-2+API, 04-02 session UI, 04-03 dashboard)
 
 Progress: [████████████████████░░░░] 50% (3/6 phases complete, 3/3 plans in phase 3)
 
@@ -82,5 +82,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-05-28
-Stopped at: Phase 4 context gathered — SM-2 study session UX + dashboard layout decisions captured
-Resume file: .planning/phases/04-study-loops/04-CONTEXT.md
+Stopped at: Phase 4 plans created and verified — 3 plans (2 waves) ready to execute
+Resume file: .planning/phases/04-study-loops/04-01-PLAN.md
