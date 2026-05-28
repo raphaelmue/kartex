@@ -9,10 +9,10 @@ See: .planning/PROJECT.md (updated 2026-05-25)
 
 ## Current Position
 
-Phase: 4 of 6 (Study Loops) — IN PROGRESS (context gathered)
+Phase: 4 of 6 (Study Loops) — IN PROGRESS (UI-SPEC approved, ready for planning)
 Plan: 0 of 3 in phase 4
-Status: Phase 4 context gathered — ready for planning
-Last activity: 2026-05-28 — Phase 4 context gathered (study session UX, SM-2, dashboard)
+Status: Phase 4 UI-SPEC approved — ready for planning
+Last activity: 2026-05-28 — Phase 4 UI design contract approved (dashboard, study session, mode selector)
 
 Progress: [████████████████████░░░░] 50% (3/6 phases complete, 3/3 plans in phase 3)
 
