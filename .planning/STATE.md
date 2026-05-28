@@ -9,10 +9,10 @@ See: .planning/PROJECT.md (updated 2026-05-25)
 
 ## Current Position
 
-Phase: 5 of 6 (Import Pipeline) — In progress (context gathered)
+Phase: 5 of 6 (Import Pipeline) — Ready to execute (3 plans planned)
 Plan: 0 of 3 in phase 5
-Status: Phase 5 context gathered — ready for planning
-Last activity: 2026-05-28 — Phase 5 context gathered (parser, preview, media handling, size limit decisions)
+Status: Phase 5 planned — 3 plans in 3 waves, verification passed
+Last activity: 2026-05-28 — Phase 5 plans created (05-01 parser TDD, 05-02 import API, 05-03 import UI)
 
 Progress: [█████████████████████████] 67% (4/6 phases complete)
 
@@ -89,5 +89,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-05-28
-Stopped at: Phase 5 context gathered — all 4 gray areas discussed (parser tolerance, preview scope, media failure handling, client-side size limit)
-Resume file: .planning/phases/05-import-pipeline/05-CONTEXT.md
+Stopped at: Phase 5 UI-SPEC approved — 6/6 dimensions checked (1 FLAG non-blocking on "Cancel"/"Back" labels)
+Resume file: .planning/phases/05-import-pipeline/05-UI-SPEC.md
