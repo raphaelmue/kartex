@@ -44,13 +44,13 @@
 
 ### Study & Learning (STDY)
 
-- [ ] **STDY-01**: User can start a spaced repetition session showing all cards due today across all decks (SM-2)
-- [ ] **STDY-02**: During a study session, each card flip is followed by a 4-key recall rating (1=Again, 2=Hard, 3=Good, 4=Easy)
-- [ ] **STDY-03**: SM-2 algorithm updates ease factor, interval, and next review date for each rating
-- [ ] **STDY-04**: User can start a deck mode session (all cards in one deck, sequentially; SM-2 progress saved)
-- [ ] **STDY-05**: User can start an exam mode session (time limit; SM-2 progress not saved)
-- [ ] **STDY-06**: Dashboard shows all cards due today across all decks with a count per deck
-- [ ] **STDY-07**: Dashboard shows study statistics: total cards reviewed today, current study streak
+- [x] **STDY-01**: User can start a spaced repetition session showing all cards due today across all decks (SM-2)
+- [x] **STDY-02**: During a study session, each card flip is followed by a 4-key recall rating (1=Again, 2=Hard, 3=Good, 4=Easy)
+- [x] **STDY-03**: SM-2 algorithm updates ease factor, interval, and next review date for each rating
+- [x] **STDY-04**: User can start a deck mode session (all cards in one deck, sequentially; SM-2 progress saved)
+- [x] **STDY-05**: User can start an exam mode session (time limit; SM-2 progress not saved)
+- [x] **STDY-06**: Dashboard shows all cards due today across all decks with a count per deck
+- [x] **STDY-07**: Dashboard shows study statistics: total cards reviewed today, current study streak
 
 ### Import (.kartex) (IMPT)
 
@@ -167,13 +167,13 @@ Deferred to a future release. Not in the current roadmap.
 | CARD-10 | Phase 3 | Complete (03-03) |
 | CARD-11 | Phase 3 | Complete (03-03) |
 | CARD-12 | Phase 3 | Pending |
-| STDY-01 | Phase 4 | Pending |
-| STDY-02 | Phase 4 | Pending |
-| STDY-03 | Phase 4 | Pending |
-| STDY-04 | Phase 4 | Pending |
-| STDY-05 | Phase 4 | Pending |
-| STDY-06 | Phase 4 | Pending |
-| STDY-07 | Phase 4 | Pending |
+| STDY-01 | Phase 4 | Complete (04-01) |
+| STDY-02 | Phase 4 | Complete (04-01) |
+| STDY-03 | Phase 4 | Complete (04-01) |
+| STDY-04 | Phase 4 | Complete (04-01) |
+| STDY-05 | Phase 4 | Complete (04-01) |
+| STDY-06 | Phase 4 | Complete (04-01) |
+| STDY-07 | Phase 4 | Complete (04-01) |
 | IMPT-01 | Phase 5 | Pending |
 | IMPT-02 | Phase 5 | Pending |
 | IMPT-03 | Phase 5 | Pending |

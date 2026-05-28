@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-05-25)
 
 ## Current Position
 
-Phase: 4 of 6 (Study Loops) — READY TO EXECUTE (3 plans planned, verified)
-Plan: 0 of 3 in phase 4
-Status: Phase 4 planned — ready to execute
-Last activity: 2026-05-28 — Phase 4 plans created and verified (04-01 SM-2+API, 04-02 session UI, 04-03 dashboard)
+Phase: 4 of 6 (Study Loops) — IN PROGRESS
+Plan: 1 of 3 in phase 4 (04-01 complete)
+Status: Executing Phase 4 — plan 01 complete, plans 02-03 remaining
+Last activity: 2026-05-28 — 04-01 SM-2 algorithm + study/dashboard API complete
 
-Progress: [████████████████████░░░░] 50% (3/6 phases complete, 3/3 plans in phase 3)
+Progress: [████████████████████░░░░] 54% (3/6 phases complete, 1/3 plans in phase 4)
 
 ## Performance Metrics
 
@@ -30,9 +30,10 @@ Progress: [████████████████████░░░
 | 1 | 3/3 | ~18 min | ~6 min |
 | 2 | 3/3 | ~20 min | ~7 min |
 | 3 | 3/3 | ~19 min | ~6 min |
+| 4 | 1/3 | ~10 min | ~10 min |
 
 **Recent Trend:**
-- Last 5 plans: 02-02, 02-03, 03-01, 03-02
+- Last 5 plans: 02-03, 03-01, 03-02, 03-03, 04-01
 - Trend: on track
 
 *Updated after each plan completion*
@@ -58,6 +59,10 @@ Recent decisions affecting current work:
 - 03-02: kartexComponents handles both p and h6 for #typst detection — Markdown may parse '#typst' as h6 or p depending on context (Pitfall 8)
 - 03-03: react-markdown v10 defaultUrlTransform strips unknown protocols (returns ''). Custom kartexUrlTransform required to pass media:// through to img/a component handlers.
 - 03-03: Split Hono router strategy for media: mediaPublicRouter (GET) before authMiddleware, mediaRouter (POST /upload) after — minimum viable auth split for browser img/audio src resolution
+- 04-01: SM-2 quality mapping: Again(1)=0, Hard(2)=3, Good(3)=4, Easy(4)=5 — RATING_TO_QUALITY constant in shared package
+- 04-01: calculateSM2 uses original easeFactor (not updated EF) for third+ interval: interval = ceil(prev_interval * old_EF) — matches classic SM-2 spec
+- 04-01: Streak starts from today if reviewed today, else from yesterday — active streak persists for users who haven't studied yet today
+- 04-01: Prisma map/filter callbacks require (item: (typeof arr)[number]) annotation in strict TypeScript backend — noImplicitAny compliance
 
 ### Pending Todos
 
@@ -82,5 +87,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-05-28
-Stopped at: Phase 4 plans created and verified — 3 plans (2 waves) ready to execute
-Resume file: .planning/phases/04-study-loops/04-01-PLAN.md
+Stopped at: Completed 04-01 — SM-2 algorithm + study/dashboard API (2 tasks, 9 files, 14 tests pass)
+Resume file: .planning/phases/04-study-loops/04-02-PLAN.md

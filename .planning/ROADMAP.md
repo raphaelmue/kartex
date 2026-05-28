@@ -133,7 +133,7 @@ Plans:
 Plans:
 
 **Wave 1** (no dependencies):
-- [ ] 04-01-PLAN.md — SM-2 pure function in packages/shared + shared Zod schemas (RateCardSchema, DueCardSchema, DashboardStatsSchema) + backend study router (GET /api/study/due, GET /api/study/deck/:id, POST /api/study/rate) + dashboard router (GET /api/dashboard/stats) + unit tests (SM-2 algorithm, streak calculation)
+- [x] 04-01-PLAN.md — SM-2 pure function in packages/shared + shared Zod schemas (RateCardSchema, DueCardSchema, DashboardStatsSchema) + backend study router (GET /api/study/due, GET /api/study/deck/:id, POST /api/study/rate) + dashboard router (GET /api/dashboard/stats) + unit tests (SM-2 algorithm, streak calculation)
 
 **Wave 2** *(blocked on Wave 1 — needs API endpoints and DueCard type)*:
 - [ ] 04-02-PLAN.md — CardFlip (CSS 3D Y-axis flip, backface-visibility vendor prefix) + RatingButtons (color-coded, keyboard hints) + ExamTimer (per-session countdown) + SessionProgress + useStudySession hook (state machine, exam mode guard) + StudySessionPage (/study + /decks/:id/learn with mode selector) + App.tsx route wiring
@@ -188,6 +188,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 | 1. Foundation & Auth | 3/3 | Complete | 2026-05-26 |
 | 2. Deck & Card Management | 3/3 | Complete | 2026-05-26 |
 | 3. Rich Content Rendering | 3/3 | Complete | 2026-05-27 |
-| 4. Study Loops | 0/3 | Planning complete | - |
+| 4. Study Loops | 1/3 | In progress | - |
 | 5. Import Pipeline | 0/3 | Not started | - |
 | 6. Sharing, Explore & Production Deploy | 0/3 | Not started | - |
