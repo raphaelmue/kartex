@@ -5,14 +5,14 @@
 See: .planning/PROJECT.md (updated 2026-05-25)
 
 **Core value:** A user can open their dashboard, see their due cards, and complete a spaced-repetition study session — that loop must always work.
-**Current focus:** Phase 4 — Study Loops
+**Current focus:** Phase 5 — Import Pipeline
 
 ## Current Position
 
-Phase: 4 of 6 (Study Loops) — COMPLETE
-Plan: 3 of 3 in phase 4 (all plans complete)
-Status: Phase 4 complete — all 3 plans executed. Ready for Phase 5 (Import Pipeline)
-Last activity: 2026-05-28 — 04-03 DashboardPage + App.tsx route wiring complete
+Phase: 5 of 6 (Import Pipeline) — In progress (context gathered)
+Plan: 0 of 3 in phase 5
+Status: Phase 5 context gathered — ready for planning
+Last activity: 2026-05-28 — Phase 5 context gathered (parser, preview, media handling, size limit decisions)
 
 Progress: [█████████████████████████] 67% (4/6 phases complete)
 
@@ -89,5 +89,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-05-28
-Stopped at: Completed 04-03 — DashboardPage + App.tsx route wiring (1 task, 3 files, TypeScript build clean)
-Resume file: .planning/phases/05-import/05-01-PLAN.md (Phase 5 not yet planned)
+Stopped at: Phase 5 context gathered — all 4 gray areas discussed (parser tolerance, preview scope, media failure handling, client-side size limit)
+Resume file: .planning/phases/05-import-pipeline/05-CONTEXT.md
