@@ -163,7 +163,7 @@ Plans:
 - [x] 05-02-PLAN.md — Install unzipper + file-type + @types/unzipper + yaml + Hono importRouter (GET /api/import/config + POST /api/import with bodyLimit, MIME/magic validation, zip extraction, Prisma transaction) + register in index.ts
 
 **Wave 3** *(blocked on Wave 2 — needs /api/import endpoint)*:
-- [ ] 05-03-PLAN.md — shadcn alert + progress install + api.postForm() helper + useImport hook (4-state machine) + ImportPage (UPLOAD/PARSING/PREVIEW/SUCCESS, LazyCard IntersectionObserver, amber warnings banner, deck name input) + App.tsx /import route wiring
+- [x] 05-03-PLAN.md — shadcn alert + progress install + api.postForm() helper + useImport hook (4-state machine) + ImportPage (UPLOAD/PARSING/PREVIEW/SUCCESS, LazyCard IntersectionObserver, amber warnings banner, deck name input) + App.tsx /import route wiring
 
 **UI hint**: yes
 
@@ -196,5 +196,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 | 2. Deck & Card Management | 3/3 | Complete | 2026-05-26 |
 | 3. Rich Content Rendering | 3/3 | Complete | 2026-05-27 |
 | 4. Study Loops | 3/3 | Complete | 2026-05-28 |
-| 5. Import Pipeline | 2/3 | In progress | - |
+| 5. Import Pipeline | 3/3 | Verifying | - |
 | 6. Sharing, Explore & Production Deploy | 0/3 | Not started | - |
