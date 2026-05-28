@@ -7,6 +7,7 @@ import { AppShell } from '@/components/AppShell'
 import { ProtectedRoute } from '@/components/ProtectedRoute'
 import { AuthProvider } from '@/context/AuthContext'
 import { AdminPage } from '@/pages/AdminPage'
+import { DashboardPage } from '@/pages/DashboardPage'
 import { DeckDetailPage } from '@/pages/DeckDetailPage'
 import { DecksPage } from '@/pages/DecksPage'
 import { LoginPage } from '@/pages/LoginPage'
@@ -69,7 +70,7 @@ function App() {
 
         <Route element={<ProtectedRoute />}>
           <Route element={<AppShell />}>
-            <Route path="/dashboard" element={<ComingSoon title="Dashboard" />} />
+            <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/decks" element={<DecksPage />} />
             <Route path="/decks/:id" element={<DeckDetailPage />} />
             <Route path="/decks/:id/learn" element={<StudySessionPage />} />
