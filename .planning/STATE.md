@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-05-25)
 
 ## Current Position
 
-Phase: 4 of 6 (Study Loops) — IN PROGRESS
-Plan: 1 of 3 in phase 4 (04-01 complete)
-Status: Executing Phase 4 — plan 01 complete, plans 02-03 remaining
-Last activity: 2026-05-28 — 04-01 SM-2 algorithm + study/dashboard API complete
+Phase: 4 of 6 (Study Loops) — COMPLETE
+Plan: 3 of 3 in phase 4 (all plans complete)
+Status: Phase 4 complete — all 3 plans executed. Ready for Phase 5 (Import Pipeline)
+Last activity: 2026-05-28 — 04-03 DashboardPage + App.tsx route wiring complete
 
-Progress: [████████████████████░░░░] 54% (3/6 phases complete, 1/3 plans in phase 4)
+Progress: [█████████████████████████] 67% (4/6 phases complete)
 
 ## Performance Metrics
 
@@ -30,7 +30,7 @@ Progress: [████████████████████░░░
 | 1 | 3/3 | ~18 min | ~6 min |
 | 2 | 3/3 | ~20 min | ~7 min |
 | 3 | 3/3 | ~19 min | ~6 min |
-| 4 | 1/3 | ~10 min | ~10 min |
+| 4 | 3/3 | ~38 min | ~13 min |
 
 **Recent Trend:**
 - Last 5 plans: 02-03, 03-01, 03-02, 03-03, 04-01
@@ -63,6 +63,8 @@ Recent decisions affecting current work:
 - 04-01: calculateSM2 uses original easeFactor (not updated EF) for third+ interval: interval = ceil(prev_interval * old_EF) — matches classic SM-2 spec
 - 04-01: Streak starts from today if reviewed today, else from yesterday — active streak persists for users who haven't studied yet today
 - 04-01: Prisma map/filter callbacks require (item: (typeof arr)[number]) annotation in strict TypeScript backend — noImplicitAny compliance
+- 04-03: shadcn Badge installed via npx shadcn@latest add badge — class-variance-authority was already present as ^0.7.1
+- 04-03: Stat chips use inline border/rounded-lg divs (not shadcn Card) for minimal layout per UI-SPEC §1c and D-08
 
 ### Pending Todos
 
@@ -87,5 +89,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-05-28
-Stopped at: Completed 04-01 — SM-2 algorithm + study/dashboard API (2 tasks, 9 files, 14 tests pass)
-Resume file: .planning/phases/04-study-loops/04-02-PLAN.md
+Stopped at: Completed 04-03 — DashboardPage + App.tsx route wiring (1 task, 3 files, TypeScript build clean)
+Resume file: .planning/phases/05-import/05-01-PLAN.md (Phase 5 not yet planned)

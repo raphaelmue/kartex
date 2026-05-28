@@ -29,7 +29,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 1: Foundation & Auth** - Monorepo scaffold, Docker Compose baseline, JWT auth with invite-code registration, admin user management
 - [x] **Phase 2: Deck & Card Management** - Full CRUD for decks and cards (text/Markdown only), tags, deck visibility
 - [x] **Phase 3: Rich Content Rendering** - KaTeX math, Typst WASM, image/audio/video/code rendering on cards
-- [ ] **Phase 4: Study Loops** - SM-2 spaced repetition, deck mode, exam mode, dashboard with stats
+- [x] **Phase 4: Study Loops** - SM-2 spaced repetition, deck mode, exam mode, dashboard with stats
 - [ ] **Phase 5: Import Pipeline** - `.kartex` file parser, preview UI, zip bundle with bundled media, MDIA validation
 - [ ] **Phase 6: Sharing, Explore & Production Deploy** - Deck sharing, fork, /explore page, full Nginx TLS Docker Compose
 
@@ -136,8 +136,8 @@ Plans:
 - [x] 04-01-PLAN.md — SM-2 pure function in packages/shared + shared Zod schemas (RateCardSchema, DueCardSchema, DashboardStatsSchema) + backend study router (GET /api/study/due, GET /api/study/deck/:id, POST /api/study/rate) + dashboard router (GET /api/dashboard/stats) + unit tests (SM-2 algorithm, streak calculation)
 
 **Wave 2** *(blocked on Wave 1 — needs API endpoints and DueCard type)*:
-- [ ] 04-02-PLAN.md — CardFlip (CSS 3D Y-axis flip, backface-visibility vendor prefix) + RatingButtons (color-coded, keyboard hints) + ExamTimer (per-session countdown) + SessionProgress + useStudySession hook (state machine, exam mode guard) + StudySessionPage (/study + /decks/:id/learn with mode selector) + App.tsx route wiring
-- [ ] 04-03-PLAN.md — DashboardPage (/dashboard hero + per-deck table + stat chips + empty state) + App.tsx /dashboard route replacement (ComingSoon → DashboardPage)
+- [x] 04-02-PLAN.md — CardFlip (CSS 3D Y-axis flip, backface-visibility vendor prefix) + RatingButtons (color-coded, keyboard hints) + ExamTimer (per-session countdown) + SessionProgress + useStudySession hook (state machine, exam mode guard) + StudySessionPage (/study + /decks/:id/learn with mode selector) + App.tsx route wiring
+- [x] 04-03-PLAN.md — DashboardPage (/dashboard hero + per-deck table + stat chips + empty state) + App.tsx /dashboard route replacement (ComingSoon → DashboardPage)
 
 **UI hint**: yes
 
@@ -188,6 +188,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 | 1. Foundation & Auth | 3/3 | Complete | 2026-05-26 |
 | 2. Deck & Card Management | 3/3 | Complete | 2026-05-26 |
 | 3. Rich Content Rendering | 3/3 | Complete | 2026-05-27 |
-| 4. Study Loops | 1/3 | In progress | - |
+| 4. Study Loops | 3/3 | Complete | 2026-05-28 |
 | 5. Import Pipeline | 0/3 | Not started | - |
 | 6. Sharing, Explore & Production Deploy | 0/3 | Not started | - |
