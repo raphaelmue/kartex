@@ -21,6 +21,16 @@ const ALLOWED_MIMES = new Set([
   'audio/wav',
 ])
 
+// Rewrites media://originalName refs to media://storedUuidName after ZIP extraction.
+// Card content is stored verbatim from the .kartex source; without this rewrite,
+// media:// refs point to the original filenames which are never served (UUID names are).
+function rewriteMediaRefs(text: string, storedFilenames: Map<string, string>): string {
+  return text.replace(/media:\/\/([^\s)'"]+)/g, (_match, refName: string) => {
+    const stored = storedFilenames.get(refName)
+    return stored ? `media://${stored}` : `media://${refName}`
+  })
+}
+
 const importRouter = new Hono<{ Variables: { userId: string } }>()
 
 // GET /api/import/config — returns configured max upload size (D-10)
@@ -270,8 +280,8 @@ importRouter.post(
       await tx.card.createMany({
         data: parseResult.cards.map((card) => ({
           deckId: created.id,
-          frontContent: card.front,
-          backContent: card.back,
+          frontContent: rewriteMediaRefs(card.front, storedFilenames),
+          backContent: rewriteMediaRefs(card.back, storedFilenames),
           tags: card.tags,
         })),
       })
