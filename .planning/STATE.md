@@ -11,8 +11,8 @@ See: .planning/PROJECT.md (updated 2026-05-25)
 
 Phase: 5 of 6 (Import Pipeline) — Executing (3 plans, 3 waves)
 Plan: 3 of 3 in phase 5
-Status: Phase 5 all plans complete — running verification
-Last activity: 2026-05-28 — 05-03 complete (ImportPage, useImport, LazyCard, postForm, /import route)
+Status: Phase 5 complete — human verification pending (5 browser/stack checks)
+Last activity: 2026-05-28 — Phase 5 verified (5/5 must-haves, 3 critical bugs fixed)
 
 Progress: [█████████████████████████] 67% (4/6 phases complete)
 

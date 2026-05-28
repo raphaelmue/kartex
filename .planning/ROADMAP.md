@@ -196,5 +196,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 | 2. Deck & Card Management | 3/3 | Complete | 2026-05-26 |
 | 3. Rich Content Rendering | 3/3 | Complete | 2026-05-27 |
 | 4. Study Loops | 3/3 | Complete | 2026-05-28 |
-| 5. Import Pipeline | 3/3 | Verifying | - |
+| 5. Import Pipeline | 3/3 | Complete | 2026-05-28 |
 | 6. Sharing, Explore & Production Deploy | 0/3 | Not started | - |
