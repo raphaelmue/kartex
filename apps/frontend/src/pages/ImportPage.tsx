@@ -3,6 +3,8 @@ import {
   AlertTriangle,
   ArrowLeft,
   CheckCircle2,
+  ChevronDown,
+  ChevronRight,
   Loader2,
   Upload,
 } from 'lucide-react'
@@ -18,9 +20,10 @@ import { Progress } from '@/components/ui/progress'
 import { useImport } from '@/hooks/useImport'
 
 // ── LazyCard — inline component, only used in ImportPage ──────────────────────
-function LazyCard({ card }: { card: ParsedCard }) {
+function LazyCard({ card, index }: { card: ParsedCard; index: number }) {
   const ref = useRef<HTMLDivElement>(null)
   const [visible, setVisible] = useState(false)
+  const [expanded, setExpanded] = useState(false)
 
   useEffect(() => {
     if (!ref.current) return
@@ -38,33 +41,59 @@ function LazyCard({ card }: { card: ParsedCard }) {
   }, [])
 
   return (
-    <div ref={ref} className="min-h-[80px]">
+    <div ref={ref} className="min-h-[44px]">
       {visible ? (
-        <div className="border border-border rounded-lg p-4 space-y-2">
-          <div className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-            Front
-          </div>
-          <KartexRenderer content={card.front} />
-          <hr className="border-border my-2" />
-          <div className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-            Back
-          </div>
-          <KartexRenderer content={card.back} />
-          {card.tags.length > 0 && (
-            <div className="flex flex-wrap gap-1 mt-2">
-              {card.tags.map((tag) => (
-                <Badge key={tag} variant="secondary" className="text-xs">
-                  {tag}
-                </Badge>
-              ))}
+        <div>
+          <button
+            type="button"
+            onClick={() => setExpanded((v) => !v)}
+            className="w-full flex items-center gap-2 px-4 py-3 text-left hover:bg-muted/40 transition-colors"
+            aria-expanded={expanded}
+          >
+            {expanded
+              ? <ChevronDown className="h-3.5 w-3.5 shrink-0 text-muted-foreground" aria-hidden="true" />
+              : <ChevronRight className="h-3.5 w-3.5 shrink-0 text-muted-foreground" aria-hidden="true" />
+            }
+            <span className="text-xs text-muted-foreground shrink-0">#{index}</span>
+            <span className="text-sm truncate text-foreground">{card.front.split('\n')[0]}</span>
+            {card.tags.length > 0 && (
+              <div className="ml-auto flex gap-1 shrink-0">
+                {card.tags.slice(0, 2).map((tag) => (
+                  <Badge key={tag} variant="secondary" className="text-xs">
+                    {tag}
+                  </Badge>
+                ))}
+                {card.tags.length > 2 && (
+                  <Badge variant="secondary" className="text-xs">+{card.tags.length - 2}</Badge>
+                )}
+              </div>
+            )}
+          </button>
+          {expanded && (
+            <div className="px-4 pb-4 space-y-2 border-t border-border bg-muted/10">
+              <div className="pt-3">
+                <div className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">Front</div>
+                <KartexRenderer content={card.front} />
+              </div>
+              <hr className="border-border" />
+              <div>
+                <div className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">Back</div>
+                <KartexRenderer content={card.back} />
+              </div>
+              {card.tags.length > 0 && (
+                <div className="flex flex-wrap gap-1 pt-1">
+                  {card.tags.map((tag) => (
+                    <Badge key={tag} variant="secondary" className="text-xs">
+                      {tag}
+                    </Badge>
+                  ))}
+                </div>
+              )}
             </div>
           )}
         </div>
       ) : (
-        <div
-          className="border border-border rounded-lg p-4 min-h-[80px] animate-pulse bg-muted/30"
-          aria-hidden="true"
-        />
+        <div className="px-4 py-3 min-h-[44px] animate-pulse bg-muted/30" aria-hidden="true" />
       )}
     </div>
   )
@@ -405,30 +434,8 @@ export function ImportPage() {
             </p>
           </div>
 
-          {/* Card preview list — lazy rendered (D-04, IMPT-05) */}
-          {parseResult && parseResult.cards.length > 0 && (
-            <div
-              className="space-y-3 mb-8"
-              aria-label={`Card preview list, ${parseResult.cards.length} cards`}
-            >
-              {parseResult.cards.map((card, i) => (
-                <LazyCard key={i} card={card} />
-              ))}
-            </div>
-          )}
-
-          {/* ZIP file: no client-side card preview — show informational note */}
-          {!parseResult && selectedFile && (
-            <div className="mb-8 p-4 border border-border rounded-lg bg-muted/20">
-              <p className="text-sm text-muted-foreground text-center">
-                Card preview is not available for .kartex.zip bundles.
-                Click &ldquo;Import Deck&rdquo; to import — the file will be validated and imported on the server.
-              </p>
-            </div>
-          )}
-
-          {/* Confirm / Cancel row */}
-          <div className="flex gap-3 pt-6 border-t border-border mt-8">
+          {/* Import / Cancel row — above card list so it's always reachable */}
+          <div className="flex gap-3 mb-6">
             <Button
               variant="outline"
               onClick={reset}
@@ -454,6 +461,30 @@ export function ImportPage() {
               )}
             </Button>
           </div>
+
+          {/* Card preview list — collapsible rows in a scroll area (D-04, IMPT-05) */}
+          {parseResult && parseResult.cards.length > 0 && (
+            <div
+              className="rounded-lg border border-border overflow-hidden"
+              aria-label={`Card preview list, ${parseResult.cards.length} cards`}
+            >
+              <div className="max-h-[420px] overflow-y-auto divide-y divide-border">
+                {parseResult.cards.map((card, i) => (
+                  <LazyCard key={i} card={card} index={i + 1} />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* ZIP file: no client-side card preview — show informational note */}
+          {!parseResult && selectedFile && (
+            <div className="p-4 border border-border rounded-lg bg-muted/20">
+              <p className="text-sm text-muted-foreground text-center">
+                Card preview is not available for .kartex.zip bundles.
+                Click &ldquo;Import Deck&rdquo; to import — the file will be validated and imported on the server.
+              </p>
+            </div>
+          )}
         </>
       )}
     </div>
