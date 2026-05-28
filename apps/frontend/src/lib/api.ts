@@ -85,4 +85,8 @@ export const api = {
   delete(url: string, options?: RequestInit): Promise<Response> {
     return baseFetch(url, { ...options, method: 'DELETE' })
   },
+
+  postForm(url: string, formData: FormData, options?: RequestInit): Promise<Response> {
+    return baseFetch(url, { ...options, method: 'POST', body: formData })
+  },
 }
