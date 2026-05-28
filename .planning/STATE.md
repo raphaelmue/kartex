@@ -70,6 +70,7 @@ Recent decisions affecting current work:
 
 - [2026-05-28] Migrate to Prisma 7 — `.planning/todos/pending/2026-05-28-migrate-to-prisma-7.md`
 - [2026-05-28] Add dark mode — `.planning/todos/pending/2026-05-28-add-dark-mode.md`
+- [2026-05-28] Add .kartex format documentation — `.planning/todos/pending/2026-05-28-add-kartex-format-documentation.md`
 
 ### Blockers/Concerns
 

@@ -1,0 +1,20 @@
+---
+deck: Warning Test Deck
+author: kartex-test
+tags: [test, warnings]
+---
+
+:: card
+front: This card is complete
+back: It has both a front and a back — it will be imported successfully.
+tags: [valid]
+::
+
+:: card
+front: This card is missing its back field
+::
+
+:: card
+front: Another complete card
+back: This one is also valid and will be imported.
+::

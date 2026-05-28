@@ -1,0 +1,35 @@
+---
+deck: Spanish Vocabulary
+author: kartex-test
+tags: [spanish, vocabulary, basics]
+---
+
+# This is a comment — ignored by the parser
+
+:: card
+front: What is "hola" in English?
+back: Hello
+tags: [greetings]
+::
+
+:: card
+front: What is the Spanish word for "thank you"?
+back: Gracias
+tags: [greetings, politeness]
+::
+
+:: card
+front: What does $E = mc^2$ represent?
+back: Energy equals mass times the speed of light squared. In SI units: $E$ in Joules, $m$ in kg, $c \approx 3 \times 10^8$ m/s.
+tags: [physics, math]
+::
+
+:: card
+front: ```python
+def greet(name):
+    return f"Hola, {name}!"
+```
+What does this function return for `greet("mundo")`?
+back: `"Hola, mundo!"`
+tags: [python, code]
+::
