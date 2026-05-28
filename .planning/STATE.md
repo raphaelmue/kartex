@@ -65,13 +65,14 @@ Recent decisions affecting current work:
 - 04-01: Prisma map/filter callbacks require (item: (typeof arr)[number]) annotation in strict TypeScript backend — noImplicitAny compliance
 - 04-03: shadcn Badge installed via npx shadcn@latest add badge — class-variance-authority was already present as ^0.7.1
 - 04-03: Stat chips use inline border/rounded-lg divs (not shadcn Card) for minimal layout per UI-SPEC §1c and D-08
+- 05-UAT: Topic grouping within decks → Option B (tag-as-topic + filtered study UI, no schema change). Option A (Topic model) deferred until tag-based approach proves insufficient.
 
 ### Pending Todos
 
 - [2026-05-28] Migrate to Prisma 7 — `.planning/todos/pending/2026-05-28-migrate-to-prisma-7.md`
 - [2026-05-28] Add dark mode — `.planning/todos/pending/2026-05-28-add-dark-mode.md`
 - [2026-05-28] Add .kartex format documentation — `.planning/todos/pending/2026-05-28-add-kartex-format-documentation.md`
-- [2026-05-28] Evaluate topic/sub-deck layer between decks and cards — `.planning/todos/pending/2026-05-28-evaluate-topic-layer-between-deck-and-cards.md`
+- [2026-05-28] Add tag-based topic filter to study session and deck view — `.planning/todos/pending/2026-05-28-evaluate-topic-layer-between-deck-and-cards.md`
 
 ### Blockers/Concerns
 
