@@ -15,7 +15,7 @@ export const ParsedCardSchema = z.object({
 export type ParsedCard = z.infer<typeof ParsedCardSchema>
 
 export const ParseWarningSchema = z.object({
-  cardIndex: z.number().int().positive(),
+  cardIndex: z.number().int().nonnegative(),
   reason: z.string().min(1),
 })
 export type ParseWarning = z.infer<typeof ParseWarningSchema>

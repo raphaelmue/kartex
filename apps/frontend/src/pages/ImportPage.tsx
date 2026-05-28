@@ -138,8 +138,11 @@ export function ImportPage() {
 
   async function handleConfirmImport() {
     setIsSubmitting(true)
-    await submitImport(pendingDeckName)
-    setIsSubmitting(false)
+    try {
+      await submitImport(pendingDeckName)
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const limitMB = maxFileSizeBytes ? Math.round(maxFileSizeBytes / 1024 / 1024) : 10

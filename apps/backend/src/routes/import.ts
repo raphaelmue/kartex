@@ -160,12 +160,29 @@ importRouter.post(
 
     // VALIDATION PHASE — collect ALL errors before writing anything (D-08, T-5-01, T-5-03, T-5-04)
     // Rule: if any media file fails validation, abort entire import — nothing written to DB or disk.
+    const MAX_MEDIA_ENTRIES = 100
+    const MAX_TOTAL_BYTES = MAX_BYTES * 10 // 100 MB uncompressed ceiling
+    if (mediaEntries.length > MAX_MEDIA_ENTRIES) {
+      return c.json(
+        { error: `Too many media files in zip (${mediaEntries.length}). Maximum is ${MAX_MEDIA_ENTRIES}.` },
+        422,
+      )
+    }
+
     const validationErrors: { name: string; reason: string }[] = []
     const entryBuffers = new Map<string, Buffer>() // cache to avoid re-reading in storage phase
+    let totalUncompressedBytes = 0
 
     for (const entry of mediaEntries) {
       const entryName = basename(entry.path.replace(/\\/g, '/'))
       const bytes = await entry.buffer()
+      totalUncompressedBytes += bytes.length
+      if (totalUncompressedBytes > MAX_TOTAL_BYTES) {
+        return c.json(
+          { error: `Total uncompressed media size exceeds limit (max ${MAX_TOTAL_BYTES} bytes).` },
+          422,
+        )
+      }
       entryBuffers.set(entryName, bytes)
 
       // T-5-04: check individual extracted file size (not just the zip total)
