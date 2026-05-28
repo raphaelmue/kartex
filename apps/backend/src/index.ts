@@ -8,6 +8,8 @@ import { authRouter } from './routes/auth.js'
 import { adminRouter } from './routes/admin.js'
 import { decksRouter } from './routes/decks.js'
 import { mediaRouter, mediaPublicRouter } from './routes/media.js'
+import { studyRouter } from './routes/study.js'
+import { dashboardRouter } from './routes/dashboard.js'
 import { seedAdminIfNeeded } from './lib/seed.js'
 
 const app = new Hono()
@@ -42,6 +44,10 @@ app.route('/api/decks', decksRouter)
 
 // ─── 5b. Media protected route (POST /upload — auth required) ────────────────
 app.route('/api/media', mediaRouter)
+
+// ─── 5c. Study + Dashboard routes (JWT required — inherited from step 4) ──────
+app.route('/api/study', studyRouter)
+app.route('/api/dashboard', dashboardRouter)
 
 // ─── 6. Admin routes (JWT + ADMIN role required) ──────────────────────────────
 app.use('/api/admin/*', requireAdmin)
