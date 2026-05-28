@@ -73,6 +73,7 @@ Recent decisions affecting current work:
 - [2026-05-28] Add dark mode — `.planning/todos/pending/2026-05-28-add-dark-mode.md`
 - [2026-05-28] Add .kartex format documentation — `.planning/todos/pending/2026-05-28-add-kartex-format-documentation.md`
 - [2026-05-28] Add tag-based topic filter to study session and deck view — `.planning/todos/pending/2026-05-28-evaluate-topic-layer-between-deck-and-cards.md`
+- [2026-05-28] Add GitHub Actions CI pipeline with Docker build and GHCR push — `.planning/todos/pending/2026-05-28-github-actions-ci-docker-ghcr.md`
 
 ### Blockers/Concerns
 
