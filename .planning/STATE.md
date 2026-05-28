@@ -5,14 +5,14 @@
 See: .planning/PROJECT.md (updated 2026-05-25)
 
 **Core value:** A user can open their dashboard, see their due cards, and complete a spaced-repetition study session — that loop must always work.
-**Current focus:** Phase 3 — Rich Content Rendering
+**Current focus:** Phase 4 — Study Loops
 
 ## Current Position
 
-Phase: 3 of 6 (Rich Content Rendering) — COMPLETE
-Plan: 3 of 3 in phase 3 — 03-03 complete 2026-05-27
-Status: Phase 3 complete — all 3 plans done. Next: Phase 4
-Last activity: 2026-05-27 — 03-03 complete (media pipeline: upload, serve, render)
+Phase: 4 of 6 (Study Loops) — IN PROGRESS (context gathered)
+Plan: 0 of 3 in phase 4
+Status: Phase 4 context gathered — ready for planning
+Last activity: 2026-05-28 — Phase 4 context gathered (study session UX, SM-2, dashboard)
 
 Progress: [████████████████████░░░░] 50% (3/6 phases complete, 3/3 plans in phase 3)
 
@@ -81,6 +81,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-05-27
-Stopped at: 03-03 complete — media pipeline (upload, serve, render). Phase 3 complete. Next: Phase 4
-Resume file: None — Phase 3 complete
+Last session: 2026-05-28
+Stopped at: Phase 4 context gathered — SM-2 study session UX + dashboard layout decisions captured
+Resume file: .planning/phases/04-study-loops/04-CONTEXT.md
