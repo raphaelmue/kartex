@@ -13,6 +13,11 @@ export default defineConfig({
     },
   },
   server: {
+    headers: {
+      // Required for SharedArrayBuffer used by Typst WASM threaded compiler
+      'Cross-Origin-Opener-Policy': 'same-origin',
+      'Cross-Origin-Embedder-Policy': 'require-corp',
+    },
     proxy: {
       '/api': {
         target: 'http://localhost:3001',
