@@ -1,9 +1,9 @@
 ---
-status: testing
+status: complete
 phase: 05-import-pipeline
 source: [05-01-SUMMARY.md, 05-02-SUMMARY.md, 05-03-SUMMARY.md]
 started: 2026-05-28T20:00:00Z
-updated: 2026-05-28T20:06:00Z
+updated: 2026-05-28T20:30:00Z
 ---
 
 ## Current Test
@@ -43,15 +43,14 @@ result: pass
 
 ### 8. Import .kartex.zip File
 expected: Upload a .kartex.zip bundle. The UI shows an informational note that card preview is not available for .kartex.zip bundles (server-side extraction only). An Import button is still present. Clicking it submits the bundle, creates the deck, and transitions to the SUCCESS state.
-result: issue
-reported: "yes, but the media was not uploaded successfully. When opening the card, i get: Failed to load resource: the server responded with a status of 404 (Not Found)"
-severity: major
+result: pass
+note: "Initial run: media 404 (card content stored original filenames, not UUID names). Fixed inline in import.ts with rewriteMediaRefs(). Retested: pass."
 
 ## Summary
 
 total: 8
-passed: 7
-issues: 1
+passed: 8
+issues: 0
 pending: 0
 skipped: 0
 blocked: 0
@@ -59,13 +58,9 @@ blocked: 0
 ## Gaps
 
 - truth: "Media referenced in a .kartex.zip card is served correctly after import"
-  status: failed
+  status: fixed
   reason: "User reported: media was not uploaded successfully — 404 on the media URL"
   severity: major
   test: 8
-  root_cause: "ZIP import stores media as UUID filenames (e.g. abc123.png) but card frontContent/backContent are saved verbatim from the .kartex source, still containing media://world-map.png. The storedFilenames map (originalName → uuidName) exists but is only used for D-09 warnings, never to rewrite card content before prisma.card.createMany."
-  artifacts:
-    - path: "apps/backend/src/routes/import.ts"
-      issue: "card.front/back not rewritten through storedFilenames before createMany"
-  missing:
-    - "Rewrite media:// refs in card content using storedFilenames map after STORAGE PHASE"
+  root_cause: "ZIP import stores media as UUID filenames (e.g. abc123.png) but card frontContent/backContent were saved verbatim from the .kartex source, still containing media://world-map.png. The storedFilenames map (originalName → uuidName) existed but was only used for D-09 warnings, never to rewrite card content before prisma.card.createMany."
+  fix: "Added rewriteMediaRefs() helper in import.ts; applied to frontContent/backContent before card.createMany. Commit: 9118d25"
