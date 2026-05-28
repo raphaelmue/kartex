@@ -9,10 +9,10 @@ See: .planning/PROJECT.md (updated 2026-05-25)
 
 ## Current Position
 
-Phase: 5 of 6 (Import Pipeline) — Ready to execute (3 plans planned)
-Plan: 0 of 3 in phase 5
-Status: Phase 5 planned — 3 plans in 3 waves, verification passed
-Last activity: 2026-05-28 — Phase 5 plans created (05-01 parser TDD, 05-02 import API, 05-03 import UI)
+Phase: 5 of 6 (Import Pipeline) — Executing (3 plans, 3 waves)
+Plan: 1 of 3 in phase 5
+Status: Phase 5 executing — Wave 2 starting (05-02 import API)
+Last activity: 2026-05-28 — 05-01 complete (parseKartex TDD, 10/10 tests green)
 
 Progress: [█████████████████████████] 67% (4/6 phases complete)
 

@@ -157,7 +157,7 @@ Plans:
 Plans:
 
 **Wave 1** (no dependencies):
-- [ ] 05-01-PLAN.md — `parseKartex()` pure function in packages/shared/src/lib/kartex-parser.ts + five Zod schemas in packages/shared/src/schemas/import.ts + barrel exports + 10 unit tests (TDD: RED then GREEN)
+- [x] 05-01-PLAN.md — `parseKartex()` pure function in packages/shared/src/lib/kartex-parser.ts + five Zod schemas in packages/shared/src/schemas/import.ts + barrel exports + 10 unit tests (TDD: RED then GREEN)
 
 **Wave 2** *(blocked on Wave 1 — needs parseKartex from @kartex/shared)*:
 - [ ] 05-02-PLAN.md — Install unzipper + file-type + @types/unzipper + yaml + Hono importRouter (GET /api/import/config + POST /api/import with bodyLimit, MIME/magic validation, zip extraction, Prisma transaction) + register in index.ts
@@ -196,5 +196,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 | 2. Deck & Card Management | 3/3 | Complete | 2026-05-26 |
 | 3. Rich Content Rendering | 3/3 | Complete | 2026-05-27 |
 | 4. Study Loops | 3/3 | Complete | 2026-05-28 |
-| 5. Import Pipeline | 0/3 | Not started | - |
+| 5. Import Pipeline | 1/3 | In progress | - |
 | 6. Sharing, Explore & Production Deploy | 0/3 | Not started | - |
