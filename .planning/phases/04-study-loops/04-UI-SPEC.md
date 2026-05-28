@@ -1,7 +1,7 @@
 ---
 phase: 4
 slug: study-loops
-status: draft
+status: approved
 shadcn_initialized: true
 preset: neutral / default / CSS variables
 created: 2026-05-28
@@ -55,16 +55,20 @@ Declared values (multiples of 4, mapped to Tailwind tokens):
 
 ## Typography
 
+Two weights only: 400 (regular) for body/caption/label, 600 (semibold) for heading/display.
+
 | Role | Size | Weight | Line Height | Tailwind |
 |------|------|--------|-------------|---------|
-| Body | 14px | 400 (regular) | 1.5 | `text-sm` |
-| Label | 14px | 500 (medium) | 1.4 | `text-sm font-medium` |
+| Caption | 12px | 400 (regular) | 1.4 | `text-xs font-normal` |
+| Body | 14px | 400 (regular) | 1.5 | `text-sm font-normal` |
 | Heading | 20px | 600 (semibold) | 1.3 | `text-xl font-semibold` |
-| Display | 48px | 700 (bold) | 1.1 | `text-5xl font-bold` |
+| Display | 48px | 600 (semibold) | 1.1 | `text-5xl font-semibold` |
 
 **Display role** is used exclusively for the dashboard due-count hero number (D-07: "X cards due today" — the number `X` itself).
 
 **Heading role** is used for page-level h2 headings and modal/section titles.
+
+**Caption role** is used for uppercase tracking labels, keyboard hints, muted supporting text, and stat chip labels.
 
 **No custom font loaded** — system font stack matches established project pattern (no `@font-face` in `index.css`).
 
@@ -127,12 +131,12 @@ All four rating buttons use `text-white` for foreground.
 Layout: single-column, top of page, `mb-8` bottom margin.
 
 ```
-[ X cards due today ]   ← text-5xl font-bold (Display role)
+[ X cards due today ]   ← text-5xl font-semibold (Display role)
 [ cards due today   ]   ← text-sm text-muted-foreground (Body role, below number)
 [  Start Studying   ]   ← shadcn Button, size="lg", w-full, mt-4, variant="default"
 ```
 
-- The due-count number (`X`) renders as `text-5xl font-bold` on its own line.
+- The due-count number (`X`) renders as `text-5xl font-semibold` on its own line.
 - The label "cards due today" renders as `text-sm text-muted-foreground` immediately below.
 - "Start Studying" button: `size="lg"`, full-width (`w-full`), `mt-4`, variant `default` (maps to `bg-primary text-primary-foreground`).
 - Clicking "Start Studying" navigates to `/study` (global SR mode — new route per RESEARCH.md open question 2).
@@ -149,7 +153,7 @@ Layout: below hero, `mb-8` bottom margin. Uses existing shadcn `Table` component
 ```
 
 - `TableHead` for both columns.
-- `TableCell` for deck name (text-sm, text-foreground) and count (text-sm font-medium, text-foreground).
+- `TableCell` for deck name (`text-sm font-normal text-foreground`) and count (`text-sm font-semibold text-foreground`).
 - Deck name is clickable: `cursor-pointer hover:underline` navigating to `/decks/:id`.
 - The count cell additionally shows a small shadcn `Badge` variant `secondary` if count > 0, or `text-muted-foreground` if 0.
 
@@ -158,8 +162,8 @@ Layout: below hero, `mb-8` bottom margin. Uses existing shadcn `Table` component
 Layout: `flex gap-4 mt-0` directly below the deck table. Two chips only.
 
 Each chip: shadcn `Card` with `p-4 rounded-lg`, containing:
-- Label line: `text-xs text-muted-foreground font-medium uppercase tracking-wide`
-- Value line: `text-2xl font-bold text-foreground`
+- Label line: `text-xs font-normal text-muted-foreground uppercase tracking-wide`
+- Value line: `text-xl font-semibold text-foreground`
 
 ```
 [ Reviewed today ]    [ Streak        ]
@@ -178,7 +182,7 @@ Shown when `stats.totalDue === 0` in place of the hero CTA button (the heading +
 [ cards due today   ]   ← same label, always shown
                          ← NO "Start Studying" button (replaced by empty state block)
 [ CheckCircle icon  ]   ← lucide-react CheckCircle2, h-10 w-10 text-green-500
-[ You're all caught up! ]  ← text-base font-semibold text-foreground
+[ You're all caught up! ]  ← text-xl font-semibold text-foreground
 [ No cards are due today. Come back tomorrow. ]  ← text-sm text-muted-foreground
 ```
 
@@ -208,18 +212,18 @@ Layout: centered single column, `max-w-lg mx-auto py-12`.
 [ Card: Spaced Repetition ]           ← shadcn Card, clickable, p-6, hover ring
   [ Brain icon ]  Spaced Repetition   ← lucide-react Brain icon h-5 w-5 + font-semibold text-sm
   Cards due today, SM-2 algorithm     ← text-xs text-muted-foreground
-  {dueCount} cards due                ← text-xs font-medium text-foreground
+  {dueCount} cards due                ← text-xs font-semibold text-foreground
 
 [ Card: Deck Mode ]                   ← shadcn Card, clickable, p-6, hover ring
   [ BookOpen icon ]  Deck Mode        ← lucide-react BookOpen h-5 w-5 + font-semibold text-sm
   All cards in order, progress saved  ← text-xs text-muted-foreground
-  {totalCards} cards total            ← text-xs font-medium text-foreground
+  {totalCards} cards total            ← text-xs font-semibold text-foreground
 
 [ Card: Exam Mode ]                   ← shadcn Card, clickable, p-6, hover ring
   [ Timer icon ]  Exam Mode           ← lucide-react Timer h-5 w-5 + font-semibold text-sm
   Time-limited, progress not saved    ← text-xs text-muted-foreground
   [ Select time limit: ▼ ]            ← shadcn Select (5/10/15/30/60 min), shown inline in this card
-  [ Start Exam ]                      ← Button variant="default" w-full mt-3, disabled until time is selected
+  [ Start Exam ]                      ← Button variant="default" w-full mt-4, disabled until time is selected
 ```
 
 Mode selector cards use: `border border-border rounded-lg p-6 cursor-pointer hover:ring-2 hover:ring-ring transition-all`.
@@ -254,7 +258,7 @@ Front face content layout:
 ```
 [ Card face — front ]
   padding: p-8 (32px all sides)
-  [ "Front" label ]     ← text-xs text-muted-foreground font-medium uppercase tracking-wide, mb-4
+  [ "Front" label ]     ← text-xs text-muted-foreground font-normal uppercase tracking-wide, mb-4
   [ KartexRenderer ]    ← prose-sm max-w-none (inherits existing KartexRenderer class)
   [ ── ]                ← hr border-border mt-8
   [ Click or press Space to reveal ]  ← text-xs text-muted-foreground text-center mt-4 select-none
@@ -277,16 +281,16 @@ Back face content layout:
 ```
 [ Card face — back ]
   padding: p-8
-  [ "Front" label ]     ← text-xs text-muted-foreground font-medium uppercase, mb-2
+  [ "Front" label ]     ← text-xs text-muted-foreground font-normal uppercase, mb-2
   [ KartexRenderer for frontContent ]  ← dimmer — wrap in opacity-60
   [ ── ]                ← hr border-border my-4
-  [ "Back" label ]      ← text-xs text-muted-foreground font-medium uppercase, mb-2
+  [ "Back" label ]      ← text-xs text-muted-foreground font-normal uppercase, mb-2
   [ KartexRenderer for backContent ]   ← full opacity
 ```
 
-**Rating buttons (D-03, D-04 — locked):** Revealed only after flip. Layout: `flex gap-3 mt-6 w-full max-w-2xl mx-auto`.
+**Rating buttons (D-03, D-04 — locked):** Revealed only after flip. Layout: `flex gap-2 mt-6 w-full max-w-2xl mx-auto`.
 
-Each button: `flex-1 min-h-[44px] rounded-md text-white font-medium text-sm transition-colors`:
+Each button: `flex-1 min-h-[44px] rounded-md text-white font-semibold text-sm transition-colors`:
 
 | Button | Label | Keyboard | Tailwind classes |
 |--------|-------|----------|-----------------|
@@ -300,7 +304,7 @@ Keyboard hint rendering inside each button:
 [ Again ]
 [  (1)  ]
 ```
-Two lines: label in `text-sm font-medium`, shortcut in `text-xs opacity-70` below. Button height auto-expands from `min-h-[44px]` with `py-2 px-3`.
+Two lines: label in `text-sm font-semibold`, shortcut in `text-xs opacity-70` below. Button height auto-expands from `min-h-[44px]` with `py-2 px-3`.
 
 Buttons are `disabled` and `opacity-50 pointer-events-none` during the 300ms flip animation (`isFlipping` state).
 
@@ -337,7 +341,7 @@ Layout: `flex flex-col items-center justify-center flex-1 text-center py-16 gap-
 
 ```
 [ Trophy icon ]                         ← lucide-react Trophy, h-12 w-12 text-yellow-500
-[ Session complete! ]                   ← text-2xl font-bold
+[ Session complete! ]                   ← text-xl font-semibold
 [ You reviewed {N} cards ]              ← text-sm text-muted-foreground (SR/Deck mode only)
   or
 [ You reviewed {N} cards in {M}m {S}s ] ← exam mode: includes elapsed time
@@ -347,7 +351,7 @@ Layout: `flex flex-col items-center justify-center flex-1 text-center py-16 gap-
   ← each: text-sm, colored to match rating button colors
 
 [ Return to Dashboard ]                 ← Button variant="default" size="lg" w-full mt-4, navigates to /dashboard
-[ Study again ]                         ← Button variant="outline" size="sm" w-full, restarts session (same mode/deck)
+[ Restart Session ]                     ← Button variant="outline" size="sm" w-full, restarts session (same mode/deck)
 ```
 
 **Exam mode timer-expired state (D-05 — locked):** When timer hits zero, a banner appears above the current card:
@@ -363,7 +367,7 @@ The current card remains interactive. Rating it triggers normal session advance.
 
 **Decision (Claude's Discretion):** In-progress SM-2 ratings already submitted (POST /api/study/rate called per card after rating) are persisted permanently. Cards not yet reached in the queue are unaffected. There is no "discard on exit" — each card rating is immediately persisted when the user presses 1–4.
 
-**Early exit UI:** A "Leave session" button appears in the top-left of the session layout (below the AppShell header): `Button variant="ghost" size="sm"` with `← Leave` label and `ArrowLeft` icon. Clicking navigates back with `navigate(-1)` (no confirmation dialog — since ratings are already saved per card, there is nothing to "lose").
+**Early exit UI:** A "Leave Session" button appears in the top-left of the session layout (below the AppShell header): `Button variant="ghost" size="sm"` with `← Leave Session` label and `ArrowLeft` icon. Clicking navigates back with `navigate(-1)` (no confirmation dialog — since ratings are already saved per card, there is nothing to "lose").
 
 **No `beforeunload` handler** — the immediate-persistence model means navigation away never discards data.
 
@@ -378,8 +382,8 @@ The current card remains interactive. Rating it triggers normal session advance.
 | `/decks/:id/learn` | `StudySessionPage` with mode selector | Add new route inside `ProtectedRoute > AppShell` |
 
 **Back navigation from study session:**
-- From `/study` (global SR): "Leave session" → `navigate('/dashboard')`
-- From `/decks/:id/learn`: "Leave session" → `navigate('/decks/:id')`
+- From `/study` (global SR): "Leave Session" → `navigate('/dashboard')`
+- From `/decks/:id/learn`: "Leave Session" → `navigate('/decks/:id')`
 - Mode selector "← Back to deck": `navigate('/decks/:id')`
 
 **AppShell sidebar:** No changes to nav items. The sidebar remains visible during study sessions (the session uses the standard AppShell layout — no full-screen mode). The card flip area uses `flex-1 min-h-0` to fill available vertical space within AppShell's `<main className="flex-1 overflow-y-auto bg-background p-8">`.
@@ -402,15 +406,16 @@ The current card remains interactive. Rating it triggers normal session advance.
 | Session completion body (SR/Deck) | "You reviewed {N} cards." |
 | Session completion body (Exam) | "You reviewed {N} cards in {M}m {S}s." |
 | Timer expired banner | "Time's up! Rate this card to finish." |
-| Leave session button | "Leave" (with ArrowLeft icon, ghost variant) |
+| Leave session button | "Leave Session" (with ArrowLeft icon, ghost variant) |
 | Back to deck (mode selector) | "Back to deck" (with ArrowLeft icon, ghost variant) |
 | Error: failed to load due cards | "Could not load your cards. Please refresh." |
 | Error: rating submission failed | "Failed to save your rating. Please try again." |
-| Error: session load failed | "Something went wrong loading this session." |
+| Error: session load failed | "Could not load this session. Please go back and try again." |
 | Exam time picker placeholder | "Select time limit" |
 | Exam time picker options | "5 minutes", "10 minutes", "15 minutes", "30 minutes", "60 minutes" |
 | Stats chip — reviewed today | Label: "Reviewed today" / Value: `{N}` |
 | Stats chip — streak | Label: "Streak" / Value: `{N} days` |
+| Restart session button | "Restart Session" |
 
 ---
 
