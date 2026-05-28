@@ -93,6 +93,65 @@ function extractTypstSource(raw: string): string {
   return raw.startsWith('#typst\n') ? raw.slice('#typst\n'.length) : raw
 }
 
+/**
+ * Preprocess card content before passing to ReactMarkdown.
+ *
+ * Converts #typst blocks to fenced ```typst code blocks so that:
+ * 1. remark-math cannot interfere with Typst math syntax ($ ... $)
+ * 2. Detection works regardless of whether there is a blank line before
+ *    the formula (two-paragraph vs one-paragraph parsing ambiguity)
+ * 3. The code component handler intercepts them via className="language-typst"
+ *
+ * Input:
+ *   #typst
+ *   $ a + b = c $
+ *
+ * Output:
+ *   ```typst
+ *   $ a + b = c $
+ *   ```
+ *
+ * A #typst block ends at the first blank line or end of content.
+ */
+function preprocessTypstBlocks(content: string): string {
+  const lines = content.split('\n')
+  const result: string[] = []
+  let i = 0
+  while (i < lines.length) {
+    if (lines[i].trim() === '#typst') {
+      // Collect source lines until blank line or end of content
+      const sourceLines: string[] = []
+      i++
+      while (i < lines.length && lines[i] !== '') {
+        sourceLines.push(lines[i])
+        i++
+      }
+      result.push('```typst', ...sourceLines, '```')
+    } else {
+      result.push(lines[i])
+      i++
+    }
+  }
+  return result.join('\n')
+}
+
+/** Recursively extract plain text from React children (handles hljs span wrappers). */
+function extractTextFromChildren(children: React.ReactNode): string {
+  if (typeof children === 'string') return children
+  if (typeof children === 'number' || typeof children === 'boolean') return String(children)
+  return React.Children.toArray(children)
+    .map((child) => {
+      if (typeof child === 'string') return child
+      if (React.isValidElement(child)) {
+        return extractTextFromChildren(
+          (child.props as { children?: React.ReactNode }).children,
+        )
+      }
+      return ''
+    })
+    .join('')
+}
+
 // Extract a YouTube video ID from common YouTube URL formats.
 // Supports: youtube.com/watch?v=, youtu.be/, youtube.com/embed/
 // Returns null if the URL is not a recognized YouTube URL.
@@ -139,6 +198,16 @@ function getChildString(children: React.ReactNode): string {
 // DOES NOT override math or code nodes — those remain handled by rehype-katex
 // and rehype-highlight automatically.
 const kartexComponents = {
+  // Fenced ```typst blocks produced by preprocessTypstBlocks() land here.
+  // extractTextFromChildren recovers the raw source even after rehype-highlight
+  // wraps it in <span> elements.
+  code({ className, children }: { className?: string; children?: React.ReactNode }) {
+    if (className === 'language-typst') {
+      const source = extractTextFromChildren(children).replace(/\n$/, '')
+      return <TypstBlock source={source} />
+    }
+    return <code className={className}>{children}</code>
+  },
   p({ children }: { children?: React.ReactNode }) {
     if (isTypstBlock(children)) {
       const source = extractTypstSource(getChildString(children))
@@ -240,7 +309,7 @@ export function KartexRenderer({ content }: KartexRendererProps) {
         urlTransform={kartexUrlTransform}
         components={kartexComponents}
       >
-        {content}
+        {preprocessTypstBlocks(content)}
       </ReactMarkdown>
     </div>
   )
