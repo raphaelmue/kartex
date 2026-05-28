@@ -128,12 +128,17 @@ Plans:
   3. Rating "Again" resets a card's interval to 1 day; repeated "Easy" ratings increase the interval exponentially
   4. User can start a deck mode session (sequential, all cards, SM-2 progress saved) and an exam mode session (time-limited, progress not saved)
   5. Dashboard shows total cards reviewed today and current study streak
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 04-01: SM-2 algorithm implementation (ease factor, interval, repetitions) + CardProgress API endpoints
-- [ ] 04-02: Study session UI — spaced repetition mode + deck mode + exam mode (card flip + rating keys)
-- [ ] 04-03: Dashboard page — due cards widget, per-deck counts, daily stats, streak tracking
+
+**Wave 1** (no dependencies):
+- [ ] 04-01-PLAN.md — SM-2 pure function in packages/shared + shared Zod schemas (RateCardSchema, DueCardSchema, DashboardStatsSchema) + backend study router (GET /api/study/due, GET /api/study/deck/:id, POST /api/study/rate) + dashboard router (GET /api/dashboard/stats) + unit tests (SM-2 algorithm, streak calculation)
+
+**Wave 2** *(blocked on Wave 1 — needs API endpoints and DueCard type)*:
+- [ ] 04-02-PLAN.md — CardFlip (CSS 3D Y-axis flip, backface-visibility vendor prefix) + RatingButtons (color-coded, keyboard hints) + ExamTimer (per-session countdown) + SessionProgress + useStudySession hook (state machine, exam mode guard) + StudySessionPage (/study + /decks/:id/learn with mode selector) + App.tsx route wiring
+- [ ] 04-03-PLAN.md — DashboardPage (/dashboard hero + per-deck table + stat chips + empty state) + App.tsx /dashboard route replacement (ComingSoon → DashboardPage)
+
 **UI hint**: yes
 
 ### Phase 5: Import Pipeline
@@ -183,6 +188,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 | 1. Foundation & Auth | 3/3 | Complete | 2026-05-26 |
 | 2. Deck & Card Management | 3/3 | Complete | 2026-05-26 |
 | 3. Rich Content Rendering | 3/3 | Complete | 2026-05-27 |
-| 4. Study Loops | 0/3 | Not started | - |
+| 4. Study Loops | 0/3 | Planning complete | - |
 | 5. Import Pipeline | 0/3 | Not started | - |
 | 6. Sharing, Explore & Production Deploy | 0/3 | Not started | - |
