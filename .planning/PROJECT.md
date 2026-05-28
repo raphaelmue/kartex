@@ -12,35 +12,34 @@ A user can open their dashboard, see their due cards, and complete a spaced-repe
 
 ### Validated
 
-(None yet — ship to validate)
+**Validated in Phase 4 (Study Loops):**
+- ✓ User can start a spaced repetition session (SM-2, due cards across all decks)
+- ✓ User can start a deck session (all cards in one deck, sequentially)
+- ✓ User can start an exam session (time limit, progress not saved)
+- ✓ After each card, user rates recall (1 = Again, 2 = Hard, 3 = Good, 4 = Easy)
+- ✓ Dashboard shows all cards due today and overall statistics
+- ✓ SM-2 algorithm: Again resets interval/repetitions, EF clamped at 1.3 floor, server-side only
+
+**Validated in Phase 3 (Rich Content Rendering):**
+- ✓ Cards render: Markdown, inline math, block math (KaTeX), `#typst` blocks (Typst WASM), images, audio, external video, code blocks
+
+**Validated in Phase 2 (Deck & Card Management):**
+- ✓ User can create a deck with title and description
+- ✓ User can view all their own decks
+- ✓ User can edit or delete their own decks
+- ✓ User can set deck visibility: private, shared, or public
+- ✓ User can create a card in a deck with front and back content
+- ✓ User can edit and delete cards
+- ✓ User can tag cards
+
+**Validated in Phase 1 (Foundation & Auth):**
+- ✓ User can register via invite code (no open sign-up)
+- ✓ Admin can create and manage invite codes
+- ✓ User can log in with username + password and stay logged in (JWT, httpOnly cookie)
+- ✓ User can log out
+- ✓ Admin can manage users (roles: admin / user)
 
 ### Active
-
-**Authentication & Users**
-- [ ] User can register via invite code (no open sign-up)
-- [ ] Admin can create and manage invite codes
-- [ ] User can log in with username + password and stay logged in (JWT, httpOnly cookie)
-- [ ] User can log out
-- [ ] Admin can manage users (roles: admin / user)
-
-**Deck Management**
-- [ ] User can create a deck with title and description
-- [ ] User can view all their own decks
-- [ ] User can edit or delete their own decks
-- [ ] User can set deck visibility: private, shared, or public
-
-**Card Management**
-- [ ] User can create a card in a deck with front and back content (Kartex format: Markdown + KaTeX + Typst)
-- [ ] User can edit and delete cards
-- [ ] User can tag cards
-- [ ] Cards render: Markdown, inline math (`$...$`), block math (`$$...$$`), `#typst` blocks (Typst WASM), images, audio (native player), external video (embedded), code blocks
-
-**Study**
-- [ ] User can start a spaced repetition session (SM-2, due cards across all decks)
-- [ ] User can start a deck session (all cards in one deck, sequentially)
-- [ ] User can start an exam session (time limit, progress not saved)
-- [ ] After each card, user rates recall (1 = Again, 2 = Hard, 3 = Good, 4 = Easy)
-- [ ] Dashboard shows all cards due today and overall statistics
 
 **Import (.kartex)**
 - [ ] User can upload a `.kartex` file and preview the parsed deck before importing
@@ -121,4 +120,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-05-25 after initialization*
+*Last updated: 2026-05-28 — Phase 4 complete (Study Loops). Core value loop now live.*
