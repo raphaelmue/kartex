@@ -21,3 +21,9 @@ export const DeckSchema = z.object({
   _count: z.object({ cards: z.number() }).optional(),
 })
 export type Deck = z.infer<typeof DeckSchema>
+
+export const DeckListItemSchema = DeckSchema.extend({
+  sharedByUsername: z.string().optional(),
+  owner: z.object({ username: z.string() }).optional(),
+})
+export type DeckListItem = z.infer<typeof DeckListItemSchema>
