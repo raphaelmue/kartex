@@ -177,12 +177,19 @@ Plans:
   2. A deck owner can make a deck public; it then appears on the /explore page browsable by any logged-in user
   3. A user can fork a public or shared deck into their own collection and edit it independently without affecting the original
   4. Each user's SM-2 progress is stored independently — forking or sharing a deck never copies or merges progress between users
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 06-01: DeckShare API (grant/revoke READ/EDIT, public visibility) + per-user progress isolation enforcement
-- [ ] 06-02: /explore page + fork endpoint + shared deck access on /decks
-- [ ] 06-03: Nginx TLS config, docker-compose.yml finalization, .env.example, deployment docs
+
+**Wave 1** (no dependencies):
+- [ ] 06-01-PLAN.md — DeckShare API (grant/revoke/MANAGE permission) + Prisma schema migration + Wave 0 test infrastructure (SHAR-01, SHAR-02, SHAR-03, SHAR-06)
+
+**Wave 2** *(blocked on Wave 1 — needs migration + sharing API)*:
+- [ ] 06-02-PLAN.md — ExplorePage + fork endpoint + sharing panel in DeckDetailPage + shared deck tiles on DecksPage (SHAR-04, SHAR-05)
+
+**Wave 3** *(blocked on Wave 2 — final integration verification)*:
+- [ ] 06-03-PLAN.md — GitHub Actions CI workflow (.github/workflows/ci.yml) + .env.example + Dockerfile yarn fix (D-16, D-17)
+
 **UI hint**: yes
 
 ## Progress

@@ -11,8 +11,8 @@ See: .planning/PROJECT.md (updated 2026-05-25)
 
 Phase: 6 of 6 (Sharing, Explore & Production Deploy) — Context gathered, ready for planning
 Plan: 0 of 3 in phase 6
-Status: Phase 6 context captured — ready for /gsd-plan-phase 6
-Last activity: 2026-05-29 — Phase 6 discuss-phase complete (4 areas discussed, CONTEXT.md written)
+Status: Phase 6 UI-SPEC approved — ready for /gsd-plan-phase 6
+Last activity: 2026-05-29 — Phase 6 UI-SPEC created and approved (6/6 dimensions, 1 FLAG for badge chip 2px exception)
 
 Progress: [█████████████████████████] 67% (4/6 phases complete)
 
@@ -94,5 +94,6 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-05-29
-Stopped at: Phase 6 context gathered — 4 areas discussed (sharing panel, shared decks, fork behavior, production deploy)
+Stopped at: Phase 6 UI-SPEC approved — design contract ready for planning
+Resume file: .planning/phases/06-sharing-explore-deploy/06-UI-SPEC.md
 Resume file: .planning/phases/06-sharing-explore-deploy/06-CONTEXT.md
