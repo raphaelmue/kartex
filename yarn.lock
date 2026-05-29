@@ -985,6 +985,7 @@ __metadata:
     tsx: "npm:^4.19.2"
     typescript: "npm:^5.4.5"
     unzipper: "npm:^0.12.3"
+    vitest: "npm:2.1.9"
   languageName: unknown
   linkType: soft
 
