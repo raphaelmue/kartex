@@ -12,7 +12,7 @@ COPY packages/shared/package.json packages/shared/
 # Add a minimal backend package.json (needed for workspace resolution)
 COPY apps/backend/package.json apps/backend/
 
-RUN corepack enable && corepack prepare yarn@4.6.0 --activate
+RUN corepack enable && corepack prepare yarn@4.15.0 --activate
 RUN yarn install
 
 # Copy source
@@ -33,7 +33,7 @@ COPY yarn.lock ./
 COPY apps/backend/package.json apps/backend/
 COPY packages/shared/package.json packages/shared/
 
-RUN corepack enable && corepack prepare yarn@4.6.0 --activate
+RUN corepack enable && corepack prepare yarn@4.15.0 --activate
 RUN yarn install
 
 # Copy source
@@ -65,7 +65,7 @@ COPY yarn.lock ./
 COPY apps/backend/package.json apps/backend/
 COPY packages/shared/package.json packages/shared/
 
-RUN corepack enable && corepack prepare yarn@4.6.0 --activate && \
+RUN corepack enable && corepack prepare yarn@4.15.0 --activate && \
     yarn workspaces focus @kartex/backend --production
 
 # Copy compiled shared package (backend imports it at runtime)
