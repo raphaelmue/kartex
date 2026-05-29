@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-05-25)
 
 ## Current Position
 
-Phase: 6 of 6 (Sharing, Explore & Production Deploy) — Executed, verification pending
+Phase: 6 of 6 (Sharing, Explore & Production Deploy) — Human UAT pending
 Plan: 3 of 3 in phase 6
-Status: Phase 6 executed — all 3 plans complete, running verifier
-Last activity: 2026-05-29 — Phase 6 executed (06-01 DeckShare API ✓, 06-02 Explore+Fork+UI ✓, 06-03 CI+Deploy ✓)
+Status: Phase 6 complete (automated) — 4 human UAT items pending in 06-HUMAN-UAT.md
+Last activity: 2026-05-29 — Phase 6 verified (10/11 automated), critical bugs fixed (CR-01, CR-02), human UAT pending
 
-Progress: [████████████████████████████████] 92% (5.9/6 phases complete)
+Progress: [█████████████████████████████████████] 98% (6/6 phases, UAT pending)
 
 ## Performance Metrics
 
