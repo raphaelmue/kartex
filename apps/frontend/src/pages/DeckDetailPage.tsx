@@ -2,9 +2,18 @@ import { BookOpen } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'sonner'
-import { Card, Deck } from '@kartex/shared'
+import { Card, Deck, Share } from '@kartex/shared'
 import { api } from '@/lib/api'
+import { useAuth } from '@/context/AuthContext'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import {
   Table,
   TableBody,
@@ -38,6 +47,28 @@ function VisibilityBadge({ visibility }: { visibility: 'PRIVATE' | 'SHARED' | 'P
   )
 }
 
+function PermissionBadge({ permission }: { permission: 'READ' | 'EDIT' | 'MANAGE' }) {
+  if (permission === 'MANAGE') {
+    return (
+      <span className="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium bg-amber-100 text-amber-800">
+        Manage
+      </span>
+    )
+  }
+  if (permission === 'EDIT') {
+    return (
+      <span className="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium bg-blue-100 text-blue-800">
+        Edit
+      </span>
+    )
+  }
+  return (
+    <span className="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium bg-secondary text-secondary-foreground">
+      Read
+    </span>
+  )
+}
+
 function TagChips({ tags }: { tags: string[] }) {
   const visible = tags.slice(0, 3)
   const extra = tags.length - 3
@@ -58,16 +89,24 @@ function TagChips({ tags }: { tags: string[] }) {
   )
 }
 
+type DeckWithPermission = Deck & { userPermission?: string; owner?: { username: string } }
+
 export function DeckDetailPage() {
   const { id: deckId } = useParams<{ id: string }>()
   const navigate = useNavigate()
-  const [deck, setDeck] = useState<Deck | null>(null)
+  const { user } = useAuth()
+  const [deck, setDeck] = useState<DeckWithPermission | null>(null)
   const [cards, setCards] = useState<Card[]>([])
   const [deckModalOpen, setDeckModalOpen] = useState(false)
   const [cardModalOpen, setCardModalOpen] = useState(false)
   const [editCard, setEditCard] = useState<Card | undefined>(undefined)
   const [confirmDeleteCardId, setConfirmDeleteCardId] = useState<string | null>(null)
   const [confirmDeleteDeck, setConfirmDeleteDeck] = useState(false)
+  const [shares, setShares] = useState<Share[]>([])
+  const [shareUsername, setShareUsername] = useState('')
+  const [sharePermission, setSharePermission] = useState<'READ' | 'EDIT' | 'MANAGE'>('READ')
+  const [shareError, setShareError] = useState<string | null>(null)
+  const [shareLoading, setShareLoading] = useState(false)
 
   useEffect(() => {
     if (deck) document.title = `${deck.title} — Kartex`
@@ -96,11 +135,31 @@ export function DeckDetailPage() {
     }
   }
 
+  const fetchShares = async () => {
+    if (!deckId) return
+    try {
+      const res = await api.get(`/api/decks/${deckId}/shares`)
+      if (res.ok) setShares(await res.json())
+    } catch {
+      // Non-blocking — sharing section will just show empty
+    }
+  }
+
   useEffect(() => {
     void fetchDeck()
     void fetchCards()
   // eslint-disable-next-line react-hooks/exhaustive-deps -- fetch fns are component-scoped; deckId is the only meaningful dep
   }, [deckId])
+
+  useEffect(() => {
+    if (!deck || !user) return
+    const isOwnerOrManage =
+      deck.ownerId === user.id || deck.userPermission === 'MANAGE'
+    if (isOwnerOrManage) {
+      void fetchShares()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [deck?.id, user?.id])
 
   const handleDeleteDeck = async () => {
     if (!deckId) return
@@ -133,6 +192,66 @@ export function DeckDetailPage() {
     }
   }
 
+  const handleAddShare = async () => {
+    if (!deckId || !shareUsername.trim()) return
+    setShareError(null)
+    setShareLoading(true)
+    try {
+      const res = await api.post(`/api/decks/${deckId}/shares`, {
+        username: shareUsername.trim(),
+        permission: sharePermission,
+      })
+      if (res.ok) {
+        setShareUsername('')
+        await fetchShares()
+      } else {
+        const data = await res.json()
+        setShareError((data as { error?: string }).error ?? 'Failed to add user.')
+      }
+    } catch {
+      setShareError('Could not reach the server.')
+    } finally {
+      setShareLoading(false)
+    }
+  }
+
+  const handleRevokeShare = async (sharedWithUserId: string) => {
+    if (!deckId) return
+    try {
+      const res = await api.delete(`/api/decks/${deckId}/shares/${sharedWithUserId}`)
+      if (res.ok) {
+        setShares((prev) => prev.filter((s) => s.sharedWithUserId !== sharedWithUserId))
+      } else {
+        toast.error('Something went wrong. Please try again.')
+      }
+    } catch {
+      toast.error('Something went wrong. Please try again.')
+    }
+  }
+
+  const handleUpdateSharePermission = async (
+    sharedWithUserId: string,
+    permission: 'READ' | 'EDIT' | 'MANAGE',
+  ) => {
+    if (!deckId) return
+    try {
+      const res = await api.patch(`/api/decks/${deckId}/shares/${sharedWithUserId}`, {
+        permission,
+      })
+      if (res.ok) {
+        setShares((prev) =>
+          prev.map((s) =>
+            s.sharedWithUserId === sharedWithUserId ? { ...s, permission } : s,
+          ),
+        )
+      } else {
+        toast.error('Something went wrong. Please try again.')
+      }
+    } catch {
+      toast.error('Something went wrong. Please try again.')
+    }
+  }
+
   const openAddCard = () => {
     setEditCard(undefined)
     setCardModalOpen(true)
@@ -154,39 +273,44 @@ export function DeckDetailPage() {
             <p className="text-sm text-muted-foreground">{deck.description}</p>
           )}
           <VisibilityBadge visibility={deck.visibility} />
+          {deck.ownerId !== user?.id && deck.owner && (
+            <p className="text-sm text-muted-foreground">Owned by {deck.owner.username}</p>
+          )}
         </div>
-        <div className="flex items-center gap-2">
-          <Button size="sm" variant="outline" onClick={() => setDeckModalOpen(true)}>
-            Edit Deck
-          </Button>
-          {confirmDeleteDeck ? (
-            <div className="flex items-center gap-2" role="alert">
-              <span className="text-sm text-muted-foreground">Are you sure?</span>
+        {deck.ownerId === user?.id && (
+          <div className="flex items-center gap-2">
+            <Button size="sm" variant="outline" onClick={() => setDeckModalOpen(true)}>
+              Edit Deck
+            </Button>
+            {confirmDeleteDeck ? (
+              <div className="flex items-center gap-2" role="alert">
+                <span className="text-sm text-muted-foreground">Are you sure?</span>
+                <Button
+                  size="sm"
+                  variant="destructive"
+                  onClick={() => void handleDeleteDeck()}
+                >
+                  Yes, delete
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => setConfirmDeleteDeck(false)}
+                >
+                  Cancel
+                </Button>
+              </div>
+            ) : (
               <Button
                 size="sm"
                 variant="destructive"
-                onClick={() => void handleDeleteDeck()}
+                onClick={() => setConfirmDeleteDeck(true)}
               >
-                Yes, delete
+                Delete Deck
               </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={() => setConfirmDeleteDeck(false)}
-              >
-                Cancel
-              </Button>
-            </div>
-          ) : (
-            <Button
-              size="sm"
-              variant="destructive"
-              onClick={() => setConfirmDeleteDeck(true)}
-            >
-              Delete Deck
-            </Button>
-          )}
-        </div>
+            )}
+          </div>
+        )}
       </div>
 
       <Table aria-label="Cards in deck">
@@ -260,6 +384,97 @@ export function DeckDetailPage() {
       {cards.length > 0 && (
         <div className="mt-4">
           <Button onClick={openAddCard}>Add Card</Button>
+        </div>
+      )}
+
+      {(deck.ownerId === user?.id || deck.userPermission === 'MANAGE') && (
+        <div className="mt-8 pt-6 border-t border-border">
+          <h3 className="text-lg font-semibold mb-4">Share this deck</h3>
+
+          <div className="flex items-center gap-2 mb-6">
+            <Input
+              placeholder="Username"
+              value={shareUsername}
+              onChange={(e) => setShareUsername(e.target.value)}
+              className="flex-1 max-w-xs"
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') void handleAddShare()
+              }}
+            />
+            <Select
+              value={sharePermission}
+              onValueChange={(v) => setSharePermission(v as 'READ' | 'EDIT' | 'MANAGE')}
+            >
+              <SelectTrigger className="w-36">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="READ">Read</SelectItem>
+                <SelectItem value="EDIT">Edit</SelectItem>
+                <SelectItem value="MANAGE">Manage</SelectItem>
+              </SelectContent>
+            </Select>
+            <Button size="sm" onClick={() => void handleAddShare()} disabled={shareLoading}>
+              Add User
+            </Button>
+          </div>
+
+          {shareError && (
+            <p className="text-sm text-destructive -mt-4 mb-4">{shareError}</p>
+          )}
+
+          {shares.length === 0 ? (
+            <p className="text-sm text-muted-foreground">Not shared with anyone yet.</p>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>User</TableHead>
+                  <TableHead>Permission</TableHead>
+                  <TableHead />
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {shares.map((share) => (
+                  <TableRow key={share.sharedWithUserId}>
+                    <TableCell className="text-sm">{share.sharedWithUser.username}</TableCell>
+                    <TableCell>
+                      <PermissionBadge permission={share.permission} />
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <Select
+                          value={share.permission}
+                          onValueChange={(v) =>
+                            void handleUpdateSharePermission(
+                              share.sharedWithUserId,
+                              v as 'READ' | 'EDIT' | 'MANAGE',
+                            )
+                          }
+                        >
+                          <SelectTrigger className="w-28">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="READ">Read</SelectItem>
+                            <SelectItem value="EDIT">Edit</SelectItem>
+                            <SelectItem value="MANAGE">Manage</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <Button
+                          size="sm"
+                          variant="destructive"
+                          onClick={() => void handleRevokeShare(share.sharedWithUserId)}
+                        >
+                          Revoke Access
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
         </div>
       )}
 
