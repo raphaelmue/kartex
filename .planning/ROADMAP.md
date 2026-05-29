@@ -30,8 +30,8 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 2: Deck & Card Management** - Full CRUD for decks and cards (text/Markdown only), tags, deck visibility
 - [x] **Phase 3: Rich Content Rendering** - KaTeX math, Typst WASM, image/audio/video/code rendering on cards
 - [x] **Phase 4: Study Loops** - SM-2 spaced repetition, deck mode, exam mode, dashboard with stats
-- [ ] **Phase 5: Import Pipeline** - `.kartex` file parser, preview UI, zip bundle with bundled media, MDIA validation
-- [ ] **Phase 6: Sharing, Explore & Production Deploy** - Deck sharing, fork, /explore page, full Nginx TLS Docker Compose
+- [x] **Phase 5: Import Pipeline** - `.kartex` file parser, preview UI, zip bundle with bundled media, MDIA validation
+- [x] **Phase 6: Sharing, Explore & Production Deploy** - Deck sharing, fork, /explore page, full Nginx TLS Docker Compose
 
 ## Phase Details
 
@@ -182,13 +182,13 @@ Plans:
 Plans:
 
 **Wave 1** (no dependencies):
-- [ ] 06-01-PLAN.md — DeckShare API (grant/revoke/MANAGE permission) + Prisma schema migration + Wave 0 test infrastructure (SHAR-01, SHAR-02, SHAR-03, SHAR-06)
+- [x] 06-01-PLAN.md — DeckShare API (grant/revoke/MANAGE permission) + Prisma schema migration + Wave 0 test infrastructure (SHAR-01, SHAR-02, SHAR-03, SHAR-06)
 
 **Wave 2** *(blocked on Wave 1 — needs migration + sharing API)*:
-- [ ] 06-02-PLAN.md — ExplorePage + fork endpoint + sharing panel in DeckDetailPage + shared deck tiles on DecksPage (SHAR-04, SHAR-05)
+- [x] 06-02-PLAN.md — ExplorePage + fork endpoint + sharing panel in DeckDetailPage + shared deck tiles on DecksPage (SHAR-04, SHAR-05)
 
 **Wave 3** *(blocked on Wave 2 — final integration verification)*:
-- [ ] 06-03-PLAN.md — GitHub Actions CI workflow (.github/workflows/ci.yml) + .env.example + Dockerfile yarn fix (D-16, D-17)
+- [x] 06-03-PLAN.md — GitHub Actions CI workflow (.github/workflows/ci.yml) + .env.example + Dockerfile yarn fix (D-16, D-17)
 
 **UI hint**: yes
 
@@ -204,4 +204,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 | 3. Rich Content Rendering | 3/3 | Complete | 2026-05-27 |
 | 4. Study Loops | 3/3 | Complete | 2026-05-28 |
 | 5. Import Pipeline | 3/3 | Complete | 2026-05-28 |
-| 6. Sharing, Explore & Production Deploy | 0/3 | Not started | - |
+| 6. Sharing, Explore & Production Deploy | 3/3 | Complete | 2026-05-29 |
