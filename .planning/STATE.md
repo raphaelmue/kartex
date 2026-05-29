@@ -5,14 +5,14 @@
 See: .planning/PROJECT.md (updated 2026-05-25)
 
 **Core value:** A user can open their dashboard, see their due cards, and complete a spaced-repetition study session — that loop must always work.
-**Current focus:** Phase 5 — Import Pipeline
+**Current focus:** Phase 6 — Sharing, Explore & Production Deploy
 
 ## Current Position
 
-Phase: 5 of 6 (Import Pipeline) — Executing (3 plans, 3 waves)
-Plan: 3 of 3 in phase 5
-Status: Phase 5 complete — human verification pending (5 browser/stack checks)
-Last activity: 2026-05-28 — Phase 5 verified (5/5 must-haves, 3 critical bugs fixed)
+Phase: 6 of 6 (Sharing, Explore & Production Deploy) — Context gathered, ready for planning
+Plan: 0 of 3 in phase 6
+Status: Phase 6 context captured — ready for /gsd-plan-phase 6
+Last activity: 2026-05-29 — Phase 6 discuss-phase complete (4 areas discussed, CONTEXT.md written)
 
 Progress: [█████████████████████████] 67% (4/6 phases complete)
 
@@ -93,6 +93,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-05-28
-Stopped at: Phase 5 UI-SPEC approved — 6/6 dimensions checked (1 FLAG non-blocking on "Cancel"/"Back" labels)
-Resume file: .planning/phases/05-import-pipeline/05-UI-SPEC.md
+Last session: 2026-05-29
+Stopped at: Phase 6 context gathered — 4 areas discussed (sharing panel, shared decks, fork behavior, production deploy)
+Resume file: .planning/phases/06-sharing-explore-deploy/06-CONTEXT.md
