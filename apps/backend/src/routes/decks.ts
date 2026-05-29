@@ -9,7 +9,8 @@ const decks = new Hono<{ Variables: { userId: string } }>()
 // Mount card sub-router: all routes at /:deckId/cards/* delegate to cardsRouter
 decks.route('/:deckId/cards', cardsRouter)
 
-// ─── Authorization helper ────────────────────────────────────────────────────
+// ─── Authorization helpers ───────────────────────────────────────────────────
+
 // Returns true if userId is the deck owner OR has MANAGE-level DeckShare.
 // Per D-01: MANAGE-permission users can grant/revoke access (not just owner).
 async function canManageDeck(deckId: string, userId: string): Promise<boolean> {
@@ -20,6 +21,29 @@ async function canManageDeck(deckId: string, userId: string): Promise<boolean> {
     where: { deckId_sharedWithUserId: { deckId, sharedWithUserId: userId } },
   })
   return share?.permission === 'MANAGE'
+}
+
+// Returns true if userId is the deck owner (strict — no delegate allowed).
+// Used to gate operations that must not be delegated: granting MANAGE permission.
+async function isDeckOwner(deckId: string, userId: string): Promise<boolean> {
+  const deck = await prisma.deck.findUnique({ where: { id: deckId }, select: { ownerId: true } })
+  return deck?.ownerId === userId
+}
+
+// Returns the caller's effective permission on a deck (OWNER | READ | EDIT | MANAGE | null).
+// Used by card routes to enforce share-level access without duplicating lookup logic.
+async function getDeckPermission(
+  deckId: string,
+  userId: string,
+): Promise<'OWNER' | 'READ' | 'EDIT' | 'MANAGE' | null> {
+  const deck = await prisma.deck.findUnique({ where: { id: deckId }, select: { ownerId: true } })
+  if (!deck) return null
+  if (deck.ownerId === userId) return 'OWNER'
+  const share = await prisma.deckShare.findUnique({
+    where: { deckId_sharedWithUserId: { deckId, sharedWithUserId: userId } },
+    select: { permission: true },
+  })
+  return (share?.permission ?? null) as 'READ' | 'EDIT' | 'MANAGE' | null
 }
 
 // ─── GET /api/decks — own decks + shared decks (D-06) ────────────────────────
@@ -143,6 +167,11 @@ decks.post('/:id/shares', async (c) => {
   if (!body.success) {
     return c.json({ error: 'Validation failed.', details: body.error.flatten() }, 400)
   }
+  // CR-02 fix: only the deck owner may grant MANAGE — a MANAGE delegate cannot
+  // elevate others to their own level (privilege escalation prevention).
+  if (body.data.permission === 'MANAGE' && !(await isDeckOwner(id, userId))) {
+    return c.json({ error: 'Only the deck owner can grant MANAGE permission.' }, 403)
+  }
   // Look up the target user by username
   const targetUser = await prisma.user.findUnique({
     where: { username: body.data.username },
@@ -175,6 +204,10 @@ decks.patch('/:id/shares/:sharedWithUserId', async (c) => {
     return c.json({ error: 'Forbidden.' }, 403)
   }
   const body = UpdateShareSchema.safeParse(await c.req.json())
+  // CR-02 fix: only owner may elevate another user to MANAGE.
+  if (body.success && body.data.permission === 'MANAGE' && !(await isDeckOwner(id, userId))) {
+    return c.json({ error: 'Only the deck owner can grant MANAGE permission.' }, 403)
+  }
   if (!body.success) {
     return c.json({ error: 'Validation failed.', details: body.error.flatten() }, 400)
   }
