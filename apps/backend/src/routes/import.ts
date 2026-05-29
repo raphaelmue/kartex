@@ -5,6 +5,7 @@ import { basename, join } from 'node:path'
 import { randomUUID } from 'node:crypto'
 import unzipper from 'unzipper'
 import { fileTypeFromBuffer } from 'file-type'
+import { Prisma } from '@prisma/client'
 import { parseKartex } from '@kartex/shared'
 import { prisma } from '../lib/prisma.js'
 
@@ -88,7 +89,7 @@ importRouter.post(
       const deckName = deckNameOverride ?? parseResult.deck.deck
 
       // Prisma transaction: deck.create + card.createMany — atomic (Pattern 5)
-      const deck = await prisma.$transaction(async (tx) => {
+      const deck = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
         const created = await tx.deck.create({
           data: {
             ownerId: userId,
@@ -266,7 +267,7 @@ importRouter.post(
 
     // Prisma transaction: deck.create + card.createMany — atomic (Pattern 5)
     // T-5-07 (accepted): if transaction fails after media writes, orphaned files remain on disk
-    const deck = await prisma.$transaction(async (tx) => {
+    const deck = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       const created = await tx.deck.create({
         data: {
           ownerId: userId,

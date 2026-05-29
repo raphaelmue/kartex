@@ -2,7 +2,7 @@ import { BookOpen } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { toast } from 'sonner'
-import { Deck } from '@kartex/shared'
+import { DeckListItem } from '@kartex/shared'
 import { api } from '@/lib/api'
 import { Button } from '@/components/ui/button'
 import {
@@ -38,9 +38,9 @@ function VisibilityBadge({ visibility }: { visibility: 'PRIVATE' | 'SHARED' | 'P
 }
 
 export function DecksPage() {
-  const [decks, setDecks] = useState<Deck[]>([])
+  const [decks, setDecks] = useState<DeckListItem[]>([])
   const [modalOpen, setModalOpen] = useState(false)
-  const [editDeck, setEditDeck] = useState<Deck | undefined>(undefined)
+  const [editDeck, setEditDeck] = useState<DeckListItem | undefined>(undefined)
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null)
 
   useEffect(() => {
@@ -81,7 +81,7 @@ export function DecksPage() {
     setModalOpen(true)
   }
 
-  const openEdit = (deck: Deck) => {
+  const openEdit = (deck: DeckListItem) => {
     setEditDeck(deck)
     setModalOpen(true)
   }
@@ -111,6 +111,9 @@ export function DecksPage() {
                 </div>
                 {deck.description && (
                   <CardDescription className="line-clamp-2">{deck.description}</CardDescription>
+                )}
+                {deck.sharedByUsername && (
+                  <p className="text-xs text-muted-foreground">Shared by {deck.sharedByUsername}</p>
                 )}
               </CardHeader>
               <CardContent>

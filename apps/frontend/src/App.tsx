@@ -14,6 +14,7 @@ import { LoginPage } from '@/pages/LoginPage'
 import { RegisterPage } from '@/pages/RegisterPage'
 import { ImportPage } from '@/pages/ImportPage'
 import { StudySessionPage } from '@/pages/StudySessionPage'
+import { ExplorePage } from '@/pages/ExplorePage'
 
 // Root error boundary — prevents uncaught render errors from showing a blank screen
 interface ErrorBoundaryState { hasError: boolean; message: string }
@@ -77,7 +78,7 @@ function App() {
             <Route path="/decks/:id/learn" element={<StudySessionPage />} />
             <Route path="/study" element={<StudySessionPage />} />
             <Route path="/import" element={<ImportPage />} />
-            <Route path="/explore" element={<ComingSoon title="Explore" />} />
+            <Route path="/explore" element={<ExplorePage />} />
             <Route path="/settings" element={<ComingSoon title="Settings" />} />
             <Route
               path="/admin"

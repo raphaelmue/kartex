@@ -1,4 +1,5 @@
 import { Hono } from 'hono'
+import { Prisma } from '@prisma/client'
 import { prisma } from '../lib/prisma.js'
 import { CreateDeckSchema, UpdateDeckSchema, CreateShareSchema, UpdateShareSchema } from '@kartex/shared'
 import { cardsRouter } from './cards.js'
@@ -46,7 +47,7 @@ decks.get('/', async (c) => {
   // Business rule: owner is never also a sharedWithUser (enforced in POST /:id/shares).
   const merged = [
     ...ownDecks,
-    ...sharedRows.map((r) => ({
+    ...sharedRows.map((r: (typeof sharedRows)[number]) => ({
       ...r.deck,
       sharedByUsername: r.deck.owner.username,
     })),
@@ -204,6 +205,52 @@ decks.delete('/:id/shares/:sharedWithUserId', async (c) => {
     where: { deckId_sharedWithUserId: { deckId: id, sharedWithUserId } },
   })
   return c.json({ message: 'Access revoked.' }, 200)
+})
+
+// ─── POST /api/decks/:id/fork — fork a public or shared deck ─────────────────
+// D-10: clean copy — no sourceId, no attribution in DB.
+// D-11: named "Copy of [original]", visibility PRIVATE, tags preserved.
+// D-12: media:// references work as-is (GET /api/media/:filename has no ownership check).
+decks.post('/:id/fork', async (c) => {
+  const { id } = c.req.param()
+  const userId = c.get('userId')
+
+  // Access check: source must be PUBLIC or user has a DeckShare record (Pitfall 4)
+  const source = await prisma.deck.findUnique({
+    where: { id },
+    include: { cards: true },
+  })
+  if (!source) return c.json({ error: 'Not found.' }, 404)
+
+  const isPublic = source.visibility === 'PUBLIC'
+  const hasShare = await prisma.deckShare.findUnique({
+    where: { deckId_sharedWithUserId: { deckId: id, sharedWithUserId: userId } },
+  })
+  if (!isPublic && !hasShare) return c.json({ error: 'Forbidden.' }, 403)
+
+  const forked = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+    const newDeck = await tx.deck.create({
+      data: {
+        ownerId: userId,
+        title: `Copy of ${source.title}`,
+        description: source.description,
+        visibility: 'PRIVATE',
+      },
+    })
+    if (source.cards.length > 0) {
+      await tx.card.createMany({
+        data: source.cards.map((card: (typeof source.cards)[number]) => ({
+          deckId: newDeck.id,
+          frontContent: card.frontContent,
+          backContent: card.backContent,
+          tags: card.tags,
+        })),
+      })
+    }
+    return newDeck
+  })
+
+  return c.json(forked, 201)
 })
 
 export { decks as decksRouter }
