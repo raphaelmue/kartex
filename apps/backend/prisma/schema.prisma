@@ -28,6 +28,7 @@ enum Visibility {
 enum Permission {
   READ
   EDIT
+  MANAGE
 }
 
 // ─── Models ──────────────────────────────────────────────────────────────────
@@ -83,7 +84,7 @@ model Deck {
 model DeckShare {
   id               String     @id @default(cuid())
   deckId           String
-  deck             Deck       @relation(fields: [deckId], references: [id])
+  deck             Deck       @relation(fields: [deckId], references: [id], onDelete: Cascade)
   sharedWithUserId String
   sharedWithUser   User       @relation(fields: [sharedWithUserId], references: [id])
   permission       Permission @default(READ)
