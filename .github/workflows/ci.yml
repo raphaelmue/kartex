@@ -38,6 +38,9 @@ jobs:
       - name: Build shared package
         run: yarn workspace @kartex/shared build
 
+      - name: Generate Prisma client
+        run: yarn workspace @kartex/backend prisma generate
+
       - name: Typecheck all workspaces
         run: yarn workspaces foreach -A run typecheck
 
