@@ -10,12 +10,12 @@ See: .planning/PROJECT.md (updated 2026-05-30)
 ## Current Position
 
 Milestone: v1.1 Study Experience & Polish
-Phase: Not started (defining requirements)
+Phase: Not started (roadmap defined, ready for planning)
 Plan: —
-Status: Defining requirements
-Last activity: 2026-05-30 — Milestone v1.1 started
+Status: Roadmap created
+Last activity: 2026-05-30 — v1.1 roadmap created (Phases 7–9)
 
-Progress: [░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░] 0% (0/? phases complete)
+Progress: [░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░] 0% (0/3 phases complete)
 
 ## Performance Metrics
 
@@ -70,12 +70,12 @@ Recent decisions affecting current work:
 
 ### Pending Todos
 
-**v1.1 candidates (backlog reviewed 2026-05-30):**
-- [2026-05-28] Add tag-based topic filter to study session and deck view — `.planning/todos/pending/2026-05-28-evaluate-topic-layer-between-deck-and-cards.md`
-- [2026-05-30] Add card limit option to study sessions (e.g. "10 random cards") — `.planning/todos/pending/2026-05-30-add-card-limit-to-study-sessions.md`
-- [2026-05-30] Add app footer with version, copyright, and links — `.planning/todos/pending/2026-05-30-add-footer-version-copyright-links.md`
-- [2026-05-30] Add i18n internationalization support — `.planning/todos/pending/2026-05-30-add-i18n.md`
-- [2026-05-30] Make sidebar collapsible on mobile devices — `.planning/todos/pending/2026-05-30-make-sidebar-collapsible-on-mobile.md`
+**v1.1 in progress:**
+- STUDY-01/02/03: Tag filter + session size + shuffle → Phase 8
+- STUDY-04: Deck detail tag grouping → Phase 8
+- SHELL-01/02: Mobile sidebar collapse + overlay drawer → Phase 7
+- SHELL-03: App footer → Phase 7
+- I18N-01/02/03: react-i18next setup + string externalization + language switcher → Phase 9
 
 **Completed:**
 - [2026-05-28] Add .kartex format documentation — done as quick task 260530-001 (`docs/kartex-format.md`)
@@ -85,7 +85,7 @@ Recent decisions affecting current work:
 
 ### Blockers/Concerns
 
-None yet.
+None.
 
 ### Quick Tasks Completed
 
@@ -103,13 +103,12 @@ Items acknowledged and deferred at milestone close on 2026-05-30:
 
 | Category | Item | Status |
 |----------|------|--------|
-| todo | 2026-05-28-evaluate-topic-layer-between-deck-and-cards | pending → v1.1 candidate |
-| todo | 2026-05-30-add-i18n | pending → v1.1 candidate |
+| todo | 2026-05-28-evaluate-topic-layer-between-deck-and-cards | resolved — maps to Phase 8 (STUDY-01/04) |
+| todo | 2026-05-30-add-i18n | resolved — maps to Phase 9 (I18N-01/02/03) |
 | todo | 2026-05-30-add-to-library-for-public-decks | removed — implemented (SHAR-06) |
 
 ## Session Continuity
 
-Last session: 2026-05-29
-Stopped at: Phase 6 UI-SPEC approved — design contract ready for planning
-Resume file: .planning/phases/06-sharing-explore-deploy/06-UI-SPEC.md
-Resume file: .planning/phases/06-sharing-explore-deploy/06-CONTEXT.md
+Last session: 2026-05-30
+Stopped at: v1.1 roadmap created — Phases 7 (App Shell), 8 (Study UX), 9 (i18n)
+Resume with: `/gsd:plan-phase 7`
