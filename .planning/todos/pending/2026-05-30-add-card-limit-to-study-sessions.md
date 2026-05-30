@@ -12,4 +12,4 @@ When studying a deck, the user has to work through all due cards in one go. For 
 
 ## Solution
 
-Add a session-size picker on the study start screen (e.g. "All due", "10 random", "20 random", or a custom number). Randomly sample N cards from the due queue before the session begins. The SM-2 outcomes still apply normally — only the queue is trimmed. Backend can stay unchanged; the limit is applied client-side when building the session card list.
+Add a session-size picker on the study start screen (e.g. "All due", "10", "20", or a custom number). The card queue is always shuffled regardless of session size — even when studying "All due", cards appear in random order rather than insertion or due-date order. When a limit is set, randomly sample N cards from the shuffled due queue. The SM-2 outcomes still apply normally — only the queue is trimmed and reordered. Backend can stay unchanged; shuffling and sampling are applied client-side when building the session card list.
