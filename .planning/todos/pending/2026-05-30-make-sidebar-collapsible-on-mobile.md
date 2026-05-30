@@ -2,6 +2,7 @@
 created: 2026-05-30T00:00:00Z
 title: Make sidebar collapsible on mobile devices
 area: ui
+resolves_phase: 7
 files:
   - apps/frontend/src/components/Sidebar.tsx
   - apps/frontend/src/App.tsx

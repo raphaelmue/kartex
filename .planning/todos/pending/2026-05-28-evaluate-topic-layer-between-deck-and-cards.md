@@ -3,6 +3,7 @@ created: 2026-05-28T20:35:00Z
 title: Add tag-based topic filter to study session and deck view
 area: ui
 decision: Option B chosen — tag-as-topic with filtered study, no schema change
+resolves_phase: 8
 files:
   - apps/frontend/src/pages/DecksPage.tsx
   - apps/frontend/src/hooks/useStudySession.ts

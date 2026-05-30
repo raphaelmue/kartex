@@ -2,6 +2,7 @@
 created: 2026-05-30T00:00:00Z
 title: Add card limit option to study sessions
 area: ui
+resolves_phase: 8
 files:
   - apps/frontend/src/pages/LearnPage.tsx
 ---

@@ -2,6 +2,7 @@
 created: 2026-05-30T00:00:00Z
 title: Add app footer with version, copyright, and links
 area: ui
+resolves_phase: 7
 files:
   - apps/frontend/src/components/AppShell.tsx
   - package.json
