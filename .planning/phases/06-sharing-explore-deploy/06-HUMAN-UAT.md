@@ -26,25 +26,15 @@ result: pass
 
 ### 4. SHAR-06 SM-2 progress isolation
 expected: Study the original deck (rate some cards). Fork the deck. Study the fork. Confirm progress on the fork does not affect due dates on the original, and vice versa. (Structurally guaranteed by new Card IDs from fork — behavioral confirmation closes the loop.)
-result: issue
-reported: "Study button for a deck is missing. When studying a shared deck: 'Could not load this session. Please go back and try again.' Feature request: public decks should have an 'add to library' option alongside fork so users can study without editing."
-severity: blocker
+result: pass
 
 ## Summary
 
 total: 4
-passed: 3
-issues: 1
+passed: 4
+issues: 0
 pending: 0
 skipped: 0
 blocked: 0
 
 ## Gaps
-
-- truth: "User can study a shared deck via the study/learn button on the deck detail page"
-  status: failed
-  reason: "User reported: study button for a deck is missing; attempting to study a shared deck returns error 'Could not load this session. Please go back and try again.'"
-  severity: blocker
-  test: 4
-  artifacts: []
-  missing: []

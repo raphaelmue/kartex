@@ -1,6 +1,6 @@
 import { BookOpen } from 'lucide-react'
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import { DeckListItem } from '@kartex/shared'
 import { api } from '@/lib/api'
@@ -38,6 +38,7 @@ function VisibilityBadge({ visibility }: { visibility: 'PRIVATE' | 'SHARED' | 'P
 }
 
 export function DecksPage() {
+  const navigate = useNavigate()
   const [decks, setDecks] = useState<DeckListItem[]>([])
   const [modalOpen, setModalOpen] = useState(false)
   const [editDeck, setEditDeck] = useState<DeckListItem | undefined>(undefined)
@@ -123,38 +124,45 @@ export function DecksPage() {
                 </p>
               </CardContent>
               <CardFooter className="flex items-center gap-2">
+                <Button size="sm" onClick={() => navigate(`/decks/${deck.id}/learn`)}>
+                  Study
+                </Button>
                 <Button size="sm" variant="outline" asChild>
                   <Link to={`/decks/${deck.id}`}>Open</Link>
                 </Button>
-                <Button size="sm" variant="outline" onClick={() => openEdit(deck)}>
-                  Edit
-                </Button>
-                {confirmDeleteId === deck.id ? (
-                  <div className="flex items-center gap-2" role="alert">
-                    <span className="text-sm text-muted-foreground">Are you sure?</span>
-                    <Button
-                      size="sm"
-                      variant="destructive"
-                      onClick={() => void handleDelete(deck.id)}
-                    >
-                      Yes, delete
+                {!deck.sharedByUsername && (
+                  <>
+                    <Button size="sm" variant="outline" onClick={() => openEdit(deck)}>
+                      Edit
                     </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => setConfirmDeleteId(null)}
-                    >
-                      Cancel
-                    </Button>
-                  </div>
-                ) : (
-                  <Button
-                    size="sm"
-                    variant="destructive"
-                    onClick={() => setConfirmDeleteId(deck.id)}
-                  >
-                    Delete
-                  </Button>
+                    {confirmDeleteId === deck.id ? (
+                      <div className="flex items-center gap-2" role="alert">
+                        <span className="text-sm text-muted-foreground">Are you sure?</span>
+                        <Button
+                          size="sm"
+                          variant="destructive"
+                          onClick={() => void handleDelete(deck.id)}
+                        >
+                          Yes, delete
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => setConfirmDeleteId(null)}
+                        >
+                          Cancel
+                        </Button>
+                      </div>
+                    ) : (
+                      <Button
+                        size="sm"
+                        variant="destructive"
+                        onClick={() => setConfirmDeleteId(deck.id)}
+                      >
+                        Delete
+                      </Button>
+                    )}
+                  </>
                 )}
               </CardFooter>
             </Card>

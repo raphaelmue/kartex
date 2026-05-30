@@ -264,6 +264,11 @@ export function DeckDetailPage() {
 
   if (!deck) return null
 
+  const canEdit =
+    deck.ownerId === user?.id ||
+    deck.userPermission === 'EDIT' ||
+    deck.userPermission === 'MANAGE'
+
   return (
     <div>
       <div className="flex items-start justify-between mb-6">
@@ -334,8 +339,14 @@ export function DeckDetailPage() {
                 <div className="flex flex-col items-center justify-center py-16 gap-3 text-muted-foreground">
                   <BookOpen className="h-10 w-10" aria-hidden="true" />
                   <p className="text-sm font-bold">No cards yet</p>
-                  <p className="text-sm">Add your first card to this deck.</p>
-                  <Button onClick={openAddCard}>Add Card</Button>
+                  {canEdit ? (
+                    <>
+                      <p className="text-sm">Add your first card to this deck.</p>
+                      <Button onClick={openAddCard}>Add Card</Button>
+                    </>
+                  ) : (
+                    <p className="text-sm">This deck has no cards yet.</p>
+                  )}
                 </div>
               </TableCell>
             </TableRow>
@@ -348,37 +359,39 @@ export function DeckDetailPage() {
                 <TagChips tags={card.tags} />
               </TableCell>
               <TableCell>
-                {confirmDeleteCardId === card.id ? (
-                  <div className="flex items-center gap-2" role="alert">
-                    <span className="text-sm text-muted-foreground">Are you sure?</span>
-                    <Button
-                      size="sm"
-                      variant="destructive"
-                      onClick={() => void handleDeleteCard(card.id)}
-                    >
-                      Yes, delete
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => setConfirmDeleteCardId(null)}
-                    >
-                      Cancel
-                    </Button>
-                  </div>
-                ) : (
-                  <div className="flex items-center gap-2">
-                    <Button size="sm" variant="outline" onClick={() => openEditCard(card)}>
-                      Edit
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="destructive"
-                      onClick={() => setConfirmDeleteCardId(card.id)}
-                    >
-                      Delete
-                    </Button>
-                  </div>
+                {canEdit && (
+                  confirmDeleteCardId === card.id ? (
+                    <div className="flex items-center gap-2" role="alert">
+                      <span className="text-sm text-muted-foreground">Are you sure?</span>
+                      <Button
+                        size="sm"
+                        variant="destructive"
+                        onClick={() => void handleDeleteCard(card.id)}
+                      >
+                        Yes, delete
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => setConfirmDeleteCardId(null)}
+                      >
+                        Cancel
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2">
+                      <Button size="sm" variant="outline" onClick={() => openEditCard(card)}>
+                        Edit
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="destructive"
+                        onClick={() => setConfirmDeleteCardId(card.id)}
+                      >
+                        Delete
+                      </Button>
+                    </div>
+                  )
                 )}
               </TableCell>
             </TableRow>
@@ -386,7 +399,7 @@ export function DeckDetailPage() {
         </TableBody>
       </Table>
 
-      {cards.length > 0 && (
+      {canEdit && cards.length > 0 && (
         <div className="mt-4">
           <Button onClick={openAddCard}>Add Card</Button>
         </div>
