@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-05-25)
 Phase: 6 of 6 (Sharing, Explore & Production Deploy) — Human UAT pending
 Plan: 3 of 3 in phase 6
 Status: Phase 6 complete (automated) — 4 human UAT items pending in 06-HUMAN-UAT.md
-Last activity: 2026-05-29 — Phase 6 verified (10/11 automated), critical bugs fixed (CR-01, CR-02), human UAT pending
+Last activity: 2026-05-30 — Quick task 260530-001: added .kartex format documentation (docs/kartex-format.md)
 
 Progress: [█████████████████████████████████████] 98% (6/6 phases, UAT pending)
 
@@ -86,6 +86,7 @@ None yet.
 | # | Description | Date | Commit | Directory |
 |---|-------------|------|--------|-----------|
 | 260526-001 | Quality baseline: ESLint/Prettier, code smell fixes, decisions recorded | 2026-05-26 | 372837e | [260526-001-quality-baseline](.planning/quick/260526-001-quality-baseline/) |
+| 260530-001 | Add .kartex format documentation (docs/kartex-format.md) | 2026-05-30 | — | [260530-001-kartex-format-docs](.planning/quick/260530-001-kartex-format-docs/) |
 
 ## Deferred Items
 
