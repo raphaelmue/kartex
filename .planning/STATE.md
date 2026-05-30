@@ -69,13 +69,20 @@ Recent decisions affecting current work:
 
 ### Pending Todos
 
+**Current milestone:**
 - [2026-05-28] Migrate to Prisma 7 — `.planning/todos/pending/2026-05-28-migrate-to-prisma-7.md`
 - [2026-05-28] Add dark mode — `.planning/todos/pending/2026-05-28-add-dark-mode.md`
-- [2026-05-28] Add .kartex format documentation — `.planning/todos/pending/2026-05-28-add-kartex-format-documentation.md`
-- [2026-05-28] Add tag-based topic filter to study session and deck view — `.planning/todos/pending/2026-05-28-evaluate-topic-layer-between-deck-and-cards.md`
-- [2026-05-28] Add GitHub Actions CI pipeline with Docker build and GHCR push — `.planning/todos/pending/2026-05-28-github-actions-ci-docker-ghcr.md`
-- [2026-05-30] Add i18n internationalization support — `.planning/todos/pending/2026-05-30-add-i18n.md`
 - [2026-05-30] Add "Add to Library" option for public decks on /explore — `.planning/todos/pending/2026-05-30-add-to-library-for-public-decks.md`
+
+**Partial (current milestone — needs Dockerfile):**
+- [2026-05-28] Add GitHub Actions CI pipeline with Docker build and GHCR push — `.planning/todos/pending/2026-05-28-github-actions-ci-docker-ghcr.md` — `ci.yml` done; `apps/backend/Dockerfile` missing
+
+**Next milestone:**
+- [2026-05-28] Add tag-based topic filter to study session and deck view — `.planning/todos/pending/2026-05-28-evaluate-topic-layer-between-deck-and-cards.md`
+- [2026-05-30] Add i18n internationalization support — `.planning/todos/pending/2026-05-30-add-i18n.md`
+
+**Completed:**
+- [2026-05-28] Add .kartex format documentation — done as quick task 260530-001 (`docs/kartex-format.md`)
 
 ### Blockers/Concerns
 
