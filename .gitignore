@@ -24,3 +24,5 @@ apps/backend/public/
 # OS
 .DS_Store
 Thumbs.db
+
+.examples/
