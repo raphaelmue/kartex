@@ -13,13 +13,14 @@
   "dependencies": {
     "@hono/node-server": "^1.13.7",
     "@kartex/shared": "workspace:*",
-    "@prisma/client": "^5.22.0",
+    "@prisma/adapter-pg": "^7.0.0",
+    "@prisma/client": "^7.0.0",
     "@types/unzipper": "^0.10.11",
     "bcryptjs": "^2.4.3",
     "file-type": "^22.0.1",
     "hono": "^4.7.9",
     "jose": "^5.9.6",
-    "prisma": "^5.22.0",
+    "prisma": "^7.0.0",
     "unzipper": "^0.12.3"
   },
   "devDependencies": {
