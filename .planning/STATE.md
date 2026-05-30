@@ -74,6 +74,7 @@ Recent decisions affecting current work:
 - [2026-05-30] Add i18n internationalization support — `.planning/todos/pending/2026-05-30-add-i18n.md`
 - [2026-05-30] Add card limit option to study sessions (e.g. "10 random cards") — `.planning/todos/pending/2026-05-30-add-card-limit-to-study-sessions.md`
 - [2026-05-30] Make sidebar collapsible on mobile devices — `.planning/todos/pending/2026-05-30-make-sidebar-collapsible-on-mobile.md`
+- [2026-05-30] Add app footer with version, copyright, and links — `.planning/todos/pending/2026-05-30-add-footer-version-copyright-links.md`
 
 **Completed:**
 - [2026-05-28] Add .kartex format documentation — done as quick task 260530-001 (`docs/kartex-format.md`)
