@@ -68,13 +68,12 @@ Recent decisions affecting current work:
 
 ### Pending Todos
 
-**Next milestone:**
-- [2026-05-30] Add "Add to Library" option for public decks on /explore — `.planning/todos/pending/2026-05-30-add-to-library-for-public-decks.md`
+**v1.1 candidates (backlog reviewed 2026-05-30):**
 - [2026-05-28] Add tag-based topic filter to study session and deck view — `.planning/todos/pending/2026-05-28-evaluate-topic-layer-between-deck-and-cards.md`
-- [2026-05-30] Add i18n internationalization support — `.planning/todos/pending/2026-05-30-add-i18n.md`
 - [2026-05-30] Add card limit option to study sessions (e.g. "10 random cards") — `.planning/todos/pending/2026-05-30-add-card-limit-to-study-sessions.md`
-- [2026-05-30] Make sidebar collapsible on mobile devices — `.planning/todos/pending/2026-05-30-make-sidebar-collapsible-on-mobile.md`
 - [2026-05-30] Add app footer with version, copyright, and links — `.planning/todos/pending/2026-05-30-add-footer-version-copyright-links.md`
+- [2026-05-30] Add i18n internationalization support — `.planning/todos/pending/2026-05-30-add-i18n.md`
+- [2026-05-30] Make sidebar collapsible on mobile devices — `.planning/todos/pending/2026-05-30-make-sidebar-collapsible-on-mobile.md`
 
 **Completed:**
 - [2026-05-28] Add .kartex format documentation — done as quick task 260530-001 (`docs/kartex-format.md`)
@@ -102,10 +101,9 @@ Items acknowledged and deferred at milestone close on 2026-05-30:
 
 | Category | Item | Status |
 |----------|------|--------|
-| quick_task | 260530-004-add-to-library-explore | missing |
-| todo | 2026-05-28-evaluate-topic-layer-between-deck-and-cards | pending |
-| todo | 2026-05-30-add-i18n | pending |
-| todo | 2026-05-30-add-to-library-for-public-decks | pending |
+| todo | 2026-05-28-evaluate-topic-layer-between-deck-and-cards | pending → v1.1 candidate |
+| todo | 2026-05-30-add-i18n | pending → v1.1 candidate |
+| todo | 2026-05-30-add-to-library-for-public-decks | removed — implemented (SHAR-06) |
 
 ## Session Continuity
 
