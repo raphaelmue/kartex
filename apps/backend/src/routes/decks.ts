@@ -286,4 +286,29 @@ decks.post('/:id/fork', async (c) => {
   return c.json(forked, 201)
 })
 
+// ─── POST /api/decks/:id/library — add public deck to own library ────────────
+// Self-service: any user can add a PUBLIC deck as a READ share.
+// Returns 409 if user is the owner; 403 if deck is not public.
+decks.post('/:id/library', async (c) => {
+  const { id } = c.req.param()
+  const userId = c.get('userId')
+
+  const deck = await prisma.deck.findUnique({
+    where: { id },
+    select: { ownerId: true, visibility: true },
+  })
+  if (!deck) return c.json({ error: 'Not found.' }, 404)
+  if (deck.ownerId === userId) {
+    return c.json({ error: 'Cannot add your own deck to library.' }, 409)
+  }
+  if (deck.visibility !== 'PUBLIC') return c.json({ error: 'Deck is not public.' }, 403)
+
+  const share = await prisma.deckShare.upsert({
+    where: { deckId_sharedWithUserId: { deckId: id, sharedWithUserId: userId } },
+    update: {},
+    create: { deckId: id, sharedWithUserId: userId, permission: 'READ' },
+  })
+  return c.json(share, 201)
+})
+
 export { decks as decksRouter }

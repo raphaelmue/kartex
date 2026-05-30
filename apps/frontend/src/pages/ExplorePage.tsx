@@ -1,10 +1,11 @@
-import { Compass, GitFork } from 'lucide-react'
+import { BookMarked, Compass, GitFork } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import { ExploreDeck } from '@kartex/shared'
 import { api } from '@/lib/api'
 import { Button } from '@/components/ui/button'
+import { useAuth } from '@/context/AuthContext'
 import {
   Card,
   CardContent,
@@ -16,9 +17,11 @@ import {
 
 export function ExplorePage() {
   const navigate = useNavigate()
+  const { user } = useAuth()
   const [decks, setDecks] = useState<ExploreDeck[]>([])
   const [loading, setLoading] = useState(true)
   const [forkingId, setForkingId] = useState<string | null>(null)
+  const [addingToLibraryId, setAddingToLibraryId] = useState<string | null>(null)
 
   useEffect(() => {
     document.title = 'Explore — Kartex'
@@ -39,6 +42,26 @@ export function ExplorePage() {
   useEffect(() => {
     void fetchDecks()
   }, [])
+
+  const handleAddToLibrary = async (deck: ExploreDeck) => {
+    setAddingToLibraryId(deck.id)
+    try {
+      const res = await api.post(`/api/decks/${deck.id}/library`)
+      if (res.ok) {
+        toast.success(`'${deck.title}' added to your library.`, {
+          action: { label: 'View decks', onClick: () => navigate('/decks') },
+        })
+      } else if (res.status === 409) {
+        toast.info('Already in your library.')
+      } else {
+        toast.error('Failed to add to library. Please try again.')
+      }
+    } catch {
+      toast.error('Failed to add to library. Please try again.')
+    } finally {
+      setAddingToLibraryId(null)
+    }
+  }
 
   const handleFork = async (deck: ExploreDeck) => {
     setForkingId(deck.id)
@@ -93,16 +116,29 @@ export function ExplorePage() {
                   {deck._count?.cards === 1 ? 'card' : 'cards'}
                 </p>
               </CardContent>
-              <CardFooter>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  disabled={forkingId === deck.id}
-                  onClick={() => void handleFork(deck)}
-                >
-                  <GitFork className="h-4 w-4 mr-1" aria-hidden="true" />
-                  {forkingId === deck.id ? 'Forking…' : 'Fork Deck'}
-                </Button>
+              <CardFooter className="gap-2">
+                {deck.ownerId !== user?.id && (
+                  <>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      disabled={addingToLibraryId === deck.id}
+                      onClick={() => void handleAddToLibrary(deck)}
+                    >
+                      <BookMarked className="h-4 w-4 mr-1" aria-hidden="true" />
+                      {addingToLibraryId === deck.id ? 'Adding…' : 'Add to Library'}
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      disabled={forkingId === deck.id}
+                      onClick={() => void handleFork(deck)}
+                    >
+                      <GitFork className="h-4 w-4 mr-1" aria-hidden="true" />
+                      {forkingId === deck.id ? 'Forking…' : 'Fork Deck'}
+                    </Button>
+                  </>
+                )}
               </CardFooter>
             </Card>
           ))}
