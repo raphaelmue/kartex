@@ -2,14 +2,17 @@ import {
   BookOpen,
   Compass,
   LayoutDashboard,
+  Moon,
   Settings,
   Shield,
+  Sun,
   Upload,
 } from 'lucide-react'
 import { NavLink, Outlet } from 'react-router-dom'
 
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/context/AuthContext'
+import { useTheme } from '@/context/ThemeContext'
 import { cn } from '@/lib/utils'
 
 const navItems = [
@@ -22,6 +25,7 @@ const navItems = [
 
 export function AppShell() {
   const { user, logout } = useAuth()
+  const { theme, toggleTheme } = useTheme()
 
   const handleLogout = () => {
     void logout()
@@ -99,6 +103,14 @@ export function AppShell() {
           <span className="text-sm text-muted-foreground flex-1 truncate">
             {user?.username}
           </span>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={toggleTheme}
+            aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+          >
+            {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+          </Button>
           <Button variant="ghost" size="sm" onClick={handleLogout}>
             Log out
           </Button>
