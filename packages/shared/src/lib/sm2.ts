@@ -81,7 +81,7 @@ export function calculateStreak(reviewDates: string[], today?: Date): number {
   const yesterdayStr = toDateStr(yesterday)
 
   // Start walk from today if studied today, else from yesterday if studied yesterday
-  let startStr: string | null = null
+  let startStr: string
   if (dateSet.has(todayStr)) {
     startStr = todayStr
   } else if (dateSet.has(yesterdayStr)) {

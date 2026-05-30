@@ -20,7 +20,7 @@ export function CardFlip({ card, isFlipped, isFlipping, onClick, children }: Car
 
   const faceStyle: React.CSSProperties = {
     backfaceVisibility: 'hidden',
-    WebkitBackfaceVisibility: 'hidden' as 'hidden',
+    WebkitBackfaceVisibility: 'hidden' as const,
   }
 
   const backFaceStyle: React.CSSProperties = {

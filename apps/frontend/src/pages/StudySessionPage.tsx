@@ -36,9 +36,14 @@ function SessionRunner({
   const navigate = useNavigate()
   const [examExpired, setExamExpired] = useState(false)
   const [startTime] = useState(() => Date.now())
+  const [endTime, setEndTime] = useState<number | null>(null)
 
   const { currentCard, face, isFlipping, sessionDone, progress, ratingCounts, flip, rate } =
     useStudySession(cards, mode)
+
+  useEffect(() => {
+    if (sessionDone) setEndTime(t => t ?? Date.now())
+  }, [sessionDone])
 
   const handleLeave = () => {
     if (deckId) navigate(`/decks/${deckId}`)
@@ -62,7 +67,7 @@ function SessionRunner({
   }
 
   if (sessionDone) {
-    const elapsedMs = Date.now() - startTime
+    const elapsedMs = (endTime ?? startTime) - startTime
     const elapsedSec = Math.floor(elapsedMs / 1000)
     const elapsedMin = Math.floor(elapsedSec / 60)
     const elapsedRemSec = elapsedSec % 60

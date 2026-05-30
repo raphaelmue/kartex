@@ -30,22 +30,6 @@ async function isDeckOwner(deckId: string, userId: string): Promise<boolean> {
   return deck?.ownerId === userId
 }
 
-// Returns the caller's effective permission on a deck (OWNER | READ | EDIT | MANAGE | null).
-// Used by card routes to enforce share-level access without duplicating lookup logic.
-async function getDeckPermission(
-  deckId: string,
-  userId: string,
-): Promise<'OWNER' | 'READ' | 'EDIT' | 'MANAGE' | null> {
-  const deck = await prisma.deck.findUnique({ where: { id: deckId }, select: { ownerId: true } })
-  if (!deck) return null
-  if (deck.ownerId === userId) return 'OWNER'
-  const share = await prisma.deckShare.findUnique({
-    where: { deckId_sharedWithUserId: { deckId, sharedWithUserId: userId } },
-    select: { permission: true },
-  })
-  return (share?.permission ?? null) as 'READ' | 'EDIT' | 'MANAGE' | null
-}
-
 // ─── GET /api/decks — own decks + shared decks (D-06) ────────────────────────
 decks.get('/', async (c) => {
   const userId = c.get('userId')
