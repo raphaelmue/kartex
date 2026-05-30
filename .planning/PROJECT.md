@@ -1,5 +1,16 @@
 # Kartex
 
+## Current Milestone: v1.1 Study Experience & Polish
+
+**Goal:** Add targeted UX improvements to the study loop and app shell — tag filtering, session limits, mobile layout, a footer, and i18n groundwork.
+
+**Target features:**
+- Tag-based topic filter in study sessions and deck view
+- Card limit + always-shuffle for study sessions
+- Mobile sidebar collapse
+- App footer (version, copyright, links)
+- i18n internationalization (frontend only in v1.1)
+
 ## What This Is
 
 Kartex is a self-hosted web application for creating, importing, and studying with multimedia flashcards. It supports rich content (LaTeX math, Typst expressions, images, audio, code), a custom `.kartex` import format, deck sharing and public exploration, and SM-2 spaced repetition. Deployable via Docker Compose for a small group of 2-5 users with invite-based registration.
@@ -44,10 +55,12 @@ A user can open their dashboard, see their due cards, and complete a spaced-repe
 
 ### Active
 
-**v1.1 candidates:**
-- [ ] "Add to Library" for public decks on /explore (copy without forking)
-- [ ] Tag-based topic filter in study session and deck view
-- [ ] i18n internationalization support
+**v1.1 — Study Experience & Polish:**
+- [ ] Tag-based topic filter in study session and deck view (tag-as-topic, no schema change)
+- [ ] Card limit + always-shuffle for study sessions
+- [ ] Mobile sidebar collapse (hamburger toggle, off-canvas drawer)
+- [ ] App footer (version, copyright, links)
+- [ ] i18n internationalization support (react-i18next, frontend only in v1.1)
 
 ### Out of Scope
 
@@ -113,4 +126,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-05-30 after v1.0 milestone. All 53 v1 requirements shipped and verified.*
+*Last updated: 2026-05-30 after v1.1 milestone start. v1.0: all 53 requirements shipped and verified.*

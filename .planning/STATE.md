@@ -5,15 +5,17 @@
 See: .planning/PROJECT.md (updated 2026-05-30)
 
 **Core value:** A user can open their dashboard, see their due cards, and complete a spaced-repetition study session — that loop must always work.
-**Current focus:** Planning next milestone (v1.1)
+**Current focus:** v1.1 — Study Experience & Polish
 
 ## Current Position
 
-Milestone: v1.0 MVP — SHIPPED 2026-05-30
-Status: All 6 phases complete, all 53 v1 requirements verified
-Last activity: 2026-05-30 — Milestone v1.0 close
+Milestone: v1.1 Study Experience & Polish
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-05-30 — Milestone v1.1 started
 
-Progress: [██████████████████████████████████████] 100% (6/6 phases complete)
+Progress: [░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░] 0% (0/? phases complete)
 
 ## Performance Metrics
 
