@@ -82,6 +82,9 @@ COPY --from=backend-builder /build/node_modules/@prisma/ ./node_modules/@prisma/
 # Copy built frontend (SPA) to where Hono will serve it
 COPY --from=frontend-builder /build/apps/backend/public/ ./apps/backend/public/
 
+# Copy prisma.config.ts so the CLI can find the datasource URL at runtime
+COPY apps/backend/prisma.config.ts apps/backend/
+
 # Copy entrypoint script (strip CRLF in case of Windows checkout)
 COPY apps/backend/entrypoint.sh /app/entrypoint.sh
 RUN sed -i 's/\r$//' /app/entrypoint.sh && chmod +x /app/entrypoint.sh
