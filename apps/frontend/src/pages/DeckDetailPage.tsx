@@ -277,40 +277,45 @@ export function DeckDetailPage() {
             <p className="text-sm text-muted-foreground">Owned by {deck.owner.username}</p>
           )}
         </div>
-        {deck.ownerId === user?.id && (
-          <div className="flex items-center gap-2">
-            <Button size="sm" variant="outline" onClick={() => setDeckModalOpen(true)}>
-              Edit Deck
-            </Button>
-            {confirmDeleteDeck ? (
-              <div className="flex items-center gap-2" role="alert">
-                <span className="text-sm text-muted-foreground">Are you sure?</span>
+        <div className="flex items-center gap-2">
+          <Button size="sm" onClick={() => navigate(`/decks/${deckId}/learn`)}>
+            Study Deck
+          </Button>
+          {deck.ownerId === user?.id && (
+            <>
+              <Button size="sm" variant="outline" onClick={() => setDeckModalOpen(true)}>
+                Edit Deck
+              </Button>
+              {confirmDeleteDeck ? (
+                <div className="flex items-center gap-2" role="alert">
+                  <span className="text-sm text-muted-foreground">Are you sure?</span>
+                  <Button
+                    size="sm"
+                    variant="destructive"
+                    onClick={() => void handleDeleteDeck()}
+                  >
+                    Yes, delete
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => setConfirmDeleteDeck(false)}
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              ) : (
                 <Button
                   size="sm"
                   variant="destructive"
-                  onClick={() => void handleDeleteDeck()}
+                  onClick={() => setConfirmDeleteDeck(true)}
                 >
-                  Yes, delete
+                  Delete Deck
                 </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => setConfirmDeleteDeck(false)}
-                >
-                  Cancel
-                </Button>
-              </div>
-            ) : (
-              <Button
-                size="sm"
-                variant="destructive"
-                onClick={() => setConfirmDeleteDeck(true)}
-              >
-                Delete Deck
-              </Button>
-            )}
-          </div>
-        )}
+              )}
+            </>
+          )}
+        </div>
       </div>
 
       <Table aria-label="Cards in deck">

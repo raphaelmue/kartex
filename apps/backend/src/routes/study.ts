@@ -7,17 +7,32 @@ const study = new Hono<{ Variables: { userId: string } }>()
 
 // GET /api/study/due — cards due today across all user's decks (STDY-01)
 // Includes: cards with nextReview <= endOfToday AND new cards (no CardProgress row)
+// Covers owned decks and decks shared with the user
 study.get('/due', async (c) => {
   const userId = c.get('userId')
   const endOfToday = new Date()
   endOfToday.setHours(23, 59, 59, 999)
+
+  // Deck IDs shared with this user
+  const sharedRows = await prisma.deckShare.findMany({
+    where: { sharedWithUserId: userId },
+    select: { deckId: true },
+  })
+  const sharedDeckIds = sharedRows.map((r: { deckId: string }) => r.deckId)
+
+  const deckFilter = {
+    OR: [
+      { ownerId: userId },
+      { id: { in: sharedDeckIds } },
+    ],
+  }
 
   // Cards WITH progress where nextReview is due today
   const dueWithProgress = await prisma.cardProgress.findMany({
     where: {
       userId,
       nextReview: { lte: endOfToday },
-      card: { deck: { ownerId: userId } },
+      card: { deck: deckFilter },
     },
     include: {
       card: {
@@ -33,7 +48,7 @@ study.get('/due', async (c) => {
   )
   const neverSeen = await prisma.card.findMany({
     where: {
-      deck: { ownerId: userId },
+      deck: deckFilter,
       progress: { none: { userId } },
     },
     include: { deck: { select: { id: true, title: true } } },
@@ -81,7 +96,12 @@ study.get('/deck/:deckId', async (c) => {
 
   const deck = await prisma.deck.findUnique({ where: { id: deckId } })
   if (!deck) return c.json({ error: 'Not found.' }, 404)
-  if (deck.ownerId !== userId) return c.json({ error: 'Forbidden.' }, 403)
+  if (deck.ownerId !== userId) {
+    const share = await prisma.deckShare.findUnique({
+      where: { deckId_sharedWithUserId: { deckId, sharedWithUserId: userId } },
+    })
+    if (!share) return c.json({ error: 'Forbidden.' }, 403)
+  }
 
   const cards = await prisma.card.findMany({
     where: { deckId },
@@ -128,7 +148,12 @@ study.post('/rate', async (c) => {
     include: { deck: { select: { ownerId: true } } },
   })
   if (!card) return c.json({ error: 'Not found.' }, 404)
-  if (card.deck.ownerId !== userId) return c.json({ error: 'Forbidden.' }, 403)
+  if (card.deck.ownerId !== userId) {
+    const share = await prisma.deckShare.findUnique({
+      where: { deckId_sharedWithUserId: { deckId: card.deckId, sharedWithUserId: userId } },
+    })
+    if (!share) return c.json({ error: 'Forbidden.' }, 403)
+  }
 
   // Fetch current CardProgress or use SM-2 defaults for first review
   const existing = await prisma.cardProgress.findUnique({
