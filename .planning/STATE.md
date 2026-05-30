@@ -86,7 +86,7 @@ None yet.
 | # | Description | Date | Commit | Directory |
 |---|-------------|------|--------|-----------|
 | 260526-001 | Quality baseline: ESLint/Prettier, code smell fixes, decisions recorded | 2026-05-26 | 372837e | [260526-001-quality-baseline](.planning/quick/260526-001-quality-baseline/) |
-| 260530-001 | Add .kartex format documentation (docs/kartex-format.md) | 2026-05-30 | — | [260530-001-kartex-format-docs](.planning/quick/260530-001-kartex-format-docs/) |
+| 260530-001 | Add .kartex format documentation (docs/kartex-format.md) | 2026-05-30 | 52238a0 | [260530-001-kartex-format-docs](.planning/quick/260530-001-kartex-format-docs/) |
 
 ## Deferred Items
 
