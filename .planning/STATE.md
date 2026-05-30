@@ -2,19 +2,18 @@
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-05-25)
+See: .planning/PROJECT.md (updated 2026-05-30)
 
 **Core value:** A user can open their dashboard, see their due cards, and complete a spaced-repetition study session — that loop must always work.
-**Current focus:** Phase 6 — Sharing, Explore & Production Deploy
+**Current focus:** Planning next milestone (v1.1)
 
 ## Current Position
 
-Phase: 6 of 6 (Sharing, Explore & Production Deploy) — Human UAT pending
-Plan: 3 of 3 in phase 6
-Status: Phase 6 complete (automated) — 4 human UAT items pending in 06-HUMAN-UAT.md
-Last activity: 2026-05-30 — Quick task 260530-001: added .kartex format documentation (docs/kartex-format.md)
+Milestone: v1.0 MVP — SHIPPED 2026-05-30
+Status: All 6 phases complete, all 53 v1 requirements verified
+Last activity: 2026-05-30 — Milestone v1.0 close
 
-Progress: [█████████████████████████████████████] 98% (6/6 phases, UAT pending)
+Progress: [██████████████████████████████████████] 100% (6/6 phases complete)
 
 ## Performance Metrics
 
@@ -69,20 +68,16 @@ Recent decisions affecting current work:
 
 ### Pending Todos
 
-**Current milestone:**
-- [2026-05-28] Migrate to Prisma 7 — `.planning/todos/pending/2026-05-28-migrate-to-prisma-7.md`
-- [2026-05-28] Add dark mode — `.planning/todos/pending/2026-05-28-add-dark-mode.md`
-- [2026-05-30] Add "Add to Library" option for public decks on /explore — `.planning/todos/pending/2026-05-30-add-to-library-for-public-decks.md`
-
-**Partial (current milestone — needs Dockerfile):**
-- [2026-05-28] Add GitHub Actions CI pipeline with Docker build and GHCR push — `.planning/todos/pending/2026-05-28-github-actions-ci-docker-ghcr.md` — `ci.yml` done; `apps/backend/Dockerfile` missing
-
 **Next milestone:**
+- [2026-05-30] Add "Add to Library" option for public decks on /explore — `.planning/todos/pending/2026-05-30-add-to-library-for-public-decks.md`
 - [2026-05-28] Add tag-based topic filter to study session and deck view — `.planning/todos/pending/2026-05-28-evaluate-topic-layer-between-deck-and-cards.md`
 - [2026-05-30] Add i18n internationalization support — `.planning/todos/pending/2026-05-30-add-i18n.md`
 
 **Completed:**
 - [2026-05-28] Add .kartex format documentation — done as quick task 260530-001 (`docs/kartex-format.md`)
+- [2026-05-28] Migrate to Prisma 7 — done as quick task 260530-002
+- [2026-05-28] Add dark mode — done as quick task 260530-003
+- [2026-05-28] Add GitHub Actions CI pipeline — done via Phase 6 (06-03) + quick task 260530-005
 
 ### Blockers/Concerns
 
@@ -94,12 +89,20 @@ None yet.
 |---|-------------|------|--------|-----------|
 | 260526-001 | Quality baseline: ESLint/Prettier, code smell fixes, decisions recorded | 2026-05-26 | 372837e | [260526-001-quality-baseline](.planning/quick/260526-001-quality-baseline/) |
 | 260530-001 | Add .kartex format documentation (docs/kartex-format.md) | 2026-05-30 | 52238a0 | [260530-001-kartex-format-docs](.planning/quick/260530-001-kartex-format-docs/) |
+| 260530-002 | Migrate to Prisma 7 (5.22.0 → 7.8.0, pg driver adapter) | 2026-05-30 | — | [260530-002-migrate-to-prisma-7](.planning/quick/260530-002-migrate-to-prisma-7/) |
+| 260530-003 | Add dark mode toggle (ThemeProvider, Moon/Sun icon in sidebar) | 2026-05-30 | — | [260530-003-add-dark-mode](.planning/quick/260530-003-add-dark-mode/) |
+| 260530-005 | Fix backend Dockerfile for Prisma 7 migration entrypoint | 2026-05-30 | 0398325 | [260530-005-backend-dockerfile](.planning/quick/260530-005-backend-dockerfile/) |
 
 ## Deferred Items
 
-| Category | Item | Status | Deferred At |
-|----------|------|--------|-------------|
-| *(none)* | | | |
+Items acknowledged and deferred at milestone close on 2026-05-30:
+
+| Category | Item | Status |
+|----------|------|--------|
+| quick_task | 260530-004-add-to-library-explore | missing |
+| todo | 2026-05-28-evaluate-topic-layer-between-deck-and-cards | pending |
+| todo | 2026-05-30-add-i18n | pending |
+| todo | 2026-05-30-add-to-library-for-public-decks | pending |
 
 ## Session Continuity
 
