@@ -202,7 +202,7 @@ const kartexComponents = {
   // extractTextFromChildren recovers the raw source even after rehype-highlight
   // wraps it in <span> elements.
   code({ className, children }: { className?: string; children?: React.ReactNode }) {
-    if (className === 'language-typst') {
+    if (className?.includes('language-typst')) {
       const source = extractTextFromChildren(children).replace(/\n$/, '')
       return <TypstBlock source={source} />
     }
