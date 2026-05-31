@@ -11,9 +11,9 @@ See: .planning/PROJECT.md (updated 2026-05-30)
 
 Milestone: v1.1 Study Experience & Polish
 Phase: Phase 8 — Study UX
-Plan: 08-01 (TBD)
-Status: Phase 7 complete — ready to plan Phase 8
-Last activity: 2026-05-31 — Phase 7 complete (AppShell responsive layout + footer, 52 tests pass)
+Plan: 08-01, 08-02, 08-03 (3 plans, 3 waves)
+Status: Planned — ready to execute Phase 8
+Last activity: 2026-05-31 — Phase 8 planned (3 plans: tag filter, session size, shuffle, deck tag grouping)
 
 Progress: [████████████░░░░░░░░░░░░░░░░░░░░░░░░░░] 33% (1/3 phases complete)
 
