@@ -42,7 +42,8 @@ function makeCard(
   backContent: string
   tags: string[]
   deckId: string
-  dueAt: string
+  deckTitle: string
+  nextReview: string
   interval: number
   easeFactor: number
   repetitions: number
@@ -53,7 +54,8 @@ function makeCard(
     backContent: `Back ${id}`,
     tags,
     deckId: 'deck-abc',
-    dueAt: '2026-01-01',
+    deckTitle: 'Test Deck',
+    nextReview: '2026-01-01',
     interval: 1,
     easeFactor: 2.5,
     repetitions: 0,
