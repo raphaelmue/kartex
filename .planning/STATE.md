@@ -10,12 +10,12 @@ See: .planning/PROJECT.md (updated 2026-05-30)
 ## Current Position
 
 Milestone: v1.1 Study Experience & Polish
-Phase: Not started (roadmap defined, ready for planning)
-Plan: —
-Status: Roadmap created
-Last activity: 2026-05-30 — v1.1 roadmap created (Phases 7–9)
+Phase: Phase 8 — Study UX
+Plan: 08-01 (TBD)
+Status: Phase 7 complete — ready to plan Phase 8
+Last activity: 2026-05-31 — Phase 7 complete (AppShell responsive layout + footer, 52 tests pass)
 
-Progress: [░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░] 0% (0/3 phases complete)
+Progress: [████████████░░░░░░░░░░░░░░░░░░░░░░░░░░] 33% (1/3 phases complete)
 
 ## Performance Metrics
 
@@ -32,6 +32,7 @@ Progress: [░░░░░░░░░░░░░░░░░░░░░░░
 | 2 | 3/3 | ~20 min | ~7 min |
 | 3 | 3/3 | ~19 min | ~6 min |
 | 4 | 3/3 | ~38 min | ~13 min |
+| 7 | 1/1 | ~4 min | ~4 min |
 
 **Recent Trend:**
 - Last 5 plans: 02-03, 03-01, 03-02, 03-03, 04-01
@@ -67,14 +68,17 @@ Recent decisions affecting current work:
 - 04-03: shadcn Badge installed via npx shadcn@latest add badge — class-variance-authority was already present as ^0.7.1
 - 04-03: Stat chips use inline border/rounded-lg divs (not shadcn Card) for minimal layout per UI-SPEC §1c and D-08
 - 05-UAT: Topic grouping within decks → Option B (tag-as-topic + filtered study UI, no schema change). Option A (Topic model) deferred until tag-based approach proves insufficient.
+- 07-01: createRequire (not resolveJsonModule) for Vite define version injection — resolveJsonModule incompatible with moduleResolution: bundler + allowImportingTsExtensions
+- 07-01: CSS transform always-in-DOM drawer for AppShell mobile — enables 200ms exit animation vs conditional render which can't animate exit
+- 07-01: Explicit vitest imports (describe/it/expect/vi) required in test files — tsconfig has no vitest/globals types, matches CardFlip.test.tsx pattern
 
 ### Pending Todos
 
 **v1.1 in progress:**
 - STUDY-01/02/03: Tag filter + session size + shuffle → Phase 8
 - STUDY-04: Deck detail tag grouping → Phase 8
-- SHELL-01/02: Mobile sidebar collapse + overlay drawer → Phase 7
-- SHELL-03: App footer → Phase 7
+- ~~SHELL-01/02: Mobile sidebar collapse + overlay drawer~~ → DONE Phase 7
+- ~~SHELL-03: App footer~~ → DONE Phase 7
 - I18N-01/02/03: react-i18next setup + string externalization + language switcher → Phase 9
 
 **Completed:**
@@ -109,6 +113,6 @@ Items acknowledged and deferred at milestone close on 2026-05-30:
 
 ## Session Continuity
 
-Last session: 2026-05-30
-Stopped at: v1.1 roadmap created — Phases 7 (App Shell), 8 (Study UX), 9 (i18n)
-Resume with: `/gsd:plan-phase 7`
+Last session: 2026-05-31
+Stopped at: Phase 7 (App Shell) complete — 07-01 plan finished, 52 tests pass, SHELL-01/02/03 done
+Resume with: `/gsd:plan-phase 8`

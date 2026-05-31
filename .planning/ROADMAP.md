@@ -23,7 +23,7 @@ Full details: [.planning/milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md)
 
 ### v1.1 Study Experience & Polish (Phases 7–9)
 
-- [ ] **Phase 7: App Shell** - Mobile sidebar collapse, overlay drawer, and app footer
+- [x] **Phase 7: App Shell** - Mobile sidebar collapse, overlay drawer, and app footer — completed 2026-05-31
 - [ ] **Phase 8: Study UX** - Tag filter, session size picker, and shuffle for study sessions
 - [ ] **Phase 9: Internationalization** - react-i18next setup, string externalization, and language switcher
 
@@ -42,7 +42,7 @@ Full details: [.planning/milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md)
 **Plans**: 1 plan
 
 Plans:
-- [ ] 07-01-PLAN.md — Test stub (Wave 0) + Vite version injection + AppShell responsive implementation (mobile topbar, overlay drawer, footer)
+- [x] 07-01-PLAN.md — Test stub (Wave 0) + Vite version injection + AppShell responsive implementation (mobile topbar, overlay drawer, footer) — completed 2026-05-31
 
 **UI hint**: yes
 
@@ -81,6 +81,6 @@ Plans:
 | 4. Study Loops | v1.0 | 3/3 | Complete | 2026-05-28 |
 | 5. Import Pipeline | v1.0 | 3/3 | Complete | 2026-05-28 |
 | 6. Sharing, Explore & Production Deploy | v1.0 | 3/3 | Complete | 2026-05-29 |
-| 7. App Shell | v1.1 | 0/1 | Not started | - |
+| 7. App Shell | v1.1 | 1/1 | Complete | 2026-05-31 |
 | 8. Study UX | v1.1 | 0/? | Not started | - |
 | 9. Internationalization | v1.1 | 0/? | Not started | - |
