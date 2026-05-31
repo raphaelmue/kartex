@@ -9,10 +9,10 @@ Requirements for the Study Experience & Polish milestone.
 
 ### Study UX
 
-- [ ] **STUDY-01**: User can filter a study session by one or more tags before it begins
-- [ ] **STUDY-02**: User can choose session size (All due / 10 / 20 / custom) before starting a session
-- [ ] **STUDY-03**: Cards in a study session are always presented in random order
-- [ ] **STUDY-04**: Deck detail page groups cards under tag headers; untagged cards appear under "Untagged"
+- [x] **STUDY-01**: User can filter a study session by one or more tags before it begins
+- [x] **STUDY-02**: User can choose session size (All due / 10 / 20 / custom) before starting a session
+- [x] **STUDY-03**: Cards in a study session are always presented in random order
+- [x] **STUDY-04**: Deck detail page groups cards under tag headers; untagged cards appear under "Untagged"
 
 ### App Shell
 
@@ -55,10 +55,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| STUDY-01 | Phase 8 | Pending |
-| STUDY-02 | Phase 8 | Pending |
-| STUDY-03 | Phase 8 | Pending |
-| STUDY-04 | Phase 8 | Pending |
+| STUDY-01 | Phase 8 | Complete — 2026-05-31 |
+| STUDY-02 | Phase 8 | Complete — 2026-05-31 |
+| STUDY-03 | Phase 8 | Complete — 2026-05-31 |
+| STUDY-04 | Phase 8 | Complete — 2026-05-31 |
 | SHELL-01 | Phase 7 | Pending |
 | SHELL-02 | Phase 7 | Pending |
 | SHELL-03 | Phase 7 | Pending |

@@ -11,11 +11,11 @@ See: .planning/PROJECT.md (updated 2026-05-30)
 
 Milestone: v1.1 Study Experience & Polish
 Phase: Phase 8 — Study UX
-Plan: 08-03 (remaining)
-Status: In progress — 08-02 complete (STUDY-01/02/03 GREEN — tag filter, session size, shuffle)
-Last activity: 2026-05-31 — 08-02 executed: StudySessionPage tag filter + session size picker + shuffle implemented; 10 RED tests now GREEN
+Plan: 08-03 (complete)
+Status: Phase 8 complete — STUDY-01/02/03/04 all GREEN (tag filter, session size, shuffle, deck tag grouping)
+Last activity: 2026-05-31 — 08-03 executed: groupCardsByFirstTag utility + DeckDetailPage tag-sectioned layout; all 65 Phase 8 tests GREEN
 
-Progress: [████████████░░░░░░░░░░░░░░░░░░░░░░░░░░] 33% (1/3 phases complete, Phase 8 in progress 2/3 plans)
+Progress: [████████████████░░░░░░░░░░░░░░░░░░░░░░] 40% (Phase 8 complete — 3/3 plans done)
 
 ## Performance Metrics
 
@@ -78,12 +78,14 @@ Recent decisions affecting current work:
 - 08-02: SessionProgress renders 'Card X of Y' (not 'X / Y') — test assertions must use actual component format
 - 08-02: act(async () => { await waitFor(...) }) incompatible with Vitest 2.1.9 — use direct waitFor pattern instead
 - 08-02: availableTags derived from allCardsRes prefetch (not cards state) — prevents chip list shrinking when filter active
+- 08-03: groupCardsByFirstTag extracted to util file — DeckDetailPage was already ~517 lines; keeping inline would exceed 500-line limit; util path matches Wave 0 test import
+- 08-03: CardActionCell local component extracted within DeckDetailPage to compact repeated edit/delete confirm JSX; keeps file at 497 lines
 
 ### Pending Todos
 
 **v1.1 in progress:**
 - ~~STUDY-01/02/03: Tag filter + session size + shuffle~~ → DONE 08-02
-- STUDY-04: Deck detail tag grouping → Phase 8 (08-03)
+- ~~STUDY-04: Deck detail tag grouping~~ → DONE 08-03
 - ~~SHELL-01/02: Mobile sidebar collapse + overlay drawer~~ → DONE Phase 7
 - ~~SHELL-03: App footer~~ → DONE Phase 7
 - I18N-01/02/03: react-i18next setup + string externalization + language switcher → Phase 9
@@ -121,5 +123,5 @@ Items acknowledged and deferred at milestone close on 2026-05-30:
 ## Session Continuity
 
 Last session: 2026-05-31
-Stopped at: 08-02 complete — STUDY-01/02/03 GREEN (tag filter, session size, shuffle in StudySessionPage)
-Resume with: `/gsd-execute-phase 8` (continues at 08-03)
+Stopped at: 08-03 complete — Phase 8 fully done; STUDY-01/02/03/04 all GREEN
+Resume with: `/gsd-plan-phase 9` (Phase 9: I18N — react-i18next setup, string externalization, language switcher)

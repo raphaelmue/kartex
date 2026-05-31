@@ -24,7 +24,7 @@ Full details: [.planning/milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md)
 ### v1.1 Study Experience & Polish (Phases 7–9)
 
 - [x] **Phase 7: App Shell** - Mobile sidebar collapse, overlay drawer, and app footer — completed 2026-05-31
-- [ ] **Phase 8: Study UX** - Tag filter, session size picker, and shuffle for study sessions
+- [x] **Phase 8: Study UX** - Tag filter, session size picker, and shuffle for study sessions — completed 2026-05-31
 - [ ] **Phase 9: Internationalization** - react-i18next setup, string externalization, and language switcher
 
 ---
@@ -60,7 +60,7 @@ Plans:
 Plans:
 - [x] 08-01-PLAN.md — Wave 0: Failing test stubs for STUDY-01/02/03 (StudySessionPage) and STUDY-04 (DeckDetailPage) — completed 2026-05-31
 - [x] 08-02-PLAN.md — Wave 1: Implement tag filter + session size picker + shuffle in StudySessionPage.tsx (STUDY-01, STUDY-02, STUDY-03) — completed 2026-05-31
-- [ ] 08-03-PLAN.md — Wave 2: Implement tag-sectioned layout in DeckDetailPage.tsx (STUDY-04) + full verification gate
+- [x] 08-03-PLAN.md — Wave 2: Implement tag-sectioned layout in DeckDetailPage.tsx (STUDY-04) + full verification gate — completed 2026-05-31
 
 **UI hint**: yes
 
@@ -88,5 +88,5 @@ Plans:
 | 5. Import Pipeline | v1.0 | 3/3 | Complete | 2026-05-28 |
 | 6. Sharing, Explore & Production Deploy | v1.0 | 3/3 | Complete | 2026-05-29 |
 | 7. App Shell | v1.1 | 1/1 | Complete | 2026-05-31 |
-| 8. Study UX | v1.1 | 2/3 | In progress | - |
+| 8. Study UX | v1.1 | 3/3 | Complete | 2026-05-31 |
 | 9. Internationalization | v1.1 | 0/? | Not started | - |
