@@ -1,11 +1,18 @@
+import { createRequire } from 'module'
 import react from '@vitejs/plugin-react'
 import path from 'path'
 import { defineConfig } from 'vite'
 import topLevelAwait from 'vite-plugin-top-level-await'
 import wasm from 'vite-plugin-wasm'
 
+const require = createRequire(import.meta.url)
+const pkg = require('./package.json') as { version: string }
+
 export default defineConfig({
   plugins: [react(), wasm(), topLevelAwait()],
+  define: {
+    __APP_VERSION__: JSON.stringify(pkg.version),
+  },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
