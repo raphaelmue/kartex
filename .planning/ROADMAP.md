@@ -58,9 +58,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 08-01-PLAN.md — Wave 1: Failing test stubs for STUDY-01/02/03 (StudySessionPage) and STUDY-04 (DeckDetailPage)
-- [ ] 08-02-PLAN.md — Wave 2: Implement tag filter + session size picker + shuffle in StudySessionPage.tsx (STUDY-01, STUDY-02, STUDY-03)
-- [ ] 08-03-PLAN.md — Wave 3: Implement tag-sectioned layout in DeckDetailPage.tsx (STUDY-04) + full verification gate
+- [x] 08-01-PLAN.md — Wave 0: Failing test stubs for STUDY-01/02/03 (StudySessionPage) and STUDY-04 (DeckDetailPage) — completed 2026-05-31
+- [ ] 08-02-PLAN.md — Wave 1: Implement tag filter + session size picker + shuffle in StudySessionPage.tsx (STUDY-01, STUDY-02, STUDY-03)
+- [ ] 08-03-PLAN.md — Wave 2: Implement tag-sectioned layout in DeckDetailPage.tsx (STUDY-04) + full verification gate
 
 **UI hint**: yes
 
@@ -88,5 +88,5 @@ Plans:
 | 5. Import Pipeline | v1.0 | 3/3 | Complete | 2026-05-28 |
 | 6. Sharing, Explore & Production Deploy | v1.0 | 3/3 | Complete | 2026-05-29 |
 | 7. App Shell | v1.1 | 1/1 | Complete | 2026-05-31 |
-| 8. Study UX | v1.1 | 0/3 | Not started | - |
+| 8. Study UX | v1.1 | 1/3 | In progress | - |
 | 9. Internationalization | v1.1 | 0/? | Not started | - |

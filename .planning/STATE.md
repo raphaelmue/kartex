@@ -11,11 +11,11 @@ See: .planning/PROJECT.md (updated 2026-05-30)
 
 Milestone: v1.1 Study Experience & Polish
 Phase: Phase 8 — Study UX
-Plan: 08-01, 08-02, 08-03 (3 plans, 3 waves)
-Status: Planned — ready to execute Phase 8
-Last activity: 2026-05-31 — Phase 8 planned (3 plans: tag filter, session size, shuffle, deck tag grouping)
+Plan: 08-02 (next), 08-03 (remaining)
+Status: In progress — 08-01 complete (Wave 0 RED tests)
+Last activity: 2026-05-31 — 08-01 executed: 13 RED test stubs created for STUDY-01/02/03/04
 
-Progress: [████████████░░░░░░░░░░░░░░░░░░░░░░░░░░] 33% (1/3 phases complete)
+Progress: [████████████░░░░░░░░░░░░░░░░░░░░░░░░░░] 33% (1/3 phases complete, Phase 8 in progress 1/3 plans)
 
 ## Performance Metrics
 
@@ -71,6 +71,10 @@ Recent decisions affecting current work:
 - 07-01: createRequire (not resolveJsonModule) for Vite define version injection — resolveJsonModule incompatible with moduleResolution: bundler + allowImportingTsExtensions
 - 07-01: CSS transform always-in-DOM drawer for AppShell mobile — enables 200ms exit animation vs conditional render which can't animate exit
 - 07-01: Explicit vitest imports (describe/it/expect/vi) required in test files — tsconfig has no vitest/globals types, matches CardFlip.test.tsx pattern
+- 08-01: Wave 0 stub pattern: Vite's import-analysis resolves all import() expressions at compile time; create throwing stub file instead of dynamic import for RED test phase
+- 08-01: StudySessionPage does NOT import useAuth — no AuthContext mock needed in StudySessionPage tests (confirmed by source read)
+- 08-01: DeckDetailPage fetchShares triggers only when ownerId === user.id — use ownerId='other-user' in test deck to avoid 3rd api.get mock requirement
+- 08-01: mockApiGet.mockImplementation(url =>) preferred over mockResolvedValueOnce for components with parallel (non-sequential) api.get calls
 
 ### Pending Todos
 
@@ -114,5 +118,5 @@ Items acknowledged and deferred at milestone close on 2026-05-30:
 ## Session Continuity
 
 Last session: 2026-05-31
-Stopped at: Phase 8 context gathered — STUDY-01/02/03/04 decisions captured
-Resume with: `/gsd-plan-phase 8`
+Stopped at: 08-01 complete — 13 RED test stubs for STUDY-01/02/03/04
+Resume with: `/gsd-execute-phase 8` (continues at 08-02)
