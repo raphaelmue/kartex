@@ -114,5 +114,5 @@ Items acknowledged and deferred at milestone close on 2026-05-30:
 ## Session Continuity
 
 Last session: 2026-05-31
-Stopped at: Phase 7 (App Shell) complete — 07-01 plan finished, 52 tests pass, SHELL-01/02/03 done
-Resume with: `/gsd:plan-phase 8`
+Stopped at: Phase 8 context gathered — STUDY-01/02/03/04 decisions captured
+Resume with: `/gsd-plan-phase 8`
