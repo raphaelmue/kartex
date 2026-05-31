@@ -13,6 +13,16 @@ import { ExamTimer } from '@/components/ExamTimer'
 import { SessionProgress } from '@/components/SessionProgress'
 import { useStudySession, type StudyMode } from '@/hooks/useStudySession'
 
+// Non-mutating Fisher-Yates shuffle (CR-01)
+function shuffle<T>(arr: T[]): T[] {
+  const out = [...arr]
+  for (let i = out.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[out[i], out[j]] = [out[j], out[i]]
+  }
+  return out
+}
+
 // EXAM_DURATIONS: user must pick (D-06 — no default)
 const EXAM_DURATIONS = [
   { label: '5 minutes', value: '300' },
@@ -259,8 +269,8 @@ export function StudySessionPage() {
                 )
               : tagFiltered
 
-          // STUDY-03: Shuffle — non-mutating Fisher-Yates approximation
-          const shuffled = [...sized].sort(() => Math.random() - 0.5)
+          // STUDY-03: Shuffle — non-mutating Fisher-Yates (CR-01)
+          const shuffled = shuffle(sized)
 
           setCards(shuffled)
         } else {
