@@ -18,5 +18,5 @@ export function groupCardsByFirstTag(cards: Card[]): { tag: string; cards: Card[
     sorted.push(['Untagged', groups.get('Untagged')!])
   }
 
-  return sorted.map(([tag, cards]) => ({ tag, cards }))
+  return sorted.map(([tag, groupCards]) => ({ tag, cards: groupCards }))
 }
