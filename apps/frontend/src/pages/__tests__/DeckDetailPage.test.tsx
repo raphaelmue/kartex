@@ -41,6 +41,7 @@ vi.mock('@/lib/api', () => ({
   api: {
     get: mockApiGet,
     post: vi.fn(),
+    patch: vi.fn(),
     delete: vi.fn(),
   },
 }))
