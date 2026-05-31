@@ -242,8 +242,9 @@ export function StudySessionPage() {
           const due = await dueRes.json() as { deckId: string }[]
           setDeckDueCount(due.filter((c) => c.deckId === deckId).length)
         }
-      } catch {
-        // Non-critical for mode selector — swallow
+      } catch (err) {
+        // Non-critical for mode selector, but log for debugging (WR-04)
+        console.error('[StudySessionPage] prefetch failed:', err)
       }
     })()
   }, [deckId])
