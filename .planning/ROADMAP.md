@@ -39,7 +39,11 @@ Full details: [.planning/milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md)
   1. On a screen narrower than 768px, the sidebar is hidden by default and a hamburger button is visible
   2. Tapping the hamburger opens the sidebar as an overlay drawer without pushing page content
   3. The app footer is visible on every page, showing the version number, copyright, and any configured links
-**Plans**: TBD
+**Plans**: 1 plan
+
+Plans:
+- [ ] 07-01-PLAN.md — Test stub (Wave 0) + Vite version injection + AppShell responsive implementation (mobile topbar, overlay drawer, footer)
+
 **UI hint**: yes
 
 ### Phase 8: Study UX
@@ -77,6 +81,6 @@ Full details: [.planning/milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md)
 | 4. Study Loops | v1.0 | 3/3 | Complete | 2026-05-28 |
 | 5. Import Pipeline | v1.0 | 3/3 | Complete | 2026-05-28 |
 | 6. Sharing, Explore & Production Deploy | v1.0 | 3/3 | Complete | 2026-05-29 |
-| 7. App Shell | v1.1 | 0/? | Not started | - |
+| 7. App Shell | v1.1 | 0/1 | Not started | - |
 | 8. Study UX | v1.1 | 0/? | Not started | - |
 | 9. Internationalization | v1.1 | 0/? | Not started | - |
