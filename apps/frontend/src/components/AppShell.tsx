@@ -36,7 +36,7 @@ export function AppShell() {
     (location.pathname.startsWith('/admin') ? 'Admin' : 'Kartex')
 
   const GITHUB_URL = 'https://github.com/raphaelmue/kartex'
-  const DOCS_URL = 'https://github.com/raphaelmue/kartex#readme'
+  const DOCS_URL = 'https://github.com/raphaelmue/kartex/blob/main/docs/kartex-format.md'
 
   const handleLogout = () => {
     void logout()
@@ -233,11 +233,12 @@ export function AppShell() {
 
       {/* Right column — topbar + main content + footer */}
       <div className="flex flex-col flex-1 min-h-0">
-        {/* Mobile topbar — hidden on desktop */}
-        <header className="flex items-center gap-2 h-16 px-4 bg-card border-b border-border md:hidden">
+        {/* Page title bar — always visible; hamburger hidden on desktop */}
+        <header className="flex items-center gap-2 h-16 px-4 bg-card border-b border-border">
           <Button
             variant="ghost"
             size="icon"
+            className="md:hidden"
             aria-label="Open navigation menu"
             aria-expanded={drawerOpen}
             aria-controls="mobile-nav-drawer"
@@ -245,8 +246,7 @@ export function AppShell() {
           >
             <Menu className="h-5 w-5" aria-hidden="true" />
           </Button>
-          <span className="text-xl font-bold">Kartex</span>
-          <span className="text-sm text-foreground">{currentLabel}</span>
+          <span className="text-base font-semibold">{currentLabel}</span>
         </header>
 
         {/* Main content */}
@@ -257,7 +257,7 @@ export function AppShell() {
         {/* Footer */}
         <footer className="h-10 shrink-0 border-t border-border flex items-center justify-between px-4 text-xs text-muted-foreground">
           <span>
-            v{__APP_VERSION__}&nbsp;·&nbsp;© Raphael Müßeler
+            v{__APP_VERSION__}&nbsp;·&nbsp;© Kartex
           </span>
           <div className="flex items-center gap-3">
             <a

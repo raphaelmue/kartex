@@ -4,7 +4,7 @@ import { MemoryRouter } from 'react-router-dom'
 import { AppShell } from '@/components/AppShell'
 
 // Set build-time constant that Vite define would inject
-;(globalThis as Record<string, unknown>).__APP_VERSION__ = '0.1.0'
+;(globalThis as Record<string, unknown>).__APP_VERSION__ = '1.0.0'
 
 // Mock AuthContext
 vi.mock('@/context/AuthContext', () => ({
@@ -55,14 +55,14 @@ describe('SHELL-01: Mobile sidebar collapse', () => {
     expect(aside!.className).toContain('hidden')
   })
 
-  it('SHELL-01b: header contains hamburger button with aria-label "Open navigation menu" inside md:hidden container', () => {
+  it('SHELL-01b: header contains hamburger button with aria-label "Open navigation menu"; button is md:hidden on desktop', () => {
     renderAppShell()
     const hamburger = screen.getByRole('button', { name: /open navigation menu/i })
     expect(hamburger).toBeTruthy()
-    // The header (topbar) containing the hamburger must have class md:hidden
+    // Hamburger button itself is hidden on desktop (md:hidden); header is always visible
+    expect(hamburger.className).toContain('md:hidden')
     const header = hamburger.closest('header')
     expect(header).not.toBeNull()
-    expect(header!.className).toContain('md:hidden')
   })
 })
 
@@ -117,11 +117,11 @@ describe('SHELL-02: Mobile overlay drawer', () => {
 })
 
 describe('SHELL-03: App footer', () => {
-  it('SHELL-03a: footer element contains "Raphael Müßeler"', () => {
+  it('SHELL-03a: footer element contains "Kartex" copyright', () => {
     renderAppShell()
     const footer = document.querySelector('footer')
     expect(footer).not.toBeNull()
-    expect(footer!.textContent).toContain('Raphael Müßeler')
+    expect(footer!.textContent).toContain('Kartex')
   })
 
   it('SHELL-03b: footer contains anchor with href containing "github.com/raphaelmue/kartex" and rel="noopener noreferrer"', () => {
@@ -135,12 +135,12 @@ describe('SHELL-03: App footer', () => {
     expect(githubLink!.rel).toContain('noreferrer')
   })
 
-  it('SHELL-03c: footer contains anchor with href containing "#readme" and rel="noopener noreferrer"', () => {
+  it('SHELL-03c: footer contains Docs anchor with href pointing to kartex-format.md and rel="noopener noreferrer"', () => {
     renderAppShell()
     const footer = document.querySelector('footer')
     expect(footer).not.toBeNull()
     const links = footer!.querySelectorAll('a')
-    const docsLink = Array.from(links).find(a => a.href.includes('#readme'))
+    const docsLink = Array.from(links).find(a => a.href.includes('kartex-format.md'))
     expect(docsLink).toBeTruthy()
     expect(docsLink!.rel).toContain('noopener')
     expect(docsLink!.rel).toContain('noreferrer')
