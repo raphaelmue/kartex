@@ -256,21 +256,17 @@ export function StudySessionPage() {
     void (async () => {
       try {
         const { mode, tags, size, count } = committedConfig
+        // WR-01: SR + deckId uses the deck-scoped endpoint; SR without deckId uses global due
         const endpoint =
           mode === 'sr' && !deckId
             ? '/api/study/due'
-            : mode === 'sr' && deckId
-              ? '/api/study/due'
-              : `/api/study/deck/${deckId}`
+            : `/api/study/deck/${deckId}`
 
         const res = await api.get(endpoint)
         if (res.ok) {
           const data = await res.json() as DueCard[]
-          // For SR mode with deck filter, filter by deckId
-          const filtered =
-            mode === 'sr' && deckId
-              ? data.filter((c) => c.deckId === deckId)
-              : data
+          // Server already scopes to the deck for deck-specific endpoints (WR-01)
+          const filtered = data
 
           // STUDY-01: Tag filter (OR logic; untagged excluded when any tag active)
           const tagFiltered =
