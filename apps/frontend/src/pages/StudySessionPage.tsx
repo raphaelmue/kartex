@@ -5,6 +5,7 @@ import { ArrowLeft, Brain, BookOpen, Timer, Trophy, CheckCircle2 } from 'lucide-
 import type { DueCard } from '@kartex/shared'
 import { api } from '@/lib/api'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { CardFlip } from '@/components/CardFlip'
 import { RatingButtons } from '@/components/RatingButtons'
@@ -19,6 +20,14 @@ const EXAM_DURATIONS = [
   { label: '15 minutes', value: '900' },
   { label: '30 minutes', value: '1800' },
   { label: '60 minutes', value: '3600' },
+]
+
+// SIZE_OPTIONS: segmented button row for session size picker (STUDY-02)
+const SIZE_OPTIONS: { label: string; value: 'all' | 10 | 20 | 'custom' }[] = [
+  { label: 'All due', value: 'all' },
+  { label: '10', value: 10 },
+  { label: '20', value: 20 },
+  { label: 'Custom', value: 'custom' },
 ]
 
 // Inner component that runs the actual session loop (cards already loaded)
@@ -174,6 +183,12 @@ export function StudySessionPage() {
   const [deckTotalCards, setDeckTotalCards] = useState<number>(0)
   const [deckDueCount, setDeckDueCount] = useState<number>(0)
 
+  // Session config state (STUDY-01, STUDY-02)
+  const [availableTags, setAvailableTags] = useState<string[]>([])
+  const [selectedTags, setSelectedTags] = useState<Set<string>>(new Set())
+  const [sessionSize, setSessionSize] = useState<'all' | 10 | 20 | 'custom'>('all')
+  const [customCount, setCustomCount] = useState<number>(1)
+
   useEffect(() => {
     document.title = 'Study — Kartex'
   }, [])
@@ -193,8 +208,9 @@ export function StudySessionPage() {
           setDeckTitle(deck.title)
         }
         if (allCardsRes.ok) {
-          const all = await allCardsRes.json() as unknown[]
+          const all = await allCardsRes.json() as DueCard[]
           setDeckTotalCards(all.length)
+          setAvailableTags([...new Set(all.flatMap((c) => c.tags))].sort())
         }
         if (dueRes.ok) {
           const due = await dueRes.json() as { deckId: string }[]
@@ -227,7 +243,26 @@ export function StudySessionPage() {
             selectedMode === 'sr' && deckId
               ? data.filter((c) => c.deckId === deckId)
               : data
-          setCards(filtered)
+
+          // STUDY-01: Tag filter (OR logic; untagged excluded when any tag active)
+          const tagFiltered =
+            selectedTags.size === 0
+              ? filtered
+              : filtered.filter((c) => c.tags.some((t) => selectedTags.has(t)))
+
+          // STUDY-02: Session size slice (SR mode only per D-08)
+          const sized =
+            selectedMode === 'sr' && sessionSize !== 'all'
+              ? tagFiltered.slice(
+                  0,
+                  sessionSize === 'custom' ? Math.max(1, customCount) : sessionSize,
+                )
+              : tagFiltered
+
+          // STUDY-03: Shuffle — non-mutating Fisher-Yates approximation
+          const shuffled = [...sized].sort(() => Math.random() - 0.5)
+
+          setCards(shuffled)
         } else {
           toast.error('Could not load this session. Please go back and try again.')
         }
@@ -237,7 +272,7 @@ export function StudySessionPage() {
         setLoadingCards(false)
       }
     })()
-  }, [selectedMode, deckId])
+  }, [selectedMode, deckId, selectedTags, sessionSize, customCount])
 
   // Mode selector (deck-specific sessions only)
   if (!selectedMode) {
@@ -253,7 +288,68 @@ export function StudySessionPage() {
           Back to deck
         </Button>
         <h1 className="text-xl font-semibold mb-2">Study: {deckTitle}</h1>
-        <p className="text-sm text-muted-foreground mb-8">Choose how you want to study</p>
+        <p className="text-sm text-muted-foreground mb-4">Choose how you want to study</p>
+
+        {/* Session config (STUDY-01, STUDY-02) — only when deck has tagged cards */}
+        {availableTags.length > 0 && (
+          <div className="mb-6 space-y-3">
+            <div>
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">
+                Filter by tag
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {availableTags.map((tag) => (
+                  <Button
+                    key={tag}
+                    size="sm"
+                    variant={selectedTags.has(tag) ? 'default' : 'outline'}
+                    onClick={() => {
+                      setSelectedTags((prev) => {
+                        const next = new Set(prev)
+                        if (next.has(tag)) next.delete(tag)
+                        else next.add(tag)
+                        return next
+                      })
+                    }}
+                    type="button"
+                  >
+                    {tag}
+                  </Button>
+                ))}
+              </div>
+            </div>
+            <div>
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">
+                Session size{' '}
+                <span className="font-normal normal-case tracking-normal">(SR mode only)</span>
+              </p>
+              <div className="flex items-center gap-2 flex-wrap">
+                {SIZE_OPTIONS.map((opt) => (
+                  <Button
+                    key={String(opt.value)}
+                    size="sm"
+                    variant={sessionSize === opt.value ? 'default' : 'outline'}
+                    onClick={() => setSessionSize(opt.value)}
+                    type="button"
+                  >
+                    {opt.label}
+                  </Button>
+                ))}
+                {sessionSize === 'custom' && (
+                  <Input
+                    type="number"
+                    min={1}
+                    value={customCount}
+                    onChange={(e) =>
+                      setCustomCount(Math.max(1, parseInt(e.target.value, 10) || 1))
+                    }
+                    className="w-20 h-8"
+                  />
+                )}
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Spaced Repetition card */}
         <div

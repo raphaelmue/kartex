@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, fireEvent, waitFor, act } from '@testing-library/react'
+import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { StudySessionPage } from '@/pages/StudySessionPage'
 
@@ -164,7 +164,7 @@ describe('StudySessionPage config section', () => {
     await waitFor(() => {
       // Only 5 bio cards — SessionRunner renders card 1 of 5 progress
       const progressText = document.body.textContent
-      expect(progressText).toContain('1 / 5')
+      expect(progressText).toContain('Card 1 of 5')
     })
   })
 
@@ -186,9 +186,9 @@ describe('StudySessionPage config section', () => {
     fireEvent.click(screen.getByRole('button', { name: /spaced repetition/i }))
 
     await waitFor(() => {
-      // 5 bio + 5 chem = 10 cards; progress shows "1 / 10"
+      // 5 bio + 5 chem = 10 cards; progress shows "Card 1 of 10"
       const progressText = document.body.textContent
-      expect(progressText).toContain('1 / 10')
+      expect(progressText).toContain('Card 1 of 10')
     })
   })
 
@@ -236,8 +236,8 @@ describe('StudySessionPage config section', () => {
     fireEvent.click(screen.getByRole('button', { name: /spaced repetition/i }))
 
     await waitFor(() => {
-      // Slice to 10 — progress shows "1 / 10"
-      expect(document.body.textContent).toContain('1 / 10')
+      // Slice to 10 — progress shows "Card 1 of 10"
+      expect(document.body.textContent).toContain('Card 1 of 10')
     })
   })
 
@@ -259,8 +259,8 @@ describe('StudySessionPage config section', () => {
     fireEvent.click(screen.getByRole('button', { name: /deck mode/i }))
 
     await waitFor(() => {
-      // Deck mode: no slice — all 15 cards, progress "1 / 15"
-      expect(document.body.textContent).toContain('1 / 15')
+      // Deck mode: no slice — all 15 cards, progress "Card 1 of 15"
+      expect(document.body.textContent).toContain('Card 1 of 15')
     })
   })
 
@@ -290,7 +290,7 @@ describe('StudySessionPage config section', () => {
     fireEvent.click(screen.getByRole('button', { name: /spaced repetition/i }))
 
     await waitFor(() => {
-      expect(document.body.textContent).toContain('1 / 5')
+      expect(document.body.textContent).toContain('Card 1 of 5')
     })
   })
 
@@ -314,48 +314,48 @@ describe('StudySessionPage config section', () => {
   // -------------------------------------------------------------------
 
   it('STUDY-03a: cards passed to SessionRunner are set-equal to fetched cards (all present, possibly reordered)', async () => {
+    renderPage()
+
+    await waitFor(() => {
+      expect(screen.getByText(/filter by tag/i)).toBeTruthy()
+    })
+
     // loadCards mock — returns mockCards in deterministic order
     mockApiGet.mockResolvedValueOnce({
       ok: true,
       json: async () => mockCards,
     })
 
-    renderPage()
+    fireEvent.click(screen.getByRole('button', { name: /spaced repetition/i }))
 
-    await act(async () => {
-      await waitFor(() => {
-        expect(screen.getByText(/filter by tag/i)).toBeTruthy()
-      })
-      fireEvent.click(screen.getByRole('button', { name: /spaced repetition/i }))
-      await waitFor(() => {
-        // SessionRunner is showing — some card is visible
-        expect(document.body.textContent).toMatch(/1 \/ 15/)
-      })
+    await waitFor(() => {
+      // SessionRunner is showing — all 15 cards present, progress total is 15
+      expect(document.body.textContent).toContain('Card 1 of 15')
     })
 
     // All 15 cards must be reachable — progress total is 15 (none lost, none duplicated)
-    expect(document.body.textContent).toContain('1 / 15')
+    expect(document.body.textContent).toContain('Card 1 of 15')
   })
 
   it('STUDY-03b: shuffle is non-mutating — original mockCards array is unchanged', async () => {
     // Capture original order snapshot
     const originalIds = mockCards.map((c) => c.id)
 
+    renderPage()
+
+    await waitFor(() => {
+      expect(screen.getByText(/filter by tag/i)).toBeTruthy()
+    })
+
     mockApiGet.mockResolvedValueOnce({
       ok: true,
       json: async () => mockCards,
     })
 
-    renderPage()
+    fireEvent.click(screen.getByRole('button', { name: /spaced repetition/i }))
 
-    await act(async () => {
-      await waitFor(() => {
-        expect(screen.getByText(/filter by tag/i)).toBeTruthy()
-      })
-      fireEvent.click(screen.getByRole('button', { name: /spaced repetition/i }))
-      await waitFor(() => {
-        expect(document.body.textContent).toMatch(/1 \/ 15/)
-      })
+    await waitFor(() => {
+      expect(document.body.textContent).toContain('Card 1 of 15')
     })
 
     // Original array order must not have been mutated
