@@ -1,10 +1,11 @@
 ---
 phase: 7
 slug: app-shell
-status: draft
+status: approved
 shadcn_initialized: true
 preset: "style=default, baseColor=neutral, cssVariables=true"
 created: 2026-05-31
+reviewed_at: 2026-05-31
 ---
 
 # Phase 7 — UI Design Contract
@@ -55,11 +56,11 @@ Exceptions:
 | Body | 14px | 400 (regular) | 1.5 | `text-sm` |
 | Label | 14px | 400 (regular) | 1.25 | `text-sm` |
 | Brand (topbar) | 20px | 700 (bold) | 1 | `text-xl font-bold` |
-| Page title (topbar) | 14px | 500 (medium) | 1 | `text-sm font-medium` |
+| Page title (topbar) | 14px | 400 (regular) | 1 | `text-sm` |
 
 Notes:
 - Brand "Kartex" in topbar: `text-xl font-bold` — matches existing sidebar brand `text-xl font-bold`.
-- Page title in topbar: `text-sm font-medium text-foreground` — distinguishable from brand without being heavier.
+- Page title in topbar: `text-sm text-foreground` — the brand's larger size and bold weight provide sufficient hierarchy; page title stays at regular weight.
 - Nav link labels: `text-sm` weight 400 — existing pattern, unchanged.
 - Footer text: `text-xs` (12px) weight 400 — `text-muted-foreground` to keep it visually recessive.
 
@@ -142,7 +143,7 @@ Accent reserved for: active nav link background (`bg-accent`) and active nav ico
 ### Topbar element layout (left → right)
 1. Hamburger button: `Button variant="ghost" size="icon"` — `h-10 w-10` (shadcn icon size) with `Menu` icon `h-5 w-5`.
 2. Brand "Kartex": `text-xl font-bold` — centered vertically, left of page title with `gap-2` or `gap-3`.
-3. Page title: `text-sm font-medium text-foreground` — derived from `navItems.find(item => location.pathname.startsWith(item.to))?.label ?? 'Kartex'`.
+3. Page title: `text-sm text-foreground` — derived from `navItems.find(item => location.pathname.startsWith(item.to))?.label ?? 'Kartex'`.
 
 Topbar internal spacing: `flex items-center gap-2 h-16 px-4`.
 
@@ -320,11 +321,11 @@ No third-party registries. No new shadcn components to install. The `Menu` icon 
 
 ## Checker Sign-Off
 
-- [ ] Dimension 1 Copywriting: PASS
-- [ ] Dimension 2 Visuals: PASS
-- [ ] Dimension 3 Color: PASS
-- [ ] Dimension 4 Typography: PASS
-- [ ] Dimension 5 Spacing: PASS
-- [ ] Dimension 6 Registry Safety: PASS
+- [x] Dimension 1 Copywriting: PASS
+- [x] Dimension 2 Visuals: PASS
+- [x] Dimension 3 Color: PASS
+- [x] Dimension 4 Typography: PASS — 2 weights only (400/700), 3 sizes (12/14/20px)
+- [x] Dimension 5 Spacing: PASS
+- [x] Dimension 6 Registry Safety: PASS
 
-**Approval:** pending
+**Approval:** approved 2026-05-31
