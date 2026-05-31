@@ -174,6 +174,14 @@ function SessionRunner({
   )
 }
 
+// Config snapshot committed when user explicitly starts a session (CR-02)
+type CommittedConfig = {
+  mode: StudyMode
+  tags: Set<string>
+  size: 'all' | 10 | 20 | 'custom'
+  count: number
+} | null
+
 // Top-level page component
 export function StudySessionPage() {
   const { id: deckId } = useParams<{ id: string }>()
@@ -198,6 +206,14 @@ export function StudySessionPage() {
   const [selectedTags, setSelectedTags] = useState<Set<string>>(new Set())
   const [sessionSize, setSessionSize] = useState<'all' | 10 | 20 | 'custom'>('all')
   const [customCount, setCustomCount] = useState<number>(1)
+
+  // Committed config snapshot — only set when user explicitly starts a session (CR-02/WR-03)
+  // The loadCards effect depends on this snapshot, not live config state, to prevent
+  // mid-session re-triggering when the user changes tags or size.
+  // For global SR (/study), auto-commit immediately with default config.
+  const [committedConfig, setCommittedConfig] = useState<CommittedConfig>(
+    isGlobalSR ? { mode: 'sr', tags: new Set(), size: 'all', count: 1 } : null,
+  )
 
   useEffect(() => {
     document.title = 'Study — Kartex'
@@ -232,16 +248,18 @@ export function StudySessionPage() {
     })()
   }, [deckId])
 
-  // Load cards when a mode is selected
+  // Load cards only when the user explicitly commits a config (CR-02/WR-03)
+  // Deps are [committedConfig, deckId] — live config state changes do not re-trigger this.
   useEffect(() => {
-    if (!selectedMode) return
+    if (!committedConfig) return
     setLoadingCards(true)
     void (async () => {
       try {
+        const { mode, tags, size, count } = committedConfig
         const endpoint =
-          selectedMode === 'sr' && !deckId
+          mode === 'sr' && !deckId
             ? '/api/study/due'
-            : selectedMode === 'sr' && deckId
+            : mode === 'sr' && deckId
               ? '/api/study/due'
               : `/api/study/deck/${deckId}`
 
@@ -250,22 +268,22 @@ export function StudySessionPage() {
           const data = await res.json() as DueCard[]
           // For SR mode with deck filter, filter by deckId
           const filtered =
-            selectedMode === 'sr' && deckId
+            mode === 'sr' && deckId
               ? data.filter((c) => c.deckId === deckId)
               : data
 
           // STUDY-01: Tag filter (OR logic; untagged excluded when any tag active)
           const tagFiltered =
-            selectedTags.size === 0
+            tags.size === 0
               ? filtered
-              : filtered.filter((c) => c.tags.some((t) => selectedTags.has(t)))
+              : filtered.filter((c) => c.tags.some((t) => tags.has(t)))
 
           // STUDY-02: Session size slice (SR mode only per D-08)
           const sized =
-            selectedMode === 'sr' && sessionSize !== 'all'
+            mode === 'sr' && size !== 'all'
               ? tagFiltered.slice(
                   0,
-                  sessionSize === 'custom' ? Math.max(1, customCount) : sessionSize,
+                  size === 'custom' ? Math.max(1, count) : size,
                 )
               : tagFiltered
 
@@ -282,7 +300,7 @@ export function StudySessionPage() {
         setLoadingCards(false)
       }
     })()
-  }, [selectedMode, deckId, selectedTags, sessionSize, customCount])
+  }, [committedConfig, deckId])
 
   // Mode selector (deck-specific sessions only)
   if (!selectedMode) {
@@ -364,10 +382,18 @@ export function StudySessionPage() {
         {/* Spaced Repetition card */}
         <div
           className="border border-border rounded-lg p-6 cursor-pointer hover:ring-2 hover:ring-ring transition-all mb-4"
-          onClick={() => setSelectedMode('sr')}
+          onClick={() => {
+            setSelectedMode('sr')
+            setCommittedConfig({ mode: 'sr', tags: selectedTags, size: sessionSize, count: customCount })
+          }}
           role="button"
           tabIndex={0}
-          onKeyDown={(e) => { if (e.key === 'Enter') setSelectedMode('sr') }}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              setSelectedMode('sr')
+              setCommittedConfig({ mode: 'sr', tags: selectedTags, size: sessionSize, count: customCount })
+            }
+          }}
         >
           <div className="flex items-center gap-2 mb-1">
             <Brain className="h-5 w-5" aria-hidden="true" />
@@ -380,10 +406,18 @@ export function StudySessionPage() {
         {/* Deck Mode card */}
         <div
           className="border border-border rounded-lg p-6 cursor-pointer hover:ring-2 hover:ring-ring transition-all mb-4"
-          onClick={() => setSelectedMode('deck')}
+          onClick={() => {
+            setSelectedMode('deck')
+            setCommittedConfig({ mode: 'deck', tags: selectedTags, size: sessionSize, count: customCount })
+          }}
           role="button"
           tabIndex={0}
-          onKeyDown={(e) => { if (e.key === 'Enter') setSelectedMode('deck') }}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              setSelectedMode('deck')
+              setCommittedConfig({ mode: 'deck', tags: selectedTags, size: sessionSize, count: customCount })
+            }
+          }}
         >
           <div className="flex items-center gap-2 mb-1">
             <BookOpen className="h-5 w-5" aria-hidden="true" />
@@ -415,7 +449,12 @@ export function StudySessionPage() {
           <Button
             className="w-full mt-4"
             disabled={examDurationSeconds === null}
-            onClick={() => { if (examDurationSeconds !== null) setSelectedMode('exam') }}
+            onClick={() => {
+              if (examDurationSeconds !== null) {
+                setSelectedMode('exam')
+                setCommittedConfig({ mode: 'exam', tags: selectedTags, size: sessionSize, count: customCount })
+              }
+            }}
           >
             Start Exam
           </Button>
