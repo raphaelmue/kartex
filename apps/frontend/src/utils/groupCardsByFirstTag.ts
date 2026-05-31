@@ -1,7 +1,22 @@
-// STUB — created in 08-01 (Wave 0) to allow RED tests to run.
-// Real implementation will be added in 08-03 (Wave 2).
-// This file intentionally exports a placeholder that throws at runtime.
+import { Card } from '@kartex/shared'
 
-export function groupCardsByFirstTag(_cards: unknown[]): never {
-  throw new Error('groupCardsByFirstTag is not yet implemented (Wave 0 stub)')
+export function groupCardsByFirstTag(cards: Card[]): { tag: string; cards: Card[] }[] {
+  const groups = new Map<string, Card[]>()
+
+  for (const card of cards) {
+    const tag = card.tags[0] ?? 'Untagged'
+    if (!groups.has(tag)) groups.set(tag, [])
+    groups.get(tag)!.push(card)
+  }
+
+  // Sort alphabetically by tag name, Untagged always last
+  const sorted = [...groups.entries()]
+    .filter(([tag]) => tag !== 'Untagged')
+    .sort(([a], [b]) => a.localeCompare(b))
+
+  if (groups.has('Untagged')) {
+    sorted.push(['Untagged', groups.get('Untagged')!])
+  }
+
+  return sorted.map(([tag, cards]) => ({ tag, cards }))
 }

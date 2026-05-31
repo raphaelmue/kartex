@@ -5,6 +5,7 @@ import { toast } from 'sonner'
 import { Card, Deck, Share } from '@kartex/shared'
 import { api } from '@/lib/api'
 import { useAuth } from '@/context/AuthContext'
+import { groupCardsByFirstTag } from '@/utils/groupCardsByFirstTag'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
@@ -90,6 +91,23 @@ function TagChips({ tags }: { tags: string[] }) {
 }
 
 type DeckWithPermission = Deck & { userPermission?: string; owner?: { username: string } }
+
+type CardActionCellProps = { card: Card; confirmDeleteCardId: string | null; onEdit: (c: Card) => void; onDelete: (id: string) => void; onCancelDelete: () => void }
+function CardActionCell({ card, confirmDeleteCardId, onEdit, onDelete, onCancelDelete }: CardActionCellProps) {
+  if (confirmDeleteCardId === card.id) return (
+    <div className="flex items-center gap-2" role="alert">
+      <span className="text-sm text-muted-foreground">Are you sure?</span>
+      <Button size="sm" variant="destructive" onClick={() => onDelete(card.id)}>Yes, delete</Button>
+      <Button size="sm" variant="outline" onClick={onCancelDelete}>Cancel</Button>
+    </div>
+  )
+  return (
+    <div className="flex items-center gap-2">
+      <Button size="sm" variant="outline" onClick={() => onEdit(card)}>Edit</Button>
+      <Button size="sm" variant="destructive" onClick={() => onDelete(card.id)}>Delete</Button>
+    </div>
+  )
+}
 
 export function DeckDetailPage() {
   const { id: deckId } = useParams<{ id: string }>()
@@ -294,110 +312,72 @@ export function DeckDetailPage() {
               {confirmDeleteDeck ? (
                 <div className="flex items-center gap-2" role="alert">
                   <span className="text-sm text-muted-foreground">Are you sure?</span>
-                  <Button
-                    size="sm"
-                    variant="destructive"
-                    onClick={() => void handleDeleteDeck()}
-                  >
-                    Yes, delete
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => setConfirmDeleteDeck(false)}
-                  >
-                    Cancel
-                  </Button>
+                  <Button size="sm" variant="destructive" onClick={() => void handleDeleteDeck()}>Yes, delete</Button>
+                  <Button size="sm" variant="outline" onClick={() => setConfirmDeleteDeck(false)}>Cancel</Button>
                 </div>
               ) : (
-                <Button
-                  size="sm"
-                  variant="destructive"
-                  onClick={() => setConfirmDeleteDeck(true)}
-                >
-                  Delete Deck
-                </Button>
+                <Button size="sm" variant="destructive" onClick={() => setConfirmDeleteDeck(true)}>Delete Deck</Button>
               )}
             </>
           )}
         </div>
       </div>
 
-      <Table aria-label="Cards in deck">
-        <TableHeader>
-          <TableRow>
-            <TableHead className="w-12">#</TableHead>
-            <TableHead>Front</TableHead>
-            <TableHead>Tags</TableHead>
-            <TableHead>Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {cards.length === 0 && (
-            <TableRow>
-              <TableCell colSpan={4}>
-                <div className="flex flex-col items-center justify-center py-16 gap-3 text-muted-foreground">
-                  <BookOpen className="h-10 w-10" aria-hidden="true" />
-                  <p className="text-sm font-bold">No cards yet</p>
-                  {canEdit ? (
-                    <>
-                      <p className="text-sm">Add your first card to this deck.</p>
-                      <Button onClick={openAddCard}>Add Card</Button>
-                    </>
-                  ) : (
-                    <p className="text-sm">This deck has no cards yet.</p>
-                  )}
-                </div>
-              </TableCell>
-            </TableRow>
+      {cards.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-16 gap-3 text-muted-foreground">
+          <BookOpen className="h-10 w-10" aria-hidden="true" />
+          <p className="text-sm font-bold">No cards yet</p>
+          {canEdit ? (
+            <>
+              <p className="text-sm">Add your first card to this deck.</p>
+              <Button onClick={openAddCard}>Add Card</Button>
+            </>
+          ) : (
+            <p className="text-sm">This deck has no cards yet.</p>
           )}
-          {cards.map((card, i) => (
-            <TableRow key={card.id}>
-              <TableCell className="w-12">{i + 1}</TableCell>
-              <TableCell className="max-w-xs truncate">{card.frontContent}</TableCell>
-              <TableCell>
-                <TagChips tags={card.tags} />
-              </TableCell>
-              <TableCell>
-                {canEdit && (
-                  confirmDeleteCardId === card.id ? (
-                    <div className="flex items-center gap-2" role="alert">
-                      <span className="text-sm text-muted-foreground">Are you sure?</span>
-                      <Button
-                        size="sm"
-                        variant="destructive"
-                        onClick={() => void handleDeleteCard(card.id)}
-                      >
-                        Yes, delete
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => setConfirmDeleteCardId(null)}
-                      >
-                        Cancel
-                      </Button>
-                    </div>
-                  ) : (
-                    <div className="flex items-center gap-2">
-                      <Button size="sm" variant="outline" onClick={() => openEditCard(card)}>
-                        Edit
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="destructive"
-                        onClick={() => setConfirmDeleteCardId(card.id)}
-                      >
-                        Delete
-                      </Button>
-                    </div>
-                  )
-                )}
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+        </div>
+      ) : (
+        groupCardsByFirstTag(cards).map(({ tag, cards: groupCards }) => (
+          <div key={tag} className="mb-6">
+            <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-2">
+              {tag}
+              <span className="font-normal normal-case tracking-normal ml-1">— {groupCards.length} cards</span>
+            </h3>
+            <Table aria-label={`Cards tagged ${tag}`}>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-12">#</TableHead>
+                  <TableHead>Front</TableHead>
+                  <TableHead>Tags</TableHead>
+                  <TableHead>Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {groupCards.map((card, i) => (
+                  <TableRow key={card.id}>
+                    <TableCell className="w-12">{i + 1}</TableCell>
+                    <TableCell className="max-w-xs truncate">{card.frontContent}</TableCell>
+                    <TableCell>
+                      <TagChips tags={card.tags} />
+                    </TableCell>
+                    <TableCell>
+                      {canEdit && (
+                        <CardActionCell
+                          card={card}
+                          confirmDeleteCardId={confirmDeleteCardId}
+                          onEdit={openEditCard}
+                          onDelete={(id) => void handleDeleteCard(id)}
+                          onCancelDelete={() => setConfirmDeleteCardId(null)}
+                        />
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        ))
+      )}
 
       {canEdit && cards.length > 0 && (
         <div className="mt-4">
