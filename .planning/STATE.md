@@ -11,11 +11,11 @@ See: .planning/PROJECT.md (updated 2026-05-30)
 
 Milestone: v1.1 Study Experience & Polish
 Phase: Phase 8 — Study UX
-Plan: 08-02 (next), 08-03 (remaining)
-Status: In progress — 08-01 complete (Wave 0 RED tests)
-Last activity: 2026-05-31 — 08-01 executed: 13 RED test stubs created for STUDY-01/02/03/04
+Plan: 08-03 (remaining)
+Status: In progress — 08-02 complete (STUDY-01/02/03 GREEN — tag filter, session size, shuffle)
+Last activity: 2026-05-31 — 08-02 executed: StudySessionPage tag filter + session size picker + shuffle implemented; 10 RED tests now GREEN
 
-Progress: [████████████░░░░░░░░░░░░░░░░░░░░░░░░░░] 33% (1/3 phases complete, Phase 8 in progress 1/3 plans)
+Progress: [████████████░░░░░░░░░░░░░░░░░░░░░░░░░░] 33% (1/3 phases complete, Phase 8 in progress 2/3 plans)
 
 ## Performance Metrics
 
@@ -75,12 +75,15 @@ Recent decisions affecting current work:
 - 08-01: StudySessionPage does NOT import useAuth — no AuthContext mock needed in StudySessionPage tests (confirmed by source read)
 - 08-01: DeckDetailPage fetchShares triggers only when ownerId === user.id — use ownerId='other-user' in test deck to avoid 3rd api.get mock requirement
 - 08-01: mockApiGet.mockImplementation(url =>) preferred over mockResolvedValueOnce for components with parallel (non-sequential) api.get calls
+- 08-02: SessionProgress renders 'Card X of Y' (not 'X / Y') — test assertions must use actual component format
+- 08-02: act(async () => { await waitFor(...) }) incompatible with Vitest 2.1.9 — use direct waitFor pattern instead
+- 08-02: availableTags derived from allCardsRes prefetch (not cards state) — prevents chip list shrinking when filter active
 
 ### Pending Todos
 
 **v1.1 in progress:**
-- STUDY-01/02/03: Tag filter + session size + shuffle → Phase 8
-- STUDY-04: Deck detail tag grouping → Phase 8
+- ~~STUDY-01/02/03: Tag filter + session size + shuffle~~ → DONE 08-02
+- STUDY-04: Deck detail tag grouping → Phase 8 (08-03)
 - ~~SHELL-01/02: Mobile sidebar collapse + overlay drawer~~ → DONE Phase 7
 - ~~SHELL-03: App footer~~ → DONE Phase 7
 - I18N-01/02/03: react-i18next setup + string externalization + language switcher → Phase 9
@@ -118,5 +121,5 @@ Items acknowledged and deferred at milestone close on 2026-05-30:
 ## Session Continuity
 
 Last session: 2026-05-31
-Stopped at: 08-01 complete — 13 RED test stubs for STUDY-01/02/03/04
-Resume with: `/gsd-execute-phase 8` (continues at 08-02)
+Stopped at: 08-02 complete — STUDY-01/02/03 GREEN (tag filter, session size, shuffle in StudySessionPage)
+Resume with: `/gsd-execute-phase 8` (continues at 08-03)
