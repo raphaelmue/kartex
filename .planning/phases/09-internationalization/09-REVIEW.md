@@ -1,14 +1,15 @@
 ---
 phase: 09-internationalization
-reviewed: 2026-06-01T15:30:45Z
+reviewed: 2026-06-01T00:00:00Z
 depth: standard
-files_reviewed: 22
+files_reviewed: 24
 files_reviewed_list:
+  - apps/frontend/src/locales/en.json
+  - apps/frontend/src/locales/de.json
   - apps/frontend/src/i18n.ts
   - apps/frontend/src/i18n.d.ts
   - apps/frontend/src/main.tsx
   - apps/frontend/src/test/setup.ts
-  - apps/frontend/src/components/__tests__/LanguageToggle.test.tsx
   - apps/frontend/src/components/AppShell.tsx
   - apps/frontend/src/components/CardFlip.tsx
   - apps/frontend/src/components/RatingButtons.tsx
@@ -17,6 +18,7 @@ files_reviewed_list:
   - apps/frontend/src/components/MediaUploadToolbar.tsx
   - apps/frontend/src/components/DeckFormModal.tsx
   - apps/frontend/src/components/CardEditorModal.tsx
+  - apps/frontend/src/components/__tests__/LanguageToggle.test.tsx
   - apps/frontend/src/pages/LoginPage.tsx
   - apps/frontend/src/pages/RegisterPage.tsx
   - apps/frontend/src/pages/DashboardPage.tsx
@@ -27,108 +29,99 @@ files_reviewed_list:
   - apps/frontend/src/pages/DeckDetailPage.tsx
   - apps/frontend/src/pages/StudySessionPage.tsx
 findings:
-  critical: 2
-  warning: 4
+  critical: 1
+  warning: 3
   info: 3
-  total: 9
+  total: 7
 status: issues_found
 ---
 
-# Phase 09: Code Review Report
+# Phase 9: Code Review Report
 
-**Reviewed:** 2026-06-01T15:30:45Z
+**Reviewed:** 2026-06-01
 **Depth:** standard
-**Files Reviewed:** 22
+**Files Reviewed:** 24
 **Status:** issues_found
 
 ## Summary
 
-This phase adds react-i18next internationalization across the full frontend — locale files, type augmentation, test setup, and translation calls in every component and page. The locale files (en.json, de.json) are complete and internally consistent; no missing keys were found between them.
+This phase introduces react-i18next (i18next v26) across the full frontend: en/de locale JSON files, TypeScript type augmentation via `i18n.d.ts`, test setup, and `t()` wrapping in every component and page. Key parity between `en.json` and `de.json` is perfect — a programmatic comparison confirms zero missing keys in either direction. All `t()` call sites use keys that exist in the locale files. User-supplied data (deck titles, usernames, card content) is consistently passed as interpolation values, never as keys — there is no pathway from user content to XSS through the i18n layer. The TypeScript type augmentation in `i18n.d.ts` provides compile-time key checking across the codebase.
 
-Two blockers were found: the test setup comment promises synchronous i18n initialization via `initImmediate: false` but the option is absent from the actual `init()` call, meaning tests can render before translations load; and an unhandled promise rejection path exists in `MediaUploadToolbar` when `fetch` throws a network error. Four warnings cover a stale-closure risk in `ExamTimer`, a hardcoded English string in `DeckDetailPage`, dead locale keys in AppShell, and a `console.error` left in production code. Three info items address code duplication and style.
-
----
+One critical bug was found: `ExamTimer` places multiple side effects inside a React state updater function, violating React's purity requirement. In React 18 StrictMode (enabled in `main.tsx`), this causes `onExpire()` to fire twice in development. Three warnings cover a variable shadowing issue that could silently misdirect future code edits, an untranslated UI string, and a misleading test comment that documents an option which is absent from the actual configuration.
 
 ## Critical Issues
 
-### CR-01: `initImmediate: false` missing from test i18n setup — translations may not be ready on first render
+### CR-01: Side effects inside state updater in `ExamTimer` — double-fires `onExpire` in StrictMode
 
-**File:** `apps/frontend/src/test/setup.ts:6-15`
-**Issue:** The comment at line 6-9 explicitly states that `initImmediate: false` is required to make `i18n.init()` synchronous in the test environment, and that without it the first render in jsdom will receive key strings rather than translated text. The option is described as the reason all existing tests stay green. However, `initImmediate: false` is **not present** in the actual `init()` options object passed at lines 10-15. The promise returned by `init()` is discarded via `void`. In the default configuration, i18next defers initialization to the next tick via `setImmediate`/`setTimeout`. If a test renders a component before the tick resolves, `t('some.key')` returns the key string `"some.key"` rather than the English text, causing assertion failures or silent test mismatch.
+**File:** `apps/frontend/src/components/ExamTimer.tsx:17-23`
 
-**Fix:**
-```ts
-void i18n.use(initReactI18next).init({
-  lng: 'en',
-  fallbackLng: 'en',
-  initImmediate: false,   // <-- add this; makes init run synchronously
-  resources: { en: { translation: en } },
-  interpolation: { escapeValue: false },
-})
+**Issue:** The `setSecondsLeft` functional updater contains three side effects: `clearInterval(timerRef.current!)`, `timerRef.current = null`, and `onExpire()`. React requires state updater functions to be pure. In React 18 StrictMode — which is enabled via `<React.StrictMode>` in `main.tsx:16` — React intentionally double-invokes state updaters in development to surface this class of bug. The result is that `onExpire()` fires twice when the timer expires. The current `onExpire` caller (`setExamExpired(true)`) is idempotent, so visible state is not corrupted. However: (a) this is an undocumented side-effect-double-fire that any future non-idempotent `onExpire` (e.g. score submission, navigation) will hit; (b) `clearInterval` and `timerRef.current = null` inside a pure function context is a correctness violation regardless of current outcomes.
+
+**Fix:** Move all side effects into a separate `useEffect` that watches `secondsLeft`, using a stable ref for `onExpire` to avoid re-creating the interval:
+
+```tsx
+export function ExamTimer({ durationSeconds, onExpire }: ExamTimerProps) {
+  const { t } = useTranslation()
+  const [secondsLeft, setSecondsLeft] = useState(durationSeconds)
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const onExpireRef = useRef(onExpire)
+  useEffect(() => { onExpireRef.current = onExpire }, [onExpire])
+
+  // Pure state updater — no side effects
+  useEffect(() => {
+    timerRef.current = setInterval(() => {
+      setSecondsLeft((prev) => (prev <= 1 ? 0 : prev - 1))
+    }, 1000)
+    return () => { if (timerRef.current) clearInterval(timerRef.current) }
+  }, [durationSeconds])
+
+  // Side effects isolated in their own effect
+  useEffect(() => {
+    if (secondsLeft === 0) {
+      if (timerRef.current) {
+        clearInterval(timerRef.current)
+        timerRef.current = null
+      }
+      onExpireRef.current()
+    }
+  }, [secondsLeft])
+
+  // ... rest of render unchanged
+}
 ```
-
----
-
-### CR-02: Unhandled promise rejection in `MediaUploadToolbar` on network error
-
-**File:** `apps/frontend/src/components/MediaUploadToolbar.tsx:61-65, 70-74`
-**Issue:** `handleUpload` is called with `.finally()` only — there is no `.catch()`. If `fetch('/api/media/upload', ...)` throws a network-level error (e.g. `TypeError: Failed to fetch`), the rejected promise propagates through `handleUpload` (which is `async`) and is not caught. The `.finally()` callback still runs to reset state, but the rejection itself becomes an unhandled promise rejection, which is logged as an uncaught error in the browser console and silently swallows the failure without showing the user an error toast.
-
-```ts
-// handleImageChange — no .catch(), network errors silently fail
-handleUpload(file, 'image').finally(() => {
-  setUploadingImage(false)
-  if (imageInputRef.current) imageInputRef.current.value = ''
-})
-```
-
-**Fix:** Add a `.catch()` to show the error toast and prevent unhandled rejections:
-```ts
-handleUpload(file, 'image')
-  .catch(() => toast.error(t('media.uploadFailed')))
-  .finally(() => {
-    setUploadingImage(false)
-    if (imageInputRef.current) imageInputRef.current.value = ''
-  })
-```
-Apply the same fix to `handleAudioChange` at lines 70-74.
 
 ---
 
 ## Warnings
 
-### WR-01: `ExamTimer` — `onExpire` excluded from effect deps, stale closure risk
+### WR-01: Variable `t` shadows translation function in `DeckDetailPage`
 
-**File:** `apps/frontend/src/components/ExamTimer.tsx:15-33`
-**Issue:** The `useEffect` that starts the interval deliberately excludes `onExpire` from the dependency array (the eslint-disable comment on line 32 applies only to `durationSeconds`). If the parent component passes a new `onExpire` reference on a subsequent render (e.g., an inline arrow function), the interval will still call the stale version captured at mount time. In `StudySessionPage`, `onExpire` is `() => setExamExpired(true)`, which is recreated on every render. While `setExamExpired` itself is a stable state-setter and the closure is benign in this specific call site, the pattern is fragile: any future refactor of the parent's `onExpire` that adds logic beyond calling a state setter could silently call stale code.
+**File:** `apps/frontend/src/pages/DeckDetailPage.tsx:293`
 
-**Fix:** Wrap `onExpire` in a ref so the effect always calls the latest version without re-creating the interval:
-```ts
-const onExpireRef = useRef(onExpire)
-useEffect(() => { onExpireRef.current = onExpire }, [onExpire])
+**Issue:** The arrow function passed to `Array.prototype.some()` uses `t` as its parameter name:
 
-useEffect(() => {
-  timerRef.current = setInterval(() => {
-    setSecondsLeft((prev) => {
-      if (prev <= 1) {
-        clearInterval(timerRef.current!)
-        timerRef.current = null
-        onExpireRef.current()   // always latest
-        return 0
-      }
-      return prev - 1
-    })
-  }, 1000)
-  return () => { if (timerRef.current) clearInterval(timerRef.current) }
-}, [durationSeconds])
+```tsx
+const filteredCards = filterTags.size > 0
+  ? cards.filter((c) => c.tags.some((t) => filterTags.has(t)))
+  : cards
+```
+
+This shadows the `t` translation function destructured from `useTranslation()` at line 116. Inside the `.some()` callback, `t` resolves to the iterated tag string, not the translator. TypeScript does not error on this because both are `string`-like in this context. The risk is that a future developer adding a translated message inside that callback (e.g. for logging or display) would silently get a tag string compared/passed instead of a translation call.
+
+**Fix:** Rename the callback parameter:
+```tsx
+const filteredCards = filterTags.size > 0
+  ? cards.filter((c) => c.tags.some((tag) => filterTags.has(tag)))
+  : cards
 ```
 
 ---
 
-### WR-02: Hardcoded English string `"more"` in `DeckDetailPage` bypasses i18n
+### WR-02: Hardcoded English string `"+N more"` in `TagChips` not localized
 
-**File:** `apps/frontend/src/pages/DeckDetailPage.tsx:90`
-**Issue:** The `TagChips` component renders `+{extra} more` as a hardcoded English string. This is the only translatable string in the reviewed codebase that was not migrated to the i18n system. In German locale it will render as e.g. "+2 more" instead of "+2 weitere".
+**File:** `apps/frontend/src/pages/DeckDetailPage.tsx:89`
+
+**Issue:** The `TagChips` component renders the overflow label as a hardcoded English string that bypasses the i18n system entirely:
 
 ```tsx
 {extra > 0 && (
@@ -136,70 +129,72 @@ useEffect(() => {
 )}
 ```
 
-**Fix:** Add a key to both locale files and use `t()`:
+This is the only translatable UI string in the reviewed files that was not migrated to `t()`. A German-locale user sees "+2 more" instead of "+2 weitere".
 
-en.json: `"nMoreTags": "+{{count}} more"`
-de.json: `"nMoreTags": "+{{count}} weitere"`
+**Fix:** Add the key to both locale files and use `t()`:
+
+```json
+// en.json — add to "deckDetail" section
+"nMoreTags": "+{{count}} more"
+
+// de.json — add to "deckDetail" section
+"nMoreTags": "+{{count}} weitere"
+```
 
 ```tsx
 {extra > 0 && (
-  <span className="text-xs text-muted-foreground">{t('common.nMoreTags', { count: extra })}</span>
+  <span className="text-xs text-muted-foreground">
+    {t('deckDetail.nMoreTags', { count: extra })}
+  </span>
 )}
 ```
 
 ---
 
-### WR-03: Dead locale keys `lang.en` / `lang.de` — language toggle uses hardcoded strings instead
+### WR-03: Test setup comment documents `initImmediate: false` but the option is absent
 
-**File:** `apps/frontend/src/components/AppShell.tsx:138, 249`
-**Issue:** Both locale files (en.json and de.json) define a `lang` namespace with `en: "EN"` and `de: "DE"`. These keys are never used. The language toggle button instead renders hardcoded string literals `'DE'` / `'EN'`:
+**File:** `apps/frontend/src/test/setup.ts:7`
 
-```tsx
-{i18n.language === 'de' ? 'DE' : 'EN'}
-```
+**Issue:** Lines 6–9 comment: *"initImmediate: false makes init synchronous so the first render in jsdom has translations."* The option `initImmediate: false` is not present in the `init()` call at lines 10–15. The comment describes this option as the mechanism that keeps tests green. In i18next v26, initialisation with bundled `resources` happens to be synchronous by default — so tests currently pass by coincidence. If the option is absent and a future version of i18next (or a plugin) changes the default, `t()` will return raw key strings on the first render, silently breaking assertions without a clear diagnostic.
 
-This is inconsistent — the locale files imply the intention to translate these labels, but the implementation bypasses them. If those locale keys are removed the code still works, but if they are kept they should be used, otherwise the keys are dead weight that misleads future maintainers.
-
-**Fix (option A — use the keys that already exist):**
-```tsx
-{i18n.language === 'de' ? t('lang.de') : t('lang.en')}
-```
-
-**Fix (option B — remove the dead keys):** Delete `lang.en` and `lang.de` from both locale files to remove the confusion.
-
----
-
-### WR-04: `console.error` left in production code
-
-**File:** `apps/frontend/src/pages/StudySessionPage.tsx:254`
-**Issue:** A `console.error` call is present in the prefetch effect of `StudySessionPage`. The comment acknowledges this is for debugging purposes (`"WR-04"`), but it will emit error-level log noise in production builds and reveal internal context about the data-fetching flow to anyone with DevTools open.
-
+**Fix:** Add the option explicitly to match the documented intent:
 ```ts
-console.error('[StudySessionPage] prefetch failed:', err)
-```
-
-**Fix:** Either remove the log entirely (the comment already says it is non-critical) or replace it with a proper error boundary / toast if user feedback is desired:
-```ts
-// remove the console.error — failure is non-critical and already handled by empty state
+void i18n.use(initReactI18next).init({
+  lng: 'en',
+  fallbackLng: 'en',
+  initImmediate: false,   // synchronous init — required so first jsdom render has translations
+  resources: { en: { translation: en } },
+  interpolation: { escapeValue: false },
+})
 ```
 
 ---
 
 ## Info
 
-### IN-01: `VisibilityBadge` component duplicated verbatim in `DecksPage` and `DeckDetailPage`
+### IN-01: Dead locale keys `lang.en` and `lang.de` — never referenced in any component
 
-**File:** `apps/frontend/src/pages/DecksPage.tsx:19-40`, `apps/frontend/src/pages/DeckDetailPage.tsx:30-51`
-**Issue:** The `VisibilityBadge` function component is identical in both files, including its i18n keys and Tailwind classes. Any change to badge styling or translation keys must be made twice.
+**File:** `apps/frontend/src/locales/en.json:297-299`, `apps/frontend/src/locales/de.json:296-299`
 
-**Fix:** Extract `VisibilityBadge` into a shared component (e.g., `apps/frontend/src/components/VisibilityBadge.tsx`) and import it in both pages.
+**Issue:** Both locale files define:
+```json
+"lang": { "en": "EN", "de": "DE" }
+```
+No component calls `t('lang.en')` or `t('lang.de')`. The `AppShell` language toggle renders hardcoded `'DE'` / `'EN'` literals directly. These keys are dead configuration that implies an intention that was not implemented.
+
+**Fix (option A):** Use the defined keys in `AppShell.tsx` lines 138 and 249:
+```tsx
+{i18n.language === 'de' ? t('lang.de') : t('lang.en')}
+```
+**Fix (option B):** Delete the `"lang"` section from both locale files to eliminate the misleading dead keys.
 
 ---
 
-### IN-02: Double `navItems.find()` call in `AppShell` title derivation
+### IN-02: `navItems.find()` called twice to compute `currentLabel` in `AppShell`
 
-**File:** `apps/frontend/src/components/AppShell.tsx:36-39`
-**Issue:** `navItems.find()` is called twice — once to check for a truthy match and once more (with a `!` assertion) to access the `.labelKey`. The first result is discarded.
+**File:** `apps/frontend/src/components/AppShell.tsx:37-39`
+
+**Issue:** `currentLabel` calls `navItems.find()` with the identical predicate twice — once to test for a match and a second time (with a `!` non-null assertion) to access the result:
 
 ```ts
 const currentLabel =
@@ -208,7 +203,7 @@ const currentLabel =
     : ...
 ```
 
-**Fix:** Capture the result once:
+**Fix:**
 ```ts
 const activeItem = navItems.find(item => location.pathname.startsWith(item.to))
 const currentLabel = activeItem
@@ -218,24 +213,35 @@ const currentLabel = activeItem
 
 ---
 
-### IN-03: i18n init error silently swallowed in `i18n.ts`
+### IN-03: Inconsistent `document.title` key pattern for auth pages vs all other pages
 
-**File:** `apps/frontend/src/i18n.ts:12`
-**Issue:** The `void` operator discards the promise returned by `.init()`. If initialization fails (malformed JSON, missing resource, plugin error), there is no error handler and the failure is silently ignored. The app will continue running with i18n in an uninitialized or partially initialized state, causing `t()` to return raw keys everywhere with no visible indication of the root cause.
+**File:** `apps/frontend/src/pages/LoginPage.tsx:39`, `apps/frontend/src/pages/RegisterPage.tsx:38`
 
-**Fix:** Attach a `.catch()` for at minimum a console error in development:
+**Issue:** Auth pages construct the browser title by concatenating a translated partial string with a hardcoded suffix:
 ```ts
-void i18n
-  .use(LanguageDetector)
-  .use(initReactI18next)
-  .init({ ... })
-  .catch((err) => {
-    console.error('[i18n] initialization failed:', err)
-  })
+document.title = t('auth.signInTitle') + ' — Kartex'   // "Sign in — Kartex"
+document.title = t('auth.createAccountTitle') + ' — Kartex'
+```
+Every other page stores the full title — including the `" — Kartex"` suffix — inside the translation key (e.g. `t('dashboard.title')` returns `"Dashboard — Kartex"`). This means the auth-page title suffix cannot be overridden per locale without touching the component source, contrary to the pattern set by every other page.
+
+**Fix:** Move the full title into the locale key, consistent with all other pages:
+```json
+// en.json
+"signInTitle": "Sign in — Kartex",
+"createAccountTitle": "Create account — Kartex"
+
+// de.json
+"signInTitle": "Anmelden — Kartex",
+"createAccountTitle": "Konto erstellen — Kartex"
+```
+```ts
+// LoginPage.tsx / RegisterPage.tsx
+document.title = t('auth.signInTitle')
+document.title = t('auth.createAccountTitle')
 ```
 
 ---
 
-_Reviewed: 2026-06-01T15:30:45Z_
+_Reviewed: 2026-06-01_
 _Reviewer: Claude (gsd-code-reviewer)_
 _Depth: standard_
