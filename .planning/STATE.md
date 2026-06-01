@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Study Experience & Polish
-status: executing
-stopped_at: 09-02 complete — AppShell translated, language toggle added, 5 shared components + 2 modals translated
-last_updated: "2026-06-01T17:15:00Z"
-last_activity: 2026-06-01 -- Phase 9 Plan 2 (AppShell + component translation + language toggle) complete
+status: complete
+stopped_at: 09-03 complete — all 9 pages translated, 254 keys en/de parity, 67 tests pass, phase verification gate passed
+last_updated: "2026-06-01T17:30:00Z"
+last_activity: 2026-06-01 -- Phase 9 Plan 3 (all pages string wrapping + phase verification gate) complete
 progress:
   total_phases: 3
-  completed_phases: 2
+  completed_phases: 3
   total_plans: 7
-  completed_plans: 5
-  percent: 71
+  completed_plans: 7
+  percent: 100
 ---
 
 # Project State
@@ -21,17 +21,17 @@ progress:
 See: .planning/PROJECT.md (updated 2026-05-30)
 
 **Core value:** A user can open their dashboard, see their due cards, and complete a spaced-repetition study session — that loop must always work.
-**Current focus:** v1.1 — Study Experience & Polish
+**Current focus:** v1.1 — Study Experience & Polish (COMPLETE)
 
 ## Current Position
 
 Milestone: v1.1 Study Experience & Polish
-Phase: Phase 9 — Internationalization
-Plan: 09-02 (complete)
-Status: Executing — ready for Plan 09-03
-Last activity: 2026-06-01 -- Phase 9 Plan 2 complete
+Phase: Phase 9 — Internationalization (COMPLETE)
+Plan: 09-03 (complete)
+Status: All plans complete — Phase 9 done, milestone v1.1 complete
+Last activity: 2026-06-01 -- Phase 9 Plan 3 complete
 
-Progress: [██████████████████████████████░░░░░░░░] 76% (09-02 complete — 2/3 Phase 9 plans done)
+Progress: [████████████████████████████████████████] 100% (all 7 plans done)
 
 ## Performance Metrics
 
@@ -50,7 +50,7 @@ Progress: [███████████████████████
 | 3 | 3/3 | ~19 min | ~6 min |
 | 4 | 3/3 | ~38 min | ~13 min |
 | 7 | 1/1 | ~4 min | ~4 min |
-| 9 | 2/3 | ~16 min | ~8 min |
+| 9 | 3/3 | ~24 min | ~8 min |
 
 **Recent Trend:**
 
@@ -104,6 +104,9 @@ Recent decisions affecting current work:
 - 09-01: Project uses yarn@4.15.0 (not pnpm) — use yarn workspace @kartex/frontend add for frontend package installs
 - 09-02: labelKey pattern for navItems/RATINGS arrays — store key strings at module scope; call t(key) inside component render to satisfy React hook rules
 - 09-02: a11y.revealHint added to both locale files — was missing from Plan 01 key inventory (CardFlip reveal hint text)
+- 09-03: EXAM_DURATIONS/SIZE_OPTIONS moved inside StudySessionPage component — needed t() access; module-scope arrays can't call hooks
+- 09-03: study.studyDeckLabel key added ('Study: {{deckTitle}}') — deckTitle interpolated as user content value, never a key (D-07)
+- 09-03: LazyCard subcomponent in ImportPage gets useTranslation for Front/Back preview labels
 
 ### Pending Todos
 
@@ -113,7 +116,7 @@ Recent decisions affecting current work:
 - ~~STUDY-04: Deck detail tag grouping~~ → DONE 08-03
 - ~~SHELL-01/02: Mobile sidebar collapse + overlay drawer~~ → DONE Phase 7
 - ~~SHELL-03: App footer~~ → DONE Phase 7
-- I18N-01/02/03: react-i18next setup + string externalization + language switcher → Phase 9
+- ~~I18N-01/02/03: react-i18next setup + string externalization + language switcher~~ → DONE Phase 9
 
 **Completed:**
 
@@ -149,5 +152,5 @@ Items acknowledged and deferred at milestone close on 2026-05-30:
 ## Session Continuity
 
 Last session: 2026-06-01
-Stopped at: 09-02 complete — AppShell translated, language toggle (EN/DE) added, 5 shared components + 2 modals translated, 67 tests green
-Resume with: `/gsd-execute-phase 9` (Phase 9 Plan 03: all 9 page files string wrapping + phase verification gate)
+Stopped at: 09-03 complete — all 9 pages translated, 254 en/de keys (parity), 67 tests pass, typecheck clean, phase verification gate passed
+Resume with: Milestone v1.1 complete. Start v1.2 planning or declare done.
