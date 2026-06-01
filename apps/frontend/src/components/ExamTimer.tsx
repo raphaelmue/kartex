@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Timer } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 interface ExamTimerProps {
   durationSeconds: number
@@ -7,6 +8,7 @@ interface ExamTimerProps {
 }
 
 export function ExamTimer({ durationSeconds, onExpire }: ExamTimerProps) {
+  const { t } = useTranslation()
   const [secondsLeft, setSecondsLeft] = useState(durationSeconds)
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
@@ -45,7 +47,7 @@ export function ExamTimer({ durationSeconds, onExpire }: ExamTimerProps) {
       className={`flex items-center gap-1 text-sm font-mono tabular-nums ${colorClass}`}
       role="timer"
       aria-live="off"
-      aria-label={`${mins}:${secs} remaining`}
+      aria-label={t('exam.timeRemaining', { time: `${mins}:${secs}` })}
     >
       <Timer className="h-4 w-4" aria-hidden="true" />
       <span>{mins}:{secs}</span>

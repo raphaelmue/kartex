@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import type { DueCard } from '@kartex/shared'
 import { KartexRenderer } from '@/components/KartexRenderer'
 
@@ -10,6 +11,8 @@ interface CardFlipProps {
 }
 
 export function CardFlip({ card, isFlipped, isFlipping, onClick, children }: CardFlipProps) {
+  const { t } = useTranslation()
+
   // Card body height: content-driven with minimum heights per UI-SPEC
   const cardBodyStyle: React.CSSProperties = {
     transformStyle: 'preserve-3d',
@@ -40,7 +43,7 @@ export function CardFlip({ card, isFlipped, isFlipping, onClick, children }: Car
         onClick={onClick}
         role="button"
         tabIndex={0}
-        aria-label="Flashcard. Click or press Space to reveal answer."
+        aria-label={t('a11y.flashcard')}
         onKeyDown={(e) => { if (e.code === 'Space') { e.preventDefault(); onClick() } }}
       >
         {/* Front face */}
@@ -48,13 +51,13 @@ export function CardFlip({ card, isFlipped, isFlipping, onClick, children }: Car
           style={faceStyle}
           className="w-full min-h-[320px] sm:min-h-[400px] bg-card border border-border rounded-lg shadow-md p-8 flex flex-col"
         >
-          <p className="text-xs text-muted-foreground font-normal uppercase tracking-wide mb-4">Front</p>
+          <p className="text-xs text-muted-foreground font-normal uppercase tracking-wide mb-4">{t('cardEditor.frontLabel')}</p>
           <div className="flex-1">
             <KartexRenderer content={card.frontContent} />
           </div>
           <hr className="border-border mt-8" />
           <p className="text-xs text-muted-foreground text-center mt-4 select-none">
-            Click or press Space to reveal
+            {t('a11y.revealHint')}
           </p>
         </div>
 
@@ -64,12 +67,12 @@ export function CardFlip({ card, isFlipped, isFlipping, onClick, children }: Car
           className="w-full min-h-[320px] sm:min-h-[400px] bg-card border border-border rounded-lg shadow-md p-8 flex flex-col"
           aria-live="polite"
         >
-          <p className="text-xs text-muted-foreground font-normal uppercase tracking-wide mb-2">Front</p>
+          <p className="text-xs text-muted-foreground font-normal uppercase tracking-wide mb-2">{t('cardEditor.frontLabel')}</p>
           <div className="opacity-60 mb-2">
             <KartexRenderer content={card.frontContent} />
           </div>
           <hr className="border-border my-4" />
-          <p className="text-xs text-muted-foreground font-normal uppercase tracking-wide mb-2">Back</p>
+          <p className="text-xs text-muted-foreground font-normal uppercase tracking-wide mb-2">{t('cardEditor.backLabel')}</p>
           <div className="flex-1">
             <KartexRenderer content={card.backContent} />
           </div>

@@ -14,6 +14,7 @@
     "switchToLight": "Switch to light mode",
     "switchLanguage": "Switch language",
     "flashcard": "Flashcard. Click or press Space to reveal answer.",
+    "revealHint": "Click or press Space to reveal",
     "uploadImage": "Upload image",
     "uploadAudio": "Upload audio",
     "leaveSession": "Leave study session"

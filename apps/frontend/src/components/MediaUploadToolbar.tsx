@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react'
 import { Image, Loader2, Music } from 'lucide-react'
 import { toast } from 'sonner'
+import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 
 interface MediaUploadToolbarProps {
@@ -9,6 +10,7 @@ interface MediaUploadToolbarProps {
 }
 
 export function MediaUploadToolbar({ onInsert, fieldRef }: MediaUploadToolbarProps) {
+  const { t } = useTranslation()
   const [uploadingImage, setUploadingImage] = useState(false)
   const [uploadingAudio, setUploadingAudio] = useState(false)
 
@@ -46,9 +48,9 @@ export function MediaUploadToolbar({ onInsert, fieldRef }: MediaUploadToolbarPro
         onInsert(insertText)
       }
 
-      toast.success(type === 'image' ? 'Image uploaded' : 'Audio uploaded')
+      toast.success(type === 'image' ? t('media.imageUploaded') : t('media.audioUploaded'))
     } else {
-      toast.error('Upload failed. Please try again.')
+      toast.error(t('media.uploadFailed'))
     }
   }
 
@@ -99,7 +101,7 @@ export function MediaUploadToolbar({ onInsert, fieldRef }: MediaUploadToolbarPro
         variant="ghost"
         size="icon"
         className="h-8 w-8"
-        aria-label="Upload image"
+        aria-label={t('a11y.uploadImage')}
         disabled={uploadingImage}
         aria-busy={uploadingImage}
         onClick={() => imageInputRef.current?.click()}
@@ -117,7 +119,7 @@ export function MediaUploadToolbar({ onInsert, fieldRef }: MediaUploadToolbarPro
         variant="ghost"
         size="icon"
         className="h-8 w-8"
-        aria-label="Upload audio"
+        aria-label={t('a11y.uploadAudio')}
         disabled={uploadingAudio}
         aria-busy={uploadingAudio}
         onClick={() => audioInputRef.current?.click()}
