@@ -473,14 +473,15 @@ const DOCS_URL = 'https://github.com/raphaelmue/kartex#readme'
 
 ---
 
-## Open Questions
+## Open Questions (RESOLVED)
 
-1. **Does `vite-env.d.ts` already exist in the project?**
+1. **Does `vite-env.d.ts` already exist in the project?** (RESOLVED: Task 2 `<read_first>` instructs executor to check before creating; action handles both "exists" and "create" cases)
+   Original question:
    - What we know: `vitest.config.ts` exists; `src/test/setup.ts` exists. No `vite-env.d.ts` was found in the glob search.
    - What's unclear: Whether `/// <reference types="vite/client" />` is declared elsewhere.
    - Recommendation: Planner should add a Wave 0 task to check for `src/vite-env.d.ts` before creating it. If it exists, append the `declare const __APP_VERSION__` line.
 
-2. **Does `Menu` export exactly as `Menu` from `lucide-react` v1.16.0?**
+2. **Does `Menu` export exactly as `Menu` from `lucide-react` v1.16.0?** (RESOLVED: Task 3 `<read_first>` includes AppShell.tsx; typecheck in Task 2 will surface any import error early)
    - What we know: `lucide-react ^1.16.0` is installed. `BookOpen`, `Compass`, `LayoutDashboard`, `Moon`, `Settings`, `Shield`, `Sun`, `Upload` are confirmed imports in `AppShell.tsx`.
    - What's unclear: Whether `Menu` is the correct export name in v1.x (Lucide has renamed icons historically).
    - Recommendation: Executor should verify `import { Menu } from 'lucide-react'` compiles without error in Wave 0.
