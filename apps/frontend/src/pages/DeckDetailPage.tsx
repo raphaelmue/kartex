@@ -290,7 +290,7 @@ export function DeckDetailPage() {
 
   const allTags = [...new Set(cards.flatMap((c) => c.tags))].sort()
   const filteredCards = filterTags.size > 0
-    ? cards.filter((c) => c.tags.some((t) => filterTags.has(t)))
+    ? cards.filter((c) => c.tags.some((tag) => filterTags.has(tag)))
     : cards
 
   const canEdit =
