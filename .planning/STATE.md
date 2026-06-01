@@ -1,3 +1,19 @@
+---
+gsd_state_version: 1.0
+milestone: v1.1
+milestone_name: Study Experience & Polish
+status: executing
+stopped_at: 08-03 complete — Phase 8 fully done; STUDY-01/02/03/04 all GREEN
+last_updated: "2026-06-01T14:48:51.226Z"
+last_activity: 2026-06-01 -- Phase 9 planning complete
+progress:
+  total_phases: 3
+  completed_phases: 2
+  total_plans: 7
+  completed_plans: 4
+  percent: 57
+---
+
 # Project State
 
 ## Project Reference
@@ -12,14 +28,15 @@ See: .planning/PROJECT.md (updated 2026-05-30)
 Milestone: v1.1 Study Experience & Polish
 Phase: Phase 8 — Study UX
 Plan: 08-03 (complete)
-Status: Phase 8 complete — STUDY-01/02/03/04 all GREEN (tag filter, session size, shuffle, deck tag grouping)
-Last activity: 2026-05-31 — 08-03 executed: groupCardsByFirstTag utility + DeckDetailPage tag-sectioned layout; all 65 Phase 8 tests GREEN
+Status: Ready to execute
+Last activity: 2026-06-01 -- Phase 9 planning complete
 
 Progress: [████████████████░░░░░░░░░░░░░░░░░░░░░░] 40% (Phase 8 complete — 3/3 plans done)
 
 ## Performance Metrics
 
 **Velocity:**
+
 - Total plans completed: 6
 - Average duration: ~6 min/plan
 - Total execution time: ~0.6 hours
@@ -35,6 +52,7 @@ Progress: [████████████████░░░░░░░
 | 7 | 1/1 | ~4 min | ~4 min |
 
 **Recent Trend:**
+
 - Last 5 plans: 02-03, 03-01, 03-02, 03-03, 04-01
 - Trend: on track
 
@@ -84,6 +102,7 @@ Recent decisions affecting current work:
 ### Pending Todos
 
 **v1.1 in progress:**
+
 - ~~STUDY-01/02/03: Tag filter + session size + shuffle~~ → DONE 08-02
 - ~~STUDY-04: Deck detail tag grouping~~ → DONE 08-03
 - ~~SHELL-01/02: Mobile sidebar collapse + overlay drawer~~ → DONE Phase 7
@@ -91,6 +110,7 @@ Recent decisions affecting current work:
 - I18N-01/02/03: react-i18next setup + string externalization + language switcher → Phase 9
 
 **Completed:**
+
 - [2026-05-28] Add .kartex format documentation — done as quick task 260530-001 (`docs/kartex-format.md`)
 - [2026-05-28] Migrate to Prisma 7 — done as quick task 260530-002
 - [2026-05-28] Add dark mode — done as quick task 260530-003

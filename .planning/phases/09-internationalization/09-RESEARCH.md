@@ -1291,17 +1291,17 @@ Nyquist validation is enabled (`workflow.nyquist_validation: true`).
 
 ---
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **Language toggle label: text code or flag?**
    - What we know: D-05 says "compact toggle button showing the current language code (EN / DE)"
    - What's unclear: CONTEXT.md §Specific Ideas mentions flags as an alternative: "EN/DE or 🇬🇧/🇩🇪 if compact enough"
-   - Recommendation: Use text codes `'EN'` / `'DE'` as stated in D-05 (the decision). Flags are only mentioned in Specific Ideas (non-binding).
+   - RESOLVED: Use text codes `'EN'` / `'DE'` as stated in D-05 (the decision). Flags are only mentioned in Specific Ideas (non-binding).
 
 2. **Language state: ThemeContext co-location or standalone?**
    - What we know: CONTEXT.md marks this as Claude's discretion. The CONTEXT.md §Existing Patterns notes "ThemeContext.tsx — context + provider pattern; planner may co-locate language in ThemeContext or create a parallel LanguageContext."
    - What's unclear: i18next manages its own language state. A separate LanguageContext may be redundant.
-   - Recommendation: Do NOT create a LanguageContext. i18next self-manages language state. `i18n.language` is the source of truth. The language toggle button reads `i18n.language` directly from `const { i18n } = useTranslation()` — no separate context needed.
+   - RESOLVED: Do NOT create a LanguageContext. i18next self-manages language state. `i18n.language` is the source of truth. The language toggle button reads `i18n.language` directly from `const { i18n } = useTranslation()` — no separate context needed.
 
 ---
 
