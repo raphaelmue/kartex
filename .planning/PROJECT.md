@@ -1,11 +1,21 @@
 # Kartex
 
-## Current State: v1.1 Shipped — Planning Next Milestone
+## Current State: v1.2 In Progress
 
-**Shipped:** v1.1 Study Experience & Polish — 2026-06-01
+**Current milestone:** v1.2 Study Control & PWA
 **Phases shipped:** 1–9 (v1.0: phases 1–6, v1.1: phases 7–9)
 **Total plans shipped:** 26 (18 in v1.0 + 8 in v1.1)
 **TypeScript LOC:** ~9,531
+
+## Current Milestone: v1.2 Study Control & PWA
+
+**Goal:** Give users fine-grained control over which decks they study and how aggressively, make the app installable as a PWA, and add project documentation.
+
+**Target features:**
+- Active deck rotation — `isActive` boolean on Deck (schema change), deck picker on /study, session size picker on /study
+- SM-2 preset modes — Normal / Intensive / Exam Prep stored in user settings (server-side)
+- PWA shell — manifest.json + vite-plugin-pwa, static asset caching, installable app shell (API still requires network; full offline study is v2)
+- Docs — root README.md + refresh design.md and kartex-format.md
 
 ## What This Is
 
@@ -59,8 +69,14 @@ A user can open their dashboard, see their due cards, and complete a spaced-repe
 
 ### Active
 
-**v1.2 — To be defined:**
-- (run `/gsd:new-milestone` to define next milestone requirements and roadmap)
+**v1.2 — Study Control & PWA:**
+- User can mark a deck as active or inactive (persists in DB, filters /study queue)
+- User can select which decks to include in a /study session (deck picker)
+- User can choose session size from /study start screen (All / 10 / 20 / custom)
+- User can set SM-2 study mode: Normal, Intensive (halved intervals), or Exam Prep (quartered)
+- App is installable as a PWA (manifest.json + service worker for static asset caching)
+- README.md exists at repo root with overview, stack, quick-start, and doc links
+- design.md and kartex-format.md are accurate against v1.1 codebase
 
 ### Out of Scope
 
@@ -136,4 +152,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-06-01 after v1.1 milestone close. v1.0: 25 requirements shipped. v1.1: 10 requirements shipped (10/10 complete).*
+*Last updated: 2026-06-02 — v1.2 milestone started. v1.0: 25 requirements shipped. v1.1: 10 requirements shipped (10/10 complete).*

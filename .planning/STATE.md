@@ -1,17 +1,16 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.1
-milestone_name: Study Experience & Polish
-status: archived
-stopped_at: v1.1 milestone closed — ROADMAP/REQUIREMENTS archived, PROJECT.md updated, git tag v1.1 created
-last_updated: "2026-06-01T18:00:00Z"
-last_activity: 2026-06-01 -- v1.1 milestone complete and archived
+milestone: v1.2
+milestone_name: Study Control & PWA
+status: planning
+last_updated: "2026-06-01T22:09:03.445Z"
+last_activity: 2026-06-01
 progress:
-  total_phases: 3
-  completed_phases: 3
-  total_plans: 8
-  completed_plans: 8
-  percent: 100
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # Project State
@@ -25,11 +24,10 @@ See: .planning/PROJECT.md (updated 2026-06-01)
 
 ## Current Position
 
-Milestone: v1.1 Study Experience & Polish — ARCHIVED
-Status: Milestone complete and archived. Ready to start v1.2 planning.
-Last activity: 2026-06-01 -- v1.1 milestone archived
-
-Progress: [████████████████████████████████████████] 100% (all 8 plans done)
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-06-01 — Milestone v1.2 started
 
 ## Performance Metrics
 
