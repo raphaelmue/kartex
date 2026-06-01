@@ -1,9 +1,9 @@
 ---
-status: complete
+status: resolved
 phase: 08-study-ux
 source: [08-VERIFICATION.md]
 started: 2026-05-31T20:55:00Z
-updated: 2026-06-01T00:00:00Z
+updated: 2026-06-01T22:10:00Z
 ---
 
 ## Current Test
@@ -56,21 +56,25 @@ blocked: 0
 ## Gaps
 
 - truth: "Cards with the same tags always land in the same section regardless of stored tag order"
-  status: failed
+  status: resolved
   reason: "User reported: cards with [tag1,tag2] and [tag2,tag1] appear in different sections. Fix: sort each card's tags before applying first-tag-wins."
   severity: minor
   test: 6
-  root_cause: ""
-  artifacts: []
+  root_cause: "Section grouping replaced by flat table + filter bar — deduplication issue is moot with per-tag filter approach"
+  artifacts:
+    - path: "apps/frontend/src/pages/DeckDetailPage.tsx"
+      issue: "section grouping removed; replaced with flat table + filter bar"
   missing: []
   debug_session: ""
 
 - truth: "Deck card list uses a flat table with filter bar rather than section grouping"
-  status: failed
+  status: resolved
   reason: "User expressed design preference: remove h3 section grouping, replace with flat sortable table and filter bar on top — considers it better UX."
   severity: minor
   test: 6
-  root_cause: ""
-  artifacts: []
+  root_cause: "DeckDetailPage card list redesigned in 08-04 gap closure plan"
+  artifacts:
+    - path: "apps/frontend/src/pages/DeckDetailPage.tsx"
+      issue: "implemented flat table + tag filter bar; chips per unique tag, toggle-filter, no h3 sections"
   missing: []
   debug_session: ""
