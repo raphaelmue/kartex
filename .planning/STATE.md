@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Study Experience & Polish
 status: executing
-stopped_at: 09-01 complete — i18n infrastructure, locale files, test setup, RED LanguageToggle stub
-last_updated: "2026-06-01T17:02:30Z"
-last_activity: 2026-06-01 -- Phase 9 Plan 1 (i18n infrastructure) complete
+stopped_at: 09-02 complete — AppShell translated, language toggle added, 5 shared components + 2 modals translated
+last_updated: "2026-06-01T17:15:00Z"
+last_activity: 2026-06-01 -- Phase 9 Plan 2 (AppShell + component translation + language toggle) complete
 progress:
   total_phases: 3
   completed_phases: 2
@@ -27,11 +27,11 @@ See: .planning/PROJECT.md (updated 2026-05-30)
 
 Milestone: v1.1 Study Experience & Polish
 Phase: Phase 9 — Internationalization
-Plan: 09-01 (complete)
-Status: Executing — ready for Plan 09-02
-Last activity: 2026-06-01 -- Phase 9 Plan 1 complete
+Plan: 09-02 (complete)
+Status: Executing — ready for Plan 09-03
+Last activity: 2026-06-01 -- Phase 9 Plan 2 complete
 
-Progress: [████████████████████████████░░░░░░░░░░] 71% (09-01 complete — 1/3 Phase 9 plans done)
+Progress: [██████████████████████████████░░░░░░░░] 76% (09-02 complete — 2/3 Phase 9 plans done)
 
 ## Performance Metrics
 
@@ -50,7 +50,7 @@ Progress: [███████████████████████
 | 3 | 3/3 | ~19 min | ~6 min |
 | 4 | 3/3 | ~38 min | ~13 min |
 | 7 | 1/1 | ~4 min | ~4 min |
-| 9 | 1/3 | ~7 min | ~7 min |
+| 9 | 2/3 | ~16 min | ~8 min |
 
 **Recent Trend:**
 
@@ -102,6 +102,8 @@ Recent decisions affecting current work:
 - 09-01: i18next v26 removed initImmediate from InitOptions — omit it; v26 init is synchronous when no async backend plugin is used
 - 09-01: changeLanguage mock requires 'as any' cast — TFunction brand type ($TFunctionBrand) in i18next v26 is not satisfiable by a plain function mock
 - 09-01: Project uses yarn@4.15.0 (not pnpm) — use yarn workspace @kartex/frontend add for frontend package installs
+- 09-02: labelKey pattern for navItems/RATINGS arrays — store key strings at module scope; call t(key) inside component render to satisfy React hook rules
+- 09-02: a11y.revealHint added to both locale files — was missing from Plan 01 key inventory (CardFlip reveal hint text)
 
 ### Pending Todos
 
@@ -147,5 +149,5 @@ Items acknowledged and deferred at milestone close on 2026-05-30:
 ## Session Continuity
 
 Last session: 2026-06-01
-Stopped at: 09-01 complete — i18n infrastructure, locale files (252 keys), test setup, RED LanguageToggle stub
-Resume with: `/gsd-execute-phase 9` (Phase 9 Plan 02: AppShell + language toggle + string wrapping)
+Stopped at: 09-02 complete — AppShell translated, language toggle (EN/DE) added, 5 shared components + 2 modals translated, 67 tests green
+Resume with: `/gsd-execute-phase 9` (Phase 9 Plan 03: all 9 page files string wrapping + phase verification gate)

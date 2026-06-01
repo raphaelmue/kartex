@@ -91,7 +91,7 @@ Plans:
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] 09-02-PLAN.md — Wave 2: AppShell + language toggle + shared components + modals string wrapping
+- [x] 09-02-PLAN.md — Wave 2: AppShell + language toggle + shared components + modals string wrapping — completed 2026-06-01
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
@@ -113,4 +113,4 @@ Plans:
 | 6. Sharing, Explore & Production Deploy | v1.0 | 3/3 | Complete | 2026-05-29 |
 | 7. App Shell | v1.1 | 1/1 | Complete | 2026-05-31 |
 | 8. Study UX | v1.1 | 3/3 | Complete | 2026-05-31 |
-| 9. Internationalization | v1.1 | 0/3 | Planned | - |
+| 9. Internationalization | v1.1 | 2/3 | In progress | - |
