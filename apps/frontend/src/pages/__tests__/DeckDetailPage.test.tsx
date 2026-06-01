@@ -129,21 +129,16 @@ describe('groupCardsByFirstTag (pure function)', () => {
 })
 
 // -------------------------------------------------------------------
-// Block 2: DeckDetailPage tag section rendering (STUDY-04c)
-// Tests that DeckDetailPage renders an h3 heading for a tag section.
-// Currently the page renders a flat <Table> — no h3 headings exist.
-// This test fails RED because the heading element does not exist yet.
+// Block 2: DeckDetailPage tag filter bar rendering (STUDY-04c)
+// Tests that DeckDetailPage renders tag filter buttons for each unique tag.
+// Flat table design — no h3 section headers.
 // -------------------------------------------------------------------
 describe('DeckDetailPage tag section rendering', () => {
   beforeEach(() => {
     mockApiGet.mockReset()
   })
 
-  it('STUDY-04c: renders an h3 section header containing "bio" when deck has a card tagged "bio"', async () => {
-    // DeckDetailPage makes two concurrent calls: fetchDeck() and fetchCards()
-    // fetchDeck → api.get(`/api/decks/deck-abc`)
-    // fetchCards → api.get(`/api/decks/deck-abc/cards`)
-    // ownerId is 'other-user' (different from user-1) to avoid triggering fetchShares
+  it('STUDY-04c: renders tag filter buttons for each unique tag when deck has tagged cards', async () => {
     mockApiGet.mockImplementation((url: string) => {
       if (url === '/api/decks/deck-abc') {
         return Promise.resolve({
@@ -176,15 +171,17 @@ describe('DeckDetailPage tag section rendering', () => {
       </MemoryRouter>,
     )
 
-    // Wait for deck to load and render
     await waitFor(() => {
       expect(screen.getByText('Test Deck')).toBeTruthy()
     })
 
-    // After tag-sectioned layout is implemented (Wave 2), an h3 heading for "bio" must exist.
-    // Currently the flat <Table> renders no h3 — this assertion fails RED.
+    // Filter buttons for each unique tag should appear
     await waitFor(() => {
-      expect(screen.getByRole('heading', { level: 3, name: /bio/i })).toBeTruthy()
+      expect(screen.getByRole('button', { name: 'bio' })).toBeTruthy()
+      expect(screen.getByRole('button', { name: 'chem' })).toBeTruthy()
     })
+
+    // No h3 section headers — flat table design
+    expect(screen.queryByRole('heading', { level: 3, name: /bio/i })).toBeNull()
   })
 })
