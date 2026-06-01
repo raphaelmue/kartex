@@ -107,7 +107,8 @@
     "failedToAddUser": "Benutzer konnte nicht hinzugefügt werden.",
     "cardDeleted": "Karte gelöscht",
     "failedToLoadCards": "Karten konnten nicht geladen werden. Bitte versuchen Sie es erneut.",
-    "cardsTableAriaLabel": "Karten mit Tag {{tag}}"
+    "cardsTableAriaLabel": "Karten mit Tag {{tag}}",
+    "nMoreTags": "+{{count}} weitere"
   },
   "permission": {
     "read": "Lesen",

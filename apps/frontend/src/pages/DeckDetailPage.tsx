@@ -73,6 +73,7 @@ function PermissionBadge({ permission }: { permission: 'READ' | 'EDIT' | 'MANAGE
 }
 
 function TagChips({ tags }: { tags: string[] }) {
+  const { t } = useTranslation()
   const visible = tags.slice(0, 3)
   const extra = tags.length - 3
   return (
@@ -86,7 +87,9 @@ function TagChips({ tags }: { tags: string[] }) {
         </span>
       ))}
       {extra > 0 && (
-        <span className="text-xs text-muted-foreground">+{extra} more</span>
+        <span className="text-xs text-muted-foreground">
+          {t('deckDetail.nMoreTags', { count: extra })}
+        </span>
       )}
     </div>
   )

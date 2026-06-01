@@ -107,7 +107,8 @@
     "failedToAddUser": "Failed to add user.",
     "cardDeleted": "Card deleted",
     "failedToLoadCards": "Failed to load cards. Please try again.",
-    "cardsTableAriaLabel": "Cards tagged {{tag}}"
+    "cardsTableAriaLabel": "Cards tagged {{tag}}",
+    "nMoreTags": "+{{count}} more"
   },
   "permission": {
     "read": "Read",
