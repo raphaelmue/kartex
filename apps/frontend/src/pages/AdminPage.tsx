@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/button'
@@ -56,6 +57,7 @@ function formatDate(dateStr: string): string {
 // ---- Invite Codes Section ----
 
 function InviteCodesSection() {
+  const { t } = useTranslation()
   const [codes, setCodes] = useState<InviteCode[]>([])
   const [expiryDays, setExpiryDays] = useState(7)
   const [generating, setGenerating] = useState(false)
@@ -83,13 +85,13 @@ function InviteCodesSection() {
     try {
       const res = await api.post('/api/admin/invite-codes', { expiryDays })
       if (res.ok) {
-        toast.success('Invite code generated')
+        toast.success(t('admin.inviteGenerated'))
         await fetchCodes()
       } else {
-        toast.error('Something went wrong. Please try again.')
+        toast.error(t('common.somethingWrong'))
       }
     } catch {
-      toast.error('Something went wrong. Please try again.')
+      toast.error(t('common.somethingWrong'))
     } finally {
       setGenerating(false)
     }
@@ -99,14 +101,14 @@ function InviteCodesSection() {
     try {
       const res = await api.delete(`/api/admin/invite-codes/${id}`)
       if (res.ok) {
-        toast.success('Invite code deleted')
+        toast.success(t('admin.inviteDeleted'))
         setCodes((prev) => prev.filter((c) => c.id !== id))
         setConfirmDeleteId(null)
       } else {
-        toast.error('Something went wrong. Please try again.')
+        toast.error(t('common.somethingWrong'))
       }
     } catch {
-      toast.error('Something went wrong. Please try again.')
+      toast.error(t('common.somethingWrong'))
     }
   }
 
@@ -119,9 +121,9 @@ function InviteCodesSection() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Invite codes</CardTitle>
+        <CardTitle>{t('admin.inviteCodesTitle')}</CardTitle>
         <CardDescription>
-          Generate one-time invite codes for new user registration.
+          {t('admin.inviteCodesDesc')}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -132,7 +134,7 @@ function InviteCodesSection() {
               htmlFor="expiry-days"
               className="text-sm font-medium leading-none"
             >
-              Expiry (days)
+              {t('admin.expiryDaysLabel')}
             </label>
             <Input
               id="expiry-days"
@@ -146,26 +148,26 @@ function InviteCodesSection() {
             />
           </div>
           <Button onClick={handleGenerate} disabled={generating}>
-            {generating ? 'Generating...' : 'Generate'}
+            {generating ? t('admin.generating') : t('admin.generate')}
           </Button>
         </div>
 
         {/* Table */}
-        <Table aria-label="Invite codes">
+        <Table aria-label={t('admin.inviteCodesTitle')}>
           <TableHeader>
             <TableRow>
-              <TableHead>Code</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Used By</TableHead>
-              <TableHead>Expires</TableHead>
-              <TableHead>Actions</TableHead>
+              <TableHead>{t('table.codeColumn')}</TableHead>
+              <TableHead>{t('table.statusColumn')}</TableHead>
+              <TableHead>{t('table.usedByColumn')}</TableHead>
+              <TableHead>{t('table.expiresColumn')}</TableHead>
+              <TableHead>{t('table.actionsColumn')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {codes.length === 0 && (
               <TableRow>
                 <TableCell colSpan={5} className="text-center text-muted-foreground">
-                  No invite codes yet.
+                  {t('admin.noInviteCodes')}
                 </TableCell>
               </TableRow>
             )}
@@ -186,7 +188,7 @@ function InviteCodesSection() {
                         size="sm"
                         onClick={() => setConfirmDeleteId(code.id)}
                       >
-                        Delete
+                        {t('common.delete')}
                       </Button>
                     )}
                     {status === 'active' && confirmDeleteId === code.id && (
@@ -197,20 +199,20 @@ function InviteCodesSection() {
                         onKeyDown={handleConfirmKeyDown}
                         tabIndex={-1}
                       >
-                        <span className="text-sm">Are you sure?</span>
+                        <span className="text-sm">{t('common.confirm')}</span>
                         <Button
                           size="sm"
                           variant="destructive"
                           onClick={() => handleDelete(code.id)}
                         >
-                          Yes, delete
+                          {t('common.yesDelete')}
                         </Button>
                         <Button
                           size="sm"
                           variant="outline"
                           onClick={() => setConfirmDeleteId(null)}
                         >
-                          Cancel
+                          {t('common.cancel')}
                         </Button>
                       </span>
                     )}
@@ -228,6 +230,7 @@ function InviteCodesSection() {
 // ---- Users Section ----
 
 function UsersSection() {
+  const { t } = useTranslation()
   const { user: authUser } = useAuth()
   const [users, setUsers] = useState<UserRecord[]>([])
   const [confirmDeactivateId, setConfirmDeactivateId] = useState<string | null>(null)
@@ -252,13 +255,13 @@ function UsersSection() {
     try {
       const res = await api.patch(`/api/admin/users/${id}`, { role: newRole })
       if (res.ok) {
-        toast.success('Role updated')
+        toast.success(t('admin.roleUpdated'))
         await fetchUsers()
       } else {
-        toast.error('Something went wrong. Please try again.')
+        toast.error(t('common.somethingWrong'))
       }
     } catch {
-      toast.error('Something went wrong. Please try again.')
+      toast.error(t('common.somethingWrong'))
     }
   }
 
@@ -266,14 +269,14 @@ function UsersSection() {
     try {
       const res = await api.patch(`/api/admin/users/${id}`, { isActive: false })
       if (res.ok) {
-        toast.success('Account deactivated')
+        toast.success(t('admin.accountDeactivated'))
         await fetchUsers()
         setConfirmDeactivateId(null)
       } else {
-        toast.error('Something went wrong. Please try again.')
+        toast.error(t('common.somethingWrong'))
       }
     } catch {
-      toast.error('Something went wrong. Please try again.')
+      toast.error(t('common.somethingWrong'))
     }
   }
 
@@ -286,30 +289,31 @@ function UsersSection() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Users</CardTitle>
-        <CardDescription>Manage user accounts and roles.</CardDescription>
+        <CardTitle>{t('admin.usersTitle')}</CardTitle>
+        <CardDescription>{t('admin.usersDesc')}</CardDescription>
       </CardHeader>
       <CardContent>
-        <Table aria-label="Users">
+        <Table aria-label={t('admin.usersTitle')}>
           <TableHeader>
             <TableRow>
-              <TableHead>Username</TableHead>
-              <TableHead>Role</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Joined</TableHead>
-              <TableHead>Actions</TableHead>
+              <TableHead>{t('table.usernameColumn')}</TableHead>
+              <TableHead>{t('table.roleColumn')}</TableHead>
+              <TableHead>{t('table.statusColumn')}</TableHead>
+              <TableHead>{t('table.joinedColumn')}</TableHead>
+              <TableHead>{t('table.actionsColumn')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {users.length === 0 && (
               <TableRow>
                 <TableCell colSpan={5} className="text-center text-muted-foreground">
-                  No users yet.
+                  {t('admin.noUsers')}
                 </TableCell>
               </TableRow>
             )}
             {users.map((u) => (
               <TableRow key={u.id}>
+                {/* username is user content — not passed through t() (D-07) */}
                 <TableCell className="text-sm">{u.username}</TableCell>
                 <TableCell>
                   <RoleBadge role={u.role} />
@@ -328,7 +332,7 @@ function UsersSection() {
                         handleRoleChange(u.id, u.role === 'ADMIN' ? 'USER' : 'ADMIN')
                       }
                     >
-                      {u.role === 'ADMIN' ? 'Make user' : 'Make admin'}
+                      {u.role === 'ADMIN' ? t('admin.makeUser') : t('admin.makeAdmin')}
                     </Button>
 
                     {/* Deactivate — hidden for own account or already inactive */}
@@ -340,7 +344,7 @@ function UsersSection() {
                             variant="destructive"
                             onClick={() => setConfirmDeactivateId(u.id)}
                           >
-                            Deactivate
+                            {t('admin.deactivate')}
                           </Button>
                         )}
                         {confirmDeactivateId === u.id && (
@@ -350,20 +354,20 @@ function UsersSection() {
                             onKeyDown={handleConfirmKeyDown}
                             tabIndex={-1}
                           >
-                            <span className="text-sm">Are you sure?</span>
+                            <span className="text-sm">{t('common.confirm')}</span>
                             <Button
                               size="sm"
                               variant="destructive"
                               onClick={() => handleDeactivate(u.id)}
                             >
-                              Yes, deactivate
+                              {t('admin.yesDeactivate')}
                             </Button>
                             <Button
                               size="sm"
                               variant="outline"
                               onClick={() => setConfirmDeactivateId(null)}
                             >
-                              Cancel
+                              {t('common.cancel')}
                             </Button>
                           </span>
                         )}
@@ -383,53 +387,56 @@ function UsersSection() {
 // ---- Badge helpers ----
 
 function InviteStatusBadge({ status }: { status: InviteCodeStatus }) {
+  const { t } = useTranslation()
   if (status === 'active') {
     return (
       <span className="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium bg-green-100 text-green-800">
-        Active
+        {t('admin.statusActive')}
       </span>
     )
   }
   if (status === 'used') {
     return (
       <span className="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium bg-muted text-muted-foreground">
-        Used
+        {t('admin.statusUsed')}
       </span>
     )
   }
   return (
     <span className="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium bg-destructive/10 text-destructive">
-      Expired
+      {t('admin.statusExpired')}
     </span>
   )
 }
 
 function RoleBadge({ role }: { role: 'ADMIN' | 'USER' }) {
+  const { t } = useTranslation()
   if (role === 'ADMIN') {
     return (
       <span className="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium bg-primary text-primary-foreground">
-        Admin
+        {t('admin.roleAdmin')}
       </span>
     )
   }
   return (
     <span className="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium bg-secondary text-secondary-foreground">
-      User
+      {t('admin.roleUser')}
     </span>
   )
 }
 
 function StatusBadge({ isActive }: { isActive: boolean }) {
+  const { t } = useTranslation()
   if (isActive) {
     return (
       <span className="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium bg-green-100 text-green-800">
-        Active
+        {t('admin.accountActive')}
       </span>
     )
   }
   return (
     <span className="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium bg-muted text-muted-foreground">
-      Inactive
+      {t('admin.accountInactive')}
     </span>
   )
 }
@@ -437,13 +444,15 @@ function StatusBadge({ isActive }: { isActive: boolean }) {
 // ---- AdminPage ----
 
 export function AdminPage() {
+  const { t, i18n } = useTranslation()
+
   useEffect(() => {
-    document.title = 'Admin — Kartex'
-  }, [])
+    document.title = t('admin.title')
+  }, [t, i18n.language])
 
   return (
     <div className="space-y-8">
-      <h2 className="text-2xl font-bold">Admin</h2>
+      <h2 className="text-2xl font-bold">{t('admin.pageHeading')}</h2>
       <InviteCodesSection />
       <UsersSection />
     </div>

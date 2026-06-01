@@ -2,6 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2 } from 'lucide-react'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 
@@ -29,23 +30,24 @@ import { useAuth } from '@/context/AuthContext'
 import { api } from '@/lib/api'
 
 export function LoginPage() {
+  const { t, i18n } = useTranslation()
   const { user, setUser } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
 
   useEffect(() => {
-    document.title = 'Sign in — Kartex'
-  }, [])
+    document.title = t('auth.signInTitle') + ' — Kartex'
+  }, [t, i18n.language])
 
   // Show success toast if redirected from register
   useEffect(() => {
     const state = location.state as { registered?: boolean } | null
     if (state?.registered) {
-      toast.success('Account created. Please sign in.')
+      toast.success(t('auth.accountCreated'))
       // Clear the state so toast doesn't re-show on back navigation
       navigate('/login', { replace: true, state: {} })
     }
-  }, [location.state, navigate])
+  }, [location.state, navigate, t])
 
   // Redirect if already authenticated
   useEffect(() => {
@@ -70,23 +72,23 @@ export function LoginPage() {
         setUser(data.user ?? data)
         navigate('/dashboard')
       } else if (res.status === 401) {
-        form.setError('password', { message: 'Invalid username or password.' })
+        form.setError('password', { message: t('auth.invalidCredentials') })
       } else {
-        toast.error('Something went wrong. Please try again.')
+        toast.error(t('common.somethingWrong'))
       }
     } catch {
-      toast.error('Something went wrong. Please try again.')
+      toast.error(t('common.somethingWrong'))
     }
   }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background">
-      <h1 className="sr-only">Sign in</h1>
+      <h1 className="sr-only">{t('auth.signIn')}</h1>
 
       <Card className="w-[400px] max-w-[calc(100vw-32px)]">
         <CardHeader>
-          <CardTitle>Sign in</CardTitle>
-          <CardDescription>Welcome back.</CardDescription>
+          <CardTitle>{t('auth.signIn')}</CardTitle>
+          <CardDescription>{t('auth.welcomeBack')}</CardDescription>
         </CardHeader>
 
         <CardContent>
@@ -97,12 +99,12 @@ export function LoginPage() {
                 name="username"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Username</FormLabel>
+                    <FormLabel>{t('auth.username')}</FormLabel>
                     <FormControl>
                       <Input
                         type="text"
                         autoComplete="username"
-                        placeholder="Username"
+                        placeholder={t('auth.username')}
                         {...field}
                       />
                     </FormControl>
@@ -116,12 +118,12 @@ export function LoginPage() {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Password</FormLabel>
+                    <FormLabel>{t('auth.password')}</FormLabel>
                     <FormControl>
                       <Input
                         type="password"
                         autoComplete="current-password"
-                        placeholder="Password"
+                        placeholder={t('auth.password')}
                         {...field}
                       />
                     </FormControl>
@@ -139,16 +141,16 @@ export function LoginPage() {
                 {isSubmitting && (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
                 )}
-                {isSubmitting ? 'Signing in...' : 'Sign in'}
+                {isSubmitting ? t('auth.signingIn') : t('auth.signIn')}
               </Button>
             </form>
           </Form>
         </CardContent>
 
         <CardFooter className="text-sm text-muted-foreground">
-          Don&apos;t have an account?{' '}
+          {t('auth.noAccount')}{' '}
           <Link to="/register" className="ml-1 underline hover:text-foreground">
-            Register
+            {t('auth.register')}
           </Link>
         </CardFooter>
       </Card>

@@ -2,6 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2 } from 'lucide-react'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 import { Link, useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 
@@ -29,12 +30,13 @@ import { useAuth } from '@/context/AuthContext'
 import { api } from '@/lib/api'
 
 export function RegisterPage() {
+  const { t, i18n } = useTranslation()
   const { user } = useAuth()
   const navigate = useNavigate()
 
   useEffect(() => {
-    document.title = 'Create account — Kartex'
-  }, [])
+    document.title = t('auth.createAccountTitle') + ' — Kartex'
+  }, [t, i18n.language])
 
   // Redirect if already authenticated
   useEffect(() => {
@@ -57,25 +59,25 @@ export function RegisterPage() {
       if (res.ok) {
         navigate('/login', { state: { registered: true } })
       } else if (res.status === 400) {
-        form.setError('inviteCode', { message: 'Invalid or expired invite code.' })
+        form.setError('inviteCode', { message: t('auth.invalidInvite') })
       } else if (res.status === 409) {
-        form.setError('username', { message: 'Username is already taken.' })
+        form.setError('username', { message: t('auth.usernameTaken') })
       } else {
-        toast.error('Something went wrong. Please try again.')
+        toast.error(t('common.somethingWrong'))
       }
     } catch {
-      toast.error('Something went wrong. Please try again.')
+      toast.error(t('common.somethingWrong'))
     }
   }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background">
-      <h1 className="sr-only">Create account</h1>
+      <h1 className="sr-only">{t('auth.createAccount')}</h1>
 
       <Card className="w-[400px] max-w-[calc(100vw-32px)]">
         <CardHeader>
-          <CardTitle>Create account</CardTitle>
-          <CardDescription>You need an invite code to register.</CardDescription>
+          <CardTitle>{t('auth.createAccount')}</CardTitle>
+          <CardDescription>{t('auth.needInvite')}</CardDescription>
         </CardHeader>
 
         <CardContent>
@@ -86,12 +88,12 @@ export function RegisterPage() {
                 name="username"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Username</FormLabel>
+                    <FormLabel>{t('auth.username')}</FormLabel>
                     <FormControl>
                       <Input
                         type="text"
                         autoComplete="username"
-                        placeholder="Username"
+                        placeholder={t('auth.username')}
                         {...field}
                       />
                     </FormControl>
@@ -105,12 +107,12 @@ export function RegisterPage() {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Password</FormLabel>
+                    <FormLabel>{t('auth.password')}</FormLabel>
                     <FormControl>
                       <Input
                         type="password"
                         autoComplete="new-password"
-                        placeholder="Password"
+                        placeholder={t('auth.password')}
                         {...field}
                       />
                     </FormControl>
@@ -124,12 +126,12 @@ export function RegisterPage() {
                 name="inviteCode"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Invite code</FormLabel>
+                    <FormLabel>{t('auth.inviteCode')}</FormLabel>
                     <FormControl>
                       <Input
                         type="text"
                         autoComplete="off"
-                        placeholder="Invite code"
+                        placeholder={t('auth.inviteCode')}
                         {...field}
                       />
                     </FormControl>
@@ -147,16 +149,16 @@ export function RegisterPage() {
                 {isSubmitting && (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
                 )}
-                {isSubmitting ? 'Creating account...' : 'Create account'}
+                {isSubmitting ? t('auth.creatingAccount') : t('auth.createAccount')}
               </Button>
             </form>
           </Form>
         </CardContent>
 
         <CardFooter className="text-sm text-muted-foreground">
-          Already have an account?{' '}
+          {t('auth.alreadyHaveAccount')}{' '}
           <Link to="/login" className="ml-1 underline hover:text-foreground">
-            Sign in
+            {t('auth.signIn')}
           </Link>
         </CardFooter>
       </Card>

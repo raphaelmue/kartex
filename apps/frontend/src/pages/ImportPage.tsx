@@ -9,6 +9,7 @@ import {
   Upload,
 } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import type { ParsedCard } from '@kartex/shared'
 import { KartexRenderer } from '@/components/KartexRenderer'
@@ -101,6 +102,7 @@ function LazyCard({ card, index }: { card: ParsedCard; index: number }) {
 
 // ── ImportPage ─────────────────────────────────────────────────────────────────
 export function ImportPage() {
+  const { t, i18n } = useTranslation()
   const navigate = useNavigate()
   const {
     step,
@@ -122,8 +124,8 @@ export function ImportPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   useEffect(() => {
-    document.title = 'Import — Kartex'
-  }, [])
+    document.title = t('import.title')
+  }, [t, i18n.language])
 
   // Pre-fill deck name when parseResult arrives
   useEffect(() => {
@@ -185,16 +187,16 @@ export function ImportPage() {
         aria-live="polite"
       >
         <CheckCircle2 className="h-12 w-12 text-green-500" aria-hidden="true" />
-        <h2 className="text-xl font-semibold">Deck imported!</h2>
+        <h2 className="text-xl font-semibold">{t('import.deckImported')}</h2>
         <p className="text-sm text-muted-foreground">
-          &ldquo;{pendingDeckName}&rdquo; was created with {importResult.cardCount} cards.
+          {t('import.importedWithCards', { name: pendingDeckName, count: importResult.cardCount })}
         </p>
         <Button
           size="lg"
           className="w-full max-w-xs"
           onClick={() => navigate(`/decks/${importResult.deckId}`)}
         >
-          View Deck
+          {t('import.viewDeck')}
         </Button>
         <Button
           variant="outline"
@@ -202,7 +204,7 @@ export function ImportPage() {
           className="w-full max-w-xs mt-2"
           onClick={reset}
         >
-          Import another file
+          {t('import.importAnotherFile')}
         </Button>
       </div>
     )
@@ -210,9 +212,9 @@ export function ImportPage() {
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-8">
-      <h1 className="text-xl font-semibold">Import Deck</h1>
+      <h1 className="text-xl font-semibold">{t('import.pageHeading')}</h1>
       <p className="text-sm text-muted-foreground mt-1 mb-8">
-        Upload a .kartex file or .kartex.zip bundle to import a deck.
+        {t('import.subtitle')}
       </p>
 
       {/* ── UPLOAD state ────────────────────────────────────────────────── */}
@@ -222,9 +224,9 @@ export function ImportPage() {
           {importErrors && importErrors.length > 0 && (
             <Alert variant="destructive" className="mb-6">
               <AlertCircle className="h-4 w-4" />
-              <AlertTitle>Import failed</AlertTitle>
+              <AlertTitle>{t('import.importFailed')}</AlertTitle>
               <AlertDescription>
-                The following files in your zip failed validation:
+                {t('import.zipValidationFail')}
                 <ul className="mt-2 space-y-1">
                   {importErrors.map((e, i) => (
                     <li key={i} className="text-sm">
@@ -232,14 +234,14 @@ export function ImportPage() {
                     </li>
                   ))}
                 </ul>
-                Remove or fix these files and re-upload the zip.
+                {t('import.zipFixHint')}
               </AlertDescription>
             </Alert>
           )}
           {importError && (
             <Alert variant="destructive" className="mb-6">
               <AlertCircle className="h-4 w-4" />
-              <AlertTitle>Import failed</AlertTitle>
+              <AlertTitle>{t('import.importFailed')}</AlertTitle>
               <AlertDescription>{importError}</AlertDescription>
             </Alert>
           )}
@@ -248,7 +250,7 @@ export function ImportPage() {
           <div
             role="button"
             tabIndex={0}
-            aria-label="Upload a .kartex file. Click to browse or drag and drop."
+            aria-label={t('import.dropZoneAriaLabel')}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
@@ -268,10 +270,10 @@ export function ImportPage() {
           >
             <Upload className="h-10 w-10 text-muted-foreground mx-auto mb-4" aria-hidden="true" />
             <p className="text-sm font-normal text-muted-foreground text-center">
-              Drop your file here, or click to browse
+              {t('import.dropZoneText')}
             </p>
             <p className="text-xs text-muted-foreground text-center mt-1">
-              .kartex or .kartex.zip &middot; max {limitMB} MB
+              {t('import.maxSize', { mb: limitMB })}
             </p>
             <Button
               variant="outline"
@@ -283,7 +285,7 @@ export function ImportPage() {
               }}
               style={{ minHeight: '44px' }}
             >
-              Browse file
+              {t('import.browseFile')}
             </Button>
           </div>
 
@@ -307,18 +309,18 @@ export function ImportPage() {
         <div
           className="flex flex-col items-center justify-center min-h-[200px] p-8 rounded-lg border-2 border-dashed border-border"
           aria-busy="true"
-          aria-label="Processing file"
+          aria-label={t('import.processingAriaLabel')}
         >
           <Loader2
             className="h-8 w-8 animate-spin text-muted-foreground mx-auto mb-3"
             aria-hidden="true"
           />
           <p className="text-sm font-normal text-muted-foreground text-center">
-            Parsing your file...
+            {t('import.parsingFile')}
           </p>
           <Progress
             className="w-full max-w-xs mx-auto mt-4"
-            aria-label="Upload progress"
+            aria-label={t('import.uploadProgressAriaLabel')}
             aria-valuemin={0}
             aria-valuemax={100}
           />
@@ -336,7 +338,7 @@ export function ImportPage() {
             disabled={step === 'importing'}
           >
             <ArrowLeft className="h-4 w-4 mr-1" aria-hidden="true" />
-            Back
+            {t('import.back')}
           </Button>
 
           {/* Parse warnings banner (D-06) — amber alert, only if warnings exist */}
@@ -344,13 +346,12 @@ export function ImportPage() {
             <Alert className="border-amber-200 bg-amber-50 text-amber-800 mb-6" role="alert">
               <AlertTriangle className="h-4 w-4 text-amber-600" />
               <AlertTitle className="text-amber-800 font-semibold text-sm">
-                {parseResult.warnings.length} card
-                {parseResult.warnings.length > 1 ? 's' : ''} skipped
+                {t('import.cardsSkipped', { count: parseResult.warnings.length })}
               </AlertTitle>
               <AlertDescription className="text-amber-800 text-sm mt-1">
                 {parseResult.warnings.map((w, i) => (
                   <div key={i}>
-                    Card {w.cardIndex}: {w.reason}
+                    {t('import.cardN', { index: w.cardIndex })} {w.reason}
                   </div>
                 ))}
               </AlertDescription>
@@ -361,16 +362,16 @@ export function ImportPage() {
           {importError && step === 'preview' && (
             <Alert variant="destructive" className="mb-6" role="alert">
               <AlertCircle className="h-4 w-4" />
-              <AlertTitle>Import failed</AlertTitle>
+              <AlertTitle>{t('import.importFailed')}</AlertTitle>
               <AlertDescription>{importError}</AlertDescription>
             </Alert>
           )}
           {importErrors && importErrors.length > 0 && step === 'preview' && (
             <Alert variant="destructive" className="mb-6" role="alert">
               <AlertCircle className="h-4 w-4" />
-              <AlertTitle>Import failed</AlertTitle>
+              <AlertTitle>{t('import.importFailed')}</AlertTitle>
               <AlertDescription>
-                The following files in your zip failed validation:
+                {t('import.zipValidationFail')}
                 <ul className="mt-2 space-y-1">
                   {importErrors.map((e, i) => (
                     <li key={i} className="text-sm">
@@ -378,7 +379,7 @@ export function ImportPage() {
                     </li>
                   ))}
                 </ul>
-                Remove or fix these files and re-upload the zip.
+                {t('import.zipFixHint')}
               </AlertDescription>
             </Alert>
           )}
@@ -390,11 +391,11 @@ export function ImportPage() {
                 htmlFor="deck-name-input"
                 className="text-sm font-normal text-foreground mb-1 block"
               >
-                Deck name
+                {t('import.deckNameLabel')}
               </label>
               <Input
                 id="deck-name-input"
-                aria-label="Deck name"
+                aria-label={t('import.deckNameLabel')}
                 value={pendingDeckName}
                 onChange={(e) => setPendingDeckName(e.target.value)}
                 disabled={step === 'importing'}
@@ -404,7 +405,8 @@ export function ImportPage() {
               <div className="space-y-1">
                 {parseResult.deck.author && (
                   <p className="text-sm text-muted-foreground">
-                    Author: {parseResult.deck.author}
+                    {/* author label is UI chrome; author value is user content (D-07) */}
+                    {t('import.author')} {parseResult.deck.author}
                   </p>
                 )}
                 {parseResult.deck.tags && parseResult.deck.tags.length > 0 && (
@@ -421,15 +423,16 @@ export function ImportPage() {
             <p className="text-sm text-muted-foreground">
               {parseResult ? (
                 <>
-                  Showing {parseResult.cards.length} cards
+                  {t('import.showingCards', { count: parseResult.cards.length })}
                   {parseResult.warnings.length > 0 && (
                     <span className="text-amber-600 ml-1">
-                      ({parseResult.warnings.length} skipped)
+                      {t('import.skippedCount', { count: parseResult.warnings.length })}
                     </span>
                   )}
                 </>
               ) : (
-                selectedFile && `File: ${selectedFile.name}`
+                /* selectedFile.name is user content — interpolated as value (D-07) */
+                selectedFile && `${t('import.fileLabel')} ${selectedFile.name}`
               )}
             </p>
           </div>
@@ -441,7 +444,7 @@ export function ImportPage() {
               onClick={reset}
               disabled={step === 'importing'}
             >
-              Cancel
+              {t('common.cancel')}
             </Button>
             <Button
               onClick={() => void handleConfirmImport()}
@@ -449,15 +452,15 @@ export function ImportPage() {
                 !pendingDeckName.trim() || step === 'importing' || isSubmitting
               }
               aria-disabled={!pendingDeckName.trim()}
-              title={!pendingDeckName.trim() ? 'Deck name cannot be empty.' : undefined}
+              title={!pendingDeckName.trim() ? t('import.deckNameRequired') : undefined}
             >
               {step === 'importing' || isSubmitting ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin mr-2" aria-hidden="true" />
-                  Importing...
+                  {t('import.importing')}
                 </>
               ) : (
-                'Import Deck'
+                t('import.importDeck')
               )}
             </Button>
           </div>
@@ -466,7 +469,7 @@ export function ImportPage() {
           {parseResult && parseResult.cards.length > 0 && (
             <div
               className="rounded-lg border border-border overflow-hidden"
-              aria-label={`Card preview list, ${parseResult.cards.length} cards`}
+              aria-label={t('import.previewAriaLabel', { count: parseResult.cards.length })}
             >
               <div className="max-h-[420px] overflow-y-auto divide-y divide-border">
                 {parseResult.cards.map((card, i) => (
@@ -480,8 +483,7 @@ export function ImportPage() {
           {!parseResult && selectedFile && (
             <div className="p-4 border border-border rounded-lg bg-muted/20">
               <p className="text-sm text-muted-foreground text-center">
-                Card preview is not available for .kartex.zip bundles.
-                Click &ldquo;Import Deck&rdquo; to import — the file will be validated and imported on the server.
+                {t('import.zipNoPreview')}
               </p>
             </div>
           )}
