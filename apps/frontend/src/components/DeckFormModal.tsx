@@ -3,6 +3,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
+import { useTranslation } from 'react-i18next'
 import {
   CreateDeckSchema,
   Deck,
@@ -44,6 +45,7 @@ interface DeckFormModalProps {
 }
 
 export function DeckFormModal({ open, onOpenChange, deck, onSuccess }: DeckFormModalProps) {
+  const { t } = useTranslation()
   const isEdit = Boolean(deck)
 
   const form = useForm<DeckFormInput>({
@@ -74,14 +76,14 @@ export function DeckFormModal({ open, onOpenChange, deck, onSuccess }: DeckFormM
         ? await api.patch(`/api/decks/${deck.id}`, data)
         : await api.post('/api/decks', data)
       if (res.ok) {
-        toast.success(isEdit ? 'Deck updated' : 'Deck created')
+        toast.success(isEdit ? t('deckForm.deckUpdated') : t('deckForm.deckCreated'))
         onOpenChange(false)
         onSuccess()
       } else {
-        toast.error('Something went wrong. Please try again.')
+        toast.error(t('common.somethingWrong'))
       }
     } catch {
-      toast.error('Something went wrong. Please try again.')
+      toast.error(t('common.somethingWrong'))
     }
   }
 
@@ -89,7 +91,7 @@ export function DeckFormModal({ open, onOpenChange, deck, onSuccess }: DeckFormM
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle>{isEdit ? 'Edit Deck' : 'New Deck'}</DialogTitle>
+          <DialogTitle>{isEdit ? t('deckForm.editDeck') : t('deckForm.newDeck')}</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -98,9 +100,9 @@ export function DeckFormModal({ open, onOpenChange, deck, onSuccess }: DeckFormM
               name="title"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Title</FormLabel>
+                  <FormLabel>{t('deckForm.titleLabel')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="Deck title" maxLength={200} {...field} />
+                    <Input placeholder={t('deckForm.titlePlaceholder')} maxLength={200} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -111,11 +113,11 @@ export function DeckFormModal({ open, onOpenChange, deck, onSuccess }: DeckFormM
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Description</FormLabel>
+                  <FormLabel>{t('deckForm.descriptionLabel')}</FormLabel>
                   <FormControl>
                     <textarea
                       className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                      placeholder="Optional description"
+                      placeholder={t('deckForm.descriptionPlaceholder')}
                       rows={3}
                       maxLength={2000}
                       {...field}
@@ -131,7 +133,7 @@ export function DeckFormModal({ open, onOpenChange, deck, onSuccess }: DeckFormM
               name="visibility"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Visibility</FormLabel>
+                  <FormLabel>{t('deckForm.visibilityLabel')}</FormLabel>
                   <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger>
@@ -139,9 +141,9 @@ export function DeckFormModal({ open, onOpenChange, deck, onSuccess }: DeckFormM
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="PRIVATE">Private</SelectItem>
-                      <SelectItem value="SHARED">Shared</SelectItem>
-                      <SelectItem value="PUBLIC">Public</SelectItem>
+                      <SelectItem value="PRIVATE">{t('visibility.private')}</SelectItem>
+                      <SelectItem value="SHARED">{t('visibility.shared')}</SelectItem>
+                      <SelectItem value="PUBLIC">{t('visibility.public')}</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -150,10 +152,10 @@ export function DeckFormModal({ open, onOpenChange, deck, onSuccess }: DeckFormM
             />
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-                Cancel
+                {t('common.cancel')}
               </Button>
               <Button type="submit" disabled={isSubmitting} aria-busy={isSubmitting}>
-                {isSubmitting ? 'Saving...' : isEdit ? 'Save Changes' : 'Create Deck'}
+                {isSubmitting ? t('common.saving') : isEdit ? t('deckForm.saveChanges') : t('deckForm.createDeck')}
               </Button>
             </DialogFooter>
           </form>

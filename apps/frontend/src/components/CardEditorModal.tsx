@@ -3,6 +3,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
+import { useTranslation } from 'react-i18next'
 import {
   CreateCardSchema,
   Card,
@@ -48,6 +49,7 @@ export function CardEditorModal({
   card,
   onSuccess,
 }: CardEditorModalProps) {
+  const { t } = useTranslation()
   const isEdit = Boolean(card)
   const [tagInput, setTagInput] = useState(card?.tags.join(', ') ?? '')
 
@@ -78,21 +80,21 @@ export function CardEditorModal({
   }, [open, card])
 
   const onSubmit = async (data: CardFormInput) => {
-    const tags = tagInput.split(',').map((t) => t.trim()).filter(Boolean)
+    const tags = tagInput.split(',').map((tag) => tag.trim()).filter(Boolean)
     const payload = { ...data, tags }
     try {
       const res = isEdit && card
         ? await api.patch(`/api/decks/${deckId}/cards/${card.id}`, payload)
         : await api.post(`/api/decks/${deckId}/cards`, payload)
       if (res.ok) {
-        toast.success(isEdit ? 'Card updated' : 'Card added')
+        toast.success(isEdit ? t('cardEditor.cardUpdated') : t('cardEditor.cardAdded'))
         onOpenChange(false)
         onSuccess()
       } else {
-        toast.error('Something went wrong. Please try again.')
+        toast.error(t('common.somethingWrong'))
       }
     } catch {
-      toast.error('Something went wrong. Please try again.')
+      toast.error(t('common.somethingWrong'))
     }
   }
 
@@ -100,7 +102,7 @@ export function CardEditorModal({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
-          <DialogTitle>{isEdit ? 'Edit Card' : 'Add Card'}</DialogTitle>
+          <DialogTitle>{isEdit ? t('cardEditor.editCard') : t('cardEditor.addCard')}</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -111,22 +113,22 @@ export function CardEditorModal({
                 const { ref: fieldRef, ...restField } = field
                 return (
                 <FormItem>
-                  <FormLabel>Front</FormLabel>
+                  <FormLabel>{t('cardEditor.frontLabel')}</FormLabel>
                   <MediaUploadToolbar
                     fieldRef={frontRef}
                     onInsert={(val) => field.onChange(val)}
                   />
                   <Tabs defaultValue="edit">
                     <TabsList>
-                      <TabsTrigger value="edit">Edit</TabsTrigger>
-                      <TabsTrigger value="preview">Preview</TabsTrigger>
+                      <TabsTrigger value="edit">{t('cardEditor.editTab')}</TabsTrigger>
+                      <TabsTrigger value="preview">{t('cardEditor.previewTab')}</TabsTrigger>
                     </TabsList>
                     <TabsContent value="edit">
                       <FormControl>
                         <textarea
                           ref={(el) => { fieldRef(el); frontRef.current = el }}
                           className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm font-mono ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                          placeholder="Front side content (Markdown)"
+                          placeholder={t('cardEditor.frontPlaceholder')}
                           rows={8}
                           {...restField}
                         />
@@ -149,22 +151,22 @@ export function CardEditorModal({
                 const { ref: fieldRef, ...restField } = field
                 return (
                 <FormItem>
-                  <FormLabel>Back</FormLabel>
+                  <FormLabel>{t('cardEditor.backLabel')}</FormLabel>
                   <MediaUploadToolbar
                     fieldRef={backRef}
                     onInsert={(val) => field.onChange(val)}
                   />
                   <Tabs defaultValue="edit">
                     <TabsList>
-                      <TabsTrigger value="edit">Edit</TabsTrigger>
-                      <TabsTrigger value="preview">Preview</TabsTrigger>
+                      <TabsTrigger value="edit">{t('cardEditor.editTab')}</TabsTrigger>
+                      <TabsTrigger value="preview">{t('cardEditor.previewTab')}</TabsTrigger>
                     </TabsList>
                     <TabsContent value="edit">
                       <FormControl>
                         <textarea
                           ref={(el) => { fieldRef(el); backRef.current = el }}
                           className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm font-mono ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                          placeholder="Back side content (Markdown)"
+                          placeholder={t('cardEditor.backPlaceholder')}
                           rows={8}
                           {...restField}
                         />
@@ -181,20 +183,20 @@ export function CardEditorModal({
               )}}
             />
             <div className="space-y-2">
-              <Label htmlFor="tag-input">Tags (comma-separated, optional)</Label>
+              <Label htmlFor="tag-input">{t('cardEditor.tagsLabel')}</Label>
               <Input
                 id="tag-input"
-                placeholder="react, typescript, algorithms"
+                placeholder={t('cardEditor.tagsPlaceholder')}
                 value={tagInput}
                 onChange={(e) => setTagInput(e.target.value)}
               />
             </div>
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-                Cancel
+                {t('common.cancel')}
               </Button>
               <Button type="submit" disabled={isSubmitting} aria-busy={isSubmitting}>
-                {isSubmitting ? 'Saving...' : 'Save Card'}
+                {isSubmitting ? t('common.saving') : t('cardEditor.saveCard')}
               </Button>
             </DialogFooter>
           </form>
