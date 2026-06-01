@@ -124,7 +124,7 @@ export function DeckDetailPage() {
   const [editCard, setEditCard] = useState<Card | undefined>(undefined)
   const [confirmDeleteCardId, setConfirmDeleteCardId] = useState<string | null>(null)
   const [confirmDeleteDeck, setConfirmDeleteDeck] = useState(false)
-  const [filterTag, setFilterTag] = useState<string | null>(null)
+  const [filterTags, setFilterTags] = useState<Set<string>>(new Set())
   const [shares, setShares] = useState<Share[]>([])
   const [shareUsername, setShareUsername] = useState('')
   const [sharePermission, setSharePermission] = useState<'READ' | 'EDIT' | 'MANAGE'>('READ')
@@ -289,7 +289,9 @@ export function DeckDetailPage() {
   if (!deck) return null
 
   const allTags = [...new Set(cards.flatMap((c) => c.tags))].sort()
-  const filteredCards = filterTag ? cards.filter((c) => c.tags.includes(filterTag)) : cards
+  const filteredCards = filterTags.size > 0
+    ? cards.filter((c) => c.tags.some((t) => filterTags.has(t)))
+    : cards
 
   const canEdit =
     deck.ownerId === user?.id ||
@@ -356,8 +358,12 @@ export function DeckDetailPage() {
                 <Button
                   key={tag}
                   size="sm"
-                  variant={filterTag === tag ? 'default' : 'outline'}
-                  onClick={() => setFilterTag(filterTag === tag ? null : tag)}
+                  variant={filterTags.has(tag) ? 'default' : 'outline'}
+                  onClick={() => setFilterTags((prev) => {
+                    const next = new Set(prev)
+                    next.has(tag) ? next.delete(tag) : next.add(tag)
+                    return next
+                  })}
                 >
                   {/* tag value is user content — not passed through t() (D-07) */}
                   {tag}
