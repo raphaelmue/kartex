@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Study Experience & Polish
 status: executing
-stopped_at: 08-03 complete — Phase 8 fully done; STUDY-01/02/03/04 all GREEN
-last_updated: "2026-06-01T14:48:51.226Z"
-last_activity: 2026-06-01 -- Phase 9 planning complete
+stopped_at: 09-01 complete — i18n infrastructure, locale files, test setup, RED LanguageToggle stub
+last_updated: "2026-06-01T17:02:30Z"
+last_activity: 2026-06-01 -- Phase 9 Plan 1 (i18n infrastructure) complete
 progress:
   total_phases: 3
   completed_phases: 2
   total_plans: 7
-  completed_plans: 4
-  percent: 57
+  completed_plans: 5
+  percent: 71
 ---
 
 # Project State
@@ -26,12 +26,12 @@ See: .planning/PROJECT.md (updated 2026-05-30)
 ## Current Position
 
 Milestone: v1.1 Study Experience & Polish
-Phase: Phase 8 — Study UX
-Plan: 08-03 (complete)
-Status: Ready to execute
-Last activity: 2026-06-01 -- Phase 9 planning complete
+Phase: Phase 9 — Internationalization
+Plan: 09-01 (complete)
+Status: Executing — ready for Plan 09-02
+Last activity: 2026-06-01 -- Phase 9 Plan 1 complete
 
-Progress: [████████████████░░░░░░░░░░░░░░░░░░░░░░] 40% (Phase 8 complete — 3/3 plans done)
+Progress: [████████████████████████████░░░░░░░░░░] 71% (09-01 complete — 1/3 Phase 9 plans done)
 
 ## Performance Metrics
 
@@ -50,6 +50,7 @@ Progress: [████████████████░░░░░░░
 | 3 | 3/3 | ~19 min | ~6 min |
 | 4 | 3/3 | ~38 min | ~13 min |
 | 7 | 1/1 | ~4 min | ~4 min |
+| 9 | 1/3 | ~7 min | ~7 min |
 
 **Recent Trend:**
 
@@ -98,6 +99,9 @@ Recent decisions affecting current work:
 - 08-02: availableTags derived from allCardsRes prefetch (not cards state) — prevents chip list shrinking when filter active
 - 08-03: groupCardsByFirstTag extracted to util file — DeckDetailPage was already ~517 lines; keeping inline would exceed 500-line limit; util path matches Wave 0 test import
 - 08-03: CardActionCell local component extracted within DeckDetailPage to compact repeated edit/delete confirm JSX; keeps file at 497 lines
+- 09-01: i18next v26 removed initImmediate from InitOptions — omit it; v26 init is synchronous when no async backend plugin is used
+- 09-01: changeLanguage mock requires 'as any' cast — TFunction brand type ($TFunctionBrand) in i18next v26 is not satisfiable by a plain function mock
+- 09-01: Project uses yarn@4.15.0 (not pnpm) — use yarn workspace @kartex/frontend add for frontend package installs
 
 ### Pending Todos
 
@@ -142,6 +146,6 @@ Items acknowledged and deferred at milestone close on 2026-05-30:
 
 ## Session Continuity
 
-Last session: 2026-05-31
-Stopped at: 08-03 complete — Phase 8 fully done; STUDY-01/02/03/04 all GREEN
-Resume with: `/gsd-plan-phase 9` (Phase 9: I18N — react-i18next setup, string externalization, language switcher)
+Last session: 2026-06-01
+Stopped at: 09-01 complete — i18n infrastructure, locale files (252 keys), test setup, RED LanguageToggle stub
+Resume with: `/gsd-execute-phase 9` (Phase 9 Plan 02: AppShell + language toggle + string wrapping)

@@ -87,7 +87,7 @@ Plans:
 Plans:
 **Wave 1**
 
-- [ ] 09-01-PLAN.md — Wave 1: i18n infrastructure (packages, en/de locales, i18n.ts, type augmentation, test setup, failing LanguageToggle stub)
+- [x] 09-01-PLAN.md — Wave 1: i18n infrastructure (packages, en/de locales, i18n.ts, type augmentation, test setup, failing LanguageToggle stub) — completed 2026-06-01
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
