@@ -6,7 +6,6 @@ import { toast } from 'sonner'
 import { Card, Deck, Share } from '@kartex/shared'
 import { api } from '@/lib/api'
 import { useAuth } from '@/context/AuthContext'
-import { groupCardsByFirstTag } from '@/utils/groupCardsByFirstTag'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
@@ -125,6 +124,7 @@ export function DeckDetailPage() {
   const [editCard, setEditCard] = useState<Card | undefined>(undefined)
   const [confirmDeleteCardId, setConfirmDeleteCardId] = useState<string | null>(null)
   const [confirmDeleteDeck, setConfirmDeleteDeck] = useState(false)
+  const [filterTag, setFilterTag] = useState<string | null>(null)
   const [shares, setShares] = useState<Share[]>([])
   const [shareUsername, setShareUsername] = useState('')
   const [sharePermission, setSharePermission] = useState<'READ' | 'EDIT' | 'MANAGE'>('READ')
@@ -288,6 +288,9 @@ export function DeckDetailPage() {
 
   if (!deck) return null
 
+  const allTags = [...new Set(cards.flatMap((c) => c.tags))].sort()
+  const filteredCards = filterTag ? cards.filter((c) => c.tags.includes(filterTag)) : cards
+
   const canEdit =
     deck.ownerId === user?.id ||
     deck.userPermission === 'EDIT' ||
@@ -346,50 +349,56 @@ export function DeckDetailPage() {
           )}
         </div>
       ) : (
-        groupCardsByFirstTag(cards).map(({ tag, cards: groupCards }) => (
-          <div key={tag} className="mb-6">
-            <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-2">
-              {/* tag value is user content — not passed through t() (D-07) */}
-              {tag}
-              <span className="font-normal normal-case tracking-normal ml-1">
-                {t('deckDetail.nCardsInGroup', { count: groupCards.length })}
-              </span>
-            </h3>
-            <Table aria-label={t('deckDetail.cardsTableAriaLabel', { tag })}>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-12">{t('table.numberColumn')}</TableHead>
-                  <TableHead>{t('table.frontColumn')}</TableHead>
-                  <TableHead>{t('table.tagsColumn')}</TableHead>
-                  <TableHead>{t('table.actionsColumn')}</TableHead>
+        <>
+          {allTags.length > 0 && (
+            <div className="flex flex-wrap gap-2 mb-4">
+              {allTags.map((tag) => (
+                <Button
+                  key={tag}
+                  size="sm"
+                  variant={filterTag === tag ? 'default' : 'outline'}
+                  onClick={() => setFilterTag(filterTag === tag ? null : tag)}
+                >
+                  {/* tag value is user content — not passed through t() (D-07) */}
+                  {tag}
+                </Button>
+              ))}
+            </div>
+          )}
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-12">{t('table.numberColumn')}</TableHead>
+                <TableHead>{t('table.frontColumn')}</TableHead>
+                <TableHead>{t('table.tagsColumn')}</TableHead>
+                <TableHead>{t('table.actionsColumn')}</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredCards.map((card, i) => (
+                <TableRow key={card.id}>
+                  <TableCell className="w-12">{i + 1}</TableCell>
+                  {/* card.frontContent is user content — not translated (D-07) */}
+                  <TableCell className="max-w-xs truncate">{card.frontContent}</TableCell>
+                  <TableCell>
+                    <TagChips tags={card.tags} />
+                  </TableCell>
+                  <TableCell>
+                    {canEdit && (
+                      <CardActionCell
+                        card={card}
+                        confirmDeleteCardId={confirmDeleteCardId}
+                        onEdit={openEditCard}
+                        onDelete={(id) => void handleDeleteCard(id)}
+                        onCancelDelete={() => setConfirmDeleteCardId(null)}
+                      />
+                    )}
+                  </TableCell>
                 </TableRow>
-              </TableHeader>
-              <TableBody>
-                {groupCards.map((card, i) => (
-                  <TableRow key={card.id}>
-                    <TableCell className="w-12">{i + 1}</TableCell>
-                    {/* card.frontContent is user content — not translated (D-07) */}
-                    <TableCell className="max-w-xs truncate">{card.frontContent}</TableCell>
-                    <TableCell>
-                      <TagChips tags={card.tags} />
-                    </TableCell>
-                    <TableCell>
-                      {canEdit && (
-                        <CardActionCell
-                          card={card}
-                          confirmDeleteCardId={confirmDeleteCardId}
-                          onEdit={openEditCard}
-                          onDelete={(id) => void handleDeleteCard(id)}
-                          onCancelDelete={() => setConfirmDeleteCardId(null)}
-                        />
-                      )}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-        ))
+              ))}
+            </TableBody>
+          </Table>
+        </>
       )}
 
       {canEdit && cards.length > 0 && (
