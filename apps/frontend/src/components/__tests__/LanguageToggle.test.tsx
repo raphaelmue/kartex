@@ -50,7 +50,8 @@ function renderAppShell() {
 
 describe('I18N-03: Language toggle button', () => {
   beforeEach(() => {
-    vi.spyOn(i18n, 'changeLanguage').mockResolvedValue(i18n)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    vi.spyOn(i18n, 'changeLanguage').mockImplementation((() => Promise.resolve()) as any)
   })
 
   it('I18N-03a: renders a button with accessible name from a11y.switchLanguage and visible text "EN"', () => {
