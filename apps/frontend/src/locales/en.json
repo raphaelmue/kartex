@@ -185,6 +185,7 @@
     "reviewedCards": "You reviewed {{count}} cards.",
     "reviewedCardsWithTime": "You reviewed {{count}} cards in {{min}}m {{sec}}s.",
     "restartSession": "Restart Session",
+    "studyDeckLabel": "Study: {{deckTitle}}",
     "loadingCards": "Loading cards…",
     "couldNotLoad": "Could not load this session. Please go back and try again."
   },

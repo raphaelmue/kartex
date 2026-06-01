@@ -320,7 +320,7 @@ export function StudySessionPage() {
           {t('study.backToDeck')}
         </Button>
         {/* deckTitle is user content — interpolated as value (D-07) */}
-        <h1 className="text-xl font-semibold mb-2">Study: {deckTitle}</h1>
+        <h1 className="text-xl font-semibold mb-2">{t('study.studyDeckLabel', { deckTitle })}</h1>
         <p className="text-sm text-muted-foreground mb-4">{t('study.chooseMode')}</p>
 
         {/* Session config (STUDY-01, STUDY-02) — only when deck has tagged cards */}

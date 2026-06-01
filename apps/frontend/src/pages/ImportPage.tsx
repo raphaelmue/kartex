@@ -22,6 +22,7 @@ import { useImport } from '@/hooks/useImport'
 
 // ── LazyCard — inline component, only used in ImportPage ──────────────────────
 function LazyCard({ card, index }: { card: ParsedCard; index: number }) {
+  const { t } = useTranslation()
   const ref = useRef<HTMLDivElement>(null)
   const [visible, setVisible] = useState(false)
   const [expanded, setExpanded] = useState(false)
@@ -73,12 +74,12 @@ function LazyCard({ card, index }: { card: ParsedCard; index: number }) {
           {expanded && (
             <div className="px-4 pb-4 space-y-2 border-t border-border bg-muted/10">
               <div className="pt-3">
-                <div className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">Front</div>
+                <div className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">{t('cardEditor.frontLabel')}</div>
                 <KartexRenderer content={card.front} />
               </div>
               <hr className="border-border" />
               <div>
-                <div className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">Back</div>
+                <div className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">{t('cardEditor.backLabel')}</div>
                 <KartexRenderer content={card.back} />
               </div>
               {card.tags.length > 0 && (

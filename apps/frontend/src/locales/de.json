@@ -185,6 +185,7 @@
     "reviewedCards": "Sie haben {{count}} Karten wiederholt.",
     "reviewedCardsWithTime": "Sie haben {{count}} Karten in {{min}}m {{sec}}s wiederholt.",
     "restartSession": "Sitzung neu starten",
+    "studyDeckLabel": "Lernen: {{deckTitle}}",
     "loadingCards": "Karten werden geladen…",
     "couldNotLoad": "Diese Sitzung konnte nicht geladen werden. Bitte gehen Sie zurück und versuchen Sie es erneut."
   },
