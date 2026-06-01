@@ -10,6 +10,7 @@ import en from '../locales/en.json'
 void i18n.use(initReactI18next).init({
   lng: 'en',
   fallbackLng: 'en',
+  initImmediate: false,   // synchronous init — required so first jsdom render has translations
   resources: { en: { translation: en } },
   interpolation: { escapeValue: false },
 })
