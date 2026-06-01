@@ -11,6 +11,7 @@ import {
   Upload,
 } from 'lucide-react'
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/context/AuthContext'
@@ -18,28 +19,34 @@ import { useTheme } from '@/context/ThemeContext'
 import { cn } from '@/lib/utils'
 
 const navItems = [
-  { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { to: '/decks', label: 'Decks', icon: BookOpen },
-  { to: '/import', label: 'Import', icon: Upload },
-  { to: '/explore', label: 'Explore', icon: Compass },
-  { to: '/settings', label: 'Settings', icon: Settings },
+  { to: '/dashboard', labelKey: 'nav.dashboard' as const, icon: LayoutDashboard },
+  { to: '/decks', labelKey: 'nav.decks' as const, icon: BookOpen },
+  { to: '/import', labelKey: 'nav.import' as const, icon: Upload },
+  { to: '/explore', labelKey: 'nav.explore' as const, icon: Compass },
+  { to: '/settings', labelKey: 'nav.settings' as const, icon: Settings },
 ]
 
 export function AppShell() {
   const { user, logout } = useAuth()
   const { theme, toggleTheme } = useTheme()
+  const { t, i18n } = useTranslation()
   const [drawerOpen, setDrawerOpen] = useState(false)
   const location = useLocation()
 
   const currentLabel =
-    navItems.find(item => location.pathname.startsWith(item.to))?.label ??
-    (location.pathname.startsWith('/admin') ? 'Admin' : 'Kartex')
+    navItems.find(item => location.pathname.startsWith(item.to))
+      ? t(navItems.find(item => location.pathname.startsWith(item.to))!.labelKey)
+      : (location.pathname.startsWith('/admin') ? t('nav.admin') : 'Kartex')
 
   const GITHUB_URL = 'https://github.com/raphaelmue/kartex'
   const DOCS_URL = 'https://github.com/raphaelmue/kartex/blob/main/docs/kartex-format.md'
 
   const handleLogout = () => {
     void logout()
+  }
+
+  const toggleLanguage = () => {
+    void i18n.changeLanguage(i18n.language === 'en' ? 'de' : 'en')
   }
 
   return (
@@ -53,10 +60,10 @@ export function AppShell() {
 
         {/* Nav */}
         <nav
-          aria-label="Main navigation"
+          aria-label={t('a11y.mainNav')}
           className="flex-1 flex flex-col gap-1 px-2 py-2"
         >
-          {navItems.map(({ to, label, icon: Icon }) => (
+          {navItems.map(({ to, labelKey, icon: Icon }) => (
             <NavLink
               key={to}
               to={to}
@@ -76,7 +83,7 @@ export function AppShell() {
                     )}
                     aria-hidden="true"
                   />
-                  {label}
+                  {t(labelKey)}
                 </>
               )}
             </NavLink>
@@ -102,7 +109,7 @@ export function AppShell() {
                     )}
                     aria-hidden="true"
                   />
-                  Admin
+                  {t('nav.admin')}
                 </>
               )}
             </NavLink>
@@ -118,12 +125,20 @@ export function AppShell() {
             variant="ghost"
             size="icon"
             onClick={toggleTheme}
-            aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+            aria-label={theme === 'dark' ? t('a11y.switchToLight') : t('a11y.switchToDark')}
           >
             {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
           </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={toggleLanguage}
+            aria-label={t('a11y.switchLanguage')}
+          >
+            {i18n.language === 'de' ? 'DE' : 'EN'}
+          </Button>
           <Button variant="ghost" size="sm" onClick={handleLogout}>
-            Log out
+            {t('common.logOut')}
           </Button>
         </div>
       </aside>
@@ -154,10 +169,10 @@ export function AppShell() {
 
         {/* Drawer nav — mirrors desktop sidebar */}
         <nav
-          aria-label="Main navigation"
+          aria-label={t('a11y.mainNav')}
           className="flex-1 flex flex-col gap-1 px-2 py-2"
         >
-          {navItems.map(({ to, label, icon: Icon }) => (
+          {navItems.map(({ to, labelKey, icon: Icon }) => (
             <NavLink
               key={to}
               to={to}
@@ -178,7 +193,7 @@ export function AppShell() {
                     )}
                     aria-hidden="true"
                   />
-                  {label}
+                  {t(labelKey)}
                 </>
               )}
             </NavLink>
@@ -205,7 +220,7 @@ export function AppShell() {
                     )}
                     aria-hidden="true"
                   />
-                  Admin
+                  {t('nav.admin')}
                 </>
               )}
             </NavLink>
@@ -221,12 +236,20 @@ export function AppShell() {
             variant="ghost"
             size="icon"
             onClick={toggleTheme}
-            aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+            aria-label={theme === 'dark' ? t('a11y.switchToLight') : t('a11y.switchToDark')}
           >
             {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
           </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={toggleLanguage}
+            aria-label={t('a11y.switchLanguage')}
+          >
+            {i18n.language === 'de' ? 'DE' : 'EN'}
+          </Button>
           <Button variant="ghost" size="sm" onClick={handleLogout}>
-            Log out
+            {t('common.logOut')}
           </Button>
         </div>
       </div>
@@ -239,7 +262,7 @@ export function AppShell() {
             variant="ghost"
             size="icon"
             className="md:hidden"
-            aria-label="Open navigation menu"
+            aria-label={t('a11y.openMenu')}
             aria-expanded={drawerOpen}
             aria-controls="mobile-nav-drawer"
             onClick={() => setDrawerOpen(true)}
@@ -257,7 +280,7 @@ export function AppShell() {
         {/* Footer */}
         <footer className="h-10 shrink-0 border-t border-border flex items-center justify-between px-4 text-xs text-muted-foreground">
           <span>
-            v{__APP_VERSION__}&nbsp;·&nbsp;© Kartex
+            v{__APP_VERSION__}&nbsp;·&nbsp;{t('footer.copyright')}
           </span>
           <div className="flex items-center gap-3">
             <a
@@ -266,7 +289,7 @@ export function AppShell() {
               rel="noopener noreferrer"
               className="hover:text-foreground underline-offset-4 hover:underline"
             >
-              GitHub
+              {t('footer.github')}
             </a>
             <a
               href={DOCS_URL}
@@ -274,7 +297,7 @@ export function AppShell() {
               rel="noopener noreferrer"
               className="hover:text-foreground underline-offset-4 hover:underline"
             >
-              Docs
+              {t('footer.docs')}
             </a>
           </div>
         </footer>
