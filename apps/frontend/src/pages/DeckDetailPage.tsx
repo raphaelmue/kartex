@@ -364,7 +364,7 @@ export function DeckDetailPage() {
                   variant={filterTags.has(tag) ? 'default' : 'outline'}
                   onClick={() => setFilterTags((prev) => {
                     const next = new Set(prev)
-                    next.has(tag) ? next.delete(tag) : next.add(tag)
+                    if (next.has(tag)) { next.delete(tag) } else { next.add(tag) }
                     return next
                   })}
                 >
