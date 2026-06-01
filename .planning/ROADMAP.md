@@ -72,7 +72,12 @@ Plans:
   1. The frontend uses react-i18next and locale JSON files exist under `apps/frontend/src/locales/`
   2. Every visible UI string in the app renders via a `t()` call — no hardcoded English strings remain in JSX
   3. A language selector control is accessible in the UI, and switching language updates all strings immediately without a page reload
-**Plans**: TBD
+**Plans**: 3 plans
+
+Plans:
+- [ ] 09-01-PLAN.md — Wave 1: i18n infrastructure (packages, en/de locales, i18n.ts, type augmentation, test setup, failing LanguageToggle stub)
+- [ ] 09-02-PLAN.md — Wave 2: AppShell + language toggle + shared components + modals string wrapping
+- [ ] 09-03-PLAN.md — Wave 3: all 9 page files string wrapping + phase verification gate
 **UI hint**: yes
 
 ---
@@ -89,4 +94,4 @@ Plans:
 | 6. Sharing, Explore & Production Deploy | v1.0 | 3/3 | Complete | 2026-05-29 |
 | 7. App Shell | v1.1 | 1/1 | Complete | 2026-05-31 |
 | 8. Study UX | v1.1 | 3/3 | Complete | 2026-05-31 |
-| 9. Internationalization | v1.1 | 0/? | Not started | - |
+| 9. Internationalization | v1.1 | 0/3 | Planned | - |
