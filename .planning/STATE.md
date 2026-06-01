@@ -2,11 +2,11 @@
 gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Study Control & PWA
-status: planning
-last_updated: "2026-06-01T22:09:03.445Z"
-last_activity: 2026-06-01
+status: roadmapped
+last_updated: "2026-06-02T00:00:00.000Z"
+last_activity: 2026-06-02
 progress:
-  total_phases: 0
+  total_phases: 4
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -17,17 +17,17 @@ progress:
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-06-01)
+See: .planning/PROJECT.md (updated 2026-06-02)
 
 **Core value:** A user can open their dashboard, see their due cards, and complete a spaced-repetition study session — that loop must always work.
-**Current focus:** v1.1 archived — planning next milestone (run `/gsd:new-milestone`)
+**Current focus:** v1.2 roadmap defined — ready to plan Phase 10
 
 ## Current Position
 
-Phase: Not started (defining requirements)
+Phase: 10 — Active Deck Rotation (not started)
 Plan: —
-Status: Defining requirements
-Last activity: 2026-06-01 — Milestone v1.2 started
+Status: Roadmapped; awaiting `/gsd:plan-phase 10`
+Last activity: 2026-06-02 — v1.2 roadmap created (phases 10–13, 16 requirements mapped)
 
 ## Performance Metrics
 
@@ -103,16 +103,21 @@ Recent decisions affecting current work:
 - 09-03: EXAM_DURATIONS/SIZE_OPTIONS moved inside StudySessionPage component — needed t() access; module-scope arrays can't call hooks
 - 09-03: study.studyDeckLabel key added ('Study: {{deckTitle}}') — deckTitle interpolated as user content value, never a key (D-07)
 - 09-03: LazyCard subcomponent in ImportPage gets useTranslation for Front/Back preview labels
+- v1.2-research: Single combined Prisma migration for Deck.isActive + User.studyMode — avoids two deploy cycles; both have @default so migration is zero-downtime
+- v1.2-research: studyMode stored on User model (not separate UserSettings table) — single preference; premature abstraction avoided; /api/auth/me already returns UserSchema
+- v1.2-research: SM-2 multiplier applied post-calculateSM2 as a nextReviewAt post-processor — never modify stored CardProgress.interval (would corrupt future scheduling)
+- v1.2-research: Typst WASM (28 MB) excluded from vite-plugin-pwa globPatterns via globIgnores; CacheFirst runtimeCaching rule for *.wasm instead
+- v1.2-research: COEP/COOP headers added as Hono global middleware (resolves pre-existing production gap; currently dev-only via Vite server.headers)
+- v1.2-research: sw.js served with Cache-Control: no-store via explicit Hono route before serveStatic catch-all
 
 ### Pending Todos
 
-**v1.1 in progress:**
+**v1.2 active:**
 
-- ~~STUDY-01/02/03: Tag filter + session size + shuffle~~ → DONE 08-02
-- ~~STUDY-04: Deck detail tag grouping~~ → DONE 08-03
-- ~~SHELL-01/02: Mobile sidebar collapse + overlay drawer~~ → DONE Phase 7
-- ~~SHELL-03: App footer~~ → DONE Phase 7
-- ~~I18N-01/02/03: react-i18next setup + string externalization + language switcher~~ → DONE Phase 9
+- Phase 10: Active Deck Rotation — Prisma migration + DECK-01/02/03/04
+- Phase 11: SM-2 Preset Modes — Settings page + rate endpoint multiplier — SM2-01/02/03/04
+- Phase 12: PWA Shell — vite-plugin-pwa + manifest + COEP/COOP headers — PWA-01/02/03/04/05
+- Phase 13: Documentation — README.md + docs refresh — DOCS-01/02/03
 
 **Completed:**
 
@@ -147,6 +152,6 @@ Items acknowledged and deferred at milestone close on 2026-05-30:
 
 ## Session Continuity
 
-Last session: 2026-06-01
-Stopped at: 09-03 complete — all 9 pages translated, 254 en/de keys (parity), 67 tests pass, typecheck clean, phase verification gate passed
-Resume with: Milestone v1.1 complete. Start v1.2 planning or declare done.
+Last session: 2026-06-02
+Stopped at: v1.2 roadmap created — phases 10–13 defined, 16/16 requirements mapped
+Resume with: `/gsd:plan-phase 10` — Active Deck Rotation (Prisma migration + isActive toggle + deck picker + session size picker)

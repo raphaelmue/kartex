@@ -53,22 +53,22 @@
 
 | REQ-ID | Phase | Plan |
 |--------|-------|------|
-| DECK-01 | — | — |
-| DECK-02 | — | — |
-| DECK-03 | — | — |
-| DECK-04 | — | — |
-| SM2-01 | — | — |
-| SM2-02 | — | — |
-| SM2-03 | — | — |
-| SM2-04 | — | — |
-| PWA-01 | — | — |
-| PWA-02 | — | — |
-| PWA-03 | — | — |
-| PWA-04 | — | — |
-| PWA-05 | — | — |
-| DOCS-01 | — | — |
-| DOCS-02 | — | — |
-| DOCS-03 | — | — |
+| DECK-01 | Phase 10 | — |
+| DECK-02 | Phase 10 | — |
+| DECK-03 | Phase 10 | — |
+| DECK-04 | Phase 10 | — |
+| SM2-01 | Phase 11 | — |
+| SM2-02 | Phase 11 | — |
+| SM2-03 | Phase 11 | — |
+| SM2-04 | Phase 11 | — |
+| PWA-01 | Phase 12 | — |
+| PWA-02 | Phase 12 | — |
+| PWA-03 | Phase 12 | — |
+| PWA-04 | Phase 12 | — |
+| PWA-05 | Phase 12 | — |
+| DOCS-01 | Phase 13 | — |
+| DOCS-02 | Phase 13 | — |
+| DOCS-03 | Phase 13 | — |
 
 ---
-*Last updated: 2026-06-02 — v1.2 requirements defined (16 requirements across 4 categories)*
+*Last updated: 2026-06-02 — v1.2 roadmap complete (16/16 requirements mapped to phases 10–13)*
