@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Study Experience & Polish
-status: complete
-stopped_at: 09-03 complete — all 9 pages translated, 254 keys en/de parity, 67 tests pass, phase verification gate passed
-last_updated: "2026-06-01T17:30:00Z"
-last_activity: 2026-06-01 -- Phase 9 Plan 3 (all pages string wrapping + phase verification gate) complete
+status: archived
+stopped_at: v1.1 milestone closed — ROADMAP/REQUIREMENTS archived, PROJECT.md updated, git tag v1.1 created
+last_updated: "2026-06-01T18:00:00Z"
+last_activity: 2026-06-01 -- v1.1 milestone complete and archived
 progress:
   total_phases: 3
   completed_phases: 3
-  total_plans: 7
-  completed_plans: 7
+  total_plans: 8
+  completed_plans: 8
   percent: 100
 ---
 
@@ -18,20 +18,18 @@ progress:
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-05-30)
+See: .planning/PROJECT.md (updated 2026-06-01)
 
 **Core value:** A user can open their dashboard, see their due cards, and complete a spaced-repetition study session — that loop must always work.
-**Current focus:** v1.1 — Study Experience & Polish (COMPLETE)
+**Current focus:** v1.1 archived — planning next milestone (run `/gsd:new-milestone`)
 
 ## Current Position
 
-Milestone: v1.1 Study Experience & Polish
-Phase: Phase 9 — Internationalization (COMPLETE)
-Plan: 09-03 (complete)
-Status: All plans complete — Phase 9 done, milestone v1.1 complete
-Last activity: 2026-06-01 -- Phase 9 Plan 3 complete
+Milestone: v1.1 Study Experience & Polish — ARCHIVED
+Status: Milestone complete and archived. Ready to start v1.2 planning.
+Last activity: 2026-06-01 -- v1.1 milestone archived
 
-Progress: [████████████████████████████████████████] 100% (all 7 plans done)
+Progress: [████████████████████████████████████████] 100% (all 8 plans done)
 
 ## Performance Metrics
 

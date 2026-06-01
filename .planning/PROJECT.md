@@ -1,15 +1,11 @@
 # Kartex
 
-## Current Milestone: v1.1 Study Experience & Polish
+## Current State: v1.1 Shipped — Planning Next Milestone
 
-**Goal:** Add targeted UX improvements to the study loop and app shell — tag filtering, session limits, mobile layout, a footer, and i18n groundwork.
-
-**Target features:**
-- Tag-based topic filter in study sessions and deck view
-- Card limit + always-shuffle for study sessions
-- Mobile sidebar collapse
-- App footer (version, copyright, links)
-- i18n internationalization (frontend only in v1.1)
+**Shipped:** v1.1 Study Experience & Polish — 2026-06-01
+**Phases shipped:** 1–9 (v1.0: phases 1–6, v1.1: phases 7–9)
+**Total plans shipped:** 26 (18 in v1.0 + 8 in v1.1)
+**TypeScript LOC:** ~9,531
 
 ## What This Is
 
@@ -53,14 +49,18 @@ A user can open their dashboard, see their due cards, and complete a spaced-repe
 - ✓ Full Docker Compose deployment: backend (Hono + serveStatic SPA), db (PostgreSQL 16), media volume — v1.0
 - ✓ GitHub Actions CI: typecheck + lint + test + build on every push — v1.0
 
+**Validated in v1.1:**
+
+- ✓ Tag-based topic filter in study session (multi-select OR logic, chip bar) — v1.1
+- ✓ Card limit + always-shuffle for study sessions (All/10/20/custom size picker) — v1.1
+- ✓ Mobile sidebar collapse with hamburger toggle and overlay drawer (200ms CSS-transform slide) — v1.1
+- ✓ App footer (build-time version, copyright, GitHub/Docs links) — v1.1
+- ✓ react-i18next internationalization: 254-key en/de locale parity, all 9 pages translated, LanguageToggle with runtime switching — v1.1
+
 ### Active
 
-**v1.1 — Study Experience & Polish:**
-- [ ] Tag-based topic filter in study session and deck view (tag-as-topic, no schema change)
-- [ ] Card limit + always-shuffle for study sessions
-- [ ] Mobile sidebar collapse (hamburger toggle, off-canvas drawer)
-- [ ] App footer (version, copyright, links)
-- [ ] i18n internationalization support (react-i18next, frontend only in v1.1)
+**v1.2 — To be defined:**
+- (run `/gsd:new-milestone` to define next milestone requirements and roadmap)
 
 ### Out of Scope
 
@@ -81,6 +81,9 @@ A user can open their dashboard, see their due cards, and complete a spaced-repe
 - Hono serves the React SPA via `serveStatic` from `./public` — Nginx was removed (D-05/D-06)
 - Target deployment: personal server or home lab, 2-5 concurrent users, no high-scale requirements
 - Shipped v1.0 with 8,135 TypeScript LOC across 226 files in 5 days
+- Shipped v1.1 with ~9,531 TypeScript LOC (46 files changed, +2,854 / -486 lines) in 2 days
+- i18n: react-i18next v26, 254 keys, `apps/frontend/src/locales/{en,de}.json` — de.json is placeholder-quality; needs native speaker review before shipping to German users
+- Uses yarn@4.15.0 workspaces (not pnpm despite original design doc — discovered in Phase 7)
 
 ## Constraints
 
@@ -107,6 +110,13 @@ A user can open their dashboard, see their due cards, and complete a spaced-repe
 | Prisma 7 migration (D-new) | Upgraded from Prisma 5.22.0 → 7.8.0 with pg driver adapter; `prisma.config.ts` replaces datasource `url` field | ✓ Good — Prisma 7 is more explicit about DB connection; required Dockerfile fix |
 | react-markdown v10 custom URL transform | defaultUrlTransform strips unknown protocols; custom `kartexUrlTransform` passes `media://` through | ✓ Good — clean separation of protocol handling |
 | Split Hono media router auth | `mediaPublicRouter` (GET) before authMiddleware, `mediaRouter` (POST) after — minimum viable auth split for browser img/audio src resolution | ✓ Good — allows `<img src="/api/media/...">` to work without CORS/cookie complexity |
+| CSS-transform always-in-DOM drawer (v1.1) | Conditional render can't animate exit; always-in-DOM with translate toggle enables 200ms slide-out | ✓ Good — smooth mobile UX, no layout shift |
+| createRequire for Vite version injection (v1.1) | `resolveJsonModule` incompatible with `moduleResolution: bundler + allowImportingTsExtensions` in project tsconfig | ✓ Good — works reliably with the existing tsconfig setup |
+| availableTags from prefetch, not filtered state (v1.1) | Deriving available tags from filtered cards causes chip list to collapse when a filter is active | ✓ Good — chip bar stays stable while filter is applied |
+| Flat table + tag filter bar over h3 section groups (v1.1) | UAT STUDY-04c failure: multi-tag cards appeared under only first tag in h3 layout; flat table + chip filter is simpler and correct | ✓ Good — adopted after UAT gap closure (08-04) |
+| i18next v26 synchronous init (v1.1) | initImmediate removed from InitOptions in v26; init is synchronous by default without async backend plugin | ✓ Good — no need for Suspense wrapper in tests |
+| labelKey pattern for hook-rule compliance (v1.1) | navItems/RATINGS arrays at module scope store key strings; t(key) called inside component render — avoids hooks-outside-component violation | ✓ Good — clean pattern for translated constant arrays |
+| User content as interpolation values only (v1.1) | Deck titles, tags, usernames passed as `{{value}}` interpolations, never as translation keys — prevents i18n injection (T-09-05) | ✓ Good — explicit D-07 rule followed throughout all 254 keys |
 
 ## Evolution
 
@@ -126,4 +136,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-05-30 after v1.1 milestone start. v1.0: all 53 requirements shipped and verified.*
+*Last updated: 2026-06-01 after v1.1 milestone close. v1.0: 25 requirements shipped. v1.1: 10 requirements shipped (10/10 complete).*
