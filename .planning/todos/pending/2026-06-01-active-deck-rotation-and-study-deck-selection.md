@@ -2,6 +2,7 @@
 created: 2026-06-01T22:15:00Z
 title: Active deck rotation and /study deck + session selection
 area: ui
+resolves_phase: 10
 files:
   - apps/frontend/src/pages/StudySessionPage.tsx
   - apps/backend/prisma/schema.prisma

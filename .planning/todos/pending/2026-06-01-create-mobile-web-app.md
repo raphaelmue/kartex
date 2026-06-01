@@ -2,6 +2,7 @@
 created: 2026-06-01T21:35:00Z
 title: Create mobile web app (PWA)
 area: ui
+resolves_phase: 12
 files: []
 ---
 

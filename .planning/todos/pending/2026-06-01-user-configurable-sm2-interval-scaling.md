@@ -2,6 +2,7 @@
 created: 2026-06-01T22:30:00Z
 title: User-configurable SM-2 interval scaling for exam/goal-based learning
 area: ui
+resolves_phase: 11
 files:
   - packages/shared/src/lib/sm2.ts
   - apps/backend/src/routes/study.ts
