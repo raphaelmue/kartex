@@ -3,15 +3,16 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Study Control & PWA
 status: executing
-stopped_at: Phase 10 Plan 04 complete — /study start screen with deck picker + session size picker
-last_updated: "2026-06-02T15:10:00.000Z"
-last_activity: 2026-06-02 -- Phase 10 Plan 04 executed
+stopped_at: phase 11 all plans done — awaiting human verification (2026-06-03)
+last_updated: "2026-06-03T00:00:00.000Z"
+last_activity: 2026-06-03 -- Phase 11 Plan 04 executed (mode indicator badge + SM2-01/SM2-04 tests)
 progress:
   total_phases: 4
-  completed_phases: 0
-  total_plans: 5
-  completed_plans: 5
-  percent: 18
+  completed_phases: 1
+  total_plans: 9
+  completed_plans: 9
+  percent: 25
+phase_11_status: executing
 ---
 
 # Project State
@@ -25,10 +26,10 @@ See: .planning/PROJECT.md (updated 2026-06-02)
 
 ## Current Position
 
-Phase: 10 — Active Deck Rotation (in progress)
-Plan: 04 complete — phase 10 all plans done
+Phase: 11 — SM-2 Preset Modes (all plans done, awaiting human verification)
+Plan: 04 complete — phase 11 all plans done
 Status: Executing
-Last activity: 2026-06-02 -- Phase 10 Plan 04 executed (/study start screen with deck picker + session size picker, DECK-03 GREEN, DECK-04 GREEN)
+Last activity: 2026-06-03 -- Phase 11 Plan 04 executed (StudySessionPage mode indicator badge + SettingsPage.test.tsx SM2-01 + StudySessionPage.test.tsx SM2-04)
 
 ## Performance Metrics
 
@@ -163,6 +164,6 @@ Items acknowledged and deferred at milestone close on 2026-05-30:
 
 ## Session Continuity
 
-Last session: 2026-06-02
-Stopped at: Phase 10 Plan 04 complete — /study start screen with deck picker + session size picker (481fdde)
+Last session: 2026-06-02T14:13:23.871Z
+Stopped at: context exhaustion at 75% (2026-06-02)
 Resume with: Phase 10 complete — continue with Phase 11 (SM-2 Preset Modes)
