@@ -2,13 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Study Control & PWA
-status: roadmapped
-last_updated: "2026-06-02T00:00:00.000Z"
-last_activity: 2026-06-02
+status: executing
+stopped_at: v1.2 roadmap created — phases 10–13 defined, 16/16 requirements mapped
+last_updated: "2026-06-02T08:39:59.166Z"
+last_activity: 2026-06-02 -- Phase 10 planning complete
 progress:
   total_phases: 4
   completed_phases: 0
-  total_plans: 0
+  total_plans: 5
   completed_plans: 0
   percent: 0
 ---
@@ -26,8 +27,8 @@ See: .planning/PROJECT.md (updated 2026-06-02)
 
 Phase: 10 — Active Deck Rotation (not started)
 Plan: —
-Status: Roadmapped; awaiting `/gsd:plan-phase 10`
-Last activity: 2026-06-02 — v1.2 roadmap created (phases 10–13, 16 requirements mapped)
+Status: Ready to execute
+Last activity: 2026-06-02 -- Phase 10 planning complete
 
 ## Performance Metrics
 

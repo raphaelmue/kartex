@@ -45,56 +45,73 @@ Full details: [.planning/milestones/v1.1-ROADMAP.md](milestones/v1.1-ROADMAP.md)
 ## Phase Details
 
 ### Phase 10: Active Deck Rotation
+
 **Goal**: Users control which decks feed their global study queue, and the /study start screen gives them per-session overrides
 **Depends on**: Nothing (first phase of v1.2)
 **Requirements**: DECK-01, DECK-02, DECK-03, DECK-04
 **Success Criteria** (what must be TRUE):
+
   1. User can toggle a deck active or inactive from the deck list and deck detail page; the toggle state persists after a browser refresh
   2. Starting a /study session only surfaces due cards from decks the user has marked active (inactive decks are completely excluded from the queue)
   3. The /study start screen shows a deck picker listing all active decks, all pre-checked; the user can uncheck individual decks for that session without affecting the persisted isActive flag
   4. The /study start screen has a session size picker (All / 10 / 20 / custom) consistent with the existing /decks/:id/learn picker
-**Plans**: 5 plans
-Plans:
+
+**Plans**: 5 plansPlans:
+**Wave 1**
+
 - [ ] 10-01-PLAN.md — Wave 0 RED test stub (DecksPage.test.tsx) for DECK-01 toggle
 - [ ] 10-02-PLAN.md — Schema foundation: Prisma isActive + studyMode migration, shared Zod schemas, shadcn Switch + Checkbox
+- [ ] 10-05-PLAN.md — i18n keys for toggle + start screen (en.json + de.json)
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
 - [ ] 10-03-PLAN.md — Backend isActive filter (study.ts) + DecksPage & DeckDetailPage toggles (DECK-01, DECK-02)
 - [ ] 10-04-PLAN.md — /study start screen: deck picker + session size picker (DECK-03, DECK-04)
-- [ ] 10-05-PLAN.md — i18n keys for toggle + start screen (en.json + de.json)
+
 **UI hint**: yes
 
 ### Phase 11: SM-2 Preset Modes
+
 **Goal**: Users can choose how aggressively intervals are compressed and that choice is enforced server-side on every rating
 **Depends on**: Phase 10 (User.studyMode column added in Phase 10 migration)
 **Requirements**: SM2-01, SM2-02, SM2-03, SM2-04
 **Success Criteria** (what must be TRUE):
+
   1. The /settings page shows a study mode selector with three options — Normal, Intensive, Exam Prep — replacing the former placeholder; the selected mode persists after logout and re-login
   2. Rating a card in Intensive mode schedules it sooner than Normal mode (nextReviewAt is earlier); rating in Exam Prep mode schedules it sooner still — verified by inspecting the API response
   3. The raw SM-2 interval stored in CardProgress is the same regardless of active study mode — only nextReviewAt shifts; the stored interval is never multiplied
   4. When a non-Normal mode is active, the study session header displays a visible indicator of the current mode
+
 **Plans**: TBD
 **UI hint**: yes
 
 ### Phase 12: PWA Shell
+
 **Goal**: The app is installable from the browser and loads its shell instantly on repeat visits without breaking Typst WASM or cached API data
 **Depends on**: Phase 11 (full app complete before PWA integration test is meaningful)
 **Requirements**: PWA-01, PWA-02, PWA-03, PWA-04, PWA-05
 **Success Criteria** (what must be TRUE):
+
   1. Chrome (desktop and mobile) offers an "Add to Home Screen" / "Install" prompt when visiting the app — the manifest.webmanifest with 192x192 and 512x512 icons is present and valid per Lighthouse
   2. On a repeat visit with the network throttled, the app shell (HTML/JS/CSS) loads from the service worker cache before the network responds; the study session, dashboard, and card content all continue to function normally once the network responds
   3. All /api/* requests go directly to the network; the service worker never returns a cached API response regardless of network state
   4. The production Hono server sends Cross-Origin-Opener-Policy: same-origin and Cross-Origin-Embedder-Policy: require-corp headers on all responses (Typst WASM functions correctly in production without dev-server workarounds)
   5. After a redeployment, the browser downloads the new sw.js immediately (no stale cached version); sw.js and workbox-*.js are served with Cache-Control: no-store
+
 **Plans**: TBD
 **UI hint**: yes
 
 ### Phase 13: Documentation
+
 **Goal**: The repository is self-documenting for a new developer or returning user — accurate README, correct architecture doc, accurate format spec
 **Depends on**: Phase 12 (docs describe the completed v1.2 state including PWA and Settings page)
 **Requirements**: DOCS-01, DOCS-02, DOCS-03
 **Success Criteria** (what must be TRUE):
+
   1. A developer who clones the repo cold can follow README.md to set up .env and run docker compose up -d without consulting any other file
   2. docs/design.md contains no references to Nginx, no references to pnpm — the architecture section accurately reflects Hono serveStatic and yarn@4.15.0
   3. docs/kartex-format.md accurately documents the #typst block type, audio media, and the .kartex.zip bundle format as implemented in v1.1
+
 **Plans**: TBD
 
 ---
