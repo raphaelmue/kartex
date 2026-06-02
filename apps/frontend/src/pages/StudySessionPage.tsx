@@ -3,11 +3,12 @@ import { useTranslation } from 'react-i18next'
 import { useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'sonner'
 import { ArrowLeft, Brain, BookOpen, Timer, Trophy, CheckCircle2 } from 'lucide-react'
-import type { DueCard } from '@kartex/shared'
+import type { DueCard, DeckListItem } from '@kartex/shared'
 import { api } from '@/lib/api'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Checkbox } from '@/components/ui/checkbox'
 import { CardFlip } from '@/components/CardFlip'
 import { RatingButtons } from '@/components/RatingButtons'
 import { ExamTimer } from '@/components/ExamTimer'
@@ -169,7 +170,147 @@ type CommittedConfig = {
   tags: Set<string>
   size: 'all' | 10 | 20 | 'custom'
   count: number
+  deckIds?: string[]   // undefined = all active decks (legacy/deck-specific paths)
 } | null
+
+// Deck entry for the global SR start screen picker
+type DeckPickerDeck = {
+  id: string
+  title: string
+  dueCount: number
+}
+
+// Row in the deck picker list (extracted to keep StudySessionPage under 500 lines)
+function DeckPickerItem({
+  deck,
+  checked,
+  isLast,
+  onToggle,
+  dueLabel,
+}: {
+  deck: DeckPickerDeck
+  checked: boolean
+  isLast: boolean
+  onToggle: () => void
+  dueLabel: string
+}) {
+  return (
+    <div
+      className={`flex items-center gap-3 px-4 py-2 cursor-pointer hover:bg-muted/50${isLast ? '' : ' border-b border-border'}`}
+      onClick={onToggle}
+    >
+      <Checkbox
+        checked={checked}
+        onCheckedChange={onToggle}
+        id={`deck-picker-${deck.id}`}
+        aria-label={deck.title}
+      />
+      <div className="flex-1 min-w-0">
+        {/* deck.title is user content — not translated (D-07) */}
+        <p className="text-sm font-semibold truncate">{deck.title}</p>
+        <p className="text-xs text-muted-foreground">{dueLabel}</p>
+      </div>
+    </div>
+  )
+}
+
+// Global SR start screen (DECK-03, DECK-04) — extracted to keep StudySessionPage under 500 lines
+function GlobalSRStartScreen({
+  activeDecks,
+  selectedDeckIds,
+  sessionSize,
+  customCount,
+  sizeOptions,
+  onToggleDeck,
+  onSetSessionSize,
+  onSetCustomCount,
+  onStartSession,
+  onNavigateBack,
+  t,
+}: {
+  activeDecks: DeckPickerDeck[]
+  selectedDeckIds: Set<string>
+  sessionSize: 'all' | 10 | 20 | 'custom'
+  customCount: number
+  sizeOptions: { label: string; value: 'all' | 10 | 20 | 'custom' }[]
+  onToggleDeck: (id: string) => void
+  onSetSessionSize: (v: 'all' | 10 | 20 | 'custom') => void
+  onSetCustomCount: (n: number) => void
+  onStartSession: () => void
+  onNavigateBack: () => void
+  t: (key: string, opts?: Record<string, unknown>) => string
+}) {
+  return (
+    <div className="max-w-lg mx-auto py-12 px-4">
+      <Button variant="ghost" size="sm" className="mb-6" onClick={onNavigateBack}>
+        <ArrowLeft className="h-4 w-4 mr-1" aria-hidden="true" />
+        {t('study.backToDashboard')}
+      </Button>
+      <h1 className="text-xl font-semibold mb-2">{t('study.globalTitle')}</h1>
+      <p className="text-sm text-muted-foreground mb-6">{t('study.globalSubtitle')}</p>
+
+      {/* Deck picker section */}
+      <div className="mb-6">
+        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">
+          {t('study.chooseDecks')}
+        </p>
+        {activeDecks.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-8 gap-2 text-muted-foreground border border-border rounded-lg">
+            <BookOpen className="h-8 w-8" aria-hidden="true" />
+            <p className="text-sm font-semibold">{t('study.noActiveDecks')}</p>
+            <p className="text-xs text-center">{t('study.noActiveDecksHint')}</p>
+          </div>
+        ) : (
+          <div className="border border-border rounded-lg overflow-hidden">
+            {activeDecks.map((deck, i) => (
+              <DeckPickerItem
+                key={deck.id}
+                deck={deck}
+                checked={selectedDeckIds.has(deck.id)}
+                isLast={i === activeDecks.length - 1}
+                onToggle={() => onToggleDeck(deck.id)}
+                dueLabel={t('study.nCardsDue', { count: deck.dueCount })}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Session size picker section */}
+      <div className="mb-6">
+        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">
+          {t('study.sessionSize')}
+        </p>
+        <div className="flex items-center gap-2 flex-wrap">
+          {sizeOptions.map((opt) => (
+            <Button
+              key={String(opt.value)}
+              size="sm"
+              variant={sessionSize === opt.value ? 'default' : 'outline'}
+              onClick={() => onSetSessionSize(opt.value)}
+              type="button"
+            >
+              {opt.label}
+            </Button>
+          ))}
+          {sessionSize === 'custom' && (
+            <Input
+              type="number"
+              min={1}
+              value={customCount}
+              onChange={(e) => onSetCustomCount(Math.max(1, parseInt(e.target.value, 10) || 1))}
+              className="w-20 h-8"
+            />
+          )}
+        </div>
+      </div>
+
+      <Button size="lg" className="w-full mt-4" disabled={selectedDeckIds.size === 0} onClick={onStartSession}>
+        {t('study.startSession')}
+      </Button>
+    </div>
+  )
+}
 
 // Top-level page component
 export function StudySessionPage() {
@@ -200,10 +341,12 @@ export function StudySessionPage() {
   // Committed config snapshot — only set when user explicitly starts a session (CR-02/WR-03)
   // The loadCards effect depends on this snapshot, not live config state, to prevent
   // mid-session re-triggering when the user changes tags or size.
-  // For global SR (/study), auto-commit immediately with default config.
-  const [committedConfig, setCommittedConfig] = useState<CommittedConfig>(
-    isGlobalSR ? { mode: 'sr', tags: new Set(), size: 'all', count: 1 } : null,
-  )
+  // Always null on mount — global SR shows start screen before committing (Pitfall 2).
+  const [committedConfig, setCommittedConfig] = useState<CommittedConfig>(null)
+
+  // Global SR start screen state
+  const [activeDecks, setActiveDecks] = useState<DeckPickerDeck[]>([])
+  const [selectedDeckIds, setSelectedDeckIds] = useState<Set<string>>(new Set())
 
   // EXAM_DURATIONS: user must pick (D-06 — no default). Computed here to use t().
   const EXAM_DURATIONS = [
@@ -256,6 +399,33 @@ export function StudySessionPage() {
     })()
   }, [deckId])
 
+  // Prefetch active decks for the global SR start screen (DECK-03)
+  useEffect(() => {
+    if (!isGlobalSR) return
+    void (async () => {
+      try {
+        const [decksRes, dueRes] = await Promise.all([
+          api.get('/api/decks'),
+          api.get('/api/study/due'),
+        ])
+        if (decksRes.ok && dueRes.ok) {
+          const allDecks = await decksRes.json() as DeckListItem[]
+          const due = await dueRes.json() as { deckId: string }[]
+          const active = allDecks.filter((d) => d.isActive)
+          const picker: DeckPickerDeck[] = active.map((d) => ({
+            id: d.id,
+            title: d.title,
+            dueCount: due.filter((c) => c.deckId === d.id).length,
+          }))
+          setActiveDecks(picker)
+          setSelectedDeckIds(new Set(picker.map((d) => d.id)))
+        }
+      } catch (err) {
+        console.error('[StudySessionPage] global prefetch failed:', err)
+      }
+    })()
+  }, [isGlobalSR])
+
   // Load cards only when the user explicitly commits a config (CR-02/WR-03)
   // Deps are [committedConfig, deckId] — live config state changes do not re-trigger this.
   useEffect(() => {
@@ -282,14 +452,20 @@ export function StudySessionPage() {
               ? filtered
               : filtered.filter((c) => c.tags.some((tag) => tags.has(tag)))
 
+          // DECK-03: Session deckIds filter (client-side, additive to server isActive filter)
+          const deckFiltered =
+            committedConfig.deckIds
+              ? tagFiltered.filter((c) => committedConfig.deckIds!.includes(c.deckId))
+              : tagFiltered
+
           // STUDY-02: Session size slice (SR mode only per D-08)
           const sized =
             mode === 'sr' && size !== 'all'
-              ? tagFiltered.slice(
+              ? deckFiltered.slice(
                   0,
                   size === 'custom' ? Math.max(1, count) : size,
                 )
-              : tagFiltered
+              : deckFiltered
 
           // STUDY-03: Shuffle — non-mutating Fisher-Yates (CR-01)
           const shuffled = shuffle(sized)
@@ -305,6 +481,27 @@ export function StudySessionPage() {
       }
     })()
   }, [committedConfig, deckId])
+
+  // Toggle a deck in/out of the session selection (DECK-03 — session-only, no API call)
+  const toggleDeckSelection = (deckId: string) => {
+    setSelectedDeckIds((prev) => {
+      const next = new Set(prev)
+      if (next.has(deckId)) next.delete(deckId)
+      else next.add(deckId)
+      return next
+    })
+  }
+
+  // Commit the global SR start screen config and begin loading cards (DECK-03/DECK-04)
+  const handleStartSession = () => {
+    setCommittedConfig({
+      mode: 'sr',
+      tags: new Set(),
+      size: sessionSize,
+      count: customCount,
+      deckIds: [...selectedDeckIds],
+    })
+  }
 
   // Mode selector (deck-specific sessions only)
   if (!selectedMode) {
@@ -470,6 +667,25 @@ export function StudySessionPage() {
           </Button>
         </div>
       </div>
+    )
+  }
+
+  // Global SR start screen (DECK-03, DECK-04) — shown when no committed config yet
+  if (isGlobalSR && !committedConfig) {
+    return (
+      <GlobalSRStartScreen
+        activeDecks={activeDecks}
+        selectedDeckIds={selectedDeckIds}
+        sessionSize={sessionSize}
+        customCount={customCount}
+        sizeOptions={SIZE_OPTIONS}
+        onToggleDeck={toggleDeckSelection}
+        onSetSessionSize={setSessionSize}
+        onSetCustomCount={setCustomCount}
+        onStartSession={handleStartSession}
+        onNavigateBack={() => navigate('/dashboard')}
+        t={t}
+      />
     )
   }
 
