@@ -1,14 +1,18 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { StudySessionPage } from '@/pages/StudySessionPage'
+
+// Mutable holder for useParams return value — allows global start screen tests to
+// set `{}` (no id param) without breaking the deck-specific suite (STATE.md 08-02, 03-02)
+const mockParams = vi.hoisted(() => ({ current: { id: 'deck-abc' } }))
 
 // 1. Mock react-router-dom — preserve real module, override useParams and useNavigate
 vi.mock('react-router-dom', async () => {
   const actual = await vi.importActual<typeof import('react-router-dom')>('react-router-dom')
   return {
     ...actual,
-    useParams: () => ({ id: 'deck-abc' }),
+    useParams: () => mockParams.current,
     useNavigate: () => vi.fn(),
   }
 })
@@ -362,5 +366,164 @@ describe('StudySessionPage config section', () => {
 
     // Original array order must not have been mutated
     expect(mockCards.map((c) => c.id)).toEqual(originalIds)
+  })
+})
+
+// ---------------------------------------------------------------------------
+// Helper: factory for DeckListItem-shaped mock decks
+// ---------------------------------------------------------------------------
+function makeDeckListItem(
+  id: string,
+  title: string,
+  isActive: boolean,
+): {
+  id: string
+  title: string
+  description: null
+  visibility: 'PRIVATE'
+  ownerId: string
+  isActive: boolean
+  createdAt: string
+  updatedAt: string
+} {
+  return {
+    id,
+    title,
+    description: null,
+    visibility: 'PRIVATE',
+    ownerId: 'user-1',
+    isActive,
+    createdAt: '2026-01-01T00:00:00.000Z',
+    updatedAt: '2026-01-01T00:00:00.000Z',
+  }
+}
+
+// Setup: configure mockApiGet for the global start screen prefetch
+// /api/decks → two active decks + one inactive deck
+// /api/study/due → three cards, two from active-deck-1, one from active-deck-2
+function setupGlobalPrefetchMocks() {
+  mockApiGet.mockImplementation((url: string) => {
+    if (url === '/api/decks') {
+      return Promise.resolve({
+        ok: true,
+        json: async () => [
+          makeDeckListItem('active-deck-1', 'Active Deck One', true),
+          makeDeckListItem('active-deck-2', 'Active Deck Two', true),
+          makeDeckListItem('inactive-deck-3', 'Inactive Deck Three', false),
+        ],
+      })
+    }
+    if (url === '/api/study/due') {
+      return Promise.resolve({
+        ok: true,
+        json: async () => [
+          { deckId: 'active-deck-1' },
+          { deckId: 'active-deck-1' },
+          { deckId: 'active-deck-2' },
+        ],
+      })
+    }
+    return Promise.resolve({ ok: false, json: async () => ({}) })
+  })
+}
+
+describe('StudySessionPage global start screen', () => {
+  beforeEach(() => {
+    // Set no id param — triggers isGlobalSR = true
+    mockParams.current = {}
+    mockApiGet.mockReset()
+    setupGlobalPrefetchMocks()
+  })
+
+  afterEach(() => {
+    // Restore deck-specific param so subsequent describe blocks are unaffected
+    mockParams.current = { id: 'deck-abc' }
+  })
+
+  it('DECK-03a: start screen renders with page title when no id param', async () => {
+    renderPage()
+    await waitFor(() => {
+      // globalTitle i18n key renders as "Study session"
+      expect(screen.getByText(/study session/i)).toBeTruthy()
+    })
+    // Active Deck One must appear in the picker
+    await waitFor(() => {
+      expect(screen.getByText('Active Deck One')).toBeTruthy()
+    })
+  })
+
+  it('DECK-03b: all active decks are pre-checked; inactive deck not shown', async () => {
+    renderPage()
+    await waitFor(() => {
+      expect(screen.getByText('Active Deck One')).toBeTruthy()
+      expect(screen.getByText('Active Deck Two')).toBeTruthy()
+    })
+
+    // Both checkboxes are checked by default (data-state="checked")
+    const checkbox1 = document.getElementById('deck-picker-active-deck-1')
+    const checkbox2 = document.getElementById('deck-picker-active-deck-2')
+    expect(checkbox1?.getAttribute('data-state')).toBe('checked')
+    expect(checkbox2?.getAttribute('data-state')).toBe('checked')
+
+    // Inactive deck must NOT appear in the picker
+    expect(screen.queryByText('Inactive Deck Three')).toBeNull()
+  })
+
+  it('DECK-03c: unchecking a deck toggles checkbox only — no PATCH call', async () => {
+    renderPage()
+    await waitFor(() => {
+      expect(screen.getByText('Active Deck One')).toBeTruthy()
+    })
+
+    const checkbox1 = document.getElementById('deck-picker-active-deck-1')
+    expect(checkbox1?.getAttribute('data-state')).toBe('checked')
+
+    // Click the row to uncheck
+    fireEvent.click(screen.getByText('Active Deck One').closest('div')!)
+
+    // Checkbox must now be unchecked
+    await waitFor(() => {
+      expect(checkbox1?.getAttribute('data-state')).toBe('unchecked')
+    })
+
+    // Only /api/decks and /api/study/due were called (prefetch) — no PATCH
+    const calls = mockApiGet.mock.calls.map((c) => c[0] as string)
+    expect(calls.every((url) => url !== '/api/decks/active-deck-1')).toBe(true)
+  })
+
+  it('DECK-03d: Start session button is disabled when all decks unchecked', async () => {
+    renderPage()
+    await waitFor(() => {
+      expect(screen.getByText('Active Deck One')).toBeTruthy()
+      expect(screen.getByText('Active Deck Two')).toBeTruthy()
+    })
+
+    // Uncheck both decks by clicking each row
+    fireEvent.click(screen.getByText('Active Deck One').closest('div')!)
+    fireEvent.click(screen.getByText('Active Deck Two').closest('div')!)
+
+    await waitFor(() => {
+      const startBtn = screen.getByRole('button', { name: /start session/i })
+      expect(startBtn).toHaveProperty('disabled', true)
+    })
+  })
+
+  it('DECK-04a: session size picker renders All / 10 / 20 / Custom buttons', async () => {
+    renderPage()
+    await waitFor(() => {
+      expect(screen.getByText(/study session/i)).toBeTruthy()
+    })
+
+    // Size buttons must be present
+    expect(screen.getByRole('button', { name: /^10$/i })).toBeTruthy()
+    expect(screen.getByRole('button', { name: /^20$/i })).toBeTruthy()
+    expect(screen.getByRole('button', { name: /^custom$/i })).toBeTruthy()
+
+    // Custom input is not shown yet
+    expect(screen.queryByRole('spinbutton')).toBeNull()
+
+    // Click Custom — number input must appear
+    fireEvent.click(screen.getByRole('button', { name: /^custom$/i }))
+    expect(screen.getByRole('spinbutton')).toBeTruthy()
   })
 })
