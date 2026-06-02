@@ -1,7 +1,7 @@
 ---
 phase: 10
 slug: active-deck-rotation
-status: draft
+status: approved
 shadcn_initialized: true
 preset: "style=default, baseColor=neutral, cssVariables=true"
 created: 2026-06-02
@@ -75,7 +75,7 @@ Typography rules:
 - /study start screen title: `text-xl font-semibold mb-2` — matches existing deck-specific mode selector heading pattern (`StudySessionPage.tsx` line 323).
 - /study start screen subtitle: `text-sm text-muted-foreground mb-4` — matches existing `study.chooseMode` paragraph pattern (line 256).
 - Section label headers: `text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2` — identical to established Phase 8 section header pattern.
-- Deck picker item name: `text-sm font-medium` — slightly heavier than body to distinguish the deck title from the due count.
+- Deck picker item name: `text-sm font-semibold` — heavier than body to distinguish the deck title from the due count.
 - Deck picker item due count: `text-xs text-muted-foreground` — subordinate, right-aligned within the flex row.
 - isActive toggle label on DecksPage/DeckDetailPage: `text-sm text-muted-foreground` — same weight as help text; the toggle itself is the primary affordance.
 
@@ -234,7 +234,7 @@ max-w-lg mx-auto py-12 px-4
   />
   <div className="flex-1 min-w-0">
     {/* deck.title is user content — not translated (D-07) */}
-    <p className="text-sm font-medium truncate">{deck.title}</p>
+    <p className="text-sm font-semibold truncate">{deck.title}</p>
     <p className="text-xs text-muted-foreground">
       {t('study.nCardsDue', { count: deck.dueCount })}
     </p>
@@ -346,7 +346,7 @@ Render inside the deck picker section container in place of the list:
 ```tsx
 <div className="flex flex-col items-center justify-center py-8 gap-2 text-muted-foreground border border-border rounded-lg">
   <BookOpen className="h-8 w-8" aria-hidden="true" />
-  <p className="text-sm font-medium">{t('study.noActiveDecks')}</p>
+  <p className="text-sm font-semibold">{t('study.noActiveDecks')}</p>
   <p className="text-xs text-center">{t('study.noActiveDecksHint')}</p>
 </div>
 ```
@@ -403,7 +403,7 @@ All strings passed through `t()`. Keys are snake_case nested under their page na
 | /study start screen — deck picker label | `study.chooseDecks` | **"Choose decks"** |
 | /study start screen — session size label | `study.sessionSize` | **"Session size"** (existing key — reuse) |
 | /study start screen — CTA button | `study.startSession` | **"Start session"** |
-| /study start screen — back button | `study.backToDashboard` | **"Back"** (existing `study.backToDeck` pattern — use a new key to avoid confusion) |
+| /study start screen — back button | `study.backToDashboard` | **"Back to Dashboard"** (new key — distinct from `study.backToDeck`) |
 | Due count per deck (picker) | `study.nCardsDue` | **"{count} cards due"** (existing key — reuse) |
 | Empty picker — no active decks heading | `study.noActiveDecks` | **"No active decks"** |
 | Empty picker — no active decks hint | `study.noActiveDecksHint` | **"Go to My Decks and toggle at least one deck active to study."** |
@@ -481,11 +481,11 @@ Both produce standard Radix UI wrappers with Tailwind styling — no network acc
 
 ## Checker Sign-Off
 
-- [ ] Dimension 1 Copywriting: PASS
-- [ ] Dimension 2 Visuals: PASS
-- [ ] Dimension 3 Color: PASS
-- [ ] Dimension 4 Typography: PASS
-- [ ] Dimension 5 Spacing: PASS
-- [ ] Dimension 6 Registry Safety: PASS
+- [x] Dimension 1 Copywriting: PASS
+- [x] Dimension 2 Visuals: PASS
+- [x] Dimension 3 Color: PASS
+- [x] Dimension 4 Typography: PASS
+- [x] Dimension 5 Spacing: PASS
+- [x] Dimension 6 Registry Safety: PASS
 
-**Approval:** pending
+**Approval:** approved 2026-06-02
