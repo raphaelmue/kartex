@@ -41,16 +41,20 @@ export function SettingsPage() {
   }, [t])
 
   const handleModeChange = async (value: string) => {
-    const previous = user?.studyMode ?? 'normal'
+    // Capture current user at invocation time — avoids stale closure on rapid changes
+    const currentUser = user
+    if (!currentUser) return
+
+    const previous = currentUser.studyMode
     // Optimistic update
-    if (user) setUser({ ...user, studyMode: value })
+    setUser({ ...currentUser, studyMode: value })
     try {
       const res = await api.patch('/api/auth/me', { studyMode: value })
       if (!res.ok) throw new Error()
       toast.success(t('settings.saved'))
     } catch {
-      // Revert on failure
-      if (user) setUser({ ...user, studyMode: previous })
+      // Revert on failure — restore previous mode from captured snapshot
+      setUser({ ...currentUser, studyMode: previous })
       toast.error(t('settings.saveFailed'))
     }
   }
