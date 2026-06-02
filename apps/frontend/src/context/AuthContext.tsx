@@ -9,6 +9,7 @@ export interface User {
   username: string
   role: 'ADMIN' | 'USER'
   isActive: boolean
+  studyMode: string
   createdAt: string
 }
 
