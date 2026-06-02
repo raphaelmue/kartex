@@ -98,8 +98,8 @@ function TagChips({ tags }: { tags: string[] }) {
 
 type DeckWithPermission = Deck & { userPermission?: string; owner?: { username: string } }
 
-type CardActionCellProps = { card: Card; confirmDeleteCardId: string | null; onEdit: (c: Card) => void; onDelete: (id: string) => void; onCancelDelete: () => void }
-function CardActionCell({ card, confirmDeleteCardId, onEdit, onDelete, onCancelDelete }: CardActionCellProps) {
+type CardActionCellProps = { card: Card; confirmDeleteCardId: string | null; onEdit: (c: Card) => void; onDelete: (id: string) => void; onRequestDelete: (id: string) => void; onCancelDelete: () => void }
+function CardActionCell({ card, confirmDeleteCardId, onEdit, onDelete, onRequestDelete, onCancelDelete }: CardActionCellProps) {
   const { t } = useTranslation()
   if (confirmDeleteCardId === card.id) return (
     <div className="flex items-center gap-2" role="alert">
@@ -111,7 +111,7 @@ function CardActionCell({ card, confirmDeleteCardId, onEdit, onDelete, onCancelD
   return (
     <div className="flex items-center gap-2">
       <Button size="sm" variant="outline" onClick={() => onEdit(card)}>{t('common.edit')}</Button>
-      <Button size="sm" variant="destructive" onClick={() => onDelete(card.id)}>{t('common.delete')}</Button>
+      <Button size="sm" variant="destructive" onClick={() => onRequestDelete(card.id)}>{t('common.delete')}</Button>
     </div>
   )
 }
@@ -426,6 +426,7 @@ export function DeckDetailPage() {
                         card={card}
                         confirmDeleteCardId={confirmDeleteCardId}
                         onEdit={openEditCard}
+                        onRequestDelete={(id) => setConfirmDeleteCardId(id)}
                         onDelete={(id) => void handleDeleteCard(id)}
                         onCancelDelete={() => setConfirmDeleteCardId(null)}
                       />

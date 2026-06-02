@@ -5,7 +5,7 @@ import { StudySessionPage } from '@/pages/StudySessionPage'
 
 // Mutable holder for useParams return value — allows global start screen tests to
 // set `{}` (no id param) without breaking the deck-specific suite (STATE.md 08-02, 03-02)
-const mockParams = vi.hoisted(() => ({ current: { id: 'deck-abc' } }))
+const mockParams = vi.hoisted(() => ({ current: { id: 'deck-abc' } as { id?: string } }))
 
 // 1. Mock react-router-dom — preserve real module, override useParams and useNavigate
 vi.mock('react-router-dom', async () => {

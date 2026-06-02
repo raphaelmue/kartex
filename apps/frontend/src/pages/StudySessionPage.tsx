@@ -226,7 +226,6 @@ function GlobalSRStartScreen({
   onSetCustomCount,
   onStartSession,
   onNavigateBack,
-  t,
 }: {
   activeDecks: DeckPickerDeck[]
   selectedDeckIds: Set<string>
@@ -238,8 +237,8 @@ function GlobalSRStartScreen({
   onSetCustomCount: (n: number) => void
   onStartSession: () => void
   onNavigateBack: () => void
-  t: (key: string, opts?: Record<string, unknown>) => string
 }) {
+  const { t } = useTranslation()
   return (
     <div className="max-w-lg mx-auto py-12 px-4">
       <Button variant="ghost" size="sm" className="mb-6" onClick={onNavigateBack}>
@@ -684,7 +683,6 @@ export function StudySessionPage() {
         onSetCustomCount={setCustomCount}
         onStartSession={handleStartSession}
         onNavigateBack={() => navigate('/dashboard')}
-        t={t}
       />
     )
   }
