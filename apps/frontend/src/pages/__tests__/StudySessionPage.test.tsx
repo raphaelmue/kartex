@@ -34,7 +34,24 @@ vi.mock('sonner', () => ({
   toast: { error: vi.fn(), success: vi.fn() },
 }))
 
-// No useAuth mock — StudySessionPage does not import useAuth
+// 4. useAuth mock — StudySessionPage now imports useAuth for mode indicator (Phase 11, SM2-04)
+// Default studyMode: 'normal' so all existing tests pass (Badge not shown in Normal mode)
+const mockStudyMode = vi.hoisted(() => ({ current: 'normal' }))
+vi.mock('@/context/AuthContext', () => ({
+  useAuth: () => ({
+    user: {
+      id: '1',
+      username: 'test',
+      role: 'USER',
+      isActive: true,
+      studyMode: mockStudyMode.current,
+      createdAt: '2026-01-01',
+    },
+    loading: false,
+    setUser: vi.fn(),
+    logout: vi.fn(),
+  }),
+}))
 
 // Helper card factory
 function makeCard(
@@ -525,5 +542,92 @@ describe('StudySessionPage global start screen', () => {
     // Click Custom — number input must appear
     fireEvent.click(screen.getByRole('button', { name: /^custom$/i }))
     expect(screen.getByRole('spinbutton')).toBeTruthy()
+  })
+})
+
+// ---------------------------------------------------------------------------
+// SM2-04: Mode indicator Badge in SessionRunner
+// ---------------------------------------------------------------------------
+
+describe('StudySessionPage mode indicator (SM2-04)', () => {
+  beforeEach(() => {
+    // Use deck-specific path so we get the mode selector start screen
+    mockParams.current = { id: 'deck-abc' }
+    mockStudyMode.current = 'normal'
+    mockApiGet.mockReset()
+    setupPrefetchMocks()
+  })
+
+  afterEach(() => {
+    mockStudyMode.current = 'normal'
+    mockParams.current = { id: 'deck-abc' }
+  })
+
+  // SM2-04a: no indicator shown in Normal mode
+  it('SM2-04a: no mode indicator Badge shown in Normal mode', async () => {
+    mockStudyMode.current = 'normal'
+    mockApiGet.mockResolvedValueOnce({
+      ok: true,
+      json: async () => [makeCard('c1', [])],
+    })
+
+    renderPage()
+
+    await waitFor(() => {
+      expect(screen.getByText(/filter by tag/i)).toBeTruthy()
+    })
+
+    // Start an SR session
+    fireEvent.click(screen.getByRole('button', { name: /spaced repetition/i }))
+
+    await waitFor(() => {
+      expect(screen.queryByText('Card 1 of 1')).toBeTruthy()
+    })
+
+    // No mode indicator should be present in Normal mode
+    expect(screen.queryByText('Intensive')).toBeNull()
+    expect(screen.queryByText('Exam Prep')).toBeNull()
+  })
+
+  // SM2-04b: Intensive mode shows indicator Badge
+  it('SM2-04b: Intensive mode shows mode indicator Badge with translated name', async () => {
+    mockStudyMode.current = 'intensive'
+    mockApiGet.mockResolvedValueOnce({
+      ok: true,
+      json: async () => [makeCard('c1', [])],
+    })
+
+    renderPage()
+
+    await waitFor(() => {
+      expect(screen.getByText(/filter by tag/i)).toBeTruthy()
+    })
+
+    fireEvent.click(screen.getByRole('button', { name: /spaced repetition/i }))
+
+    await waitFor(() => {
+      expect(screen.getByText('Intensive')).toBeTruthy()
+    })
+  })
+
+  // SM2-04c: Exam Prep mode shows indicator Badge
+  it('SM2-04c: Exam Prep mode shows mode indicator Badge with translated name', async () => {
+    mockStudyMode.current = 'exam_prep'
+    mockApiGet.mockResolvedValueOnce({
+      ok: true,
+      json: async () => [makeCard('c1', [])],
+    })
+
+    renderPage()
+
+    await waitFor(() => {
+      expect(screen.getByText(/filter by tag/i)).toBeTruthy()
+    })
+
+    fireEvent.click(screen.getByRole('button', { name: /spaced repetition/i }))
+
+    await waitFor(() => {
+      expect(screen.getByText('Exam Prep')).toBeTruthy()
+    })
   })
 })
