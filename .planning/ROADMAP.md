@@ -53,7 +53,13 @@ Full details: [.planning/milestones/v1.1-ROADMAP.md](milestones/v1.1-ROADMAP.md)
   2. Starting a /study session only surfaces due cards from decks the user has marked active (inactive decks are completely excluded from the queue)
   3. The /study start screen shows a deck picker listing all active decks, all pre-checked; the user can uncheck individual decks for that session without affecting the persisted isActive flag
   4. The /study start screen has a session size picker (All / 10 / 20 / custom) consistent with the existing /decks/:id/learn picker
-**Plans**: TBD
+**Plans**: 5 plans
+Plans:
+- [ ] 10-01-PLAN.md — Wave 0 RED test stub (DecksPage.test.tsx) for DECK-01 toggle
+- [ ] 10-02-PLAN.md — Schema foundation: Prisma isActive + studyMode migration, shared Zod schemas, shadcn Switch + Checkbox
+- [ ] 10-03-PLAN.md — Backend isActive filter (study.ts) + DecksPage & DeckDetailPage toggles (DECK-01, DECK-02)
+- [ ] 10-04-PLAN.md — /study start screen: deck picker + session size picker (DECK-03, DECK-04)
+- [ ] 10-05-PLAN.md — i18n keys for toggle + start screen (en.json + de.json)
 **UI hint**: yes
 
 ### Phase 11: SM-2 Preset Modes
@@ -106,7 +112,7 @@ Full details: [.planning/milestones/v1.1-ROADMAP.md](milestones/v1.1-ROADMAP.md)
 | 7. App Shell | v1.1 | 1/1 | Complete | 2026-05-31 |
 | 8. Study UX | v1.1 | 4/4 | Complete | 2026-06-01 |
 | 9. Internationalization | v1.1 | 3/3 | Complete | 2026-06-01 |
-| 10. Active Deck Rotation | v1.2 | 0/? | Not started | — |
+| 10. Active Deck Rotation | v1.2 | 0/5 | Planned | — |
 | 11. SM-2 Preset Modes | v1.2 | 0/? | Not started | — |
 | 12. PWA Shell | v1.2 | 0/? | Not started | — |
 | 13. Documentation | v1.2 | 0/? | Not started | — |

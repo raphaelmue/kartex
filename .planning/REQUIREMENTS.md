@@ -53,10 +53,10 @@
 
 | REQ-ID | Phase | Plan |
 |--------|-------|------|
-| DECK-01 | Phase 10 | — |
-| DECK-02 | Phase 10 | — |
-| DECK-03 | Phase 10 | — |
-| DECK-04 | Phase 10 | — |
+| DECK-01 | Phase 10 | 10-01, 10-02, 10-03, 10-05 |
+| DECK-02 | Phase 10 | 10-02, 10-03 |
+| DECK-03 | Phase 10 | 10-02, 10-04, 10-05 |
+| DECK-04 | Phase 10 | 10-02, 10-04, 10-05 |
 | SM2-01 | Phase 11 | — |
 | SM2-02 | Phase 11 | — |
 | SM2-03 | Phase 11 | — |
