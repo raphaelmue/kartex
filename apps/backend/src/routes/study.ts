@@ -29,7 +29,7 @@ study.get('/due', async (c) => {
   const deckFilter = {
     OR: [
       { ownerId: userId, isActive: true },
-      { id: { in: sharedDeckIds } },
+      { id: { in: sharedDeckIds }, isActive: true },
     ],
   }
 
