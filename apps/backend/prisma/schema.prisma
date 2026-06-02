@@ -38,6 +38,7 @@ model User {
   passwordHash  String
   role          Role           @default(USER)
   isActive      Boolean        @default(true)
+  studyMode     String         @default("normal")
   createdAt     DateTime       @default(now())
 
   refreshTokens RefreshToken[]
@@ -73,6 +74,7 @@ model Deck {
   title       String
   description String?
   visibility  Visibility  @default(PRIVATE)
+  isActive    Boolean     @default(true)
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
 
