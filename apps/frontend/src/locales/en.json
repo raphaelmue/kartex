@@ -306,6 +306,22 @@
     "github": "GitHub",
     "docs": "Docs"
   },
+  "settings": {
+    "title": "Settings — Kartex",
+    "pageHeading": "Settings",
+    "studyModeSection": "Study Mode",
+    "studyModeDesc": "Controls how aggressively your SM-2 review intervals are compressed. The raw interval stored per card is never modified — only the next review date shifts.",
+    "modeNames": {
+      "normal": "Normal",
+      "intensive": "Intensive",
+      "exam_prep": "Exam Prep"
+    },
+    "modeNormalDesc": "Standard SM-2 scheduling",
+    "modeIntensiveDesc": "Reviews at ½ interval — doubles revisit frequency",
+    "modeExamPrepDesc": "Reviews at ¼ interval — maximum revisit frequency",
+    "saved": "Study mode saved",
+    "saveFailed": "Failed to save — please try again"
+  },
   "lang": {
     "en": "EN",
     "de": "DE"

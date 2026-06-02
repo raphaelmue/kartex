@@ -306,6 +306,22 @@
     "github": "GitHub",
     "docs": "Docs"
   },
+  "settings": {
+    "title": "Einstellungen — Kartex",
+    "pageHeading": "Einstellungen",
+    "studyModeSection": "Lernmodus",
+    "studyModeDesc": "Steuert, wie stark deine SM-2-Wiederholungsintervalle komprimiert werden. Das gespeicherte Intervall pro Karte wird nie verändert — nur das Datum der nächsten Wiederholung verschiebt sich.",
+    "modeNames": {
+      "normal": "Normal",
+      "intensive": "Intensiv",
+      "exam_prep": "Prüfungsvorbereitung"
+    },
+    "modeNormalDesc": "Standard-SM-2-Planung",
+    "modeIntensiveDesc": "Wiederholungen bei ½ Intervall — doppelte Häufigkeit",
+    "modeExamPrepDesc": "Wiederholungen bei ¼ Intervall — maximale Häufigkeit",
+    "saved": "Lernmodus gespeichert",
+    "saveFailed": "Speichern fehlgeschlagen — bitte erneut versuchen"
+  },
   "lang": {
     "en": "EN",
     "de": "DE"
