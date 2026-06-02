@@ -5,6 +5,7 @@ import { toast } from 'sonner'
 import { ArrowLeft, Brain, BookOpen, Timer, Trophy, CheckCircle2 } from 'lucide-react'
 import type { DueCard, DeckListItem } from '@kartex/shared'
 import { api } from '@/lib/api'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -14,6 +15,7 @@ import { RatingButtons } from '@/components/RatingButtons'
 import { ExamTimer } from '@/components/ExamTimer'
 import { SessionProgress } from '@/components/SessionProgress'
 import { useStudySession, type StudyMode } from '@/hooks/useStudySession'
+import { useAuth } from '@/context/AuthContext'
 
 // Non-mutating Fisher-Yates shuffle (CR-01)
 function shuffle<T>(arr: T[]): T[] {
@@ -33,11 +35,13 @@ function SessionRunner({
   mode,
   examDurationSeconds,
   deckId,
+  studyMode,
 }: {
   cards: DueCard[]
   mode: StudyMode
   examDurationSeconds: number | null
   deckId?: string
+  studyMode: string
 }) {
   const { t } = useTranslation()
   const navigate = useNavigate()
@@ -145,8 +149,15 @@ function SessionRunner({
         </div>
       )}
 
-      {/* Progress: Card N of M */}
-      <SessionProgress current={progress.current} total={progress.total} />
+      {/* Progress: Card N of M + optional mode indicator badge (SM2-04) */}
+      <div className="flex items-center gap-2">
+        <SessionProgress current={progress.current} total={progress.total} />
+        {studyMode !== 'normal' && (
+          <Badge variant="secondary" className="text-xs shrink-0">
+            {t(`settings.modeNames.${studyMode}`)}
+          </Badge>
+        )}
+      </div>
 
       {/* Card flip + rating buttons */}
       <CardFlip
@@ -316,6 +327,7 @@ export function StudySessionPage() {
   const { t, i18n } = useTranslation()
   const { id: deckId } = useParams<{ id: string }>()
   const navigate = useNavigate()
+  const { user } = useAuth()
 
   // Determine if this is global SR mode (/study) or deck-specific (/decks/:id/learn)
   const isGlobalSR = !deckId
@@ -701,6 +713,7 @@ export function StudySessionPage() {
       mode={selectedMode}
       examDurationSeconds={examDurationSeconds}
       deckId={deckId}
+      studyMode={user?.studyMode ?? 'normal'}
     />
   )
 }
