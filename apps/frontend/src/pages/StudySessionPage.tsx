@@ -598,14 +598,14 @@ export function StudySessionPage() {
           className="border border-border rounded-lg p-6 cursor-pointer hover:ring-2 hover:ring-ring transition-all mb-4"
           onClick={() => {
             setSelectedMode('sr')
-            setCommittedConfig({ mode: 'sr', tags: selectedTags, size: sessionSize, count: customCount })
+            setCommittedConfig({ mode: 'sr', tags: new Set(selectedTags), size: sessionSize, count: customCount })
           }}
           role="button"
           tabIndex={0}
           onKeyDown={(e) => {
             if (e.key === 'Enter') {
               setSelectedMode('sr')
-              setCommittedConfig({ mode: 'sr', tags: selectedTags, size: sessionSize, count: customCount })
+              setCommittedConfig({ mode: 'sr', tags: new Set(selectedTags), size: sessionSize, count: customCount })
             }
           }}
         >
@@ -624,14 +624,14 @@ export function StudySessionPage() {
           className="border border-border rounded-lg p-6 cursor-pointer hover:ring-2 hover:ring-ring transition-all mb-4"
           onClick={() => {
             setSelectedMode('deck')
-            setCommittedConfig({ mode: 'deck', tags: selectedTags, size: sessionSize, count: customCount })
+            setCommittedConfig({ mode: 'deck', tags: new Set(selectedTags), size: sessionSize, count: customCount })
           }}
           role="button"
           tabIndex={0}
           onKeyDown={(e) => {
             if (e.key === 'Enter') {
               setSelectedMode('deck')
-              setCommittedConfig({ mode: 'deck', tags: selectedTags, size: sessionSize, count: customCount })
+              setCommittedConfig({ mode: 'deck', tags: new Set(selectedTags), size: sessionSize, count: customCount })
             }
           }}
         >
@@ -670,7 +670,7 @@ export function StudySessionPage() {
             onClick={() => {
               if (examDurationSeconds !== null) {
                 setSelectedMode('exam')
-                setCommittedConfig({ mode: 'exam', tags: selectedTags, size: sessionSize, count: customCount })
+                setCommittedConfig({ mode: 'exam', tags: new Set(selectedTags), size: sessionSize, count: customCount })
               }
             }}
           >
