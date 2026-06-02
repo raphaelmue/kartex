@@ -14,6 +14,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import { Switch } from '@/components/ui/switch'
 import { DeckFormModal } from '@/components/DeckFormModal'
 
 function VisibilityBadge({ visibility }: { visibility: 'PRIVATE' | 'SHARED' | 'PUBLIC' }) {
@@ -81,6 +82,22 @@ export function DecksPage() {
     }
   }
 
+  const handleToggleActive = async (deckId: string, checked: boolean) => {
+    setDecks((prev) =>
+      prev.map((d) => (d.id === deckId ? { ...d, isActive: checked } : d))
+    )
+    try {
+      const res = await api.patch(`/api/decks/${deckId}`, { isActive: checked })
+      if (!res.ok) throw new Error('PATCH failed')
+      toast.success(checked ? t('decks.activatedToast') : t('decks.deactivatedToast'))
+    } catch {
+      setDecks((prev) =>
+        prev.map((d) => (d.id === deckId ? { ...d, isActive: !checked } : d))
+      )
+      toast.error(t('decks.failedToToggle'))
+    }
+  }
+
   const openCreate = () => {
     setEditDeck(undefined)
     setModalOpen(true)
@@ -108,7 +125,8 @@ export function DecksPage() {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {decks.map((deck) => (
-            <Card key={deck.id}>
+            <div key={deck.id} className={deck.isActive ? '' : 'opacity-60'}>
+            <Card>
               <CardHeader>
                 <div className="flex items-start justify-between gap-2">
                   {/* deck.title is user content — not passed through t() (D-07) */}
@@ -130,6 +148,19 @@ export function DecksPage() {
                 </p>
               </CardContent>
               <CardFooter className="flex items-center gap-2">
+                {!deck.sharedByUsername && (
+                  <div className="flex items-center gap-2 mr-auto">
+                    <Switch
+                      checked={deck.isActive}
+                      onCheckedChange={(checked) => void handleToggleActive(deck.id, checked)}
+                      aria-label={t('decks.toggleActive')}
+                      id={`active-${deck.id}`}
+                    />
+                    <label htmlFor={`active-${deck.id}`} className="text-sm text-muted-foreground cursor-pointer">
+                      {t('decks.activeLabel')}
+                    </label>
+                  </div>
+                )}
                 <Button size="sm" onClick={() => navigate(`/decks/${deck.id}/learn`)}>
                   {t('decks.studyButton')}
                 </Button>
@@ -172,6 +203,7 @@ export function DecksPage() {
                 )}
               </CardFooter>
             </Card>
+            </div>
           ))}
         </div>
       )}
