@@ -151,9 +151,13 @@ study.post('/rate', async (c) => {
   // T-4-01: Verify card exists and belongs to the authenticated user's deck
   const card = await prisma.card.findUnique({
     where: { id: cardId },
-    include: { deck: { select: { ownerId: true } } },
+    include: { deck: { select: { ownerId: true, isActive: true } } },
   })
   if (!card) return c.json({ error: 'Not found.' }, 404)
+
+  // Deck must be active regardless of ownership path (CR-02)
+  if (!card.deck.isActive) return c.json({ error: 'Forbidden.' }, 403)
+
   if (card.deck.ownerId !== userId) {
     const share = await prisma.deckShare.findUnique({
       where: { deckId_sharedWithUserId: { deckId: card.deckId, sharedWithUserId: userId } },
