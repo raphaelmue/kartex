@@ -65,7 +65,7 @@ Full details: [.planning/milestones/v1.1-ROADMAP.md](milestones/v1.1-ROADMAP.md)
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] 10-03-PLAN.md — Backend isActive filter (study.ts) + DecksPage & DeckDetailPage toggles (DECK-01, DECK-02)
+- [x] 10-03-PLAN.md — Backend isActive filter (study.ts) + DecksPage & DeckDetailPage toggles (DECK-01, DECK-02)
 - [ ] 10-04-PLAN.md — /study start screen: deck picker + session size picker (DECK-03, DECK-04)
 
 **UI hint**: yes
@@ -129,7 +129,7 @@ Full details: [.planning/milestones/v1.1-ROADMAP.md](milestones/v1.1-ROADMAP.md)
 | 7. App Shell | v1.1 | 1/1 | Complete | 2026-05-31 |
 | 8. Study UX | v1.1 | 4/4 | Complete | 2026-06-01 |
 | 9. Internationalization | v1.1 | 3/3 | Complete | 2026-06-01 |
-| 10. Active Deck Rotation | v1.2 | 3/5 | In progress | — |
+| 10. Active Deck Rotation | v1.2 | 4/5 | In progress | — |
 | 11. SM-2 Preset Modes | v1.2 | 0/? | Not started | — |
 | 12. PWA Shell | v1.2 | 0/? | Not started | — |
 | 13. Documentation | v1.2 | 0/? | Not started | — |

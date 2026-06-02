@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Study Control & PWA
 status: executing
-stopped_at: Phase 10 Plan 05 complete — i18n keys for toggle + start screen (en.json + de.json)
-last_updated: "2026-06-02T15:52:00.000Z"
-last_activity: 2026-06-02 -- Phase 10 Plan 05 executed
+stopped_at: Phase 10 Plan 03 complete — backend isActive filter + DecksPage/DeckDetailPage toggles
+last_updated: "2026-06-02T12:58:00.000Z"
+last_activity: 2026-06-02 -- Phase 10 Plan 03 executed
 progress:
   total_phases: 4
   completed_phases: 0
   total_plans: 5
-  completed_plans: 3
+  completed_plans: 4
   percent: 15
 ---
 
@@ -26,9 +26,9 @@ See: .planning/PROJECT.md (updated 2026-06-02)
 ## Current Position
 
 Phase: 10 — Active Deck Rotation (in progress)
-Plan: 05 complete, next: 03/04 (Wave 2)
+Plan: 03 complete, next: 04 (Wave 2)
 Status: Executing
-Last activity: 2026-06-02 -- Phase 10 Plan 05 executed (i18n keys: 5 decks.* + 7 study.* keys in en.json and de.json)
+Last activity: 2026-06-02 -- Phase 10 Plan 03 executed (backend isActive filter + DecksPage/DeckDetailPage toggles, DECK-01 GREEN, DECK-02 enforced)
 
 ## Performance Metrics
 
@@ -48,7 +48,7 @@ Last activity: 2026-06-02 -- Phase 10 Plan 05 executed (i18n keys: 5 decks.* + 7
 | 4 | 3/3 | ~38 min | ~13 min |
 | 7 | 1/1 | ~4 min | ~4 min |
 | 9 | 3/3 | ~24 min | ~8 min |
-| 10 | 3/5 | ~18 min | ~6 min |
+| 10 | 4/5 | ~20 min | ~5 min |
 
 **Recent Trend:**
 
@@ -115,6 +115,7 @@ Recent decisions affecting current work:
 - 10-02: isActive added to CreateDeckSchema (propagates to UpdateDeckSchema via .partial()); isActive added to DeckSchema (propagates to DeckListItemSchema via .extend())
 - 10-02: @radix-ui/react-switch@^1.2.6 and @radix-ui/react-checkbox@^1.3.3 installed via npx shadcn@latest add
 - 10-05: Both locale files (en.json + de.json) updated atomically in one commit — missing de.json keys fall back to raw key string, not English value (Pitfall 5 prevention)
+- 10-03: deckFilter OR[0] changed to { ownerId: userId, isActive: true }; shared-deck branch unchanged (owner-only scope v1.2)
 
 ### Pending Todos
 
@@ -159,5 +160,5 @@ Items acknowledged and deferred at milestone close on 2026-05-30:
 ## Session Continuity
 
 Last session: 2026-06-02
-Stopped at: Phase 10 Plan 05 complete — i18n keys committed (e0bd636)
-Resume with: `/gsd:execute-phase 10` — continue with Plan 03 (backend isActive filter + DecksPage/DeckDetailPage toggles) and Plan 04 (/study start screen)
+Stopped at: Phase 10 Plan 03 complete — backend isActive filter + DecksPage/DeckDetailPage toggles (918e372)
+Resume with: `/gsd:execute-phase 10` — continue with Plan 04 (/study start screen: deck picker + session size picker, DECK-03, DECK-04)
