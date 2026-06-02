@@ -405,7 +405,9 @@ export function StudySessionPage() {
         }
       } catch (err) {
         // Non-critical for mode selector, but log for debugging (WR-04)
-        console.error('[StudySessionPage] prefetch failed:', err)
+        if (import.meta.env.DEV) {
+          console.error('[StudySessionPage] prefetch failed:', err)
+        }
       }
     })()
   }, [deckId])
@@ -432,7 +434,9 @@ export function StudySessionPage() {
           setSelectedDeckIds(new Set(picker.map((d) => d.id)))
         }
       } catch (err) {
-        console.error('[StudySessionPage] global prefetch failed:', err)
+        if (import.meta.env.DEV) {
+          console.error('[StudySessionPage] global prefetch failed:', err)
+        }
       }
     })()
   }, [isGlobalSR])
