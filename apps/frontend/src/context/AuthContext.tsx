@@ -3,13 +3,14 @@ import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 
 import { api, setAuthFailureHandler } from '@/lib/api'
+import type { StudyMode } from '@kartex/shared'
 
 export interface User {
   id: string
   username: string
   role: 'ADMIN' | 'USER'
   isActive: boolean
-  studyMode: string
+  studyMode: StudyMode
   createdAt: string
 }
 
