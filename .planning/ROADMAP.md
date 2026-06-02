@@ -59,7 +59,7 @@ Full details: [.planning/milestones/v1.1-ROADMAP.md](milestones/v1.1-ROADMAP.md)
 **Plans**: 5 plansPlans:
 **Wave 1**
 
-- [ ] 10-01-PLAN.md — Wave 0 RED test stub (DecksPage.test.tsx) for DECK-01 toggle
+- [x] 10-01-PLAN.md — Wave 0 RED test stub (DecksPage.test.tsx) for DECK-01 toggle
 - [ ] 10-02-PLAN.md — Schema foundation: Prisma isActive + studyMode migration, shared Zod schemas, shadcn Switch + Checkbox
 - [ ] 10-05-PLAN.md — i18n keys for toggle + start screen (en.json + de.json)
 
@@ -129,7 +129,7 @@ Full details: [.planning/milestones/v1.1-ROADMAP.md](milestones/v1.1-ROADMAP.md)
 | 7. App Shell | v1.1 | 1/1 | Complete | 2026-05-31 |
 | 8. Study UX | v1.1 | 4/4 | Complete | 2026-06-01 |
 | 9. Internationalization | v1.1 | 3/3 | Complete | 2026-06-01 |
-| 10. Active Deck Rotation | v1.2 | 0/5 | Planned | — |
+| 10. Active Deck Rotation | v1.2 | 1/5 | In progress | — |
 | 11. SM-2 Preset Modes | v1.2 | 0/? | Not started | — |
 | 12. PWA Shell | v1.2 | 0/? | Not started | — |
 | 13. Documentation | v1.2 | 0/? | Not started | — |

@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Study Control & PWA
 status: executing
-stopped_at: v1.2 roadmap created — phases 10–13 defined, 16/16 requirements mapped
-last_updated: "2026-06-02T08:39:59.166Z"
-last_activity: 2026-06-02 -- Phase 10 planning complete
+stopped_at: Phase 10 Plan 01 complete — Wave 0 RED test scaffold for DECK-01
+last_updated: "2026-06-02T14:45:00.000Z"
+last_activity: 2026-06-02 -- Phase 10 Plan 01 executed
 progress:
   total_phases: 4
   completed_phases: 0
   total_plans: 5
-  completed_plans: 0
-  percent: 0
+  completed_plans: 1
+  percent: 5
 ---
 
 # Project State
@@ -25,10 +25,10 @@ See: .planning/PROJECT.md (updated 2026-06-02)
 
 ## Current Position
 
-Phase: 10 — Active Deck Rotation (not started)
-Plan: —
-Status: Ready to execute
-Last activity: 2026-06-02 -- Phase 10 planning complete
+Phase: 10 — Active Deck Rotation (in progress)
+Plan: 01 complete, next: 02
+Status: Executing
+Last activity: 2026-06-02 -- Phase 10 Plan 01 executed (Wave 0 RED test scaffold)
 
 ## Performance Metrics
 
@@ -48,6 +48,7 @@ Last activity: 2026-06-02 -- Phase 10 planning complete
 | 4 | 3/3 | ~38 min | ~13 min |
 | 7 | 1/1 | ~4 min | ~4 min |
 | 9 | 3/3 | ~24 min | ~8 min |
+| 10 | 1/5 | ~4 min | ~4 min |
 
 **Recent Trend:**
 
@@ -154,5 +155,5 @@ Items acknowledged and deferred at milestone close on 2026-05-30:
 ## Session Continuity
 
 Last session: 2026-06-02
-Stopped at: v1.2 roadmap created — phases 10–13 defined, 16/16 requirements mapped
-Resume with: `/gsd:plan-phase 10` — Active Deck Rotation (Prisma migration + isActive toggle + deck picker + session size picker)
+Stopped at: Phase 10 Plan 01 complete — DecksPage.test.tsx RED scaffold committed (a01b43e)
+Resume with: `/gsd:execute-phase 10` — continue with Plan 02 (Schema foundation: Prisma isActive + studyMode migration, shared Zod schemas, shadcn Switch + Checkbox)
