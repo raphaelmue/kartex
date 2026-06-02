@@ -23,6 +23,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { Switch } from '@/components/ui/switch'
 import { CardEditorModal } from '@/components/CardEditorModal'
 import { DeckFormModal } from '@/components/DeckFormModal'
 
@@ -203,6 +204,20 @@ export function DeckDetailPage() {
     }
   }
 
+  const handleToggleActive = async (checked: boolean) => {
+    if (!deckId || !deck) return
+    const prev = deck.isActive
+    setDeck((d) => d ? { ...d, isActive: checked } : d)
+    try {
+      const res = await api.patch(`/api/decks/${deckId}`, { isActive: checked })
+      if (!res.ok) throw new Error('PATCH failed')
+      toast.success(checked ? t('decks.activatedToast') : t('decks.deactivatedToast'))
+    } catch {
+      setDeck((d) => d ? { ...d, isActive: prev } : d)
+      toast.error(t('decks.failedToToggle'))
+    }
+  }
+
   const handleDeleteCard = async (cardId: string) => {
     if (!deckId) return
     try {
@@ -318,6 +333,19 @@ export function DeckDetailPage() {
           )}
         </div>
         <div className="flex items-center gap-2">
+          {deck.ownerId === user?.id && (
+            <div className="flex items-center gap-2">
+              <Switch
+                checked={deck.isActive}
+                onCheckedChange={(checked) => void handleToggleActive(checked)}
+                aria-label={t('decks.toggleActive')}
+                id="deck-active-toggle"
+              />
+              <label htmlFor="deck-active-toggle" className="text-sm text-muted-foreground cursor-pointer">
+                {t('decks.activeLabel')}
+              </label>
+            </div>
+          )}
           <Button size="sm" onClick={() => navigate(`/decks/${deckId}/learn`)}>
             {t('deckDetail.studyDeck')}
           </Button>
