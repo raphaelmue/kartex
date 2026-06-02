@@ -84,7 +84,12 @@
     "editButton": "Bearbeiten",
     "deleteButton": "Löschen",
     "deckDeleted": "Deck gelöscht",
-    "failedToLoad": "Decks konnten nicht geladen werden. Bitte versuchen Sie es erneut."
+    "failedToLoad": "Decks konnten nicht geladen werden. Bitte versuchen Sie es erneut.",
+    "activeLabel": "Aktiv",
+    "toggleActive": "Deck aktivieren/deaktivieren",
+    "activatedToast": "Deck zur Lernwarteschlange hinzugefügt",
+    "deactivatedToast": "Deck aus der Lernwarteschlange entfernt",
+    "failedToToggle": "Deck konnte nicht aktualisiert werden — bitte erneut versuchen"
   },
   "deckDetail": {
     "title": "Deck — Kartex",
@@ -188,7 +193,14 @@
     "restartSession": "Sitzung neu starten",
     "studyDeckLabel": "Lernen: {{deckTitle}}",
     "loadingCards": "Karten werden geladen…",
-    "couldNotLoad": "Diese Sitzung konnte nicht geladen werden. Bitte gehen Sie zurück und versuchen Sie es erneut."
+    "couldNotLoad": "Diese Sitzung konnte nicht geladen werden. Bitte gehen Sie zurück und versuchen Sie es erneut.",
+    "globalTitle": "Lernsitzung",
+    "globalSubtitle": "Wählen Sie, welche aktiven Decks in dieser Sitzung enthalten sein sollen.",
+    "chooseDecks": "Decks auswählen",
+    "startSession": "Sitzung starten",
+    "backToDashboard": "Zurück zum Dashboard",
+    "noActiveDecks": "Keine aktiven Decks",
+    "noActiveDecksHint": "Gehen Sie zu \"Meine Decks\" und aktivieren Sie mindestens ein Deck."
   },
   "rating": {
     "again": "Nochmal",

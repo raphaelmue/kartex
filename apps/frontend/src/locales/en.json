@@ -84,7 +84,12 @@
     "editButton": "Edit",
     "deleteButton": "Delete",
     "deckDeleted": "Deck deleted",
-    "failedToLoad": "Failed to load decks. Please try again."
+    "failedToLoad": "Failed to load decks. Please try again.",
+    "activeLabel": "Active",
+    "toggleActive": "Toggle deck active",
+    "activatedToast": "Deck added to study queue",
+    "deactivatedToast": "Deck removed from study queue",
+    "failedToToggle": "Failed to update deck — try again"
   },
   "deckDetail": {
     "title": "Deck — Kartex",
@@ -188,7 +193,14 @@
     "restartSession": "Restart Session",
     "studyDeckLabel": "Study: {{deckTitle}}",
     "loadingCards": "Loading cards…",
-    "couldNotLoad": "Could not load this session. Please go back and try again."
+    "couldNotLoad": "Could not load this session. Please go back and try again.",
+    "globalTitle": "Study session",
+    "globalSubtitle": "Choose which active decks to include in this session.",
+    "chooseDecks": "Choose decks",
+    "startSession": "Start session",
+    "backToDashboard": "Back to Dashboard",
+    "noActiveDecks": "No active decks",
+    "noActiveDecksHint": "Go to My Decks and toggle at least one deck active to study."
   },
   "rating": {
     "again": "Again",
