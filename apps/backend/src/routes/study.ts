@@ -5,6 +5,12 @@ import { calculateSM2, RATING_TO_QUALITY } from '../lib/sm2.js'
 
 const study = new Hono<{ Variables: { userId: string } }>()
 
+const STUDY_MODE_MULTIPLIERS: Record<string, number> = {
+  normal: 1.0,
+  intensive: 0.5,
+  exam_prep: 0.25,
+}
+
 // GET /api/study/due — cards due today across all user's decks (STDY-01)
 // Includes: cards with nextReview <= endOfToday AND new cards (no CardProgress row)
 // Covers owned decks and decks shared with the user
@@ -155,10 +161,16 @@ study.post('/rate', async (c) => {
     if (!share) return c.json({ error: 'Forbidden.' }, 403)
   }
 
-  // Fetch current CardProgress or use SM-2 defaults for first review
-  const existing = await prisma.cardProgress.findUnique({
-    where: { userId_cardId: { userId, cardId } },
-  })
+  // Fetch current CardProgress and user studyMode in parallel
+  const [existing, ratingUser] = await Promise.all([
+    prisma.cardProgress.findUnique({
+      where: { userId_cardId: { userId, cardId } },
+    }),
+    prisma.user.findUnique({
+      where: { id: userId },
+      select: { studyMode: true },
+    }),
+  ])
 
   // T-4-03: SM-2 runs server-side only — client sends rating 1-4, server computes nextReview
   const quality = RATING_TO_QUALITY[rating]
@@ -169,6 +181,15 @@ study.post('/rate', async (c) => {
     interval: existing?.interval ?? 1,
   })
 
+  // SM2-02: Apply study mode multiplier to nextReview only — interval stored raw (SM2-03)
+  // T-11-05: unknown mode falls back to 1.0 (normal) — no amplification possible
+  const multiplier = STUDY_MODE_MULTIPLIERS[ratingUser?.studyMode ?? 'normal'] ?? 1.0
+  const adjustedNextReview = new Date()
+  adjustedNextReview.setDate(
+    adjustedNextReview.getDate() + Math.max(1, Math.ceil(sm2.interval * multiplier))
+  )
+  adjustedNextReview.setHours(0, 0, 0, 0)
+
   // Upsert CardProgress using @@unique([userId, cardId]) compound index
   const updated = await prisma.cardProgress.upsert({
     where: { userId_cardId: { userId, cardId } },
@@ -176,7 +197,7 @@ study.post('/rate', async (c) => {
       easeFactor: sm2.easeFactor,
       interval: sm2.interval,
       repetitions: sm2.repetitions,
-      nextReview: sm2.nextReview,
+      nextReview: adjustedNextReview,
       lastReviewed: new Date(),
     },
     create: {
@@ -185,7 +206,7 @@ study.post('/rate', async (c) => {
       easeFactor: sm2.easeFactor,
       interval: sm2.interval,
       repetitions: sm2.repetitions,
-      nextReview: sm2.nextReview,
+      nextReview: adjustedNextReview,
       lastReviewed: new Date(),
     },
   })
