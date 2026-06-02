@@ -26,7 +26,7 @@ dashboard.get('/stats', async (c) => {
     where: {
       userId,
       nextReview: { lte: endOfToday },
-      card: { deck: { ownerId: userId } },
+      card: { deck: { ownerId: userId, isActive: true } },
     },
     select: {
       card: { select: { deck: { select: { id: true, title: true } } } },
@@ -36,7 +36,7 @@ dashboard.get('/stats', async (c) => {
   // Never-seen cards (no CardProgress row) — also due
   const neverSeen = await prisma.card.findMany({
     where: {
-      deck: { ownerId: userId },
+      deck: { ownerId: userId, isActive: true },
       progress: { none: { userId } },
     },
     include: { deck: { select: { id: true, title: true } } },
