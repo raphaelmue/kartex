@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Study Control & PWA
 status: executing
-stopped_at: Phase 10 Plan 03 complete — backend isActive filter + DecksPage/DeckDetailPage toggles
-last_updated: "2026-06-02T12:58:00.000Z"
-last_activity: 2026-06-02 -- Phase 10 Plan 03 executed
+stopped_at: Phase 10 Plan 04 complete — /study start screen with deck picker + session size picker
+last_updated: "2026-06-02T15:10:00.000Z"
+last_activity: 2026-06-02 -- Phase 10 Plan 04 executed
 progress:
   total_phases: 4
   completed_phases: 0
   total_plans: 5
-  completed_plans: 4
-  percent: 15
+  completed_plans: 5
+  percent: 18
 ---
 
 # Project State
@@ -26,9 +26,9 @@ See: .planning/PROJECT.md (updated 2026-06-02)
 ## Current Position
 
 Phase: 10 — Active Deck Rotation (in progress)
-Plan: 03 complete, next: 04 (Wave 2)
+Plan: 04 complete — phase 10 all plans done
 Status: Executing
-Last activity: 2026-06-02 -- Phase 10 Plan 03 executed (backend isActive filter + DecksPage/DeckDetailPage toggles, DECK-01 GREEN, DECK-02 enforced)
+Last activity: 2026-06-02 -- Phase 10 Plan 04 executed (/study start screen with deck picker + session size picker, DECK-03 GREEN, DECK-04 GREEN)
 
 ## Performance Metrics
 
@@ -116,6 +116,10 @@ Recent decisions affecting current work:
 - 10-02: @radix-ui/react-switch@^1.2.6 and @radix-ui/react-checkbox@^1.3.3 installed via npx shadcn@latest add
 - 10-05: Both locale files (en.json + de.json) updated atomically in one commit — missing de.json keys fall back to raw key string, not English value (Pitfall 5 prevention)
 - 10-03: deckFilter OR[0] changed to { ownerId: userId, isActive: true }; shared-deck branch unchanged (owner-only scope v1.2)
+- 10-04: GlobalSRStartScreen extracted as a named local function component (above StudySessionPage) to manage file size
+- 10-04: committedConfig initializer changed to always null — start screen must show before any auto-commit (Pitfall 2)
+- 10-04: deckIds filter is additive to server isActive filter — never a replacement; client cannot be trusted as sole enforcement
+- 10-04: mockParams.current vi.hoisted mutable holder in tests — default { id: 'deck-abc' }; global block sets {} in beforeEach
 
 ### Pending Todos
 
@@ -160,5 +164,5 @@ Items acknowledged and deferred at milestone close on 2026-05-30:
 ## Session Continuity
 
 Last session: 2026-06-02
-Stopped at: Phase 10 Plan 03 complete — backend isActive filter + DecksPage/DeckDetailPage toggles (918e372)
-Resume with: `/gsd:execute-phase 10` — continue with Plan 04 (/study start screen: deck picker + session size picker, DECK-03, DECK-04)
+Stopped at: Phase 10 Plan 04 complete — /study start screen with deck picker + session size picker (481fdde)
+Resume with: Phase 10 complete — continue with Phase 11 (SM-2 Preset Modes)

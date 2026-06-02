@@ -9,10 +9,10 @@
 
 ### Active Deck Management
 
-- [ ] **DECK-01**: User can mark a deck as active or inactive via a toggle on the deck list or deck detail page
-- [ ] **DECK-02**: The /study global session only queues due cards from decks the user has marked active
-- [ ] **DECK-03**: User can select which active decks to include in a /study session via a deck picker on the study start screen (active decks pre-checked; user can uncheck for this session only)
-- [ ] **DECK-04**: /study start screen has a session size picker (All / 10 / 20 / custom), matching the existing picker on /decks/:id/learn
+- [x] **DECK-01**: User can mark a deck as active or inactive via a toggle on the deck list or deck detail page
+- [x] **DECK-02**: The /study global session only queues due cards from decks the user has marked active
+- [x] **DECK-03**: User can select which active decks to include in a /study session via a deck picker on the study start screen (active decks pre-checked; user can uncheck for this session only)
+- [x] **DECK-04**: /study start screen has a session size picker (All / 10 / 20 / custom), matching the existing picker on /decks/:id/learn
 
 ### SM-2 Preset Modes
 
