@@ -2,7 +2,7 @@ import type { Context } from 'hono'
 import { Hono } from 'hono'
 import { getCookie, setCookie, deleteCookie } from 'hono/cookie'
 import bcrypt from 'bcryptjs'
-import { LoginSchema, RegisterSchema } from '@kartex/shared'
+import { LoginSchema, RegisterSchema, UpdateStudyModeSchema } from '@kartex/shared'
 import { prisma } from '../lib/prisma.js'
 import { signToken } from '../lib/jwt.js'
 import { authMiddleware } from '../middleware/auth.js'
@@ -208,7 +208,7 @@ auth.get('/me', authMiddleware, async (c) => {
   // T-02-07: Select only safe fields — no passwordHash
   const user = await prisma.user.findUnique({
     where: { id: userId },
-    select: { id: true, username: true, role: true, isActive: true, createdAt: true },
+    select: { id: true, username: true, role: true, isActive: true, studyMode: true, createdAt: true },
   })
 
   if (!user) {
@@ -216,6 +216,25 @@ auth.get('/me', authMiddleware, async (c) => {
   }
 
   return c.json(user, 200)
+})
+
+// ─── PATCH /me ─────────────────────────────────────────────────────────────────
+
+auth.patch('/me', authMiddleware, async (c) => {
+  const body = UpdateStudyModeSchema.safeParse(await c.req.json())
+  if (!body.success) {
+    return c.json({ error: 'Validation failed.', details: body.error.flatten() }, 400)
+  }
+
+  const userId = c.get('userId')
+
+  const updated = await prisma.user.update({
+    where: { id: userId },
+    data: { studyMode: body.data.studyMode },
+    select: { id: true, username: true, role: true, isActive: true, studyMode: true, createdAt: true },
+  })
+
+  return c.json(updated, 200)
 })
 
 export { auth as authRouter }
