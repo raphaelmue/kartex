@@ -56,7 +56,7 @@ Full details: [.planning/milestones/v1.1-ROADMAP.md](milestones/v1.1-ROADMAP.md)
   3. The /study start screen shows a deck picker listing all active decks, all pre-checked; the user can uncheck individual decks for that session without affecting the persisted isActive flag
   4. The /study start screen has a session size picker (All / 10 / 20 / custom) consistent with the existing /decks/:id/learn picker
 
-**Plans**: 5 plansPlans:
+**Plans**: 5 plans
 **Wave 1**
 
 - [x] 10-01-PLAN.md — Wave 0 RED test stub (DecksPage.test.tsx) for DECK-01 toggle
@@ -108,7 +108,21 @@ Full details: [.planning/milestones/v1.1-ROADMAP.md](milestones/v1.1-ROADMAP.md)
   4. The production Hono server sends Cross-Origin-Opener-Policy: same-origin and Cross-Origin-Embedder-Policy: require-corp headers on all responses (Typst WASM functions correctly in production without dev-server workarounds)
   5. After a redeployment, the browser downloads the new sw.js immediately (no stale cached version); sw.js and workbox-*.js are served with Cache-Control: no-store
 
-**Plans**: TBD
+**Plans**: 4 plans
+
+**Wave 1** *(parallel)*
+
+- [ ] 12-01-PLAN.md — Package legitimacy checkpoint + logo SVG + icon generation (@vite-pwa/assets-generator) + index.html meta tags (PWA-01)
+- [ ] 12-02-PLAN.md — Hono backend: secureHeaders middleware (COEP/COOP) + /sw.js no-store route + serveStatic onFound for workbox-*.js (PWA-04, PWA-05)
+
+**Wave 2** *(blocked on Wave 1)*
+
+- [ ] 12-03-PLAN.md — Install vite-plugin-pwa + workbox-window + configure VitePWA in vite.config.ts with manifest, precache rules (no WASM), NetworkOnly /api/*, CacheFirst *.wasm (PWA-01, PWA-02, PWA-03)
+
+**Wave 3** *(blocked on Wave 2)*
+
+- [ ] 12-04-PLAN.md — Production build verification + curl header smoke tests + Lighthouse PWA audit checkpoint (all five requirements)
+
 **UI hint**: yes
 
 ### Phase 13: Documentation
@@ -141,5 +155,5 @@ Full details: [.planning/milestones/v1.1-ROADMAP.md](milestones/v1.1-ROADMAP.md)
 | 9. Internationalization | v1.1 | 3/3 | Complete | 2026-06-01 |
 | 10. Active Deck Rotation | v1.2 | 5/5 | Complete | 2026-06-02 |
 | 11. SM-2 Preset Modes | v1.2 | 4/4 | Complete | 2026-06-03 |
-| 12. PWA Shell | v1.2 | 0/? | Not started | — |
+| 12. PWA Shell | v1.2 | 0/4 | Not started | — |
 | 13. Documentation | v1.2 | 0/? | Not started | — |
