@@ -3,6 +3,7 @@ import { serve } from '@hono/node-server'
 import { serveStatic } from '@hono/node-server/serve-static'
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
+import { secureHeaders } from 'hono/secure-headers'
 import { authMiddleware, requireAdmin } from './middleware/auth.js'
 import { authRouter } from './routes/auth.js'
 import { adminRouter } from './routes/admin.js'
@@ -15,6 +16,17 @@ import { exploreRouter } from './routes/explore.js'
 import { seedAdminIfNeeded } from './lib/seed.js'
 
 const app = new Hono()
+
+// ─── 0. Cross-origin isolation headers (PWA-04 + Typst WASM in production) ──
+// MUST be first — applies COOP/COEP to ALL responses (API, static, SPA fallback)
+// Dev-only workaround in vite.config.ts server.headers is superseded by this
+app.use(
+  '*',
+  secureHeaders({
+    crossOriginOpenerPolicy: 'same-origin',
+    crossOriginEmbedderPolicy: 'require-corp',
+  }),
+)
 
 // ─── 1. Health endpoint (FIRST — no auth, no catch-all interference) ──────────
 app.get('/api/health', (c) => c.json({ status: 'ok' }))
