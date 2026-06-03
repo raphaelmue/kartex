@@ -150,7 +150,7 @@ function SessionRunner({
       )}
 
       {/* Progress: Card N of M + optional mode indicator badge (SM2-04) */}
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 mb-4">
         <SessionProgress current={progress.current} total={progress.total} />
         {studyMode !== 'normal' && (
           <Badge variant="secondary" className="text-xs shrink-0">

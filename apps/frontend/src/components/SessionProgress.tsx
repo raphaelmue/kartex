@@ -10,7 +10,7 @@ export function SessionProgress({ current, total }: SessionProgressProps) {
 
   return (
     <p
-      className="text-sm text-muted-foreground text-center mb-4"
+      className="text-sm text-muted-foreground text-center"
       aria-label={t('session.progressAriaLabel', { current, total })}
     >
       {t('session.progress', { current, total })}
