@@ -119,7 +119,10 @@ auth.post('/login', async (c) => {
 
   setAuthCookies(c, accessToken, rawRefreshToken)
 
-  return c.json({ id: user.id, username: user.username, role: user.role }, 200)
+  return c.json(
+    { id: user.id, username: user.username, role: user.role, isActive: user.isActive, studyMode: user.studyMode, createdAt: user.createdAt },
+    200,
+  )
 })
 
 // ─── POST /logout ─────────────────────────────────────────────────────────────
@@ -197,7 +200,10 @@ auth.post('/refresh', async (c) => {
 
   setAuthCookies(c, accessToken, newRawRefreshToken)
 
-  return c.json({ id: user.id, username: user.username, role: user.role }, 200)
+  return c.json(
+    { id: user.id, username: user.username, role: user.role, isActive: user.isActive, studyMode: user.studyMode, createdAt: user.createdAt },
+    200,
+  )
 })
 
 // ─── GET /me ──────────────────────────────────────────────────────────────────
