@@ -73,8 +73,31 @@ app.route('/api/explore', exploreRouter)
 app.use('/api/admin/*', requireAdmin)
 app.route('/api/admin', adminRouter)
 
-// ─── 7. Static files (D-06: Hono serves the built Vite SPA) ──────────────────
-app.use('*', serveStatic({ root: './public' }))
+// ─── 7a. sw.js — Cache-Control: no-store (PWA-05) ───────────────────────────
+// Explicit route before serveStatic catch-all — prevents browser from caching the SW
+app.get('/sw.js', (c) => {
+  try {
+    const sw = readFileSync('./public/sw.js', 'utf8')
+    c.header('Cache-Control', 'no-store')
+    c.header('Content-Type', 'application/javascript')
+    return c.body(sw)
+  } catch {
+    return c.text('Service worker not found', 404)
+  }
+})
+
+// ─── 7b. Static files — no-store for workbox chunks (PWA-05), default for others
+app.use(
+  '*',
+  serveStatic({
+    root: './public',
+    onFound: (filePath, c) => {
+      if (/workbox-[^/]+\.js$/.test(filePath)) {
+        c.header('Cache-Control', 'no-store')
+      }
+    },
+  }),
+)
 
 // ─── 8. SPA fallback (React Router client-side routing) ──────────────────────
 //        All non-API, non-static requests return index.html
