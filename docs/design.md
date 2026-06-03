@@ -13,13 +13,12 @@ Self-hosted web application for creating, importing, and learning with multimedi
 
 | Layer         | Technology                               |
 |---------------|------------------------------------------|
-| Monorepo      | `pnpm workspaces`                        |
+| Monorepo      | yarn workspaces (yarn@4.15.0)            |
 | Frontend      | React + Vite + TypeScript                |
 | UI Library    | shadcn/ui (Radix UI + Tailwind CSS)      |
 | Backend       | Hono (Node.js, TypeScript)               |
 | ORM           | Prisma                                   |
 | Database      | PostgreSQL 16                            |
-| Proxy         | Nginx                                    |
 | Shared Types  | `packages/shared` (Zod schemas)          |
 
 ### Why shadcn/ui?
@@ -61,7 +60,6 @@ kartex/
 │           ├── schemas/         ← Zod schemas (Card, Deck, User ...)
 │           └── types/           ← Derived TypeScript types
 ├── docker-compose.yml
-├── pnpm-workspace.yaml
 └── .env
 ```
 
@@ -76,30 +74,25 @@ The `shared` package is the **single source of truth** for all data types. Front
 │                  Browser                    │
 │              (React SPA)                    │
 └───────────────────┬─────────────────────────┘
-                    │ HTTPS
+                    │ HTTP / HTTPS
 ┌───────────────────▼─────────────────────────┐
-│              Nginx (Reverse Proxy)          │
-│         TLS Termination, Static Files       │
-└──────┬──────────────────────────────────────┘
-       │ /api/*
-┌──────▼──────────┐    ┌─────────────────────┐
-│  Hono Backend   │    │   Local Volume       │
-│  (Node.js/TS)   │    │   (Images, Audio)    │
-└──────┬──────────┘    └─────────────────────┘
-       │ Prisma
-┌──────▼──────────┐
-│   PostgreSQL    │
-└─────────────────┘
+│          Hono Backend (Node.js/TS)          │
+│  • REST API on /api/*                       │
+│  • Serves React SPA via serveStatic         │
+│  • Port 3000                                │
+└──────────────────┬──────────────────────────┘
+                   │ Prisma
+┌──────────────────▼──────────────────────────┐
+│             PostgreSQL 16                   │
+└─────────────────────────────────────────────┘
 ```
 
 ### Services (Docker Compose)
 
-| Service     | Image                | Purpose                     |
-|-------------|----------------------|-----------------------------|
-| `frontend`  | node (build) → nginx | React SPA, static serving   |
-| `backend`   | node:22-slim         | REST API (Hono)             |
-| `db`        | postgres:16          | Persistence (via Prisma)    |
-| `proxy`     | nginx:alpine         | Reverse proxy, TLS          |
+| Service   | Image                | Purpose                                |
+|-----------|----------------------|----------------------------------------|
+| `backend` | node:22-slim         | REST API + React SPA (Hono, port 3000) |
+| `db`      | postgres:16-alpine   | Persistence (via Prisma)               |
 
 > Videos are embedded as external links (YouTube, Vimeo, etc.) — no self-hosted video storage needed. Images and audio are stored on a local volume.
 
@@ -127,63 +120,118 @@ POST /api/auth/register   ← invite code or admin only
 ## 6. Data Model (Prisma Schema)
 
 ```prisma
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+enum Role {
+  ADMIN
+  USER
+}
+
+enum Visibility {
+  PRIVATE
+  SHARED
+  PUBLIC
+}
+
+enum Permission {
+  READ
+  EDIT
+  MANAGE
+}
+
 model User {
-  id             String        @id @default(cuid())
-  username       String        @unique
-  email          String        @unique
-  hashedPassword String
-  role           Role          @default(USER)
-  createdAt      DateTime      @default(now())
-  decks          Deck[]
-  sharedDecks    DeckShare[]
-  progress       CardProgress[]
+  id            String         @id @default(cuid())
+  username      String         @unique
+  passwordHash  String
+  role          Role           @default(USER)
+  isActive      Boolean        @default(true)
+  studyMode     String         @default("normal")
+  createdAt     DateTime       @default(now())
+
+  refreshTokens RefreshToken[]
+  inviteCodeUsed InviteCode?
+  decks         Deck[]
+  sharedDecks   DeckShare[]
+  progress      CardProgress[]
+}
+
+model InviteCode {
+  id        String    @id @default(cuid())
+  code      String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  usedById  String?   @unique
+  usedBy    User?     @relation(fields: [usedById], references: [id])
+  createdAt DateTime  @default(now())
+}
+
+model RefreshToken {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  tokenHash String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
 }
 
 model Deck {
   id          String      @id @default(cuid())
-  owner       User        @relation(fields: [ownerId], references: [id])
   ownerId     String
+  owner       User        @relation(fields: [ownerId], references: [id])
   title       String
   description String?
   visibility  Visibility  @default(PRIVATE)
-  cards       Card[]
-  shares      DeckShare[]
+  isActive    Boolean     @default(true)
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
+
+  cards  Card[]
+  shares DeckShare[]
 }
 
 model DeckShare {
   id               String     @id @default(cuid())
-  deck             Deck       @relation(fields: [deckId], references: [id])
   deckId           String
-  sharedWithUser   User       @relation(fields: [sharedWithUserId], references: [id])
+  deck             Deck       @relation(fields: [deckId], references: [id], onDelete: Cascade)
   sharedWithUserId String
+  sharedWithUser   User       @relation(fields: [sharedWithUserId], references: [id])
   permission       Permission @default(READ)
+
+  @@unique([deckId, sharedWithUserId])
 }
 
 model Card {
   id           String         @id @default(cuid())
-  deck         Deck           @relation(fields: [deckId], references: [id])
   deckId       String
-  frontContent String         // Kartex format (Markdown + Typst)
-  backContent  String         // Kartex format
+  deck         Deck           @relation(fields: [deckId], references: [id], onDelete: Cascade)
+  frontContent String
+  backContent  String
   tags         String[]
-  progress     CardProgress[]
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
+
+  progress CardProgress[]
 }
 
 model CardProgress {
   id           String    @id @default(cuid())
-  user         User      @relation(fields: [userId], references: [id])
   userId       String
-  card         Card      @relation(fields: [cardId], references: [id])
+  user         User      @relation(fields: [userId], references: [id])
   cardId       String
-  easeFactor   Float     @default(2.5)   // SM-2
-  interval     Int       @default(1)     // days
+  card         Card      @relation(fields: [cardId], references: [id], onDelete: Cascade)
+  easeFactor   Float     @default(2.5)
+  interval     Int       @default(1)
   repetitions  Int       @default(0)
   nextReview   DateTime  @default(now())
   lastReviewed DateTime?
+
   @@unique([userId, cardId])
 }
 
@@ -196,10 +244,6 @@ model Media {
   sizeBytes   Int
   createdAt   DateTime @default(now())
 }
-
-enum Role       { ADMIN USER }
-enum Visibility { PRIVATE SHARED PUBLIC }
-enum Permission { READ EDIT }
 ```
 
 ---
@@ -366,37 +410,41 @@ After each card the user rates their recall:
 
 ```yaml
 services:
-  proxy:
-    image: nginx:alpine
-    ports: ["80:80", "443:443"]
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./certs:/etc/ssl:ro
-
   backend:
-    build: ./apps/backend
+    build:
+      context: .
+      dockerfile: apps/backend/Dockerfile
+    ports:
+      - "${BACKEND_PORT:-3000}:3000"
     environment:
-      - DATABASE_URL=postgresql://kartex:${DB_PASSWORD}@db:5432/kartex
-      - JWT_SECRET=${JWT_SECRET}
-      - STORAGE_PATH=/data/media
-    volumes:
-      - media_data:/data/media
+      DATABASE_URL: postgresql://kartex:${DB_PASSWORD}@db:5432/kartex
+      JWT_SECRET: ${JWT_SECRET}
+      ADMIN_USERNAME: ${ADMIN_USERNAME}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      ALLOWED_ORIGIN: ${ALLOWED_ORIGIN:-http://localhost:5173}
+      NODE_ENV: production
+      STORAGE_PATH: /app/media
     depends_on:
       db:
         condition: service_healthy
+    volumes:
+      - media_data:/app/media
+    restart: unless-stopped
 
   db:
-    image: postgres:16
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: kartex
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: kartex
     volumes:
       - pg_data:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_DB=kartex
-      - POSTGRES_USER=kartex
-      - POSTGRES_PASSWORD=${DB_PASSWORD}
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U kartex"]
       interval: 5s
-      retries: 5
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
 
 volumes:
   pg_data:
@@ -406,9 +454,10 @@ volumes:
 ### Deployment
 
 ```bash
-cp .env.example .env   # set JWT_SECRET and DB_PASSWORD
+cp .env.example .env
+# Edit .env — set JWT_SECRET, DB_PASSWORD, ADMIN_USERNAME, ADMIN_PASSWORD
 docker compose up -d
-# Available at http://localhost
+# Available at http://localhost:3000
 ```
 
 ---
@@ -426,7 +475,6 @@ docker compose up -d
 ## 14. Future Features (v2)
 
 - **AI integration**: script upload → Claude API → generate Kartex file
-- **Offline / PWA**: service worker for already-loaded decks
 - **OIDC / LDAP**: for institutional deployments
 - **Statistics**: learning curves, retention rate per deck
 - **Quiz mode**: multiple choice, AI-generated
