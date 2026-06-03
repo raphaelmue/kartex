@@ -114,7 +114,11 @@ app.get('*', (c) => {
 // ─── Server startup ───────────────────────────────────────────────────────────
 const port = parseInt(process.env.PORT ?? '3000', 10)
 
-await seedAdminIfNeeded()
+try {
+  await seedAdminIfNeeded()
+} catch (err) {
+  console.warn('[server] Admin seed skipped — database not reachable at startup:', (err as Error).message)
+}
 
 serve({ fetch: app.fetch, port }, (info) => {
   console.log(`[server] Listening on http://localhost:${info.port}`)
