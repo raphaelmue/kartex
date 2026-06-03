@@ -62,7 +62,7 @@ The `tags` array accepts both inline (`[a, b, c]`) and block YAML list syntax.
 
 ## 2. Comments
 
-Any line whose first non-whitespace character is `#` is a comment and is ignored by the parser, **except** for `#typst` which is a rich-content directive (see §6).
+Any line whose first non-whitespace character is `#` is a comment and is ignored by the parser, **except** for `#typst` which is a rich-content directive (see §5.3).
 
 ```
 # This line is a comment
