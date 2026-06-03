@@ -36,7 +36,7 @@ Full details: [.planning/milestones/v1.1-ROADMAP.md](milestones/v1.1-ROADMAP.md)
 ### v1.2 Study Control & PWA (Phases 10–13)
 
 - [x] **Phase 10: Active Deck Rotation** — Schema migration (isActive + studyMode columns) + active deck toggle, deck picker, and session size on /study — completed 2026-06-02
-- [ ] **Phase 11: SM-2 Preset Modes** — Settings page study mode picker + backend rate endpoint applies interval multiplier server-side — executing 2026-06-03
+- [x] **Phase 11: SM-2 Preset Modes** — Settings page study mode picker + backend rate endpoint applies interval multiplier server-side — completed 2026-06-03
 - [ ] **Phase 12: PWA Shell** — vite-plugin-pwa manifest + service worker + COEP/COOP headers + sw.js cache control
 - [ ] **Phase 13: Documentation** — README.md at repo root + accurate design.md and kartex-format.md
 
@@ -140,6 +140,6 @@ Full details: [.planning/milestones/v1.1-ROADMAP.md](milestones/v1.1-ROADMAP.md)
 | 8. Study UX | v1.1 | 4/4 | Complete | 2026-06-01 |
 | 9. Internationalization | v1.1 | 3/3 | Complete | 2026-06-01 |
 | 10. Active Deck Rotation | v1.2 | 5/5 | Complete | 2026-06-02 |
-| 11. SM-2 Preset Modes | v1.2 | 0/4 | Planned | — |
+| 11. SM-2 Preset Modes | v1.2 | 4/4 | Complete | 2026-06-03 |
 | 12. PWA Shell | v1.2 | 0/? | Not started | — |
 | 13. Documentation | v1.2 | 0/? | Not started | — |

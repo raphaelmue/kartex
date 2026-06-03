@@ -3,16 +3,16 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Study Control & PWA
 status: executing
-stopped_at: phase 11 all plans done — awaiting human verification (2026-06-03)
+stopped_at: phase 11 complete — ready to plan phase 12 (2026-06-03)
 last_updated: "2026-06-03T00:00:00.000Z"
-last_activity: 2026-06-03 -- Phase 11 Plan 04 executed (mode indicator badge + SM2-01/SM2-04 tests)
+last_activity: 2026-06-03 -- Phase 11 human UAT passed (3/3); 2 bugs found and fixed during UAT
 progress:
   total_phases: 4
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 9
   completed_plans: 9
-  percent: 25
-phase_11_status: executing
+  percent: 50
+phase_11_status: complete
 ---
 
 # Project State
