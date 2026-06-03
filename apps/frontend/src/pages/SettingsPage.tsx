@@ -11,6 +11,8 @@ import {
 } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import type { StudyMode } from '@kartex/shared'
+
 import { useAuth } from '@/context/AuthContext'
 import { api } from '@/lib/api'
 
@@ -45,11 +47,12 @@ export function SettingsPage() {
     const currentUser = user
     if (!currentUser) return
 
+    const mode = value as StudyMode
     const previous = currentUser.studyMode
     // Optimistic update
-    setUser({ ...currentUser, studyMode: value })
+    setUser({ ...currentUser, studyMode: mode })
     try {
-      const res = await api.patch('/api/auth/me', { studyMode: value })
+      const res = await api.patch('/api/auth/me', { studyMode: mode })
       if (!res.ok) throw new Error()
       toast.success(t('settings.saved'))
     } catch {
