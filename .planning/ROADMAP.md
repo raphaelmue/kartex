@@ -136,7 +136,13 @@ Full details: [.planning/milestones/v1.1-ROADMAP.md](milestones/v1.1-ROADMAP.md)
   2. docs/design.md contains no references to Nginx, no references to pnpm — the architecture section accurately reflects Hono serveStatic and yarn@4.15.0
   3. docs/kartex-format.md accurately documents the #typst block type, audio media, and the .kartex.zip bundle format as implemented in v1.1
 
-**Plans**: TBD
+**Plans**: 3 plans
+
+**Wave 1** *(all parallel — no shared files)*
+
+- [ ] 13-01-PLAN.md — Create README.md at repo root with project overview, tech stack, quick-start, and doc links (DOCS-01)
+- [ ] 13-02-PLAN.md — Fix stale sections in docs/design.md: remove Nginx/pnpm references, update architecture diagram, services table, data model, Docker Compose example (DOCS-02)
+- [ ] 13-03-PLAN.md — Verify docs/kartex-format.md accuracy against parser source; fix any discrepancies found (DOCS-03)
 
 ---
 
@@ -156,4 +162,4 @@ Full details: [.planning/milestones/v1.1-ROADMAP.md](milestones/v1.1-ROADMAP.md)
 | 10. Active Deck Rotation | v1.2 | 5/5 | Complete | 2026-06-02 |
 | 11. SM-2 Preset Modes | v1.2 | 4/4 | Complete | 2026-06-03 |
 | 12. PWA Shell | v1.2 | 4/4 | Complete | 2026-06-03 |
-| 13. Documentation | v1.2 | 0/? | Not started | — |
+| 13. Documentation | v1.2 | 0/3 | Not started | — |
