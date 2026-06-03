@@ -155,5 +155,5 @@ Full details: [.planning/milestones/v1.1-ROADMAP.md](milestones/v1.1-ROADMAP.md)
 | 9. Internationalization | v1.1 | 3/3 | Complete | 2026-06-01 |
 | 10. Active Deck Rotation | v1.2 | 5/5 | Complete | 2026-06-02 |
 | 11. SM-2 Preset Modes | v1.2 | 4/4 | Complete | 2026-06-03 |
-| 12. PWA Shell | v1.2 | 0/4 | Not started | — |
+| 12. PWA Shell | v1.2 | 0/4 | Planned | — |
 | 13. Documentation | v1.2 | 0/? | Not started | — |
