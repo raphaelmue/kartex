@@ -32,6 +32,7 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html}'],
+        maximumFileSizeToCacheInBytes: 3 * 1024 * 1024, // 3 MiB — main bundle exceeds 2 MiB default
         navigateFallbackDenylist: [/^\/api\//],
         runtimeCaching: [
           {
