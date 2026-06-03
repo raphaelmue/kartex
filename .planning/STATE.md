@@ -3,17 +3,18 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Study Control & PWA
 status: executing
-stopped_at: phase 12 planned — ready to execute phase 12 (2026-06-03)
+stopped_at: phase 12 complete — ready to plan phase 13 (2026-06-03)
 last_updated: "2026-06-03T00:00:00.000Z"
-last_activity: 2026-06-03 -- Phase 12 PWA Shell planned (4 plans / 3 waves; verification passed)
+last_activity: 2026-06-03 -- Phase 12 PWA Shell complete (4/4 plans; Lighthouse PWA audit passed)
 progress:
   total_phases: 4
-  completed_phases: 2
+  completed_phases: 3
   total_plans: 13
-  completed_plans: 9
-  percent: 50
+  completed_plans: 13
+  percent: 75
 phase_11_status: complete
-phase_12_status: planned
+phase_12_status: complete
+phase_13_status: not_started
 ---
 
 # Project State
@@ -27,10 +28,10 @@ See: .planning/PROJECT.md (updated 2026-06-02)
 
 ## Current Position
 
-Phase: 11 — SM-2 Preset Modes (all plans done, awaiting human verification)
-Plan: 04 complete — phase 11 all plans done
+Phase: 12 — PWA Shell (all 4 plans complete; Lighthouse PWA audit approved)
+Plan: 04 complete — phase 12 all plans done
 Status: Executing
-Last activity: 2026-06-03 -- Phase 11 Plan 04 executed (StudySessionPage mode indicator badge + SettingsPage.test.tsx SM2-01 + StudySessionPage.test.tsx SM2-04)
+Last activity: 2026-06-03 -- Phase 12 all 4 plans executed and verified (PWA-01 through PWA-05; Lighthouse approved)
 
 ## Performance Metrics
 
@@ -122,6 +123,11 @@ Recent decisions affecting current work:
 - 10-04: committedConfig initializer changed to always null — start screen must show before any auto-commit (Pitfall 2)
 - 10-04: deckIds filter is additive to server isActive filter — never a replacement; client cannot be trusted as sole enforcement
 - 10-04: mockParams.current vi.hoisted mutable holder in tests — default { id: 'deck-abc' }; global block sets {} in beforeEach
+- 12-01: @vite-pwa/assets-generator minimal-2023 preset outputs apple-touch-icon-180x180.png (not apple-touch-icon.png) — must copy to apple-touch-icon.png for index.html link to resolve
+- 12-03: VitePWA placed last in plugins array (after react, wasm, topLevelAwait) — WASM compatibility (Pitfall 6)
+- 12-03: globPatterns: ['**/*.{js,css,html}'] — wasm explicitly excluded to prevent Typst WASM 28 MB precache failure
+- 12-04: maximumFileSizeToCacheInBytes set to 3 MiB — main bundle (2.16 MB) exceeds Workbox default 2 MiB limit
+- 12-04: seedAdminIfNeeded wrapped in try-catch in Hono index.ts — server starts gracefully without DB connection
 
 ### Pending Todos
 
@@ -165,6 +171,6 @@ Items acknowledged and deferred at milestone close on 2026-05-30:
 
 ## Session Continuity
 
-Last session: 2026-06-02T14:13:23.871Z
-Stopped at: context exhaustion at 75% (2026-06-02)
-Resume with: Phase 10 complete — continue with Phase 11 (SM-2 Preset Modes)
+Last session: 2026-06-03T00:00:00.000Z
+Stopped at: Phase 12 complete — all 4 plans executed, Lighthouse PWA audit approved
+Resume with: Phase 13 (Documentation) — run /gsd-plan-phase 13 to plan

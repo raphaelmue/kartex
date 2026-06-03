@@ -37,7 +37,7 @@ Full details: [.planning/milestones/v1.1-ROADMAP.md](milestones/v1.1-ROADMAP.md)
 
 - [x] **Phase 10: Active Deck Rotation** — Schema migration (isActive + studyMode columns) + active deck toggle, deck picker, and session size on /study — completed 2026-06-02
 - [x] **Phase 11: SM-2 Preset Modes** — Settings page study mode picker + backend rate endpoint applies interval multiplier server-side — completed 2026-06-03
-- [ ] **Phase 12: PWA Shell** — vite-plugin-pwa manifest + service worker + COEP/COOP headers + sw.js cache control
+- [x] **Phase 12: PWA Shell** — vite-plugin-pwa manifest + service worker + COEP/COOP headers + sw.js cache control — completed 2026-06-03
 - [ ] **Phase 13: Documentation** — README.md at repo root + accurate design.md and kartex-format.md
 
 ---
@@ -112,16 +112,16 @@ Full details: [.planning/milestones/v1.1-ROADMAP.md](milestones/v1.1-ROADMAP.md)
 
 **Wave 1** *(parallel)*
 
-- [ ] 12-01-PLAN.md — Package legitimacy checkpoint + logo SVG + icon generation (@vite-pwa/assets-generator) + index.html meta tags (PWA-01)
-- [ ] 12-02-PLAN.md — Hono backend: secureHeaders middleware (COEP/COOP) + /sw.js no-store route + serveStatic onFound for workbox-*.js (PWA-04, PWA-05)
+- [x] 12-01-PLAN.md — Package legitimacy checkpoint + logo SVG + icon generation (@vite-pwa/assets-generator) + index.html meta tags (PWA-01)
+- [x] 12-02-PLAN.md — Hono backend: secureHeaders middleware (COEP/COOP) + /sw.js no-store route + serveStatic onFound for workbox-*.js (PWA-04, PWA-05)
 
 **Wave 2** *(blocked on Wave 1)*
 
-- [ ] 12-03-PLAN.md — Install vite-plugin-pwa + workbox-window + configure VitePWA in vite.config.ts with manifest, precache rules (no WASM), NetworkOnly /api/*, CacheFirst *.wasm (PWA-01, PWA-02, PWA-03)
+- [x] 12-03-PLAN.md — Install vite-plugin-pwa + workbox-window + configure VitePWA in vite.config.ts with manifest, precache rules (no WASM), NetworkOnly /api/*, CacheFirst *.wasm (PWA-01, PWA-02, PWA-03)
 
 **Wave 3** *(blocked on Wave 2)*
 
-- [ ] 12-04-PLAN.md — Production build verification + curl header smoke tests + Lighthouse PWA audit checkpoint (all five requirements)
+- [x] 12-04-PLAN.md — Production build verification + curl header smoke tests + Lighthouse PWA audit checkpoint (all five requirements)
 
 **UI hint**: yes
 
@@ -155,5 +155,5 @@ Full details: [.planning/milestones/v1.1-ROADMAP.md](milestones/v1.1-ROADMAP.md)
 | 9. Internationalization | v1.1 | 3/3 | Complete | 2026-06-01 |
 | 10. Active Deck Rotation | v1.2 | 5/5 | Complete | 2026-06-02 |
 | 11. SM-2 Preset Modes | v1.2 | 4/4 | Complete | 2026-06-03 |
-| 12. PWA Shell | v1.2 | 0/4 | Planned | — |
+| 12. PWA Shell | v1.2 | 4/4 | Complete | 2026-06-03 |
 | 13. Documentation | v1.2 | 0/? | Not started | — |
