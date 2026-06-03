@@ -3,7 +3,7 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Study Control & PWA
 status: executing
-stopped_at: phase 12 complete — ready to plan phase 13 (2026-06-03)
+stopped_at: phase 13 planned — 3 plans ready to execute (2026-06-03)
 last_updated: "2026-06-03T00:00:00.000Z"
 last_activity: 2026-06-03 -- Phase 12 PWA Shell complete (4/4 plans; Lighthouse PWA audit passed)
 progress:
@@ -14,7 +14,7 @@ progress:
   percent: 75
 phase_11_status: complete
 phase_12_status: complete
-phase_13_status: not_started
+phase_13_status: planned
 ---
 
 # Project State
@@ -28,10 +28,10 @@ See: .planning/PROJECT.md (updated 2026-06-02)
 
 ## Current Position
 
-Phase: 12 — PWA Shell (all 4 plans complete; Lighthouse PWA audit approved)
-Plan: 04 complete — phase 12 all plans done
-Status: Executing
-Last activity: 2026-06-03 -- Phase 12 all 4 plans executed and verified (PWA-01 through PWA-05; Lighthouse approved)
+Phase: 13 — Documentation (3 plans planned; ready to execute)
+Plan: 00 — no plans executed yet
+Status: Planned
+Last activity: 2026-06-03 -- Phase 13 Documentation planned: 3 plans (Wave 1 parallel: README.md, design.md fix, kartex-format.md audit)
 
 ## Performance Metrics
 
@@ -173,4 +173,4 @@ Items acknowledged and deferred at milestone close on 2026-05-30:
 
 Last session: 2026-06-03T00:00:00.000Z
 Stopped at: Phase 12 complete — all 4 plans executed, Lighthouse PWA audit approved
-Resume with: Phase 13 (Documentation) — run /gsd-plan-phase 13 to plan
+Resume with: Phase 13 (Documentation) — run /gsd-execute-phase 13 to execute
