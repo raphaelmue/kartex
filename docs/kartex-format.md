@@ -246,7 +246,7 @@ back:
 |------|-----------|
 | **D-01 — Lenient cards** | A card block missing `front:` or `back:` is skipped and added to the import warnings list. Other cards in the file are unaffected. |
 | **D-02 — Required header** | A file without a valid `---` YAML header (or with a missing/empty `deck:` field) is rejected entirely — a fatal parse error is returned and nothing is imported. |
-| **Comment stripping** | Lines starting with `#` (excluding `#typst`) are removed before parsing. This applies globally, but `#typst` inside field values is preserved. |
+| **Comment stripping** | Lines starting with `#` (excluding `#typst`) are removed before parsing. This applies only to **standalone lines** (lines that are not continuation lines within a `front:` or `back:` field value). Code examples with a leading `#` inside a `back:` field (e.g. Python comments or shell scripts) are preserved correctly because those lines are collected as field-value continuations, not standalone lines. |
 | **Line endings** | Both LF (`\n`) and CRLF (`\r\n`) are normalised. |
 | **Tags fallback** | If a `tags:` value cannot be parsed as a YAML array, it is silently treated as empty (non-fatal). |
 
