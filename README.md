@@ -27,7 +27,8 @@ Self-hosted flashcard application with spaced repetition, rich content (LaTeX, T
 ## Prerequisites
 
 - Docker and Docker Compose
-- No other tools needed on the host (everything runs in containers)
+- No other build tools needed on the host (everything runs in containers)
+- **Optional:** Node.js — only needed for the `node -e` secret-generation command in Quick Start step 3. If Node.js is not available, use `openssl rand -hex 32` instead.
 
 ## Quick Start
 
@@ -53,10 +54,14 @@ ADMIN_USERNAME=<username for the first admin account>
 ADMIN_PASSWORD=<password for the first admin account>
 ```
 
-Generate a secure `JWT_SECRET`:
+Generate a secure `JWT_SECRET` (use whichever is available):
 
 ```bash
+# If Node.js is installed:
 node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+
+# Alternative (OpenSSL):
+openssl rand -hex 32
 ```
 
 `DB_PASSWORD` is only used inside the PostgreSQL container — choose any strong password.
