@@ -464,7 +464,8 @@ docker compose up -d
 
 ## 13. Security
 
-- All API endpoints require a valid JWT (except `/api/auth/login`)
+- Public endpoints (no JWT required): `POST /api/auth/login`, `POST /api/auth/register`, `POST /api/auth/logout`, `POST /api/auth/refresh`, `GET /api/health`, `GET /api/media/:filename` (media files served without auth to support `<img>`/`<audio>` tags)
+- All other `/api/*` endpoints require a valid JWT access token in the httpOnly cookie
 - File uploads: MIME + magic bytes validation, configurable max size
 - Rate limiting on auth endpoints (Hono middleware)
 - CORS: own domain only
