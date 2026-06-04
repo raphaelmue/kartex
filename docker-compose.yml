@@ -10,7 +10,7 @@ services:
       JWT_SECRET: ${JWT_SECRET}
       ADMIN_USERNAME: ${ADMIN_USERNAME}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD}
-      ALLOWED_ORIGIN: ${ALLOWED_ORIGIN:-http://localhost:5173}
+      ALLOWED_ORIGIN: ${ALLOWED_ORIGIN:-http://localhost:3000}
       NODE_ENV: production
       STORAGE_PATH: /app/media
     depends_on:

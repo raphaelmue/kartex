@@ -85,7 +85,7 @@ All configuration is via environment variables in `.env`:
 | `JWT_SECRET` | `change-this-to-a-long-random-secret` | JWT signing secret — must be a long random string (at least 32 characters). |
 | `ADMIN_USERNAME` | `admin` | Initial admin account username (created on first startup if no admin exists). |
 | `ADMIN_PASSWORD` | `change-this-admin-password` | Initial admin account password (created on first startup if no admin exists). |
-| `ALLOWED_ORIGIN` | `http://localhost:3000` | The origin from which the browser makes requests to the API. In production: your full domain (e.g. `https://kartex.example.com`). |
+| `ALLOWED_ORIGIN` | `http://localhost:3000` | Origin allowed for CORS. In a Docker Compose deployment the default fallback is `http://localhost:3000` (the port the SPA is served from). For local Vite dev use `http://localhost:5173`. In production set this to your full domain (e.g. `https://kartex.example.com`). |
 | `BACKEND_PORT` | `3000` | Host port for the backend container. |
 | `STORAGE_PATH` | `/app/media` | Absolute path inside the container where uploaded media files are stored. Mapped to a Docker volume — do not change without also updating the volume mount path. |
 | `MAX_UPLOAD_BYTES` | `10485760` | Maximum upload file size in bytes (default: 10 MB). |

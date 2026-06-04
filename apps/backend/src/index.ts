@@ -35,7 +35,7 @@ app.get('/api/health', (c) => c.json({ status: 'ok' }))
 app.use(
   '/api/*',
   cors({
-    origin: process.env.ALLOWED_ORIGIN || 'http://localhost:5173',
+    origin: process.env.ALLOWED_ORIGIN || 'http://localhost:3000',
     credentials: true, // Required for httpOnly cookie auth
     allowMethods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowHeaders: ['Content-Type', 'Authorization'],
