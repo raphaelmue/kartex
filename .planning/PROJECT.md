@@ -1,10 +1,10 @@
 # Kartex
 
-## Current State: v1.2 In Progress
+## Current State: v1.2 Complete
 
-**Current milestone:** v1.2 Study Control & PWA
-**Phases shipped:** 1–9 (v1.0: phases 1–6, v1.1: phases 7–9)
-**Total plans shipped:** 26 (18 in v1.0 + 8 in v1.1)
+**Current milestone:** v1.2 Study Control & PWA — SHIPPED 2026-06-04
+**Phases shipped:** 1–13 (v1.0: 1–6, v1.1: 7–9, v1.2: 10–13)
+**Total plans shipped:** 42 (18 in v1.0 + 8 in v1.1 + 16 in v1.2)
 **TypeScript LOC:** ~9,531
 
 ## Current Milestone: v1.2 Study Control & PWA
@@ -67,16 +67,19 @@ A user can open their dashboard, see their due cards, and complete a spaced-repe
 - ✓ App footer (build-time version, copyright, GitHub/Docs links) — v1.1
 - ✓ react-i18next internationalization: 254-key en/de locale parity, all 9 pages translated, LanguageToggle with runtime switching — v1.1
 
+### Validated in v1.2
+
+- ✓ User can mark a deck as active or inactive (persists in DB, filters /study queue) — v1.2 Phase 10
+- ✓ User can select which decks to include in a /study session (deck picker) — v1.2 Phase 10
+- ✓ User can choose session size from /study start screen (All / 10 / 20 / custom) — v1.2 Phase 10
+- ✓ User can set SM-2 study mode: Normal, Intensive (halved intervals), or Exam Prep (quartered) — v1.2 Phase 11
+- ✓ App is installable as a PWA (manifest.json + service worker for static asset caching) — v1.2 Phase 12
+- ✓ README.md exists at repo root with overview, stack, quick-start, and doc links — v1.2 Phase 13
+- ✓ design.md and kartex-format.md are accurate against v1.2 codebase — v1.2 Phase 13
+
 ### Active
 
-**v1.2 — Study Control & PWA:**
-- User can mark a deck as active or inactive (persists in DB, filters /study queue)
-- User can select which decks to include in a /study session (deck picker)
-- User can choose session size from /study start screen (All / 10 / 20 / custom)
-- User can set SM-2 study mode: Normal, Intensive (halved intervals), or Exam Prep (quartered)
-- App is installable as a PWA (manifest.json + service worker for static asset caching)
-- README.md exists at repo root with overview, stack, quick-start, and doc links
-- design.md and kartex-format.md are accurate against v1.1 codebase
+No active development. v1.2 is complete.
 
 ### Out of Scope
 
