@@ -373,13 +373,27 @@ After each card the user rates their recall:
 - Again → interval resets to 1 day
 - Dashboard shows all cards due today across all decks
 
-### Study Modes
+### Session Types
 
-| Mode              | Description                                  |
-|-------------------|----------------------------------------------|
-| Spaced Repetition | SM-2, due cards across all decks             |
-| Deck Mode         | All cards in a deck, sequentially            |
-| Exam Mode         | Time limit, progress not saved               |
+Three session types control how cards are presented and whether progress is saved:
+
+| Session Type      | Description                                                                 |
+|-------------------|-----------------------------------------------------------------------------|
+| Spaced Repetition | SM-2 algorithm, due cards across all decks, progress saved                  |
+| Deck Mode         | All cards in a selected deck, sequentially, progress saved                  |
+| Exam Mode         | All cards in a selected deck with a timer; progress is **not** saved (skips `POST /api/study/rate`) |
+
+### SM-2 User Modes (Speed Multipliers)
+
+Separate from session types, each user has a configurable SM-2 speed multiplier (set via `PATCH /api/auth/me`). These affect the interval growth rate, not the session presentation:
+
+| User Mode    | Interval Multiplier | Use Case                                  |
+|--------------|--------------------|--------------------------------------------|
+| `normal`     | 1.0×               | Standard long-term retention               |
+| `intensive`  | 1.5×               | Faster review for upcoming exams           |
+| `exam_prep`  | 0.25×              | Dense review — cards return very quickly   |
+
+> **Note:** "Exam Mode" (session type, no progress saved) and `exam_prep` (SM-2 multiplier) are two orthogonal settings that are often confused. A user can run an Exam Mode session while their SM-2 multiplier is set to `normal`.
 
 ---
 
