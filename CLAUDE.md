@@ -13,7 +13,7 @@ See `.planning/PROJECT.md` for full context, requirements, and key decisions.
 
 | Layer | Technology |
 |-------|------------|
-| Monorepo | pnpm workspaces |
+| Monorepo | yarn workspaces (yarn@4.15.0) |
 | Frontend | React + Vite + TypeScript |
 | UI Library | shadcn/ui (Radix UI + Tailwind CSS — copy-paste components) |
 | Backend | Hono (Node.js, TypeScript) |
