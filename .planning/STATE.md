@@ -31,7 +31,7 @@ See: .planning/PROJECT.md (updated 2026-06-02)
 Phase: 13 — Documentation (3/3 plans complete)
 Plan: 03 — all plans executed
 Status: Complete
-Last activity: 2026-06-04 -- Phase 13 Documentation complete: README.md created (DOCS-01), design.md fixed 7 stale sections (DOCS-02), kartex-format.md verified with 1 inaccuracy corrected (DOCS-03)
+Last activity: 2026-06-04 - Completed quick task 260604-001: language switcher moved to settings, CI lint fixed
 
 ## Performance Metrics
 
@@ -158,6 +158,7 @@ None.
 | 260530-002 | Migrate to Prisma 7 (5.22.0 → 7.8.0, pg driver adapter) | 2026-05-30 | — | [260530-002-migrate-to-prisma-7](.planning/quick/260530-002-migrate-to-prisma-7/) |
 | 260530-003 | Add dark mode toggle (ThemeProvider, Moon/Sun icon in sidebar) | 2026-05-30 | — | [260530-003-add-dark-mode](.planning/quick/260530-003-add-dark-mode/) |
 | 260530-005 | Fix backend Dockerfile for Prisma 7 migration entrypoint | 2026-05-30 | 0398325 | [260530-005-backend-dockerfile](.planning/quick/260530-005-backend-dockerfile/) |
+| 260604-001 | Move language switcher to settings; fix CI lint (unused ComingSoon) | 2026-06-04 | 0a96ef8 | [260604-001-lang-switcher-to-settings](.planning/quick/260604-001-lang-switcher-to-settings/) |
 
 ## Deferred Items
 
