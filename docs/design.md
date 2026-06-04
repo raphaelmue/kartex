@@ -437,7 +437,7 @@ services:
       JWT_SECRET: ${JWT_SECRET}
       ADMIN_USERNAME: ${ADMIN_USERNAME}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD}
-      ALLOWED_ORIGIN: ${ALLOWED_ORIGIN:-http://localhost:5173}
+      ALLOWED_ORIGIN: ${ALLOWED_ORIGIN:-http://localhost:3000}
       NODE_ENV: production
       STORAGE_PATH: /app/media
     depends_on:
@@ -475,6 +475,8 @@ cp .env.example .env
 docker compose up -d
 # Available at http://localhost:3000
 ```
+
+> **CORS note:** In the Docker Compose production setup the React SPA is served by the backend container on port 3000, so `ALLOWED_ORIGIN` must match that origin (`http://localhost:3000` or your domain). The fallback value `5173` (Vite dev port) applies only when running the frontend separately with `yarn dev:frontend` — do not use it as a production default.
 
 ---
 
