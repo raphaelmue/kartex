@@ -320,7 +320,9 @@
     "modeIntensiveDesc": "Reviews at ½ interval — doubles revisit frequency",
     "modeExamPrepDesc": "Reviews at ¼ interval — maximum revisit frequency",
     "saved": "Study mode saved",
-    "saveFailed": "Failed to save — please try again"
+    "saveFailed": "Failed to save — please try again",
+    "languageSection": "Language",
+    "languageDesc": "Choose the interface language."
   },
   "lang": {
     "en": "EN",

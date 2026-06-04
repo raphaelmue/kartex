@@ -320,7 +320,9 @@
     "modeIntensiveDesc": "Wiederholungen bei ½ Intervall — doppelte Häufigkeit",
     "modeExamPrepDesc": "Wiederholungen bei ¼ Intervall — maximale Häufigkeit",
     "saved": "Lernmodus gespeichert",
-    "saveFailed": "Speichern fehlgeschlagen — bitte erneut versuchen"
+    "saveFailed": "Speichern fehlgeschlagen — bitte erneut versuchen",
+    "languageSection": "Sprache",
+    "languageDesc": "Wähle die Oberflächensprache."
   },
   "lang": {
     "en": "EN",

@@ -2,71 +2,58 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import i18n from 'i18next'
-import { AppShell } from '@/components/AppShell'
+import { SettingsPage } from '@/pages/SettingsPage'
 
-// Set build-time constant that Vite define would inject
-;(globalThis as Record<string, unknown>).__APP_VERSION__ = '1.0.0'
+// Mock react-router-dom — keep real module but override useNavigate
+vi.mock('react-router-dom', async () => {
+  const actual = await vi.importActual<typeof import('react-router-dom')>('react-router-dom')
+  return { ...actual, useNavigate: () => vi.fn() }
+})
 
-// Mock AuthContext — mirrors AppShell.test.tsx pattern
+// Mock AuthContext
 vi.mock('@/context/AuthContext', () => ({
   useAuth: () => ({
-    user: { id: 'u1', username: 'testuser', role: 'USER', isActive: true, createdAt: '2026-01-01' },
+    user: { id: 'u1', username: 'testuser', role: 'USER', isActive: true, studyMode: 'normal', createdAt: '2026-01-01' },
     loading: false,
     setUser: vi.fn(),
     logout: vi.fn(),
   }),
 }))
 
-// Mock ThemeContext — mirrors AppShell.test.tsx pattern
-vi.mock('@/context/ThemeContext', () => ({
-  useTheme: () => ({
-    theme: 'light',
-    toggleTheme: vi.fn(),
-  }),
-}))
+// Mock api module (SettingsPage uses it for studyMode PATCH)
+vi.mock('@/lib/api', () => ({ api: { patch: vi.fn().mockResolvedValue({ ok: true }) } }))
 
-// Mock react-router-dom — keep real module but override useLocation
-vi.mock('react-router-dom', async () => {
-  const actual = await vi.importActual<typeof import('react-router-dom')>('react-router-dom')
-  return {
-    ...actual,
-    useLocation: () => ({
-      pathname: '/dashboard',
-      search: '',
-      hash: '',
-      state: null,
-      key: 'default',
-    }),
-  }
-})
+// Mock sonner
+vi.mock('sonner', () => ({ toast: { success: vi.fn(), error: vi.fn() } }))
 
-function renderAppShell() {
+function renderSettings() {
   return render(
-    <MemoryRouter initialEntries={['/dashboard']}>
-      <AppShell />
+    <MemoryRouter>
+      <SettingsPage />
     </MemoryRouter>
   )
 }
 
-describe('I18N-03: Language toggle button', () => {
+describe('I18N-03: Language toggle in Settings', () => {
   beforeEach(() => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    vi.spyOn(i18n, 'changeLanguage').mockImplementation((() => Promise.resolve()) as any)
+    vi.spyOn(i18n, 'changeLanguage').mockImplementation((() => Promise.resolve()) as never)
   })
 
-  it('I18N-03a: renders a button with accessible name from a11y.switchLanguage and visible text "EN"', () => {
-    renderAppShell()
-    // The button should have aria-label matching t('a11y.switchLanguage') = 'Switch language'
-    // and its visible text should be 'EN' when i18n.language === 'en'
-    const langButton = screen.getByRole('button', { name: /switch language/i })
-    expect(langButton).toBeTruthy()
-    expect(langButton.textContent).toBe('EN')
+  it('I18N-03a: renders language radio group with EN and DE options', () => {
+    renderSettings()
+    const enRadio = document.getElementById('lang-en')
+    const deRadio = document.getElementById('lang-de')
+    expect(enRadio).toBeTruthy()
+    expect(deRadio).toBeTruthy()
+    expect(screen.getByText('EN')).toBeTruthy()
+    expect(screen.getByText('DE')).toBeTruthy()
   })
 
-  it('I18N-03b: clicking the language button calls i18n.changeLanguage with "de"', () => {
-    renderAppShell()
-    const langButton = screen.getByRole('button', { name: /switch language/i })
-    fireEvent.click(langButton)
+  it('I18N-03b: clicking the DE radio calls i18n.changeLanguage with "de"', () => {
+    renderSettings()
+    const deRadio = document.getElementById('lang-de')
+    expect(deRadio).toBeTruthy()
+    fireEvent.click(deRadio!)
     expect(i18n.changeLanguage).toHaveBeenCalledWith('de')
   })
 })

@@ -29,7 +29,7 @@ const navItems = [
 export function AppShell() {
   const { user, logout } = useAuth()
   const { theme, toggleTheme } = useTheme()
-  const { t, i18n } = useTranslation()
+  const { t } = useTranslation()
   const [drawerOpen, setDrawerOpen] = useState(false)
   const location = useLocation()
 
@@ -43,10 +43,6 @@ export function AppShell() {
 
   const handleLogout = () => {
     void logout()
-  }
-
-  const toggleLanguage = () => {
-    void i18n.changeLanguage(i18n.language === 'en' ? 'de' : 'en')
   }
 
   return (
@@ -128,14 +124,6 @@ export function AppShell() {
             aria-label={theme === 'dark' ? t('a11y.switchToLight') : t('a11y.switchToDark')}
           >
             {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={toggleLanguage}
-            aria-label={t('a11y.switchLanguage')}
-          >
-            {i18n.language === 'de' ? 'DE' : 'EN'}
           </Button>
           <Button variant="ghost" size="sm" onClick={handleLogout}>
             {t('common.logOut')}
@@ -239,14 +227,6 @@ export function AppShell() {
             aria-label={theme === 'dark' ? t('a11y.switchToLight') : t('a11y.switchToDark')}
           >
             {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={toggleLanguage}
-            aria-label={t('a11y.switchLanguage')}
-          >
-            {i18n.language === 'de' ? 'DE' : 'EN'}
           </Button>
           <Button variant="ghost" size="sm" onClick={handleLogout}>
             {t('common.logOut')}

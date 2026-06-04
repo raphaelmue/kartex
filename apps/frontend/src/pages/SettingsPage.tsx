@@ -35,7 +35,7 @@ const STUDY_MODE_OPTIONS = [
 ] as const
 
 export function SettingsPage() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const { user, setUser } = useAuth()
 
   useEffect(() => {
@@ -95,6 +95,29 @@ export function SettingsPage() {
                     {t(opt.descKey)}
                   </p>
                 </div>
+              </div>
+            ))}
+          </RadioGroup>
+        </CardContent>
+      </Card>
+
+      <Card className="mt-6">
+        <CardHeader>
+          <CardTitle>{t('settings.languageSection')}</CardTitle>
+          <CardDescription>{t('settings.languageDesc')}</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <RadioGroup
+            value={i18n.language === 'de' ? 'de' : 'en'}
+            onValueChange={(lang) => { void i18n.changeLanguage(lang) }}
+            className="space-y-4"
+          >
+            {(['en', 'de'] as const).map((lang) => (
+              <div key={lang} className="flex items-center gap-3">
+                <RadioGroupItem value={lang} id={`lang-${lang}`} />
+                <Label htmlFor={`lang-${lang}`} className="font-medium cursor-pointer">
+                  {t(`lang.${lang}`)}
+                </Label>
               </div>
             ))}
           </RadioGroup>

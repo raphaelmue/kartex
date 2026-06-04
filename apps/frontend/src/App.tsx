@@ -1,5 +1,5 @@
-import { AlertTriangle, Clock } from 'lucide-react'
-import { Component, ReactNode, useEffect } from 'react'
+import { AlertTriangle } from 'lucide-react'
+import { Component, ReactNode } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 
 import { AdminRoute } from '@/components/AdminRoute'
@@ -48,20 +48,6 @@ class ErrorBoundary extends Component<{ children: ReactNode }, ErrorBoundaryStat
   }
 }
 
-// Coming soon placeholder for Phase 2+ routes
-function ComingSoon({ title }: { title: string }) {
-  useEffect(() => {
-    document.title = `${title} — Kartex`
-  }, [title])
-
-  return (
-    <div className="flex flex-col items-center justify-center h-full gap-4">
-      <Clock className="h-12 w-12 text-muted-foreground" aria-hidden="true" />
-      <h2 className="text-xl font-semibold">Coming soon</h2>
-      <p className="text-sm text-muted-foreground">This feature is being built.</p>
-    </div>
-  )
-}
 
 function App() {
   return (
