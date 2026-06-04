@@ -109,10 +109,12 @@ The `shared` package is the **single source of truth** for all data types. Front
 - Roles: `admin` and `user`
 
 ```
-POST /api/auth/login
-POST /api/auth/logout
-POST /api/auth/refresh
-POST /api/auth/register   ← invite code or admin only
+POST  /api/auth/login
+POST  /api/auth/logout
+POST  /api/auth/refresh
+POST  /api/auth/register   ← invite code or admin only
+GET   /api/auth/me         ← returns authenticated user profile (JWT required)
+PATCH /api/auth/me         ← updates studyMode: normal | intensive | exam_prep (JWT required)
 ```
 
 ---
