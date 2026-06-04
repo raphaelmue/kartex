@@ -4,7 +4,7 @@
 
 - ✅ **v1.0 MVP** — Phases 1–6 (shipped 2026-05-30)
 - ✅ **v1.1 Study Experience & Polish** — Phases 7–9 (shipped 2026-06-01)
-- 🔄 **v1.2 Study Control & PWA** — Phases 10–13 (in progress)
+- ✅ **v1.2 Study Control & PWA** — Phases 10–13 (shipped 2026-06-04)
 
 ## Phases
 
@@ -38,7 +38,7 @@ Full details: [.planning/milestones/v1.1-ROADMAP.md](milestones/v1.1-ROADMAP.md)
 - [x] **Phase 10: Active Deck Rotation** — Schema migration (isActive + studyMode columns) + active deck toggle, deck picker, and session size on /study — completed 2026-06-02
 - [x] **Phase 11: SM-2 Preset Modes** — Settings page study mode picker + backend rate endpoint applies interval multiplier server-side — completed 2026-06-03
 - [x] **Phase 12: PWA Shell** — vite-plugin-pwa manifest + service worker + COEP/COOP headers + sw.js cache control — completed 2026-06-03
-- [ ] **Phase 13: Documentation** — README.md at repo root + accurate design.md and kartex-format.md
+- [x] **Phase 13: Documentation** — README.md at repo root + accurate design.md and kartex-format.md — completed 2026-06-04
 
 ---
 
@@ -140,9 +140,9 @@ Full details: [.planning/milestones/v1.1-ROADMAP.md](milestones/v1.1-ROADMAP.md)
 
 **Wave 1** *(all parallel — no shared files)*
 
-- [ ] 13-01-PLAN.md — Create README.md at repo root with project overview, tech stack, quick-start, and doc links (DOCS-01)
-- [ ] 13-02-PLAN.md — Fix stale sections in docs/design.md: remove Nginx/pnpm references, update architecture diagram, services table, data model, Docker Compose example (DOCS-02)
-- [ ] 13-03-PLAN.md — Verify docs/kartex-format.md accuracy against parser source; fix any discrepancies found (DOCS-03)
+- [x] 13-01-PLAN.md — Create README.md at repo root with project overview, tech stack, quick-start, and doc links (DOCS-01)
+- [x] 13-02-PLAN.md — Fix stale sections in docs/design.md: remove Nginx/pnpm references, update architecture diagram, services table, data model, Docker Compose example (DOCS-02)
+- [x] 13-03-PLAN.md — Verify docs/kartex-format.md accuracy against parser source; fix any discrepancies found (DOCS-03)
 
 ---
 
@@ -162,4 +162,4 @@ Full details: [.planning/milestones/v1.1-ROADMAP.md](milestones/v1.1-ROADMAP.md)
 | 10. Active Deck Rotation | v1.2 | 5/5 | Complete | 2026-06-02 |
 | 11. SM-2 Preset Modes | v1.2 | 4/4 | Complete | 2026-06-03 |
 | 12. PWA Shell | v1.2 | 4/4 | Complete | 2026-06-03 |
-| 13. Documentation | v1.2 | 0/3 | Not started | — |
+| 13. Documentation | v1.2 | 3/3 | Complete | 2026-06-04 |
