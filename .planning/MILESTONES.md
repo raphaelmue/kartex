@@ -46,3 +46,28 @@ Mobile-responsive app shell with hamburger overlay drawer and footer, tag-based 
 
 - Roadmap: [.planning/milestones/v1.1-ROADMAP.md](milestones/v1.1-ROADMAP.md)
 - Requirements: [.planning/milestones/v1.1-REQUIREMENTS.md](milestones/v1.1-REQUIREMENTS.md)
+
+---
+
+## v1.2 Study Control & PWA — Shipped 2026-06-04
+
+**Phases:** 10–13 | **Plans:** 16 | **Timeline:** 5 days (2026-06-02 → 2026-06-06)
+**UAT:** 6/6 passed (Phase 12 human verification 2026-06-06)
+
+### Delivered
+
+Active deck rotation with per-session overrides, SM-2 preset study modes enforced server-side (Normal/Intensive/Exam Prep), PWA shell with service worker, cross-origin isolation headers, and complete project documentation (README, design.md, kartex-format.md).
+
+### Key Accomplishments
+
+1. isActive toggle on DecksPage + DeckDetailPage with optimistic update; server-side deckFilter enforces exclusion (DECK-01/02)
+2. /study start screen with pre-checked deck picker (session-only uncheck) + session size picker All/10/20/custom (DECK-03/04)
+3. SettingsPage SM-2 mode selector (Normal/Intensive/Exam Prep); server-side STUDY_MODE_MULTIPLIERS applied post-calculateSM2 to nextReview only; raw CardProgress.interval never modified (SM2-01–04)
+4. vite-plugin-pwa + manifest.webmanifest (192×192+512×512 icons); SW precaches JS/CSS/HTML (WASM excluded); NetworkOnly for /api/* (PWA-01/02/03)
+5. COEP/COOP headers via Hono secureHeaders step 0; sw.js + workbox served with Cache-Control: no-store (PWA-04/05)
+6. README.md at repo root + docs/design.md and docs/kartex-format.md refreshed and verified accurate (DOCS-01/02/03)
+
+### Archive
+
+- Roadmap: [.planning/milestones/v1.2-ROADMAP.md](milestones/v1.2-ROADMAP.md)
+- Requirements: [.planning/milestones/v1.2-REQUIREMENTS.md](milestones/v1.2-REQUIREMENTS.md)

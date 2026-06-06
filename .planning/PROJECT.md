@@ -106,7 +106,7 @@ No active development. v1.2 is complete.
 
 ## Constraints
 
-- **Tech stack**: pnpm monorepo, React + Vite + TypeScript + shadcn/ui, Hono backend, Prisma 7 + PostgreSQL 16, Docker Compose — fixed per design doc
+- **Tech stack**: yarn workspaces monorepo, React + Vite + TypeScript + shadcn/ui, Hono backend, Prisma 7 + PostgreSQL 16, Docker Compose — fixed per design doc
 - **Auth**: JWT in httpOnly cookies, invite-code registration only — no open sign-up
 - **Spaced repetition**: SM-2 algorithm specifically — interval and ease factor per `docs/design.md § 9`
 - **Deployment**: Docker Compose — must run with `docker compose up -d` after `.env` setup
@@ -155,4 +155,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-06-02 — v1.2 milestone started. v1.0: 25 requirements shipped. v1.1: 10 requirements shipped (10/10 complete).*
+*Last updated: 2026-06-06 after v1.2 milestone — v1.0: 25 requirements shipped. v1.1: 10 requirements shipped. v1.2: 16 requirements shipped (16/16 complete).*
