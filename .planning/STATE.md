@@ -3,18 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Study Control & PWA
 status: complete
-stopped_at: phase 13 complete — all 3 plans executed (2026-06-04)
-last_updated: "2026-06-04T00:00:00.000Z"
-last_activity: 2026-06-04 -- Phase 13 Documentation complete (3/3 plans; README.md created, design.md fixed, kartex-format.md verified)
+stopped_at: v1.2.0 milestone archived and tagged (2026-06-06)
+last_updated: "2026-06-06T00:00:00.000Z"
+last_activity: "2026-06-06 - v1.2.0 archived: milestones/, ROADMAP.md collapsed, REQUIREMENTS.md removed, tag v1.2.0 created"
 progress:
   total_phases: 4
   completed_phases: 4
   total_plans: 16
   completed_plans: 16
   percent: 100
-phase_11_status: complete
-phase_12_status: complete
-phase_13_status: complete
 ---
 
 # Project State
@@ -172,6 +169,6 @@ Items acknowledged and deferred at milestone close on 2026-05-30:
 
 ## Session Continuity
 
-Last session: 2026-06-03T00:00:00.000Z
-Stopped at: Phase 12 complete — all 4 plans executed, Lighthouse PWA audit approved
-Resume with: Phase 13 (Documentation) — run /gsd-execute-phase 13 to execute
+Last session: 2026-06-06T00:00:00.000Z
+Stopped at: v1.2.0 milestone archived — all phases complete, tag created
+Resume with: /gsd-new-milestone to start v1.3
