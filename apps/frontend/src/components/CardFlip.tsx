@@ -39,7 +39,7 @@ export function CardFlip({ card, isFlipped, isFlipping, onClick, children }: Car
       {/* Card body: 3D transform context — NOT a flex container (Pitfall 3) */}
       <div
         style={cardBodyStyle}
-        className="relative min-h-[320px] sm:min-h-[400px] cursor-pointer select-none"
+        className="relative cursor-pointer select-none"
         onClick={onClick}
         role="button"
         tabIndex={0}
@@ -49,14 +49,14 @@ export function CardFlip({ card, isFlipped, isFlipping, onClick, children }: Car
         {/* Front face */}
         <div
           style={faceStyle}
-          className="w-full min-h-[320px] sm:min-h-[400px] bg-card border border-border rounded-lg shadow-md p-8 flex flex-col"
+          className="w-full min-h-[280px] sm:min-h-[380px] max-h-[calc(100svh-380px)] bg-card border border-border rounded-lg shadow-md p-6 sm:p-8 flex flex-col overflow-hidden"
         >
-          <p className="text-xs text-muted-foreground font-normal uppercase tracking-wide mb-4">{t('cardEditor.frontLabel')}</p>
-          <div className="flex-1">
+          <p className="text-xs text-muted-foreground font-normal uppercase tracking-wide mb-4 shrink-0">{t('cardEditor.frontLabel')}</p>
+          <div className="flex-1 min-h-0 overflow-y-auto">
             <KartexRenderer content={card.frontContent} />
           </div>
-          <hr className="border-border mt-8" />
-          <p className="text-xs text-muted-foreground text-center mt-4 select-none">
+          <hr className="border-border mt-6 sm:mt-8 shrink-0" />
+          <p className="text-xs text-muted-foreground text-center mt-4 select-none shrink-0">
             {t('a11y.revealHint')}
           </p>
         </div>
@@ -64,16 +64,16 @@ export function CardFlip({ card, isFlipped, isFlipping, onClick, children }: Car
         {/* Back face — always in DOM, hidden via backface-visibility */}
         <div
           style={backFaceStyle}
-          className="w-full min-h-[320px] sm:min-h-[400px] bg-card border border-border rounded-lg shadow-md p-8 flex flex-col"
+          className="w-full min-h-[280px] sm:min-h-[380px] bg-card border border-border rounded-lg shadow-md p-6 sm:p-8 flex flex-col overflow-hidden"
           aria-live="polite"
         >
-          <p className="text-xs text-muted-foreground font-normal uppercase tracking-wide mb-2">{t('cardEditor.frontLabel')}</p>
-          <div className="opacity-60 mb-2">
+          <p className="text-xs text-muted-foreground font-normal uppercase tracking-wide mb-2 shrink-0">{t('cardEditor.frontLabel')}</p>
+          <div className="opacity-60 mb-2 shrink-0 max-h-[72px] overflow-hidden">
             <KartexRenderer content={card.frontContent} />
           </div>
-          <hr className="border-border my-4" />
-          <p className="text-xs text-muted-foreground font-normal uppercase tracking-wide mb-2">{t('cardEditor.backLabel')}</p>
-          <div className="flex-1">
+          <hr className="border-border my-3 shrink-0" />
+          <p className="text-xs text-muted-foreground font-normal uppercase tracking-wide mb-2 shrink-0">{t('cardEditor.backLabel')}</p>
+          <div className="flex-1 min-h-0 overflow-y-auto">
             <KartexRenderer content={card.backContent} />
           </div>
         </div>

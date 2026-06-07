@@ -118,7 +118,7 @@ function SessionRunner({
   const isFlipped = face === 'back'
 
   return (
-    <div className="flex flex-col flex-1 min-h-0 py-8 px-4 max-w-2xl mx-auto w-full">
+    <div className="flex flex-col flex-1 min-h-0 py-4 sm:py-8 px-4 max-w-2xl mx-auto w-full">
       {/* Top bar: Leave Session + optional timer */}
       <div className="flex items-center justify-between mb-4">
         <Button
