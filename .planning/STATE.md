@@ -135,6 +135,10 @@ Recent decisions affecting current work:
 - Phase 12: PWA Shell — vite-plugin-pwa + manifest + COEP/COOP headers — PWA-01/02/03/04/05
 - Phase 13: Documentation — README.md + docs refresh — DOCS-01/02/03
 
+**Captured todos:**
+
+- [2026-06-07] Add learning statistics to dashboard — overall progress, easy/hard card counts, retention rate, per-deck stats (`2026-06-07-add-learning-statistics.md`)
+
 **Completed:**
 
 - [2026-05-28] Add .kartex format documentation — done as quick task 260530-001 (`docs/kartex-format.md`)
