@@ -118,9 +118,9 @@ function SessionRunner({
   const isFlipped = face === 'back'
 
   return (
-    <div className="flex flex-col flex-1 min-h-0 py-4 sm:py-8 px-4 max-w-2xl mx-auto w-full">
+    <div className="flex flex-col h-full px-4 max-w-2xl mx-auto w-full">
       {/* Top bar: Leave Session + optional timer */}
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between pt-4 sm:pt-6 pb-3 shrink-0">
         <Button
           variant="ghost"
           size="sm"
@@ -141,7 +141,7 @@ function SessionRunner({
       {/* Timer expired banner (D-05) */}
       {examExpired && (
         <div
-          className="bg-orange-50 border border-orange-200 rounded-md p-3 mb-4 flex items-center gap-2 text-sm text-orange-800"
+          className="bg-orange-50 border border-orange-200 rounded-md p-3 mb-3 flex items-center gap-2 text-sm text-orange-800 shrink-0"
           aria-live="assertive"
         >
           <Timer className="h-4 w-4" aria-hidden="true" />
@@ -150,7 +150,7 @@ function SessionRunner({
       )}
 
       {/* Progress: Card N of M + optional mode indicator badge (SM2-04) */}
-      <div className="flex items-center gap-2 mb-4">
+      <div className="flex items-center gap-2 mb-3 shrink-0">
         <SessionProgress current={progress.current} total={progress.total} />
         {studyMode !== 'normal' && (
           <Badge variant="secondary" className="text-xs shrink-0">
@@ -159,18 +159,20 @@ function SessionRunner({
         )}
       </div>
 
-      {/* Card flip + rating buttons */}
-      <CardFlip
-        card={currentCard}
-        isFlipped={isFlipped}
-        isFlipping={isFlipping}
-        onClick={() => { if (!isFlipped) void flip() }}
-      >
-        <RatingButtons
-          onRate={(rating) => void rate(rating)}
-          disabled={isFlipping}
-        />
-      </CardFlip>
+      {/* Card flip + rating buttons: fills remaining height */}
+      <div className="flex-1 min-h-0">
+        <CardFlip
+          card={currentCard}
+          isFlipped={isFlipped}
+          isFlipping={isFlipping}
+          onClick={() => { if (!isFlipped) void flip() }}
+        >
+          <RatingButtons
+            onRate={(rating) => void rate(rating)}
+            disabled={isFlipping}
+          />
+        </CardFlip>
+      </div>
     </div>
   )
 }

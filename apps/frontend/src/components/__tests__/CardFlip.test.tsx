@@ -23,13 +23,14 @@ const mockCard: DueCard = {
 
 describe('CardFlip', () => {
   it('does not render rating buttons children when not flipped', () => {
-    render(
+    const { container } = render(
       <CardFlip card={mockCard} isFlipped={false} isFlipping={false} onClick={vi.fn()}>
         <RatingButtons onRate={vi.fn()} />
       </CardFlip>
     )
-    // Rating buttons should not be in the DOM when isFlipped=false
-    expect(screen.queryByRole('button', { name: /again/i })).toBeNull()
+    // Buttons are in the DOM but invisible (opacity-0 + pointer-events-none) when not flipped
+    const wrapper = container.querySelector('.opacity-0')
+    expect(wrapper).not.toBeNull()
   })
 
   it('renders rating buttons children when flipped and not mid-animation', () => {
@@ -42,12 +43,14 @@ describe('CardFlip', () => {
   })
 
   it('does not render rating buttons during flip animation (isFlipping=true)', () => {
-    render(
+    const { container } = render(
       <CardFlip card={mockCard} isFlipped={true} isFlipping={true} onClick={vi.fn()}>
         <RatingButtons onRate={vi.fn()} />
       </CardFlip>
     )
-    expect(screen.queryByRole('button', { name: /again/i })).toBeNull()
+    // Buttons are in the DOM but invisible during animation (opacity-0 + pointer-events-none)
+    const wrapper = container.querySelector('.opacity-0')
+    expect(wrapper).not.toBeNull()
   })
 
   it('calls onClick when card wrapper is clicked', () => {

@@ -46,7 +46,7 @@ export function AppShell() {
   }
 
   return (
-    <div className="flex h-screen overflow-hidden">
+    <div className="flex h-[100dvh] overflow-hidden">
       {/* Desktop sidebar */}
       <aside className="hidden md:flex w-60 bg-card border-r border-border flex-col h-full">
         {/* Brand area */}
