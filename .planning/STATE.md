@@ -156,7 +156,7 @@ None.
 | 260530-003 | Add dark mode toggle (ThemeProvider, Moon/Sun icon in sidebar) | 2026-05-30 | — | [260530-003-add-dark-mode](.planning/quick/260530-003-add-dark-mode/) |
 | 260530-005 | Fix backend Dockerfile for Prisma 7 migration entrypoint | 2026-05-30 | 0398325 | [260530-005-backend-dockerfile](.planning/quick/260530-005-backend-dockerfile/) |
 | 260604-001 | Move language switcher to settings; fix CI lint (unused ComingSoon) | 2026-06-04 | 0a96ef8 | [260604-001-lang-switcher-to-settings](.planning/quick/260604-001-lang-switcher-to-settings/) |
-| 260607-001 | Study card: cap card height, make back content scrollable, bump v1.2.1 | 2026-06-07 | — | [260607-001-study-card-scrollable-text](.planning/quick/20260607-001-study-card-scrollable-text/) |
+| 260607-001 | Study card: cap card height, make back content scrollable, bump v1.2.1 | 2026-06-07 | 048f4fe | [260607-001-study-card-scrollable-text](.planning/quick/20260607-001-study-card-scrollable-text/) |
 
 ## Deferred Items
 
