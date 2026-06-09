@@ -11,7 +11,7 @@
 - [ ] **STATS-02**: Dashboard displays retention rate (% ratings ≥ Good in last 30 days), showing "No data yet" when review history is empty
 - [ ] **STATS-03**: Dashboard displays card difficulty breakdown (Easy / Good / Hard / Again counts), showing "No data yet" when review history is empty
 - [ ] **STATS-04**: Dashboard displays per-deck progress summary (due, mastered, in-learning)
-- [ ] **STATS-05**: Each card rating is recorded in a new `ReviewLog` table (userId, cardId, deckId, rating, reviewedAt) inside the existing `POST /api/study/rate` transaction
+- [x] **STATS-05**: Each card rating is recorded in a new `ReviewLog` table (userId, cardId, deckId, rating, reviewedAt) inside the existing `POST /api/study/rate` transaction
 
 ### Deck Update via Import (IMP)
 
@@ -21,7 +21,7 @@
 - [ ] **IMP-04**: Cards present in the file but absent in the deck are added as new cards
 - [ ] **IMP-05**: Cards present in the deck but absent in the file are listed as "removed" in the preview
 - [ ] **IMP-06**: User can toggle "keep removed cards" on the confirmation dialog; when on (default), removed cards are kept; when off, they are deleted
-- [ ] **IMP-07**: The `.kartex` format accepts an optional `id:` field per card block; existing files without `id:` import normally (backward compatible)
+- [x] **IMP-07**: The `.kartex` format accepts an optional `id:` field per card block; existing files without `id:` import normally (backward compatible)
 
 ## Future Requirements
 
@@ -52,16 +52,17 @@
 | STATS-02 | Phase 15 | Pending |
 | STATS-03 | Phase 15 | Pending |
 | STATS-04 | Phase 15 | Pending |
-| STATS-05 | Phase 14 | Pending |
+| STATS-05 | Phase 14 | Complete |
 | IMP-01 | Phase 16 | Pending |
 | IMP-02 | Phase 16 | Pending |
 | IMP-03 | Phase 16 | Pending |
 | IMP-04 | Phase 16 | Pending |
 | IMP-05 | Phase 16 | Pending |
 | IMP-06 | Phase 16 | Pending |
-| IMP-07 | Phase 14 | Pending |
+| IMP-07 | Phase 14 | Complete |
 
 **Coverage:**
+
 - v1.3.0 requirements: 12 total
 - Mapped to phases: 12
 - Unmapped: 0 ✓

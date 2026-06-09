@@ -234,6 +234,6 @@ Full details: [.planning/milestones/v1.2-ROADMAP.md](milestones/v1.2-ROADMAP.md)
 | 11. SM-2 Preset Modes | v1.2 | 4/4 | Complete | 2026-06-03 |
 | 12. PWA Shell | v1.2 | 4/4 | Complete | 2026-06-03 |
 | 13. Documentation | v1.2 | 3/3 | Complete | 2026-06-04 |
-| 14. Schema Foundation | v1.3.0 | 3/3 | Complete   | 2026-06-09 |
+| 14. Schema Foundation | v1.3.0 | 3/3 | Complete    | 2026-06-09 |
 | 15. Stats Feature | v1.3.0 | 0/TBD | Not started | - |
 | 16. Import Update Feature | v1.3.0 | 0/TBD | Not started | - |
