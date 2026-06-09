@@ -1,219 +1,247 @@
-# Technology Stack — v1.2 Additions
+# Technology Stack — v1.3.0 Additions
 
-**Project:** Kartex v1.2 Study Control & PWA
-**Researched:** 2026-06-02
-**Mode:** Milestone supplement — existing stack is fixed; this covers NEW additions only.
+**Project:** Kartex v1.3.0 Stats & Import Update
+**Researched:** 2026-06-09
+**Mode:** Milestone supplement — existing stack is fixed; this covers NEW capabilities only.
 
 ---
 
 ## Scope
 
-Four feature areas require stack changes. The existing stack (React 18 + Vite 5 + TypeScript + shadcn/ui + Hono + Prisma 7 + PostgreSQL 16 + react-i18next v26) is validated and not re-researched.
+Two feature areas. The existing stack (React 18 + Vite 5 + TypeScript + shadcn/ui + Hono +
+Prisma 7 + PostgreSQL 16 + react-i18next v26 + vite-plugin-pwa) is validated and not
+re-researched.
 
 ---
 
-## Feature 1: Active Deck Rotation (`isActive` on Deck)
+## Feature 1: Learning Statistics Dashboard
 
-### Prisma Schema Change
+### Critical Schema Gap — ReviewLog Table Required
 
-Add `isActive Boolean @default(true)` to the `Deck` model.
+**The current schema cannot answer STATS-02 or STATS-03.**
 
-**No new libraries needed.** This is a pure Prisma migration.
+`CardProgress` stores SM-2 state only: `easeFactor`, `interval`, `repetitions`,
+`nextReview`, `lastReviewed`. The `rating` (1–4) submitted by the user is used to compute
+the SM-2 output and then discarded — it is never persisted. This means:
 
-**Migration pattern — safe for existing rows:**
+- STATS-02 (retention rate = % ratings ≥ Good in last 30 days) — **no data**
+- STATS-03 (card difficulty breakdown = Easy/Good/Hard/Again counts) — **no data**
 
-Because `isActive` has a `@default(true)`, Prisma's `migrate dev` will generate:
+STATS-01 (reviewed today count) and STATS-04 (per-deck due/mastered/in-learning) can be
+derived from existing `CardProgress` fields.
 
-```sql
-ALTER TABLE "Deck" ADD COLUMN "isActive" BOOLEAN NOT NULL DEFAULT true;
-```
+**Recommended fix: add a `ReviewLog` model to capture every rating event.**
 
-PostgreSQL fills all existing rows with `true` atomically. No backfill script needed. No `--create-only` customization required. This is the standard, safe path for boolean-with-default columns on Prisma + PostgreSQL.
-
-**Confidence:** HIGH — this is Prisma's standard behavior for `@default` on non-nullable columns with existing data.
-
-**One-liner schema addition:**
 ```prisma
-model Deck {
-  // ... existing fields ...
-  isActive    Boolean     @default(true)   // NEW
+model ReviewLog {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  cardId     String
+  card       Card     @relation(fields: [cardId], references: [id], onDelete: Cascade)
+  deckId     String
+  deck       Deck     @relation(fields: [deckId], references: [id], onDelete: Cascade)
+  rating     Int      // 1=Again 2=Hard 3=Good 4=Easy (raw user rating, not SM-2 quality)
+  reviewedAt DateTime @default(now())
+
+  @@index([userId, reviewedAt])
+  @@index([userId, deckId, reviewedAt])
 }
 ```
 
-No Zod schema drift: add `isActive: z.boolean().default(true)` to the shared Deck schema in `packages/shared/src/schemas/`.
+Add back-relations to `User`, `Card`, `Deck`:
+```prisma
+model User  { reviewLogs ReviewLog[] }
+model Card  { reviewLogs ReviewLog[] }
+model Deck  { reviewLogs ReviewLog[] }
+```
+
+**What changes at the route level:** `POST /api/study/rate` already has the `rating` value
+in scope (from `RateCardSchema`). Add a `reviewLog.create` call inside the existing
+`cardProgress.upsert` — batch both in a `$transaction` to keep the write atomic.
+
+**Migration safety:** New table with no NOT-NULL columns without defaults and no required
+foreign keys without defaults. Existing rows are unaffected. No backfill needed — stats
+show data from the point the migration runs forward.
+
+**Confidence:** HIGH — direct code read of `study.ts` confirms rating is discarded; Prisma
+`$transaction` pattern is already used in `import.ts`.
+
+### What Drives the Stat Chip Values
+
+Once `ReviewLog` exists, the four stats compute as:
+
+| Stat | Source | Query |
+|------|--------|-------|
+| STATS-01: total reviewed (all time + this week) | `ReviewLog` | COUNT with `reviewedAt >= weekStart` |
+| STATS-02: retention rate (30 days) | `ReviewLog` | COUNT(rating >= 3) / COUNT(*) where reviewedAt >= 30 days ago |
+| STATS-03: difficulty breakdown | `ReviewLog` | GROUP BY rating where reviewedAt >= 30 days ago (or all time) |
+| STATS-04: per-deck progress | `CardProgress` + `Card` | interval >= 21 → "mastered"; repetitions > 0 → "in-learning"; no row → "new/due" |
+
+These are straightforward aggregate queries in Prisma. No special analytics library is needed.
+
+### New API Endpoint
+
+Add `GET /api/stats/summary` (or extend `GET /api/dashboard/stats`). Returning from the
+existing dashboard endpoint is simpler (one fetch call) — extend `DashboardStats` in
+`packages/shared` rather than adding a new route.
+
+**No new libraries needed** for the backend statistics computation.
+
+### Frontend: No Charting Library
+
+The dashboard spec calls for **stat chips** — small numeric tiles showing a value and a
+label. The two existing chips (reviewed today, streak) are already implemented as plain
+`div` + Tailwind. The new chips (total reviewed, retention %, difficulty breakdown, per-deck
+progress) follow the same pattern.
+
+STATS-04 (per-deck progress showing due/mastered/in-learning counts) could optionally use a
+progress bar — the `Progress` component from `@radix-ui/react-progress` is **already
+installed** in the project (`apps/frontend/src/components/ui/progress.tsx`).
+
+**Decision: do not add a charting library.** Recharts, Nivo, and similar add 50-300 KB to
+the bundle. The spec says "stat chips on the existing dashboard page" — numeric tiles, not
+charts. The existing `Progress` bar component is sufficient for any proportional display.
+
+**If a bar chart is ever needed** (out of scope for v1.3): Recharts is the idiomatic choice
+for React (MIT, ~130 KB gzip, tree-shakeable, well-maintained). Install then, not now.
+
+**No new npm packages needed** for the stats dashboard UI.
+
+### Date Range Arithmetic
+
+Retention rate and difficulty breakdown require "last 30 days" filtering. This is a single
+`new Date(); date.setDate(date.getDate() - 30)` computation — no date library needed.
+The project already avoids date libraries (no `date-fns` or `dayjs` in either package.json).
+Keep that pattern.
+
+**Confidence:** HIGH — confirmed by reading both package.json files and the existing
+dashboard route implementation.
 
 ---
 
-## Feature 2: SM-2 Preset Modes (User Settings, Server-Side)
+## Feature 2: Deck Update via Import
 
-### Schema: New `UserSettings` Model vs JSON Column
+### Critical Format Gap — Card `id:` Field Does Not Exist
 
-**Recommendation: Dedicated `UserSettings` table with typed columns.**
+**The current `.kartex` format has no `id:` field on card blocks.**
 
-Rationale: SM-2 presets are a small, schema-stable set of fields (one enum for study mode, possibly one integer for session size default). A typed table gives:
-- Type-safe Prisma queries — no manual JSON parsing
-- Zod schemas in `packages/shared` map cleanly to typed fields
-- Easy to extend with future settings without JSON shape gymnastics
-- Avoids `Json` type in Prisma which loses type safety without workarounds
+The parser (`kartex-parser.ts`) recognises only `front:`, `back:`, and `tags:`. The
+`ParsedCard` Zod schema has no `id` field. The import route (`import.ts`) calls
+`card.createMany` and does not pass any application-level ID.
 
-The JSON column approach (storing `{ studyMode: "NORMAL" }` in a `settings Json` field on `User`) saves one migration but requires runtime parsing and manual validation. For 3–4 well-known fields, it is the wrong tradeoff.
+For merge-by-ID to work (IMP-02/03/04), cards in the `.kartex` file must carry a stable
+identity that survives re-export and re-import. The only correct solution is to add an
+optional `id:` field to the format.
 
-**No new libraries needed.** Prisma handles this natively.
+**Recommended additions:**
 
-**Proposed schema addition:**
+1. **`.kartex` format (docs/kartex-format.md):** Add `id:` as an optional card field. When
+   exporting a deck, the backend serialises the Prisma `card.id` (CUID) as the `id:` field.
+   When importing for update, the parser extracts `id:` and the route uses it as the merge
+   key. Cards without `id:` are treated as new (assigned a new DB id on insert).
 
-```prisma
-enum StudyMode {
-  NORMAL
-  INTENSIVE
-  EXAM_PREP
-}
+2. **`ParsedCard` Zod schema** (`packages/shared/src/schemas/import.ts`):
+   ```typescript
+   export const ParsedCardSchema = z.object({
+     id: z.string().optional(),   // NEW — present only in re-exported decks
+     front: z.string().min(1),
+     back: z.string().min(1),
+     tags: z.array(z.string()).default([]),
+   })
+   ```
 
-model UserSettings {
-  id          String    @id @default(cuid())
-  userId      String    @unique
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  studyMode   StudyMode @default(NORMAL)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-}
+3. **`kartex-parser.ts`:** Add `id:` to `FIELD_PATTERN` and `parseFields`. One-line regex
+   change: `const FIELD_PATTERN = /^(front|back|tags|id):\s*(.*)/`
+   Collect `id` as a string if present, pass through to `ParsedCard`.
+
+4. **Deck export endpoint (new):** `GET /api/decks/:id/export` — serialises the deck to
+   `.kartex` text, writing each card's DB `id` into the `id:` field. This is the mechanism
+   by which users get a `.kartex` file that carries IDs. Without export, the update feature
+   only works if the user manually added `id:` fields (unlikely) — so export is a
+   prerequisite.
+
+**No new libraries needed** for format extension or merge logic.
+
+### Merge Logic — Pure Set Operations, No Library
+
+The merge (IMP-02/03/04) is a three-way diff on card IDs:
+
+```
+fileIds   = Set of id values from parsed file (non-null only)
+dbIds     = Set of card.id values currently in the deck
+
+toUpdate  = intersection(fileIds, dbIds)   → update content, preserve CardProgress
+toAdd     = fileIds - dbIds                → card.createMany
+toRemove  = dbIds - fileIds                → card.deleteMany (cascades CardProgress)
+noIdCards = cards from file with no id    → card.createMany (always new)
 ```
 
-Add the back-relation to `User`:
-```prisma
-model User {
-  // ... existing ...
-  settings    UserSettings?
-}
-```
+This is four JavaScript `Set` operations. No diffing library needed. The `diff` npm package
+or similar are for text line diffing, which is irrelevant here.
 
-**Migration safety:** New table + new enum. Existing users get no `UserSettings` row initially — the backend UPSERT pattern on first access (`prisma.userSettings.upsert(...)`) handles row creation transparently on the first settings read or write. No migration risk.
+**Confidence:** HIGH — pure algorithmic logic, no external dependency required.
 
-**Confidence:** HIGH — standard Prisma pattern; the UPSERT-on-first-access pattern is idiomatic for optional user preferences.
+### Confirmation Preview — New Shared Schema
 
----
+IMP-05 requires a preview showing added/updated/removed counts before the user commits.
+This is a two-phase API:
 
-## Feature 3: PWA Shell (vite-plugin-pwa)
+- **Phase 1:** `POST /api/decks/:id/import/preview` — parse the file, compute diff counts,
+  return the summary. Nothing written to DB.
+- **Phase 2:** `POST /api/decks/:id/import/commit` — re-parse (or accept a preview token)
+  and apply the merge.
 
-### Library
-
-| Library | Version | Why |
-|---------|---------|-----|
-| `vite-plugin-pwa` | `^1.3.0` | Latest stable; peer dep supports Vite `^3.1 \|\| ^4 \|\| ^5 \|\| ^6 \|\| ^7 \|\| ^8` — Vite 5 (currently `5.4.19`) is fully covered |
-
-Workbox is bundled as a dependency of `vite-plugin-pwa` (`workbox-build ^7.4.1` and `workbox-window ^7.4.1`). No separate workbox package needed.
-
-**Confidence:** HIGH — verified via `npm info vite-plugin-pwa` (version 1.3.0, peer dep string verified).
-
-### Installation
-
-```bash
-yarn workspace @kartex/frontend add -D vite-plugin-pwa
-```
-
-### Service Worker Strategy: `generateSW` (recommended for this scope)
-
-Use `strategy: 'generateSW'` (the default). It auto-generates a service worker that precaches all static build outputs (HTML, JS, CSS, WASM chunks, icons). No custom service worker file to maintain.
-
-`injectManifest` (custom SW) is only needed when you require custom route interception or background sync — both are out of scope for v1.2.
-
-### Vite Config Integration
-
-The existing `vite.config.ts` has `COEP: require-corp` headers in the `server` block (needed for Typst WASM + SharedArrayBuffer). This is a **critical integration concern** — see PITFALL below.
-
-Minimal config addition to `vite.config.ts`:
+Add a new Zod schema in `packages/shared/src/schemas/import.ts`:
 
 ```typescript
-import { VitePWA } from 'vite-plugin-pwa'
-
-export default defineConfig({
-  plugins: [
-    react(),
-    wasm(),
-    topLevelAwait(),
-    VitePWA({
-      registerType: 'autoUpdate',
-      workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,wasm}'],
-        // Exclude API routes from SW interception
-        navigateFallback: '/index.html',
-        navigateFallbackDenylist: [/^\/api\//],
-      },
-      manifest: {
-        name: 'Kartex',
-        short_name: 'Kartex',
-        description: 'Self-hosted spaced repetition flashcard app',
-        theme_color: '#ffffff',
-        background_color: '#ffffff',
-        display: 'standalone',
-        start_url: '/',
-        icons: [
-          { src: 'pwa-192x192.png', sizes: '192x192', type: 'image/png' },
-          { src: 'pwa-512x512.png', sizes: '512x512', type: 'image/png' },
-          { src: 'pwa-512x512.png', sizes: '512x512', type: 'image/png', purpose: 'any maskable' },
-        ],
-      },
-    }),
-  ],
-  // ... rest of config unchanged
+export const DeckUpdatePreviewSchema = z.object({
+  toAdd:    z.number().int().nonnegative(),
+  toUpdate: z.number().int().nonnegative(),
+  toRemove: z.number().int().nonnegative(),
+  warnings: z.array(ParseWarningSchema),
 })
+export type DeckUpdatePreview = z.infer<typeof DeckUpdatePreviewSchema>
 ```
 
-### COEP / Service Worker Interaction — Critical Pitfall
+No new libraries needed.
 
-The dev server sets `Cross-Origin-Embedder-Policy: require-corp` for Typst WASM. This header also applies to the service worker scope. Under `COEP: require-corp`, cached opaque (cross-origin no-CORS) responses cannot be served by the service worker back to the page — the browser blocks them.
+### File Upload UI — Reuse `useImport` Hook Pattern
 
-**Impact for Kartex v1.2:** All resources being cached by the SW are same-origin (JS/CSS/HTML/WASM from the same Hono server). There are no third-party CDN imports. The Typst WASM files are bundled by Vite, not fetched cross-origin at runtime. KaTeX CSS is also bundled. **This means COEP does not conflict with the service worker for same-origin-only static assets.**
+The existing `ImportPage.tsx` and `useImport` hook handle file upload, parse preview, and
+confirmation already. The deck-update upload on `DeckDetailPage` should reuse the same
+pattern: a hidden `<input type="file">` + `FormData` POST, progress state managed locally.
 
-The COEP header is only set in `server.headers` (dev mode proxy); the production build is served by Hono's `serveStatic` which sets its own response headers. Confirm that Hono adds COEP headers in production too (required for Typst WASM threading) — if it does, same analysis applies: all SW-cached assets are same-origin, no conflict.
+The confirmation preview dialog can use the existing `Dialog` component from
+`@radix-ui/react-dialog` (already installed).
 
-**Action:** Add `wasm` to `globPatterns` so Typst's `.wasm` chunks are precached. Explicitly exclude `/api/*` from SW navigation fallback.
+**No new UI libraries needed.**
 
-**Confidence:** MEDIUM — COEP + SW interaction analysis based on spec and web research; same-origin assertion based on examining the current stack (no CDN imports). Verify with Lighthouse after first integration that SW registers cleanly.
+### ZIP Bundle Handling for Deck Update
 
-### Required PWA Assets
+The existing import route handles both `.kartex` and `.kartex.zip`. The deck-update route
+must handle both as well. All ZIP logic (`unzipper`, `file-type`, `ALLOWED_MIMES`, media
+UUID rewrite) already exists in `import.ts`. Extract the shared logic into a helper
+function and call it from both routes.
 
-These must be added to `apps/frontend/public/`:
-
-| File | Size | Notes |
-|------|------|-------|
-| `pwa-192x192.png` | 192×192 px | Android home screen icon |
-| `pwa-512x512.png` | 512×512 px | Splash screen / maskable |
-| `apple-touch-icon.png` | 180×180 px | iOS Safari |
-| `favicon.ico` | 32×32 px | Already exists (verify) |
-
-The 512×512 image serves double duty as `purpose: 'any maskable'` — acceptable if the icon has safe-zone padding. For a clean maskable icon, a separate `pwa-maskable-512x512.png` is optional but not required for installability.
-
-`theme-color` meta tag must also be added to `apps/frontend/index.html`:
-```html
-<meta name="theme-color" content="#ffffff" />
-```
-
-### `@vite-pwa/assets-generator` (optional)
-
-If icon generation from an SVG source is desired:
-
-```bash
-npx @vite-pwa/assets-generator --preset minimal public/logo.svg
-```
-
-This is a one-time CLI tool, not a build dependency. Use if a source SVG exists; otherwise create PNGs manually.
-
----
-
-## Feature 4: Docs (README, design.md, kartex-format.md)
-
-**No stack additions.** Documentation is written in Markdown. No new tooling needed. Existing `docs/` structure is sufficient.
+**No new libraries needed** — `unzipper` and `file-type` are already installed.
 
 ---
 
 ## Summary of New Dependencies
 
-| Package | Workspace | Type | Version | Purpose |
-|---------|-----------|------|---------|---------|
-| `vite-plugin-pwa` | `@kartex/frontend` | devDependency | `^1.3.0` | PWA manifest + SW generation |
+**Zero new npm packages are required for v1.3.0.**
 
-Everything else (Deck `isActive`, `UserSettings` model, SM-2 preset enum, docs) requires **zero new npm packages** — only Prisma schema changes, Zod schema additions in `packages/shared`, and backend route updates using existing libraries.
+| Feature | Change | Libraries |
+|---------|--------|-----------|
+| ReviewLog schema | New Prisma model + migration | None — Prisma already installed |
+| Stats API | Extend dashboard route, aggregate queries | None |
+| Stats UI chips | Extend existing chip layout | None — shadcn/ui Progress already installed |
+| `.kartex` `id:` field | Parser + schema update | None — `yaml` already installed |
+| Merge logic | Set operations in `import.ts` | None |
+| Preview schema | New Zod object in `packages/shared` | None — Zod already installed |
+| Deck export | New `GET /api/decks/:id/export` route | None |
+| Update UI | File input + Dialog on DeckDetailPage | None — Dialog already installed |
 
 ---
 
@@ -221,18 +249,18 @@ Everything else (Deck `isActive`, `UserSettings` model, SM-2 preset enum, docs) 
 
 | Category | Recommended | Alternative | Why Not |
 |----------|-------------|-------------|---------|
-| PWA plugin | `vite-plugin-pwa` | Manual manifest + custom SW | vite-plugin-pwa auto-generates precache manifest from Vite build output; manual is error-prone with hashed filenames |
-| SW strategy | `generateSW` | `injectManifest` | injectManifest requires a custom SW file; no custom SW logic needed for static-only caching in v1.2 |
-| User settings storage | Typed `UserSettings` table | `Json` column on `User` | JSON loses Prisma type safety; typed table maps cleanly to Zod schemas in `packages/shared` |
-| Settings row creation | UPSERT on first access | Migration-time backfill | UPSERT is simpler; no need for a backfill script since settings are optional until first access |
+| Stats visualization | No charting library — numeric chips | Recharts | Spec says chips, not charts; adds 130 KB+ bundle weight for no stated requirement |
+| Date range | Inline `new Date()` arithmetic | date-fns / dayjs | No date library in project; 30-day window is a single subtraction |
+| Card merge key | `id:` field in `.kartex` format | Content hash of front+back | Content hash breaks on any edit; stable DB id is the only reliable key |
+| Diff computation | In-memory Set operations | npm `diff` package | `diff` is for text line diffing; structural card set operations need no library |
+| Preview/commit two-phase | Stateless re-parse on commit | Server-side session token | Stateless is simpler; re-parsing a small file is negligible cost |
 
 ---
 
 ## Sources
 
-- `npm info vite-plugin-pwa` — version 1.3.0, peer deps confirmed (HIGH confidence)
-- [vite-plugin-pwa GitHub](https://github.com/vite-pwa/vite-plugin-pwa) — strategy docs
-- [PWA Minimal Requirements — Vite PWA](https://vite-pwa-org.netlify.app/guide/pwa-minimal-requirements.html) — icon sizes, manifest fields
-- [Prisma Customizing Migrations](https://www.prisma.io/docs/orm/prisma-migrate/workflows/customizing-migrations) — migration patterns
-- [Prisma Working with JSON Fields](https://www.prisma.io/docs/orm/prisma-client/special-fields-and-types/working-with-json-fields) — JSON vs typed table tradeoffs
-- [MDN COEP Header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Cross-Origin-Embedder-Policy) — COEP + service worker behavior
+- Direct code read: `apps/backend/src/routes/study.ts` — confirms rating is discarded after SM-2 computation (HIGH confidence)
+- Direct code read: `apps/backend/prisma/schema.prisma` — confirms no `ReviewLog` or `lastRating` field exists (HIGH confidence)
+- Direct code read: `packages/shared/src/lib/kartex-parser.ts` — confirms no `id:` field parsed (HIGH confidence)
+- Direct code read: `packages/shared/src/schemas/import.ts` — confirms `ParsedCard` has no `id` field (HIGH confidence)
+- Direct code read: `apps/frontend/package.json` — confirms no charting library installed, `@radix-ui/react-progress` and `@radix-ui/react-dialog` already present (HIGH confidence)

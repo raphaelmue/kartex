@@ -1,8 +1,8 @@
-# Architecture: v1.2 Feature Integration
+# Architecture Patterns: v1.3.0 Stats & Import Update
 
-**Project:** Kartex v1.2 — Study Control & PWA
-**Researched:** 2026-06-02
-**Confidence:** HIGH (all claims verified against codebase source)
+**Domain:** Adding learning statistics and deck-update-via-import to an existing Kartex v1.2 app
+**Researched:** 2026-06-09
+**Confidence:** HIGH (all claims verified against current codebase source)
 
 ---
 
@@ -12,295 +12,387 @@
 Browser (React SPA)
       |  HTTP(S)
 Hono backend (Node.js, port 3000)
-  |-- /api/*          → route handlers (auth, decks, study, dashboard, ...)
-  |-- * (catch-all)   → serveStatic({ root: './public' })  [step 7 in index.ts]
-  |-- * (SPA fallback)→ readFileSync('./public/index.html') [step 8 in index.ts]
+  |-- /api/*          → route handlers (auth, decks, study, dashboard, import, ...)
+  |-- * (catch-all)   → serveStatic({ root: './public' })
+  |-- * (SPA fallback)→ readFileSync('./public/index.html')
       |
   Prisma 7 + PostgreSQL 16
       |
   Docker volume (media files)
 ```
 
-Build pipeline: Vite builds `apps/frontend` → output lands at `apps/backend/public/` (via `build.outDir` in vite.config.ts). Docker copies that directory into the production image at `/app/apps/backend/public/`. At startup, `entrypoint.sh` runs `prisma migrate deploy` then `node dist/index.js`.
+Key facts about the existing codebase relevant to v1.3.0:
 
-The monorepo uses yarn 4.15.0 workspaces (not pnpm despite CLAUDE.md header).
-
----
-
-## Feature 1: Active Deck Rotation
-
-### What changes
-
-**Schema (one migration):**
-Add `isActive Boolean @default(true)` to `Deck`. Default `true` means all existing decks remain active — zero-downtime migration.
-
-**Backend — three touch points:**
-
-1. `apps/backend/src/routes/decks.ts` — `PATCH /api/decks/:id` already delegates to `UpdateDeckSchema`. Add `isActive` to `UpdateDeckSchema` in `packages/shared/src/schemas/deck.ts` so the existing PATCH handler can persist the toggle without a new route.
-
-2. `apps/backend/src/routes/study.ts` — `GET /api/study/due` builds a `deckFilter` OR-combining owned + shared decks. Add `isActive: true` to the Deck condition in both the `dueWithProgress` and `neverSeen` queries. The `deckFilter` object is used in two places inside the same route handler — both must be updated.
-
-3. `apps/backend/src/routes/dashboard.ts` — `GET /api/dashboard/stats` has its own hard-coded `deck: { ownerId: userId }` filter (does not reuse `deckFilter` from study.ts). It must also add `isActive: true` to its deck condition so the dashboard count stays consistent with what the study queue will show.
-
-**Shared types:**
-- `packages/shared/src/schemas/deck.ts` — `DeckSchema` and `DeckListItemSchema` must expose `isActive: z.boolean()` so the frontend can read and toggle the field.
-- `UpdateDeckSchema` gains an optional `isActive: z.boolean()` field.
-
-**Frontend:**
-- `DecksPage.tsx` (or `DeckDetailPage.tsx`) — add an active/inactive toggle control (e.g., a Switch from shadcn/ui). The toggle calls `PATCH /api/decks/:id` with `{ isActive: false }`.
-- `StudySessionPage.tsx` — the `/study` route auto-commits with `{ mode: 'sr', tags: new Set(), size: 'all', count: 1 }`. Currently it has no deck-picker UI. A deck-picker panel (checkboxes or chips listing the user's active decks) needs to be added to the config screen that is already present for deck-specific sessions (`!selectedMode` branch). The global SR path (`isGlobalSR === true`) skips the config screen; this branch needs to be opened up or replaced with a new config-first flow.
-
-**Data flow change:** `GET /api/study/due` gains a `WHERE "Deck"."isActive" = true` condition via Prisma. No API surface change — the response shape is identical.
-
-### Migration risk
-
-LOW. `isActive` defaults to `true` → existing rows are unaffected. Single additive column. Rollback: drop column (no FK dependencies).
+- `CardProgress` stores per-(user, card) SM-2 state: `easeFactor`, `interval`, `repetitions`, `nextReview`, `lastReviewed`. It does NOT store a per-review quality/rating log.
+- The `.kartex` format (parser + docs) has no `id:` field on card blocks. Matching cards by ID requires adding this field to both the parser and the format spec.
+- The existing import router (`apps/backend/src/routes/import.ts`) creates new decks. It has no update path.
+- `DashboardPage` fetches `GET /api/dashboard/stats` for due counts, streak, and reviewed-today. No learning statistics (retention, breakdown, mastered counts) are in that endpoint.
+- The `DeckDetailPage` owns an action bar with Study / Edit / Delete buttons. It already has a modal pattern (DeckFormModal, CardEditorModal) for contextual workflows.
 
 ---
 
-## Feature 2: SM-2 Preset Modes
+## Feature 1: Learning Statistics Dashboard
 
-### Decision: User model field vs. UserPreferences table
+### New Endpoint
 
-**Recommendation: add `studyMode` to the `User` model directly.**
+**`GET /api/stats/summary`** — new route file `apps/backend/src/routes/stats.ts`
 
-Rationale:
-- There is only one preference (study mode) in v1.2 scope. A `UserPreferences` table is premature abstraction.
-- The existing `User` model already has a simple profile shape (id, username, passwordHash, role, isActive, createdAt). Adding one nullable enum field keeps the same pattern used for `role` and `isActive`.
-- The `/api/auth/me` endpoint already returns the full `UserSchema`. Adding `studyMode` to `UserSchema` exposes it to the frontend in one place with no extra round-trip.
-- If future preferences emerge (v2+), the `User` model can be refactored to a `UserPreferences` table at that time.
+All required data already exists in `CardProgress` and `Card`. No schema migration needed.
 
-**Schema addition:**
-
-```prisma
-enum StudyMode {
-  NORMAL
-  INTENSIVE
-  EXAM_PREP
-}
-
-model User {
-  ...
-  studyMode StudyMode @default(NORMAL)
-  ...
-}
-```
-
-**Where the multiplier runs:**
-
-The SM-2 logic lives in `packages/shared/src/lib/sm2.ts` → `calculateSM2(input: SM2Input): SM2Output`. The function is pure and stateless — it does not read from the DB. The multiplier must be applied **in the route handler** (`apps/backend/src/routes/study.ts`, `POST /api/study/rate`), after `calculateSM2` returns and before `prisma.cardProgress.upsert`. Specifically:
-
-```
-const sm2 = calculateSM2({ quality, repetitions, easeFactor, interval })
-// Apply mode multiplier to the computed interval:
-const modeMultiplier = { NORMAL: 1, INTENSIVE: 0.5, EXAM_PREP: 0.25 }[userStudyMode]
-const scaledInterval = Math.max(1, Math.round(sm2.interval * modeMultiplier))
-// Recompute nextReview from scaledInterval (or pass multiplied interval to a helper)
-```
-
-The `calculateSM2` function itself should NOT be modified — it stays a pure SM-2 implementation. The mode scaling is a post-processing step at the route layer. This keeps `packages/shared/sm2.ts` test-stable and the shared package free of backend concerns.
-
-**New API endpoint:** `PATCH /api/users/me/preferences` (or `PATCH /api/auth/me`) accepting `{ studyMode: 'NORMAL' | 'INTENSIVE' | 'EXAM_PREP' }`. The `POST /api/study/rate` handler must fetch the caller's `studyMode` before calling `calculateSM2` — this is one additional `prisma.user.findUnique` per rate call. For 2-5 users and non-hot-path card rating, this is acceptable; caching is not needed.
-
-**Shared types:**
-- Add `StudyModeEnum = z.enum(['NORMAL', 'INTENSIVE', 'EXAM_PREP'])` to `packages/shared/src/schemas/user.ts`.
-- Add `studyMode: StudyModeEnum` to `UserSchema` and `UserResponseSchema`.
-- New `UpdateStudyModeSchema = z.object({ studyMode: StudyModeEnum })` — can live in `schemas/user.ts`.
-
-**Frontend:**
-- `/settings` route is currently a `<ComingSoon>` placeholder (see `App.tsx`). This feature gives the `/settings` page its first real content: a mode picker (radio group or select) that PATCHes the new endpoint.
-- `AuthContext.tsx` stores the `User` object returned by `/api/auth/me`. Once `UserSchema` includes `studyMode`, the context automatically carries it — no context refactor needed.
-
-**Migration risk:** LOW. Nullable-or-defaulted enum column. PostgreSQL `ALTER TABLE ADD COLUMN ... DEFAULT 'NORMAL'` is instant for small tables. Rollback: drop column + drop enum type.
-
----
-
-## Feature 3: PWA Shell
-
-### Build output
-
-`vite-plugin-pwa` with `generateSW` strategy emits into Vite's `build.outDir` (currently `apps/backend/public/`):
-- `sw.js` — service worker at root of outDir
-- `workbox-<hash>.js` — Workbox runtime
-- `manifest.webmanifest` — Web App Manifest (JSON)
-- `registerSW.js` — auto-injected registration script
-
-The plugin injects the `<link rel="manifest">` tag and the `registerSW.js` script tag into `index.html` automatically during build.
-
-### Hono static serving interaction
-
-Current Hono routing order in `index.ts`:
-
-```
-step 7: app.use('*', serveStatic({ root: './public' }))
-step 8: app.get('*', (c) => readFileSync('./public/index.html'))
-```
-
-Step 7 uses `@hono/node-server/serve-static`. This middleware serves any file that exists in `./public` by path. Because `sw.js` and `manifest.webmanifest` land **in the root of `./public`**, `serveStatic` will serve them at `/sw.js` and `/manifest.webmanifest` respectively — **no Hono route changes are needed** for file serving.
-
-However, two concerns need to be addressed:
-
-**1. Content-Type for manifest.webmanifest:**
-Browsers require `Content-Type: application/manifest+json` for `.webmanifest` files. Hono's `serveStatic` delegates MIME detection to the underlying file system adapter. The `@hono/node-server` adapter uses the `mime` package. Verify that `mime` maps `.webmanifest` → `application/manifest+json`. If not (older `mime` versions map it to `application/json`), add a custom middleware before `serveStatic` that intercepts `/manifest.webmanifest` and sets the correct header. This is a one-liner Hono middleware.
-
-**2. Cache-Control for sw.js and manifest.webmanifest:**
-Browsers refuse to cache service workers longer than 86400 seconds, and a stale `sw.js` prevents updates from reaching users. Hono's `serveStatic` does not set `Cache-Control` by default, which is acceptable (browsers apply their own defaults for SW files). For production correctness, add a Hono middleware that sets `Cache-Control: no-cache` for `/sw.js` and `/manifest.webmanifest` specifically. This matches the PWA deployment guidance for non-hashed files.
-
-**3. COOP/COEP headers in production:**
-The Vite dev server sets `Cross-Origin-Opener-Policy: same-origin` and `Cross-Origin-Embedder-Policy: require-corp` (required for Typst WASM SharedArrayBuffer). These headers are currently **only in the Vite dev server config** (`vite.config.ts` → `server.headers`). They are NOT applied by Hono in production. Add these two headers to Hono for all `*` responses (before `serveStatic`) to maintain Typst WASM correctness in production. This is pre-existing tech debt; the PWA work is a good time to fix it.
-
-**SW scope:** `vite-plugin-pwa` registers the SW at `/sw.js` with scope `/` by default. Since the SPA is served from the root, this is correct. No `Service-Worker-Allowed` header override is needed.
-
-**HTTPS:** Service workers require HTTPS in production. The existing deployment (Docker Compose, port 3000) is expected to be behind a reverse proxy that terminates TLS. No change needed in the application.
-
-### Docker / production path
-
-The Dockerfile copies `apps/backend/public/` into `/app/apps/backend/public/`. After the Vite build with `vite-plugin-pwa`, that directory will contain `sw.js`, `workbox-*.js`, and `manifest.webmanifest` alongside the existing `index.html` and `assets/`. No Dockerfile changes are needed.
-
-### PWA manifest content
-
-The `manifest.webmanifest` is configured inside `vite.config.ts` under the `VitePWA({ manifest: { ... } })` plugin option. Required fields for installability: `name`, `short_name`, `start_url`, `display: 'standalone'`, `background_color`, `theme_color`, `icons` (at minimum 192x192 and 512x512 PNG). Icons must exist in `apps/frontend/public/` to be included in the build output and referenced by the manifest.
-
-### What vite-plugin-pwa is NOT doing in v1.2
-
-The offline study requirement is explicitly deferred to v2. The `generateSW` workbox config should use `networkFirst` or `networkOnly` for `/api/*` routes — precaching only static shell assets (HTML, JS, CSS, fonts, icons). This prevents stale API responses from being served from cache.
-
----
-
-## Feature 4: Docs (README.md)
-
-No architectural impact. Touches only repo root and `docs/`. No schema, backend, or frontend code changes.
-
----
-
-## Component Map: New vs Modified
-
-| Component | Status | Change |
-|-----------|--------|--------|
-| `schema.prisma` — Deck model | **Modified** | Add `isActive Boolean @default(true)` |
-| `schema.prisma` — User model | **Modified** | Add `studyMode StudyMode @default(NORMAL)` |
-| `schema.prisma` — enums | **Modified** | Add `StudyMode` enum |
-| New Prisma migration | **New** | Single migration for both schema changes |
-| `packages/shared/schemas/deck.ts` | **Modified** | Add `isActive` to `DeckSchema`, `UpdateDeckSchema` |
-| `packages/shared/schemas/user.ts` | **Modified** | Add `StudyModeEnum`, `studyMode` to `UserSchema`/`UserResponseSchema`, new `UpdateStudyModeSchema` |
-| `apps/backend/src/routes/study.ts` — `GET /due` | **Modified** | Add `isActive: true` filter to `deckFilter` (two query sites) |
-| `apps/backend/src/routes/study.ts` — `POST /rate` | **Modified** | Fetch user's `studyMode`, apply interval multiplier after `calculateSM2` |
-| `apps/backend/src/routes/dashboard.ts` | **Modified** | Add `isActive: true` to deck filter in stats query |
-| `apps/backend/src/routes/decks.ts` — `PATCH /:id` | **Unchanged** | Already delegates to `UpdateDeckSchema` — picks up `isActive` automatically |
-| New route: `PATCH /api/users/me/preferences` (or `PATCH /api/auth/me`) | **New** | Accepts `{ studyMode }`, persists to User |
-| `apps/backend/src/index.ts` | **Modified** | Register new preferences route; add COOP/COEP headers for production; add Cache-Control middleware for `/sw.js`, `/manifest.webmanifest` |
-| `apps/frontend/vite.config.ts` | **Modified** | Add `vite-plugin-pwa` with `generateSW`, manifest config, workbox routes |
-| `apps/frontend/public/` | **New files** | PWA icons (192×192, 512×512 PNG) |
-| `apps/frontend/src/pages/StudySessionPage.tsx` | **Modified** | Global SR path: open config screen, add deck-picker UI |
-| `apps/frontend/src/pages/DecksPage.tsx` or `DeckDetailPage.tsx` | **Modified** | Add active/inactive toggle per deck |
-| `apps/frontend/src/pages/SettingsPage.tsx` | **New** (replaces `<ComingSoon>`) | Study mode picker (radio group), calls PATCH preferences endpoint |
-| `apps/frontend/src/App.tsx` | **Unchanged** | `/settings` route already wired |
-| `apps/backend/prisma/migrations/<new>/migration.sql` | **New** | Generated by `prisma migrate dev` |
-
----
-
-## Build Order and Dependencies
-
-The dependency chain is strict — each step unblocks the next:
-
-```
-1. Schema changes (schema.prisma)
-   └─> 2. Generate Prisma migration
-         └─> 3. Shared type updates (packages/shared)
-               ├─> 4a. Backend route changes (study.ts, dashboard.ts, new prefs route, index.ts)
-               └─> 4b. Frontend UI changes (StudySessionPage, DecksPage, SettingsPage, vite.config.ts)
-                         └─> 5. PWA icons + manifest config (can run in parallel with 4b)
-```
-
-Steps 4a and 4b can be worked on in parallel once step 3 is done (shared types are the contract between them). Step 5 (PWA icon assets + vite.config.ts plugin config) is independent of steps 1-4 and can be done at any time.
-
-**Critical ordering rule:** The Prisma migration must be committed and applied before any backend code that references the new fields (`isActive`, `studyMode`) is deployed. In the Docker Compose flow, `entrypoint.sh` runs `prisma migrate deploy` before starting the server — so this is automatically enforced at deploy time.
-
----
-
-## Patterns to Follow
-
-### Pattern: Additive Schema + Shared Type First
-
-Always update `schema.prisma` → generate migration → update `packages/shared` schemas → then update backend routes and frontend. This prevents TypeScript compile errors in routes that import shared types.
-
-### Pattern: `deckFilter` Reuse
-
-The `deckFilter` object in `study.ts` is used in multiple Prisma queries. The `isActive: true` condition must be added to the `deckFilter` definition (or its constituent OR clauses), not duplicated at each query site. Current structure:
+Response shape:
 
 ```typescript
-const deckFilter = {
-  OR: [
-    { ownerId: userId },
-    { id: { in: sharedDeckIds } },
-  ],
+{
+  totalReviewedAllTime: number        // COUNT(CardProgress rows) WHERE userId = ?
+  totalReviewedThisWeek: number       // COUNT WHERE lastReviewed >= startOfCurrentWeek
+  retentionRate: null                 // See Decision 4 — not computable from current schema
+  ratingBreakdown: {
+    again: number    // cards where repetitions == 0 AND lastReviewed IS NOT NULL
+    hard: number     // cards with low interval relative to repetitions count
+    good: number     // (approximation — see Decision 4)
+    easy: number
+  }
+  byDeck: Array<{
+    deckId: string
+    deckTitle: string
+    total: number        // total Card rows in deck
+    due: number          // nextReview <= today OR no CardProgress row
+    mastered: number     // repetitions >= 3 AND interval >= 21
+    inLearning: number   // has CardProgress row but not mastered
+    notStarted: number   // no CardProgress row
+  }>
 }
 ```
 
-Becomes:
+Implementation notes:
+
+- `totalReviewedAllTime`: `prisma.cardProgress.count({ where: { userId } })`
+- `totalReviewedThisWeek`: count where `lastReviewed >= startOfWeek`
+- `retentionRate`: return `null` — see Decision 4
+- `byDeck`: one query per deck is acceptable for 2–5 user target; alternatively a single aggregation query using `groupBy` on cards + left-join progress. The dashboard route pattern (application-side grouping in `Map`) is already established — follow the same pattern.
+- "mastered" heuristic: `repetitions >= 3 AND interval >= 21` is a reasonable proxy. No new schema field needed — computed in application code.
+
+**Route registration**: add `app.route('/api/stats', statsRouter)` in `apps/backend/src/index.ts`, placed after the existing auth middleware and before `serveStatic`.
+
+### Shared Schema Changes
+
+Add `StatsSummarySchema` and `StatsSummaryType` in a new file `packages/shared/src/schemas/stats.ts`. Export from `packages/shared/src/index.ts`.
+
+### Modified Components
+
+**`apps/frontend/src/pages/DashboardPage.tsx`** — add a second parallel `useEffect` / fetch that calls `GET /api/stats/summary`. The existing fetch of `GET /api/dashboard/stats` must not be changed (it drives the core study CTA). The stats summary is fetched independently so a slow query cannot delay the due-card count and "Start Studying" button.
+
+### New Components
+
+**`apps/frontend/src/components/StatsSummaryPanel.tsx`** — a new section rendered below the existing stats chips in `DashboardPage`. Contains:
+
+- Chip row: total reviewed all time, total this week
+- Per-deck progress table: due / mastered / in-learning columns
+- Rating breakdown chips or a simple bar: Again / Hard / Good / Easy
+
+Uses existing shadcn/ui `Badge` and `Table` components that are already imported in `DashboardPage`.
+
+Loading state: renders a skeleton (`animate-pulse` divs) while the fetch resolves. On error: silently renders nothing (stats are supplementary, not blocking).
+
+### Data Flow
+
+```
+DashboardPage mount
+  ├── api.get('/api/dashboard/stats')  [existing — unchanged]
+  │     └── sets stats → renders hero section + deck table + chips
+  └── api.get('/api/stats/summary')    [new — parallel]
+        └── sets summaryStats (null on error/loading)
+              └── StatsSummaryPanel({ data: summaryStats })
+                    └── renders chips + breakdown + per-deck table
+                        (skeleton while null, silent no-op on error)
+```
+
+---
+
+## Feature 2: Deck Update via Import
+
+### The `id:` Field Problem (must be solved first)
+
+The `.kartex` format has no `id:` field. The requirement to "match cards by ID" requires:
+
+1. **Parser change** (`packages/shared/src/lib/kartex-parser.ts`): add `id:` as a recognised single-line field in `parseFields`, treated identically to `tags:`.
+2. **Schema change** (`packages/shared/src/schemas/import.ts`): add `id: z.string().optional()` to `ParsedCardSchema`.
+3. **Format doc change** (`docs/kartex-format.md`): document `id:` as an optional card field.
+
+Cards in the file with no `id:` field are always treated as new cards. This is backward-compatible with all existing `.kartex` files.
+
+### New Endpoints
+
+Both endpoints extend the existing `importRouter` in `apps/backend/src/routes/import.ts`.
+
+---
+
+**`POST /api/import/deck/:deckId/preview`**
+
+Parse the uploaded file, compute the diff against the existing deck, return the preview without any DB writes.
+
+Request: `multipart/form-data`, field `file` (`.kartex` or `.kartex.zip`). No `deckName` field — a deck update does not rename the deck.
+
+Response (200):
 
 ```typescript
-const deckFilter = {
-  isActive: true,   // <-- add here
-  OR: [
-    { ownerId: userId },
-    { id: { in: sharedDeckIds } },
-  ],
+{
+  added: number
+  updated: number
+  removed: number
+  addedCards: Array<{ front: string; back: string; tags: string[] }>
+  updatedCards: Array<{ id: string; front: string; back: string; tags: string[] }>
+  removedCards: Array<{ id: string; frontContent: string }>
+  warnings: Array<{ cardIndex: number; reason: string }>
 }
 ```
 
-Both the `dueWithProgress` and `neverSeen` queries then inherit the filter automatically.
+---
 
-### Pattern: SM-2 Stays Pure
+**`POST /api/import/deck/:deckId/apply`**
 
-Do not add a `mode` or `multiplier` parameter to `calculateSM2`. The function is tested and shared — it must remain a direct SM-2 implementation. Apply the interval multiplier at the call site in `routes/study.ts` as a post-processing step, and recompute `nextReview` from the scaled interval using the same date-arithmetic pattern already in `sm2.ts`.
+Re-parse the uploaded file (stateless — same file sent again) and apply the diff atomically.
 
-### Pattern: StudyMode in Auth Context
+Request: `multipart/form-data`, field `file` (same file as preview). Re-parsing is safe because it is a pure operation.
 
-`AuthContext` stores the `User` object from `/api/auth/me`. Once `UserSchema` gains `studyMode`, the settings page can read `user.studyMode` from the context without an additional fetch. After a successful PATCH, call `/api/auth/me` again (or update local state directly) to reflect the change.
+Response (200):
+
+```typescript
+{
+  deckId: string
+  addedCount: number
+  updatedCount: number
+  removedCount: number
+  warnings: Array<{ cardIndex: number; reason: string }>
+}
+```
+
+Both endpoints enforce `deck.ownerId === userId`. MANAGE-permission shares may not trigger an import update — owner only. This matches the existing pattern for deck deletion.
+
+### Diff Algorithm (server-side, shared between preview and apply)
+
+```
+existingCards = prisma.card.findMany({ where: { deckId } })
+existingById  = Map<card.id → Card>
+
+for each parsedCard in file:
+  if parsedCard.id && existingById.has(parsedCard.id):
+    → "updated" bucket
+  else:
+    → "added" bucket
+
+for each existingCard whose id is NOT in the "updated" bucket id set:
+  → "removed" bucket
+
+Transaction (apply only):
+  1. card.createMany(added)
+  2. card.update × N for each updated (content fields only; CardProgress untouched)
+  3. card.deleteMany({ where: { id: { in: removedIds } } })
+     — cascade in schema.prisma (onDelete: Cascade on Card→CardProgress) handles progress cleanup
+```
+
+Extract the diff logic into a helper function `computeDeckDiff(existingCards, parsedCards)` so it can be called identically in both preview and apply handlers.
+
+### Shared Schema Changes
+
+In `packages/shared/src/schemas/import.ts`:
+
+- Add `id: z.string().optional()` to `ParsedCardSchema`
+- Add `DeckUpdatePreviewSchema` (the 200 preview response shape)
+- Add `DeckUpdateResultSchema` (the 200 apply response shape)
+- Export both new types from `packages/shared/src/index.ts`
+
+### New Frontend Components
+
+**`apps/frontend/src/hooks/useDeckUpdate.ts`** — mirrors the `useImport` hook structure. Step state machine: `'idle' | 'uploading' | 'preview' | 'applying' | 'success' | 'error'`. Calls `/api/import/deck/:deckId/preview` on file selection, then `/api/import/deck/:deckId/apply` on user confirmation. Accepts `deckId` as a parameter.
+
+**`apps/frontend/src/components/DeckUpdateModal.tsx`** — a shadcn/ui `Dialog` triggered from `DeckDetailPage`. Contains:
+
+1. **Upload step**: drop zone (same keyboard/drag interaction pattern as `ImportPage`'s drop zone). Note: `ImportPage` has the drop zone logic inlined. Consider extracting a `KartexFileDropZone` presentational component to avoid duplicating event handlers — this is optional but reduces drift. Minimum viable: copy the drop zone JSX block.
+2. **Preview step**: diff summary chips (X added / Y updated / Z removed), expandable lists for each bucket (use the `LazyCard`-style collapsible pattern from `ImportPage`), warning banner if `warnings.length > 0`, note that removed cards lose their study history, Confirm / Cancel buttons.
+3. **Applying step**: spinner.
+4. **Success step**: toast via `sonner` + modal auto-close + `onSuccess()` callback (triggers `fetchCards` in parent).
+5. **Error state**: inline error alert inside the modal (do not close on error).
+
+### Modified Components
+
+**`apps/frontend/src/pages/DeckDetailPage.tsx`** — add an "Update from file" button in the owner action bar (owner only, `deck.ownerId === user?.id`). Add state `deckUpdateModalOpen: boolean`. Render `DeckUpdateModal` at the bottom of the component. Pass `deckId` and `onSuccess={fetchCards}` to the modal.
+
+### Data Flow
+
+```
+DeckDetailPage (owner view)
+  └── "Update from file" button → deckUpdateModalOpen = true
+
+DeckUpdateModal — step: idle
+  └── user drops/selects .kartex file → step: uploading
+        └── api.postForm('/api/import/deck/:deckId/preview', formData)
+              → 200: diff payload → step: preview
+              → 422: parse/validation error → step: error (show message in modal)
+              → 413: file too large → step: error
+
+DeckUpdateModal — step: preview
+  └── shows: X added / Y updated / Z removed + card lists + warnings
+  └── "Confirm Update" → step: applying
+        └── api.postForm('/api/import/deck/:deckId/apply', formData)
+              → 200: result → step: success → toast + close + onSuccess()
+              → error: step: error (show message, user can retry or cancel)
+
+Backend — preview handler:
+  1. bodyLimit (reuse MAX_BYTES env var)
+  2. auth + deck ownership check
+  3. parse file via parseKartex(@kartex/shared)
+  4. prisma.card.findMany({ where: { deckId } })
+  5. computeDeckDiff(existingCards, parsedCards)
+  6. return diff — zero DB writes
+
+Backend — apply handler:
+  1. bodyLimit
+  2. auth + deck ownership check
+  3. parse file (re-parse — stateless)
+  4. prisma.card.findMany({ where: { deckId } })
+  5. computeDeckDiff(existingCards, parsedCards)
+  6. prisma.$transaction: createMany → update × N → deleteMany
+  7. return counts
+```
 
 ---
 
-## Anti-Patterns to Avoid
+## Build Order
 
-### Anti-Pattern: Separate UserPreferences Table
+Phases A and B are fully independent and can be built in either order or in parallel.
 
-A dedicated `UserPreferences` table for a single field adds a join to every user fetch and a second migration. The `User` model pattern (adding typed nullable/defaulted fields) is already established by `role`, `isActive`, and the upcoming `studyMode`. Use it.
+### Phase A: Stats Dashboard (no dependencies on Phase B)
 
-### Anti-Pattern: Modifying calculateSM2 Signature
+| Step | What | Why first |
+|------|------|-----------|
+| A1 | `packages/shared/src/schemas/stats.ts` + export from `index.ts` | Type contract needed by both backend and frontend |
+| A2 | `apps/backend/src/routes/stats.ts` — implement `GET /` | Backend before frontend can test against it |
+| A3 | Register `statsRouter` in `apps/backend/src/index.ts` | Required before any frontend call works |
+| A4 | `apps/frontend/src/components/StatsSummaryPanel.tsx` — skeleton + display | Component before page modification |
+| A5 | `apps/frontend/src/pages/DashboardPage.tsx` — add fetch + render panel | Depends on A4 |
+| A6 | i18n keys in `en.json` + `de.json` | Any step after A4 |
 
-Adding mode parameters to the shared `sm2.ts` function breaks the clean separation between algorithm and application logic, contaminates tests, and forces the frontend (which also imports this function) to handle backend-only concepts. Apply mode at the route layer.
+### Phase B: Deck Update via Import (ordered strictly)
 
-### Anti-Pattern: Precaching /api/* in Service Worker
+| Step | What | Why this order |
+|------|------|----------------|
+| B1 | Parser: add `id:` field to `parseFields` in `kartex-parser.ts` | All downstream depends on parser |
+| B2 | Schema: add `id?` to `ParsedCardSchema`, add preview/result schemas | Types needed by backend and frontend |
+| B3 | Parser tests: update `kartex-parser.test.ts` | Validate parser change before wiring backend |
+| B4 | `docs/kartex-format.md`: document `id:` field | Can be done any time after B1 |
+| B5 | Backend: add `computeDeckDiff` helper + preview + apply handlers in `import.ts` | Depends on B2 |
+| B6 | Backend tests: `import.test.ts` for preview and apply routes | Depends on B5 |
+| B7 | `apps/frontend/src/hooks/useDeckUpdate.ts` | Depends on B2 (types) |
+| B8 | `apps/frontend/src/components/DeckUpdateModal.tsx` | Depends on B7 |
+| B9 | `apps/frontend/src/pages/DeckDetailPage.tsx` — add button + modal | Depends on B8 |
+| B10 | i18n keys in `en.json` + `de.json` | Any step after B8 |
 
-If the Workbox `generateSW` config does not explicitly exclude `/api/*`, Workbox's default behavior may attempt to cache API responses. This would serve stale flashcard data from cache. Always configure `runtimeCaching` with `NetworkOnly` or `NetworkFirst` for `/api/*` routes, or exclude them from the precache manifest using `navigateFallbackDenylist`.
+### Dependency Map
 
-### Anti-Pattern: Forgetting dashboard.ts Filter
+```
+Phase A:
+  packages/shared/schemas/stats.ts
+    └── backend/routes/stats.ts
+          └── backend/index.ts (registration)
+                └── frontend/StatsSummaryPanel.tsx
+                      └── frontend/DashboardPage.tsx (modified)
 
-`dashboard.ts` has its own independent deck filter (`deck: { ownerId: userId }`). It does NOT import or reuse `deckFilter` from `study.ts`. If only `study.ts` is updated with `isActive: true`, the dashboard will still count inactive decks. Both files must be updated.
+Phase B:
+  packages/shared/lib/kartex-parser.ts (id field)
+    └── packages/shared/schemas/import.ts (ParsedCard.id + new schemas)
+          ├── backend/routes/import.ts (preview + apply handlers)
+          │     └── backend tests
+          └── frontend/hooks/useDeckUpdate.ts
+                └── frontend/components/DeckUpdateModal.tsx
+                      └── frontend/pages/DeckDetailPage.tsx (modified)
+```
 
 ---
 
-## Migration Risk Summary
+## Component Boundary Summary
 
-| Change | Risk | Mitigation |
-|--------|------|------------|
-| `Deck.isActive @default(true)` | LOW | Non-breaking additive column, default preserves existing behavior |
-| `User.studyMode @default(NORMAL)` | LOW | Non-breaking additive column + enum, default preserves existing behavior |
-| Single combined migration | LOW | `prisma migrate deploy` in entrypoint runs before server start |
-| `vite-plugin-pwa` in vite.config.ts | LOW | Build-time only; worst case: build fails, not runtime failure |
-| COOP/COEP headers added to Hono | LOW-MEDIUM | Required for Typst WASM; could break if reverse proxy strips custom headers |
-| Cache-Control for `/sw.js` | LOW | Additive Hono middleware, no existing behavior changed |
-| `manifest.webmanifest` Content-Type | LOW | One-liner Hono middleware; easily verifiable with curl |
+| Component | Status | Location | Purpose |
+|-----------|--------|----------|---------|
+| `StatsSummarySchema` / type | NEW | `packages/shared/src/schemas/stats.ts` | Shared type for stats response |
+| `GET /api/stats/summary` | NEW | `apps/backend/src/routes/stats.ts` | Return aggregated learning stats |
+| Register `statsRouter` | MODIFIED | `apps/backend/src/index.ts` | Mount new route |
+| `StatsSummaryPanel` | NEW | `apps/frontend/src/components/StatsSummaryPanel.tsx` | Render stat chips + per-deck table |
+| `DashboardPage` | MODIFIED | existing | Add parallel stats fetch + render panel |
+| `kartex-parser.ts` | MODIFIED | `packages/shared/src/lib/kartex-parser.ts` | Parse optional `id:` card field |
+| `ParsedCardSchema` | MODIFIED | `packages/shared/src/schemas/import.ts` | Add `id?: string` |
+| `DeckUpdatePreviewSchema` | NEW | `packages/shared/src/schemas/import.ts` | Shared type for diff preview response |
+| `DeckUpdateResultSchema` | NEW | `packages/shared/src/schemas/import.ts` | Shared type for apply response |
+| `computeDeckDiff` helper | NEW | `apps/backend/src/routes/import.ts` | Pure diff function, used in both handlers |
+| `POST /api/import/deck/:id/preview` | NEW | `apps/backend/src/routes/import.ts` | Compute diff, no DB writes |
+| `POST /api/import/deck/:id/apply` | NEW | `apps/backend/src/routes/import.ts` | Apply diff transactionally |
+| `useDeckUpdate` hook | NEW | `apps/frontend/src/hooks/useDeckUpdate.ts` | State machine for update flow |
+| `DeckUpdateModal` | NEW | `apps/frontend/src/components/DeckUpdateModal.tsx` | Upload → preview → confirm UI |
+| `DeckDetailPage` | MODIFIED | existing | Add "Update from file" button + modal |
+
+---
+
+## Key Architecture Decisions
+
+**Decision 1: Stats endpoint is a separate route (`/api/stats/summary`), not an extension of `/api/dashboard/stats`.**
+
+`/api/dashboard/stats` drives the core study loop (due cards, streak, reviewed-today). It must remain fast and always-available — this is the "core value" of the application. The new stats aggregations (per-deck mastered counts, all-time review totals) involve heavier queries and can fail gracefully without blocking the study CTA. Keeping them in a separate endpoint means a slow stats query cannot delay the dashboard's primary content. The frontend fetches both in parallel.
+
+**Decision 2: Preview + Apply both re-upload the file (no server-side session).**
+
+Storing the parse result between preview and apply would require server-side state (session, cache, or DB staging table). This adds complexity, memory pressure, and expiry edge cases. The `.kartex` file is small (bounded by `MAX_BYTES`). Re-parsing on apply is deterministic and safe. For a 2–5 user deployment the double-upload cost is negligible.
+
+**Decision 3: `id:` matching is opt-in, not required.**
+
+Cards in the import file without an `id:` field are always treated as new. This is backward-compatible with all existing `.kartex` files and the LLM generation prompt in `kartex-format.md`. Users who want update-in-place semantics must include `id:` fields in their `.kartex` files. A future "Export as .kartex" feature (out of scope for v1.3) would produce files with IDs pre-populated.
+
+**Decision 4: `retentionRate` returns `null` — do not approximate from current schema.**
+
+`CardProgress` stores the running SM-2 state per card, not a per-review quality log. There is no reliable way to derive "% of ratings >= Good in last 30 days" from the current schema. Returning an approximated percentage would be misleading. Return `null` and display "n/a" in the UI. If exact retention metrics are needed in a future milestone, a `ReviewLog` model (one row per card rating event) can be added then.
+
+**Decision 5: `card.updateMany` is NOT usable for content updates — use individual `card.update` calls in the transaction.**
+
+Prisma's `updateMany` does not support per-row different data (it applies the same `data` object to all matched rows). Updated cards each have different `frontContent`/`backContent`/`tags` values. The transaction must call `card.update` once per updated card, or use a raw SQL `UPDATE ... CASE WHEN ...` — the per-card update loop is simpler and correct for the expected volume (dozens to hundreds of cards).
+
+---
+
+## Critical Pitfalls
+
+**Pitfall 1: Retention rate is not directly computable from the current schema.**
+
+`CardProgress` has no per-review quality log. Any percentage labeled "retention rate" derived from the current fields would be a proxy metric. Do not display a fabricated number as an exact measured rate — return `null` and display "n/a."
+
+**Pitfall 2: The `id:` field must survive the parser unchanged.**
+
+The `parseFields` function trims leading/trailing whitespace from single-line field values. A cuid ID value has no whitespace, so trimming is safe. But the comparison in the diff algorithm is a strict string equality check against `card.id` (cuid). Any transformation (lowercasing, truncation) would cause match failures. Ensure the parser returns the `id` value verbatim (after trim only).
+
+**Pitfall 3: Diff sets must be mutually exclusive before the transaction.**
+
+Validate that a card ID cannot appear in both the "updated" and "removed" sets before executing the transaction. If the same ID were in both (a bug in the diff logic), the transaction would attempt to update a card that was just deleted, or vice versa. Assert disjointness with a `Set` intersection check in `computeDeckDiff`.
+
+**Pitfall 4: `card.deleteMany` (via cascade) deletes `CardProgress` for removed cards.**
+
+This is the intended behavior per IMP-04. The `DeckUpdateModal` preview step must surface this consequence visibly — removed cards should be listed with a prominent warning that study history for those cards will be permanently deleted. Do not bury this in small print.
+
+**Pitfall 5: Stats queries must always filter by `userId` first.**
+
+All `CardProgress` queries in `stats.ts` must include `where: { userId }` to use the `@@unique([userId, cardId])` compound index. The existing `dashboard.ts` follows this pattern consistently — replicate it. A query without a `userId` filter would scan the entire `CardProgress` table.
+
+**Pitfall 6: The existing import handler creates decks — the update handler must reject creation.**
+
+The new `/deck/:deckId/preview` and `/deck/:deckId/apply` routes receive a deckId in the path. They must verify that `deck.ownerId === userId` AND that the deck actually exists, before parsing the file. A 404 on deck not found and a 403 on wrong owner are both required. Do not proceed to file parsing if authorization fails.
 
 ---
 
 ## Sources
 
-- Codebase: `apps/backend/src/index.ts`, `routes/study.ts`, `routes/dashboard.ts`, `routes/decks.ts`
-- Codebase: `apps/backend/prisma/schema.prisma`
-- Codebase: `packages/shared/src/lib/sm2.ts`, `schemas/study.ts`, `schemas/deck.ts`, `schemas/user.ts`
-- Codebase: `apps/frontend/vite.config.ts`, `src/pages/StudySessionPage.tsx`, `src/context/AuthContext.tsx`
-- [vite-plugin-pwa PWA Requirements](https://deepwiki.com/vite-pwa/vite-plugin-pwa/8.1-pwa-requirements) — MEDIUM confidence (DeepWiki, verified against official Nginx deployment guide)
-- [vite-plugin-pwa Nginx deployment guide](https://vite-pwa-org.netlify.app/deployment/nginx) — MEDIUM confidence (official docs site)
-- [vite-plugin-pwa GitHub](https://github.com/vite-pwa/vite-plugin-pwa) — HIGH confidence (official source)
+- Codebase: `apps/backend/prisma/schema.prisma` — verified Card, CardProgress, Deck models
+- Codebase: `apps/backend/src/routes/dashboard.ts` — existing stats query patterns
+- Codebase: `apps/backend/src/routes/import.ts` — existing import handler structure, bodyLimit pattern
+- Codebase: `apps/backend/src/routes/decks.ts` — authorization patterns (canManageDeck, isDeckOwner)
+- Codebase: `packages/shared/src/lib/kartex-parser.ts` — parseFields function, existing field handling
+- Codebase: `packages/shared/src/schemas/import.ts` — ParsedCardSchema, existing import types
+- Codebase: `apps/frontend/src/pages/DashboardPage.tsx` — current fetch pattern and chip layout
+- Codebase: `apps/frontend/src/pages/DeckDetailPage.tsx` — action bar and modal integration pattern
+- Codebase: `apps/frontend/src/hooks/useImport.ts` — hook state machine pattern to replicate
+- Codebase: `docs/kartex-format.md` — confirmed no `id:` field exists in current format spec

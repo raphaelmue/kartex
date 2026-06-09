@@ -1,305 +1,321 @@
-# Feature Landscape — Kartex v1.2
+# Feature Landscape: Learning Statistics & Deck Update via Import
 
-**Domain:** Spaced-repetition flashcard app (self-hosted, 2-5 users)
-**Milestone:** v1.2 Study Control & PWA
-**Researched:** 2026-06-02
-**Confidence:** HIGH (codebase direct inspection + verified against Anki docs, vite-pwa docs, and SM-2 literature)
-
----
-
-## Scope
-
-Four features only. All four add to the existing app; none replace existing behaviour.
-
-1. Active deck rotation
-2. SM-2 preset modes (Normal / Intensive / Exam Prep)
-3. PWA installable shell
-4. Docs (README.md, refresh design.md, kartex-format.md)
+**Domain:** Spaced-repetition flashcard app (self-hosted, SM-2, 2-5 users)
+**Milestone:** v1.3.0 — Stats & Import Update
+**Researched:** 2026-06-09
+**Confidence:** HIGH (codebase direct inspection confirms all schema and parser findings; Anki/RemNote docs used for industry patterns)
 
 ---
 
-## 1. Active Deck Rotation
+## Critical Constraints (Read Before Feature Sections)
 
-### What "active deck" means in practice
+Two hard constraints discovered by reading the actual codebase. Both directly affect what can be built without schema/format changes.
 
-In apps like Anki and Fresh Cards the concept exists implicitly as a "paused" state shown via a visual dot or label on the deck list. Kartex's formulation is a first-class, persistent boolean per deck (`isActive`) that gates which decks contribute cards to the global `/study` due queue.
+### Constraint A — No Review History Log in the Database
 
-The key distinction from suspension in Anki: Anki suspends individual *cards*; Kartex suspends an entire *deck* at the owner level. This is simpler and appropriate for a small-group app where users manage their own study focus week-to-week.
+`CardProgress` stores only the **current SM-2 state** per (user, card) pair:
+`easeFactor`, `interval`, `repetitions`, `nextReview`, `lastReviewed`.
 
-### Table Stakes (expected behaviours)
+There is no `quality` column and no `ReviewHistory` / `ReviewLog` table.
+The `POST /api/study/rate` endpoint upserts the latest state and discards the previous one.
 
-| Behaviour | Why Expected | Complexity | Notes |
-|-----------|--------------|------------|-------|
-| Toggle active/inactive per deck, persisted server-side | Users need to park a deck during an exam block or holiday without losing progress | Low | Prisma schema: add `isActive Boolean @default(true)` to `Deck`. One migration. |
-| Inactive decks are excluded from `/api/study/due` | The entire point of the feature; without this the toggle is cosmetic | Low | Filter `where: { isActive: true }` added to both `ownerId` and shared-deck branches in `study.get('/due')`. |
-| Active/inactive state visible on the deck list (`/decks`) and deck detail (`/decks/:id`) | Users need feedback that the toggle worked | Low | Badge or toggle switch component on `DecksPage` and `DeckDetailPage`. |
-| Inactive decks shown visually distinct (muted/dimmed) on the deck list | Mirrors Fresh Cards "paused" dot pattern; avoids confusion | Low | CSS opacity/muted colour on the deck card when `isActive === false`. |
-| Dashboard due-count reflects active-only decks | Dashboard already calls `/api/study/due`; if that endpoint is filtered, the count is automatically correct | None | Free: dashboard reads from the same due endpoint. |
+**Consequence:** A metric like "% Good+Easy last 30 days" requires storing the outcome of
+every review event. That data does not currently exist.
 
-### Deck Picker (select decks for a session)
+**Options:**
 
-The deck picker is a companion to active deck rotation. Rather than a persistent toggle, it is a per-session override: "for this one study run, include these specific decks."
+1. **Add a `ReviewLog` table** (recommended) — `(id, userId, cardId, rating, reviewedAt)`.
+   Append-only writes on every `POST /api/study/rate`. Cheap to write, enables all future
+   stat queries. Requires one Prisma migration. This is the standard pattern in Anki,
+   SuperMemo, and RemNote.
 
-| Behaviour | Why Expected | Complexity | Notes |
-|-----------|--------------|------------|-------|
-| `/study` start screen shows a checkable list of the user's decks | Users want to combine cards from 2-3 related decks in one session without permanently activating/deactivating | Medium | Replaces the current auto-commit on page load (isGlobalSR path in StudySessionPage). Needs a deck-picker step before card load. |
-| Decks pre-selected according to their `isActive` state | Active decks checked by default; inactive decks unchecked but selectable | Low | UI pre-checks active decks; user can override before starting. |
-| Selecting zero decks disables "Start" | Prevents empty session | Low | Button disabled when selection is empty. |
-| Session size picker already on the start screen | Already shipped in v1.1; stays in the same UI step | None | No change. |
-| After deck selection, `/api/study/due` is called with the selected deck IDs | Backend filters due cards to only the chosen decks | Medium | Needs query param: `GET /api/study/due?deckIds=a,b,c`. The existing endpoint returns all decks; add optional filter. |
-| Tags and size pickers appear after deck selection (or alongside) | Tags are deck-specific; picking decks first determines available tags | Medium | The tag-prefetch effect in StudySessionPage currently calls all due. Must re-fetch after deck selection is confirmed. |
+2. **Approximate from current state only** — treat "retention rate" as the fraction of
+   cards with `interval >= threshold` (mastered cards as a proxy). No migration needed,
+   but this is a deck-mastery metric, not a review-accuracy metric. Labelling it "retention
+   rate" would be misleading. It should be labelled "mastered card rate" or similar.
 
-### Differentiators
+Recommendation: **Add `ReviewLog`** in the same migration that adds the card ID field
+(below). The table is trivial and unlocks correct retention computation now plus accurate
+time-series charts later. Without it, a "retention rate" stat chip is misleading.
 
-| Feature | Value Proposition | Complexity | Notes |
-|---------|-------------------|------------|-------|
-| Inactive deck count shown on dashboard as a gentle reminder ("3 decks paused") | Surfacing forgotten inactive decks prevents long-term drift | Low | Dashboard stat row, one additional API field. |
-| Per-deck active toggle accessible from deck detail page, not just the list | Power users prefer acting from where they already are | Low | Toggle in deck detail header/actions. |
+### Constraint B — No Card ID in the .kartex Format
 
-### Anti-Features
+The `.kartex` format and parser produce cards with only `front`, `back`, and `tags`.
+There is no `id:` field in the format spec, the kartex-parser, or the `ParsedCard` Zod schema.
+
+The project requirements say "Cards matched by stable card ID" — but this field does not exist.
+
+**Consequence:** Import-merge cannot use a stable file-level ID without a format extension.
+
+**Matching strategy options:**
+
+1. **Extend the format with an optional `id:` field** (recommended) — add `id: some-slug`
+   as an optional single-line field inside `:: card` blocks, identical to how `tags:` works.
+   Parser change is small. `kartex-format.md` spec must be updated. Cards without `id:` are
+   treated as new — backward-compatible. This mirrors how Anki uses note GUIDs.
+
+2. **Match by content hash** — SHA-256 of `front + back` text. Fragile: one character
+   edit to a card's content makes it look like a deletion + addition, not an update.
+   Breaks the core use case (updating card content while preserving SM-2 history).
+
+3. **Match by position** — card N in the file updates card N in the deck. Breaks on any
+   reordering, insertion, or deletion. Rejected.
+
+Recommendation: **Add optional `id:` field to the .kartex format.** It is opt-in: source
+files without IDs can still be imported as new decks. The deck owner must add `id:` fields
+to their source to benefit from update-in-place. Format stays backward-compatible.
+
+Schema change required: `Card.kartexId String?` (nullable). Unique constraint per deck,
+not globally — multiple decks can use the same ID namespace.
+
+---
+
+## Feature Area 1: Learning Statistics Dashboard
+
+### Table Stakes (users expect these; missing = product feels incomplete)
+
+| Feature | Why Expected | Complexity | Schema Change? |
+|---------|--------------|------------|----------------|
+| Total cards reviewed (all-time) | Standard SRS metric; present in Anki, RemNote, SuperMemo, CleverDeck | Low | No — count distinct `CardProgress` rows where `lastReviewed IS NOT NULL` (counts unique cards ever reviewed, not total review events) |
+| Cards reviewed this week | Standard weekly-cadence metric; common in all SRS dashboards | Low | No — filter `lastReviewed >= start of current week` |
+| Per-deck progress: due / in-learning / mastered / new counts | Users want to see which decks need attention without opening each one | Medium | No — derive from `CardProgress.interval` and presence/absence of `CardProgress` rows |
+| "Mastered" definition consistent with SRS norms | Anki and CleverDeck both define "mature" at interval >= 21 days; users familiar with Anki expect this threshold | Low | No — use a named constant `MASTERED_INTERVAL_DAYS = 21` |
+
+**Note on "all-time reviewed" semantics:** `CardProgress` stores one row per (user, card) pair.
+Counting those rows counts "distinct cards ever touched," not "total review events." This is an
+important caveat for the UI label — "cards studied" is more accurate than "total reviews."
+For true total review events you need `ReviewLog`.
+
+**Note on "in-learning" vs "mastered" vs "new":**
+- New: no `CardProgress` row for this (userId, cardId)
+- In-learning: `CardProgress` exists AND `interval < 21`
+- Mastered: `CardProgress` exists AND `interval >= 21`
+
+### Differentiators (valued but not expected by all users)
+
+| Feature | Value Proposition | Complexity | Schema Change? |
+|---------|-------------------|------------|----------------|
+| Retention rate (% ratings >= Good in last 30 days) | Most meaningful SRS accuracy metric; Anki calls it "True Retention"; target 85-95% | Medium | **Yes — requires `ReviewLog` table** |
+| Card difficulty breakdown (Easy / Good / Hard / Again counts) | Shows which cards are struggling; informs study strategy; Anki shows this as "Answer Buttons" graph | Medium | **Yes — requires `ReviewLog` table** |
+| Upcoming due forecast ("X cards due tomorrow / this week") | Computable from `nextReview` dates without any extra schema | Low | No — aggregate `COUNT WHERE nextReview BETWEEN now AND +7 days` |
+| Review heatmap / calendar (study activity grid) | Visual streak; RemNote and Anki both offer this; motivational for daily habit | High | Yes — needs `ReviewLog` for full history; can approximate from `lastReviewed` per card but misses multiple-reviews-per-day |
+
+### Anti-Features (explicitly do not build for v1.3)
 
 | Anti-Feature | Why Avoid | What to Do Instead |
 |--------------|-----------|-------------------|
-| Auto-deactivating decks after N days of no reviews | Too clever; silently changes user intent | Surface inactive decks with a reminder |
-| Deck picker as a separate "filter" page before every study session | Creates friction for the primary happy path | Pre-select active decks so one click ("Start") works for the common case |
-| Allowing the deck picker to override the due filter (study inactive-deck due cards) | Conceptually confusing; inactive means "don't schedule this" | Deck picker selects *active* decks for a session; inactive can be toggled active first |
-| `isActive` on shared/explore decks | Shared-deck active state should be per-user, not deck-global | Store active state on the user's copy only; the Deck schema `isActive` must be owner-scoped. Design choice: either add a `UserDeckSettings` join table, or keep `isActive` on `Deck` and only owner can toggle (simpler). For a 2-5-user app, owner-only toggle is sufficient — shared-deck recipients get whatever the owner decides. |
+| Per-card retention curves / learning graphs | Correct only with per-card review history log; charting libraries add bundle size; cognitive overload for 2-5 users | Ship aggregate retention rate instead; defer charts to v2 |
+| Leaderboards / comparative stats between users | Out of scope for invite-only self-hosted deployment; social features not in the product vision | Skip entirely |
+| "Time to mastery" prediction | Requires FSRS-style stability modeling; SM-2 does not carry this concept naturally | Not applicable to SM-2 |
+| Stats updating in real-time during a study session | Distracts from the learning loop; adds live-query complexity | Stats live on dashboard only; refresh on page visit |
+| Separate `/stats` page | Fragments the core loop (dashboard → study → back to dashboard); adds navigation overhead | Add stat chips to the existing `/dashboard` page |
 
-### Dependencies on Existing Features
+### What Major SRS Apps Show (Confidence: HIGH — official docs)
 
-- Reads from `GET /api/study/due` — must add optional `deckIds` filter param
-- `Deck` model in Prisma schema needs `isActive Boolean @default(true)`
-- `UpdateDeckSchema` in `packages/shared` needs `isActive` field
-- `DeckSchema` in `packages/shared` needs `isActive` in response shape
-- `DecksPage` and `DeckDetailPage` already have deck update mutations — toggle re-uses that path
-- `StudySessionPage` isGlobalSR path currently auto-commits immediately; needs a new "deck picker" pre-step
+**Anki** (most mature SRS reference):
+- Today section: reviews completed, pass/fail rate, card types (learning / review / relearning)
+- Graphs: future due forecast, calendar heatmap, reviews by week/month, card counts (new/young/mature/suspended), answer button breakdown (Again/Hard/Good/Easy per card type), ease factor distribution, interval distribution, true retention table (per 1m/3m/6m/12m/all-time)
+- Maturity threshold: **interval >= 21 days** (established convention, used as-is by Kartex)
+
+**RemNote**:
+- Study streak heatmap, cards-created-over-time widget, upcoming-due forecast
+- Per-document color-coded Learning Progress bar across mastery levels (New → Acquiring → Growing → Solidifying → Retaining → Stale)
+- Stats are primarily document-centric, not deck-centric at a high level
+- Individual card metadata: ease factor, phase, next/last review, mastery level, total study time
+
+**CleverDeck (SM-2)**:
+- Mastery defined as interval >= 21 days (configurable, cosmetic setting only)
+- Per-deck breakdown of new/in-learning/mastered counts
+
+### Phased Delivery Recommendation
+
+**Phase A (no migration needed):**
+1. GET /api/stats/summary endpoint returning: totalReviewedAllTime, reviewedThisWeek, byDeck array of `{ deckId, deckTitle, dueCount, inLearningCount, masteredCount, newCount }`
+2. Dashboard stat chips for the above
+3. Optionally: upcoming-due-7-days count (requires no migration, just a `nextReview` aggregate)
+
+**Phase B (requires `ReviewLog` migration — can ship same PR as import-merge migration):**
+4. Retention rate chip (% Good+Easy last 30 days from `ReviewLog`)
+5. Difficulty breakdown (Easy/Good/Hard/Again counts from `ReviewLog`)
+
+If `ReviewLog` is deferred past v1.3, ship Phase A only and clearly label the retention/difficulty
+chips as "coming soon" or omit them entirely. Do not ship a "retention rate" metric derived purely
+from `interval` thresholds — it would be a different (less useful) metric with a misleading name.
 
 ---
 
-## 2. SM-2 Preset Modes
+## Feature Area 2: Deck Update via Import
 
-### What "SM-2 modes" means in practice
+### Table Stakes (users expect these; missing = product feels incomplete)
 
-The standard SM-2 interval formula is: `newInterval = ceil(previousInterval * easeFactor)`. An interval multiplier applied on top scales all computed intervals uniformly. This is exactly how Anki's "Interval Modifier" works and is well-established in spaced repetition literature.
+| Feature | Why Expected | Complexity | Notes |
+|---------|--------------|------------|-------|
+| Upload new .kartex file from Deck Detail page | Core user request: "I updated my source file, refresh the deck without losing my progress" | Medium | New upload affordance on `DeckDetailPage`; existing `ImportPage` is "create new deck" only |
+| Confirmation preview showing counts: added / updated / unchanged / removed | Without preview, users fear silent data loss; every SRS app with update support shows what will change before committing | Medium | Two-step: preview endpoint then commit endpoint |
+| SM-2 progress preserved for matched cards | This is the entire value proposition; progress loss on re-import is the #1 user complaint in Anki forums | High (design) | Requires stable card matching; see Constraint B — needs `id:` field in format |
+| New cards (present in file, absent in deck) added | Expected — user added cards to the source file | Low | Standard `Card.create` after matching |
+| Removed cards (present in deck, absent in file) deleted | Expected behavior for "deck reflects the source file"; destructive but correct | Medium | Must be explicit in preview; `onDelete: Cascade` on `CardProgress` already in schema |
 
-Kartex defines three named presets:
-- **Normal** — multiplier 1.0 (default SM-2, unchanged behaviour)
-- **Intensive** — multiplier 0.5 (halved intervals; review twice as often)
-- **Exam Prep** — multiplier 0.25 (quartered intervals; aggressive cram schedule)
-
-The multiplier is applied at the moment the SM-2 result is calculated in `calculateSM2()`. It does NOT retroactively reschedule existing `CardProgress` rows; it only affects the next computed `nextReview` date going forward.
-
-### Table Stakes
-
-| Behaviour | Why Expected | Complexity | Notes |
-|-----------|--------------|------------|-------|
-| User can choose a mode in Settings | Settings page (`/settings`) already exists as a placeholder; this is its first real content | Low | Segment control or radio group: Normal / Intensive / Exam Prep |
-| Mode persists server-side per user | The mode must survive across devices and sessions | Medium | New `UserSettings` model in Prisma (or a `studyMode` column on `User`). `User` already has an `isActive` field — adding `studyMode` directly to `User` is the simplest migration. |
-| Mode applies when `POST /api/study/rate` is called | The backend must read the user's mode and apply the multiplier inside `calculateSM2` | Low | `calculateSM2` already receives `SM2Input`; add optional `intervalMultiplier` param. Backend fetches user's `studyMode` at rate time and maps it to a multiplier. |
-| Normal mode is the default and produces identical output to current behaviour | No regression for existing users | None | Default `studyMode = 'normal'`; multiplier 1.0 passes through unchanged. |
-| Mode selection shows a short human-readable description of what each mode does | Users need to understand impact before choosing | Low | Helper text under each option explaining review frequency change. |
-
-### Differentiators
+### Differentiators (valuable but not expected)
 
 | Feature | Value Proposition | Complexity | Notes |
 |---------|-------------------|------------|-------|
-| Visual mode indicator in the study session header | Reminds user they are in a non-default mode so they aren't surprised by rapid recurrence | Low | Small badge "Intensive" in session top bar, only when non-Normal |
-| Mode can be changed at any time (not locked to a deck or session) | Flexibility for users adjusting to exam seasons | None | Just a settings update |
+| "Keep removed cards" option on confirmation dialog | Power users may want to retain cards the author deleted (e.g. personal additions not in source) | Low | Single checkbox on confirmation; default is to delete |
+| Dry-run / preview as a separate API call before commit | Clean REST design; avoids file being re-uploaded on confirm | Low-Medium | `POST /api/decks/:id/import/preview` → `POST /api/decks/:id/import/commit`; file held in frontend state between the two calls |
+| Per-card diff (show which specific cards changed, not just counts) | Useful for reviewing content changes in detail | High | Verbose for large decks; counts are sufficient for v1.3 |
+| Media file updates in .kartex.zip bundles | Update images/audio in place along with card content | High | Requires tracking media refs across update; complex media-ref rewrite for updated cards; defer to later milestone |
 
-### Anti-Features
+### Anti-Features (explicitly do not build)
 
 | Anti-Feature | Why Avoid | What to Do Instead |
 |--------------|-----------|-------------------|
-| Per-deck SM-2 modes | Increases cognitive load; users forget which deck has which mode | One global mode the user sets consciously |
-| Per-session mode picker on the study start screen | Clutter on the start screen; mode should reflect a study phase (weeks), not a single session | Put it in Settings only |
-| Retroactively rescheduling existing `CardProgress` on mode change | Complex, lossy, and surprising | Apply multiplier only to future `nextReview` calculations |
-| Exposing the raw multiplier number in the UI | "0.25x" is meaningless to most users | Named presets with plain-language descriptions |
-| Custom arbitrary multiplier input | Out of scope; 3 presets cover the practical range; YAGNI | Presets only |
-| Ease-factor modification (changing starting EF or EF floor) | SM-2 EF floor is 1.3 per SuperMemo research — lowering it causes pathological scheduling | Only modify interval multiplier |
+| Silent import without preview | Users cannot undo deletions; Anki forums show this is the top import UX pain point | Always require explicit confirmation before any destructive change |
+| Overwriting SM-2 progress by default | Defeats the entire purpose of the feature — users re-import because they updated content, not because they want to reset progress | Never overwrite `CardProgress` rows for matched cards |
+| Field-level merge conflict resolution | "Author edited `front`, user also edited `front` — who wins?" is complex and rare at this scale | Last-write-wins: file content always overwrites card content (SM-2 state untouched) |
+| Auto-removing cards without user confirmation | Too destructive; a mismatched ID or renamed card could silently delete progress | Count removals in preview; require explicit confirmation |
+| Exposing raw SQL diff in the UI | Technical noise; users need counts, not IDs | Show "3 cards added, 1 updated, 2 removed" counts |
 
-### Implementation Notes
+### Import-Merge Algorithm (Recommended Design)
 
-Current `calculateSM2` in `packages/shared/src/lib/sm2.ts`:
+```
+INPUT: deckId (URL param), .kartex file (multipart upload)
 
-```typescript
-// Line 55: newInterval = Math.ceil(interval * easeFactor)
+PREVIEW STEP:
+  1. Parse file → ParsedCard[] (existing parseKartex — no change)
+  2. Load all existing cards for deck: id, kartexId, frontContent, backContent, tags
+  3. For each parsed card with a non-null id field:
+     - Find existing card WHERE kartexId = parsed.id
+     - If found AND content same → UNCHANGED
+     - If found AND content differs → UPDATE candidate
+     - If not found → ADD candidate
+  4. Parsed cards without id field → ADD candidate (cannot match)
+  5. Existing cards not matched by any parsed card → REMOVE candidate
+  6. Return counts: { added, updated, unchanged, removed }
+
+COMMIT STEP (user confirms):
+  7. Execute in a single Prisma transaction:
+     a. UPDATE matched cards: frontContent, backContent, tags (CardProgress untouched)
+     b. CREATE new Card rows for adds (no CardProgress — treated as new cards)
+     c. DELETE Card rows for removes (CardProgress cascade-deletes per schema)
+  8. Return { added, updated, removed, warnings }
 ```
 
-The multiplier wraps this result: `Math.max(1, Math.ceil(rawInterval * multiplier))`. Floor at 1 day prevents multiplied intervals from collapsing to 0.
+**Cascade delete note:** `Card → CardProgress` already has `onDelete: Cascade` in
+`schema.prisma`. Removing a card correctly removes its SM-2 history without extra code.
 
-Mapping:
+**Media note:** For v1.3, only plain `.kartex` files are supported for update. The `.kartex.zip`
+bundle update (with media changes) is deferred due to complexity of re-mapping media refs on
+updated cards. Updated card content that references existing `media://` files via unchanged
+refs will continue to work correctly.
+
+### API Design
+
+Two-endpoint approach is preferred over a single endpoint with `dryRun` flag:
+
 ```
-'normal'   → 1.0
-'intensive' → 0.5
-'exam_prep' → 0.25
+POST /api/decks/:id/import/preview
+  Auth: JWT (deck owner only)
+  Body: multipart, field "file" (.kartex only for v1.3)
+  Response 200: { added: N, updated: N, unchanged: N, removed: N, warnings: [] }
+  Response 422: parse errors
+
+POST /api/decks/:id/import/commit
+  Auth: JWT (deck owner only)
+  Body: multipart, field "file" (.kartex only for v1.3), optional "keepRemoved": "true"
+  Response 200: { added: N, updated: N, removed: N, warnings: [] }
+  Response 422: parse errors
 ```
 
-Backend `POST /api/study/rate` fetches `user.studyMode`, computes multiplier, passes to `calculateSM2`. The shared `SM2Input` type gains an optional `intervalMultiplier?: number` field.
+**Frontend state:** hold the `File` object in React component state between preview and commit.
+Re-POST it on the commit call. File is not uploaded twice to the server unless the user changes
+it between steps.
 
-### Dependencies on Existing Features
+**Authorization:** only the deck owner can trigger an import-update. DeckShare READ/EDIT
+holders cannot update the source deck. (Deck owner created the deck; they own the source file.)
 
-- `calculateSM2` in `packages/shared` — add `intervalMultiplier` param
-- Prisma `User` model — add `studyMode String @default("normal")`
-- New Zod schema `StudyModeSchema = z.enum(['normal', 'intensive', 'exam_prep'])` in `packages/shared/src/schemas/user.ts`
-- New backend route: `GET /api/settings` and `PUT /api/settings` (or `PATCH /api/auth/me` — consistent with how user profile would work)
-- `/settings` page — currently `ComingSoon` placeholder, replace with real content
-- `POST /api/study/rate` — reads `userId` → looks up `studyMode` → applies multiplier
+### Format Extension Required
 
----
+Add an optional `id:` field to card blocks in the `.kartex` format:
 
-## 3. PWA Installable Shell
+```
+:: card
+id: thermo-001
+front: What is the zeroth law of thermodynamics?
+back: If A ≡ B and B ≡ C, then A ≡ C. (Defines temperature as a transitive property.)
+tags: [laws, zeroth-law]
+::
+```
 
-### What "installable shell" means (scoped)
+Rules:
+- `id:` is a single-line field (like `tags:`)
+- IDs must be unique within a file; duplicate IDs produce a warning; second card treated as new
+- Cards without `id:` are always new (cannot be matched to existing cards)
+- IDs are stored in `Card.kartexId String?` (nullable DB column; unique per deck, not globally)
+- The format is explicitly backward-compatible: old files without `id:` still import correctly
 
-This is explicitly NOT full offline study. The target is:
-- App is installable to the home screen on Android/iOS/desktop Chrome
-- Static assets (JS, CSS, HTML, fonts, icons) are cached by the service worker after first visit — subsequent loads are instant even if the network is slow
-- API calls (`/api/*`) always go to the network; no offline card data
-- An optional in-app install prompt gives users a discoverable way to install
-
-### Table Stakes
-
-| Behaviour | Why Expected | Complexity | Notes |
-|-----------|--------------|------------|-------|
-| `manifest.webmanifest` with required fields (`name`, `short_name`, `start_url`, `display: standalone`, `theme_color`, `background_color`, icons) | Without this, browsers do not offer installation | Low | `vite-plugin-pwa` generates it from config |
-| 192×192 and 512×512 PNG icons (standard purpose) | Chrome requires both sizes before firing `beforeinstallprompt` | Low | Create 2 PNGs in `apps/frontend/public/` |
-| 512×512 maskable icon | Android adaptive icons crop to a circle; without maskable the icon looks bad | Low | Same design with safe-zone padding |
-| `apple-touch-icon` meta tag pointing to 180×180 PNG | iOS Safari ignores manifest icons and reads this tag | Low | One PNG, one `<link>` in `index.html` |
-| Service worker pre-caches all Vite build output (JS, CSS, HTML) | Users get instant loads on second visit | Low | `workbox.globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}']` |
-| WASM files excluded from precache or handled separately | `typst.ts` WASM is large and changes rarely; incorrect caching config causes stale errors | Medium | Use `globIgnores` for WASM or set a network-first strategy for WASM requests |
-| Service worker update prompt (toast/banner) when a new version is deployed | Users on the installed PWA need to know there's an update | Low | `useRegisterSW` hook from `vite-plugin-pwa/react`; show toast with reload action |
-| `registerType: 'prompt'` (not `'autoUpdate'`) | Auto-update silently reloads the page mid-session — unacceptable during a study session | Low | Use prompt strategy; user explicitly triggers reload |
-
-### Differentiators
-
-| Feature | Value Proposition | Complexity | Notes |
-|---------|-------------------|------------|-------|
-| In-app "Install App" button in the AppShell header or Settings page | Makes install discoverable; browser's native prompt is easy to miss | Low | Capture `beforeinstallprompt` event; show a button when event fires and app is not already installed; hide after install |
-| Install button checks `display-mode: standalone` to auto-hide when already installed | No redundant prompt after install | Low | `window.matchMedia('(display-mode: standalone)').matches` |
-| `theme_color` matches the app's primary brand colour (dark mode aware if possible) | Integrated look in the OS task switcher | Low | Use Kartex's shadcn/ui primary colour |
-
-### Anti-Features
-
-| Anti-Feature | Why Avoid | What to Do Instead |
-|--------------|-----------|-------------------|
-| Caching `/api/*` responses in the service worker | API data becomes stale; cached auth cookies could serve wrong-user data | Use `networkOnly` strategy for all `/api/*` routes — explicit in Workbox config |
-| Offline fallback page that implies the app works offline | Users expect to study, get a blank page, assume the app is broken | Either no offline page, or an honest "you need a connection to study Kartex" message |
-| `registerType: 'autoUpdate'` | Forces page reload without user consent — disruptive during a study session | Use `'prompt'` and surface a gentle update banner |
-| Requiring service worker for app to function at all | HTTPS + service worker requirement breaks localhost development unless `devOptions.enabled` is properly set | Keep `devOptions.enabled: false` in dev by default; enable explicitly when testing PWA features |
-| Push notifications | No backend infrastructure exists for web push; adds significant complexity | Out of scope for this milestone |
-
-### Technical Context
-
-- No `apps/frontend/public/` directory exists yet — must create it
-- `vite.config.ts` does not include `VitePWA` plugin — must add it
-- Build output goes to `apps/backend/public/` (Hono serveStatic) — Vite's `outDir` is already set; the manifest and service worker will land there automatically
-- COOP/COEP headers (`Cross-Origin-Opener-Policy: same-origin`, `Cross-Origin-Embedder-Policy: require-corp`) are set in dev proxy for Typst WASM; these headers are compatible with PWA installation but must be present on the deployed Hono server too for WASM to work in the installed PWA
-- `vite-plugin-pwa` version to use: `^0.21.x` (latest stable as of research date) — check npm at implementation time
-
-### Dependencies on Existing Features
-
-- `apps/frontend/vite.config.ts` — add `VitePWA(...)` to plugins array
-- `apps/frontend/index.html` — add `<link rel="apple-touch-icon">` and `<meta name="theme-color">`
-- `apps/frontend/public/` — create directory, add icon PNGs
-- `apps/backend/src/index.ts` or wherever Hono COOP/COEP headers are set — verify headers are present for deployed build (not just dev proxy)
-- `AppShell.tsx` — add optional install button component
-
----
-
-## 4. Documentation
-
-### What "good docs" look like for this project
-
-Kartex is self-hosted by a technically capable operator, likely the developer themselves or a small group. Docs need to answer: "How do I run this?" and "How does the .kartex format work?" They do not need to be exhaustive tutorials.
-
-### Table Stakes
-
-| Doc | Why Expected | Complexity | Notes |
-|-----|--------------|------------|-------|
-| `README.md` at repo root with: project description, tech stack table, quick-start (clone → .env → docker compose up), screenshot or feature list, link to /docs | Any public or shared repo without a README looks abandoned | Low | Static markdown; write once |
-| `docs/design.md` updated to reflect v1.1 reality | design.md was last updated in v0.4; it references Nginx which was removed (D-05/D-06), pnpm (codebase uses yarn@4.15.0), and does not mention i18n, mobile shell, or tag filter | Medium | Audit each section against actual code; correct inaccuracies |
-| `docs/kartex-format.md` updated to include all supported content types | Should document `#typst` blocks, audio, code blocks, and the .kartex.zip bundle format if not already present | Low | Read current file, identify gaps, fill them |
-
-### Differentiators
-
-| Feature | Value Proposition | Complexity | Notes |
-|---------|-------------------|------------|-------|
-| Architecture diagram in design.md (text-based or Mermaid) showing the current Hono-serves-SPA setup | The Nginx removal changed the system topology; current design.md diagrams may be wrong | Low | Mermaid or ASCII is sufficient |
-| Quick-start includes a note about invite-code flow | First-time operators don't know how to create the first admin user | Low | One paragraph |
-
-### Anti-Features
-
-| Anti-Feature | Why Avoid | What to Do Instead |
-|--------------|-----------|-------------------|
-| Exhaustive API reference docs | Zod schemas + Hono route comments are sufficient; generating full OpenAPI docs is a separate project | Keep route comments tight; no separate API doc file this milestone |
-| Video walkthroughs or screenshot-heavy tutorials | High maintenance cost when UI changes | Plain text + one representative screenshot in README if easy to add |
-
-### Dependencies on Existing Features
-
-- No code changes required for docs
-- design.md accuracy depends on reading actual backend routes, Prisma schema, and Docker Compose file to verify claims
-- kartex-format.md accuracy depends on reading the kartex-parser in `packages/shared/src/lib/kartex-parser.ts`
+Parser changes needed:
+- Add `id` field to `ParsedCard` Zod schema in `packages/shared/src/schemas/import.ts`
+- Add `id` detection to `parseFields()` in `kartex-parser.ts` (single-line field, same as `tags`)
+- Update `kartex-format.md` documentation
 
 ---
 
 ## Feature Dependency Map
 
 ```
-isActive on Deck schema
-  └── DeckSchema (shared/schemas/deck.ts)  [isActive field]
-       ├── DecksPage toggle UI
-       ├── DeckDetailPage toggle UI
-       └── GET /api/study/due filter
-            └── Deck picker pre-step in StudySessionPage
-                 └── Tag filter re-fetch after deck selection
+ReviewLog table migration
+  ├── POST /api/study/rate → append ReviewLog row on every rating
+  ├── Retention rate chip (STATS-02)
+  └── Difficulty breakdown chip (STATS-03)
 
-studyMode on User (or UserSettings model)
-  └── StudyModeSchema (shared/schemas/user.ts)
-       ├── PUT /api/settings endpoint (new)
-       ├── GET /api/settings endpoint (new)
-       ├── POST /api/study/rate reads mode → multiplier
-       │    └── calculateSM2 gains intervalMultiplier param
-       └── SettingsPage (new real page, replaces ComingSoon)
+No migration needed:
+  ├── Total cards reviewed all-time (STATS-01 variant A)
+  ├── Reviewed this week (STATS-01 variant B)
+  └── Per-deck progress (STATS-04): due / in-learning / mastered / new
 
-PWA manifest + service worker
-  └── vite-plugin-pwa in vite.config.ts
-       ├── apps/frontend/public/ (new dir + icons)
-       ├── index.html (apple-touch-icon, theme-color meta)
-       └── AppShell.tsx (optional install button)
-
-Docs
-  └── No code dependencies
+kartexId field on Card model (migration)
+  ├── id: field in .kartex format (format extension)
+  ├── ParsedCard.id in shared Zod schemas
+  ├── parseFields() in kartex-parser.ts
+  └── Import-merge matching logic
+       ├── POST /api/decks/:id/import/preview (IMP-01, IMP-05)
+       ├── POST /api/decks/:id/import/commit (IMP-02, IMP-03, IMP-04)
+       └── DeckDetailPage: upload affordance + confirmation modal
 ```
 
 ---
 
-## MVP Recommendation
+## MVP Recommendation for v1.3
 
-For each feature, the minimum shippable version:
+**Ship Phase A (Stats, no new migration):**
+- `GET /api/stats/summary` — totalReviewedAllTime, reviewedThisWeek, byDeck summary
+- Dashboard stat chips for all Phase A metrics
+- New `StatsSchema` and `DeckProgressSchema` in `packages/shared`
 
-**Active deck rotation:** `isActive` DB column + filter in `/due` endpoint + toggle on deck list. Deck picker is additive but ships together since `/study` page needs a pre-step anyway.
+**Ship Phase B (Import-merge, one migration):**
+- Migration: add `ReviewLog` table + `Card.kartexId String?` (single migration, low cost)
+- Parser extension: `id:` field support
+- `POST /api/decks/:id/import/preview` + `POST /api/decks/:id/import/commit`
+- `DeckDetailPage` upload affordance + confirmation dialog
 
-**SM-2 modes:** `studyMode` column on `User` + real Settings page + multiplier in `/rate`. All three must ship together or the feature is unreachable from the UI.
+**Defer:**
+- Retention rate chip and difficulty breakdown chip (need `ReviewLog` data to accumulate first — ship the table in v1.3, surface the metrics in v1.4 once there is real data)
+- Media update support in `.kartex.zip` bundles
+- Per-card diff view in import preview
 
-**PWA:** manifest + 3 icons + service worker precache + update prompt. Install button in AppShell is low-effort and meaningfully improves discoverability — include it.
-
-**Docs:** README.md is highest value (first impression for any new operator). design.md accuracy is important but lower urgency. kartex-format.md is reference-only.
-
-Defer:
-- WASM-aware service worker routing: can start with blanket `networkOnly` for `/api/*` and revisit WASM caching separately if needed
-- "Inactive deck count" dashboard stat: nice-to-have, low priority
+**Delivery order:** Stats Phase A first (no format changes, no migration needed), then
+Import-merge Phase B (requires format extension + migration). Stats and Import-merge are
+independent of each other — can be parallelized within the milestone.
 
 ---
 
 ## Sources
 
-- [Anki Manual — Studying](https://docs.ankiweb.net/studying.html) (Anki deck selection UX patterns)
-- [Anki Manual — Filtered Decks](https://docs.ankiweb.net/filtered-decks.html) (multi-deck combine patterns)
-- [Fresh Cards changelog](https://freshcardsapp.com/changelog/) (deck status dot UX for paused/active decks)
-- [RemNote — Anki SM-2 Algorithm](https://help.remnote.com/en/articles/6026144-the-anki-sm-2-spaced-repetition-algorithm) (interval multiplier / interval factor mechanics)
-- [Control-Alt-Backspace — SM-2 overdue handling](https://controlaltbackspace.org/overdue-handling/) (EF floor rationale, aggressive scheduling risks)
-- [vite-plugin-pwa guide](https://vite-pwa-org.netlify.app/guide/) (setup patterns, registerType options)
-- [vite-plugin-pwa service worker precache](https://vite-pwa-org.netlify.app/guide/service-worker-precache) (globPatterns configuration)
-- [PWA Minimal Requirements — vite-pwa](https://vite-pwa-org.netlify.app/guide/pwa-minimal-requirements) (icon size requirements)
-- [PWA Icon Requirements 2026](https://logofoundry.app/blog/pwa-icon-requirements-safe-areas) (maskable icon safe zone, apple-touch-icon)
-- [Chapimaster — Add Install PWA Button in React](https://www.chapimaster.com/programming/vite/add-install-app-button-react-pwa) (beforeinstallprompt pattern, install button placement)
+- [Anki Statistics Manual](https://docs.ankiweb.net/stats.html) — HIGH confidence
+- [Anki Packaged Decks Import](https://docs.ankiweb.net/importing/packaged-decks.html) — HIGH confidence
+- [RemNote Flashcard Statistics](https://help.remnote.com/en/articles/7970392-flashcard-statistics) — MEDIUM confidence
+- [RemNote Flashcard Home](https://help.remnote.com/en/articles/7925835-the-flashcard-home) — MEDIUM confidence
+- [CleverDeck Algorithm (mastery threshold)](https://cleverdeck.com/manual/algorithm/) — MEDIUM confidence
+- [Anki Forums: Updating imported deck without losing progress](https://forums.ankiweb.net/t/is-there-a-way-to-update-an-imported-deck-so-i-dont-lose-my-progress-with-the-cards-already-in-there/47625) — MEDIUM confidence (user pain points, expected behaviors)
+- [Flashcards World Import/Export](https://flashcards.world/wiki/import-export/) — LOW confidence (confirms preview-before-commit pattern is expected; non-destructive default is common)
+- Kartex codebase: `apps/backend/prisma/schema.prisma`, `packages/shared/src/lib/kartex-parser.ts`, `packages/shared/src/schemas/import.ts`, `apps/backend/src/routes/study.ts`, `apps/backend/src/routes/dashboard.ts`, `docs/kartex-format.md` — HIGH confidence (ground truth)
