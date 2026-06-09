@@ -8,6 +8,7 @@ export const DeckHeaderSchema = z.object({
 export type DeckHeader = z.infer<typeof DeckHeaderSchema>
 
 export const ParsedCardSchema = z.object({
+  id: z.string().min(1).optional(),
   front: z.string().min(1),
   back: z.string().min(1),
   tags: z.array(z.string()).default([]),
