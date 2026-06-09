@@ -4,7 +4,7 @@ milestone: v1.3.0
 milestone_name: Stats & Import Update
 status: Roadmap defined, ready for /gsd-plan-phase 14
 stopped_at: Phase 14 context gathered
-last_updated: "2026-06-09T18:37:04.923Z"
+last_updated: "2026-06-09T18:53:54.744Z"
 last_activity: 2026-06-09 — v1.3.0 roadmap created (Phases 14–16)
 progress:
   total_phases: 7

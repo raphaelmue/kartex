@@ -171,7 +171,16 @@ Full details: [.planning/milestones/v1.2-ROADMAP.md](milestones/v1.2-ROADMAP.md)
   4. `ParsedCardSchema` in `packages/shared` exposes an optional `id` field; `StatsSummarySchema` and `DeckUpdatePreviewSchema`/`DeckUpdateResultSchema` exist as shared Zod types
   5. `docs/kartex-format.md` documents the optional `id:` card field
 
-**Plans**: TBD
+**Plans**: 3 plans
+
+**Wave 1**
+
+- [ ] 14-01-PLAN.md — Prisma schema (ReviewLog + Card.kartexId) + hand-written SQL migration + shared Zod schemas (stats.ts, update.ts, ParsedCardSchema.id)
+
+**Wave 2** *(blocked on Wave 1)*
+
+- [ ] 14-02-PLAN.md — Parser `id:` field implementation (TDD) + docs/kartex-format.md update (IMP-07, D-04)
+- [ ] 14-03-PLAN.md — [BLOCKING] prisma migrate deploy + rate endpoint transaction with ReviewLog write (STATS-05)
 
 ### Phase 15: Stats Feature
 
@@ -225,6 +234,6 @@ Full details: [.planning/milestones/v1.2-ROADMAP.md](milestones/v1.2-ROADMAP.md)
 | 11. SM-2 Preset Modes | v1.2 | 4/4 | Complete | 2026-06-03 |
 | 12. PWA Shell | v1.2 | 4/4 | Complete | 2026-06-03 |
 | 13. Documentation | v1.2 | 3/3 | Complete | 2026-06-04 |
-| 14. Schema Foundation | v1.3.0 | 0/TBD | Not started | - |
+| 14. Schema Foundation | v1.3.0 | 0/3 | Not started | - |
 | 15. Stats Feature | v1.3.0 | 0/TBD | Not started | - |
 | 16. Import Update Feature | v1.3.0 | 0/TBD | Not started | - |
