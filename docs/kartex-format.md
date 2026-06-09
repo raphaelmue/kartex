@@ -94,13 +94,14 @@ back: Paris
 
 ## 4. Card Fields
 
-Inside a card block, three fields are recognised:
+Inside a card block, four fields are recognised:
 
-| Field   | Required | Description                        |
-|---------|----------|------------------------------------|
-| `front` | Yes      | The question / prompt side         |
-| `back`  | Yes      | The answer / explanation side      |
-| `tags`  | No       | Card-level tags (YAML list syntax) |
+| Field   | Required | Description                                           |
+|---------|----------|-------------------------------------------------------|
+| `front` | Yes      | The question / prompt side                            |
+| `back`  | Yes      | The answer / explanation side                         |
+| `tags`  | No       | Card-level tags (YAML list syntax)                    |
+| `id`    | No       | Stable identifier for import-update matching          |
 
 ### Syntax
 
@@ -108,13 +109,14 @@ Inside a card block, three fields are recognised:
 front: Single-line value
 back:  Single-line value
 tags:  [tag1, tag2]
+id:    my-card-id
 ```
 
-Fields are detected by a `fieldname:` prefix at the start of a line (no leading whitespace required).
+Fields are detected by a `fieldname:` prefix at the start of a line (no leading whitespace required). Fields may appear in any order inside the card block.
 
 ### Multi-line Values
 
-A field value begins on the same line as `front:` or `back:` and continues on subsequent lines until the parser encounters another recognised field name (`front:`, `back:`, or `tags:`) or the closing `::`.
+A field value begins on the same line as `front:` or `back:` and continues on subsequent lines until the parser encounters another recognised field name (`front:`, `back:`, `tags:`, or `id:`) or the closing `::`.
 
 ```
 :: card
@@ -141,6 +143,24 @@ tags: [physics]
 ```
 
 Tags at the card level supplement the deck-level tags — they are stored separately and can be used to filter study sessions.
+
+### id Field
+
+The optional `id:` field assigns a stable, human-readable identifier to a card. It is used by the import-update feature (Phase 16) to match cards in a `.kartex` file against existing cards in the deck — enabling updates and deletions without losing study progress.
+
+```
+:: card
+id: newton-first-law
+front: What does Newton's first law state?
+back: An object at rest stays at rest unless acted upon by an external force.
+tags: [physics]
+::
+```
+
+**Rules:**
+- Must be a non-empty string (an `id:` line with no value is ignored).
+- Duplicate `id` values within the same file are tolerated by the parser — uniqueness within a deck is enforced during import.
+- Omitting `id:` is always valid; existing imports without `id:` continue to work unchanged.
 
 ---
 
