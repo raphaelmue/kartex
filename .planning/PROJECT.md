@@ -1,6 +1,6 @@
 # Kartex
 
-## Current State: v1.2 Complete
+## Current State: v1.3.0 In Progress — Phase 14 Complete
 
 **Current milestone:** v1.2 Study Control & PWA — SHIPPED 2026-06-04
 **Phases shipped:** 1–13 (v1.0: 1–6, v1.1: 7–9, v1.2: 10–13)
@@ -163,4 +163,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-06-09 — v1.3.0 started. v1.0: 25 requirements shipped. v1.1: 10 requirements shipped. v1.2: 16 requirements shipped (16/16 complete).*
+*Last updated: 2026-06-10 — Phase 14 complete (Schema Foundation). ReviewLog model, Card.kartexId, parser id: field, shared Zod schemas, and rate endpoint transaction. v1.0: 25 requirements shipped. v1.1: 10 requirements shipped. v1.2: 16 requirements shipped (16/16 complete).*
