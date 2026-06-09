@@ -132,6 +132,7 @@ function parseCardBlock(
   const front = fields.front
   const back = fields.back
   const tagsRaw = fields.tags
+  const id = fields.id
 
   void frontMatch
   void backMatch
@@ -169,19 +170,19 @@ function parseCardBlock(
     }
   }
 
-  return { card: { front, back, tags } }
+  return { card: { front, back, tags, id } }
 }
 
 // Parse field values from a card block content string.
-// Returns an object with front, back, and tags string values (or undefined if absent).
-function parseFields(content: string): { front?: string; back?: string; tags?: string } {
+// Returns an object with front, back, tags, and optional id string values (or undefined if absent).
+function parseFields(content: string): { front?: string; back?: string; tags?: string; id?: string } {
   const lines = content.split('\n')
-  const result: { front?: string; back?: string; tags?: string } = {}
+  const result: { front?: string; back?: string; tags?: string; id?: string } = {}
 
   let currentField: 'front' | 'back' | null = null
   let currentLines: string[] = []
 
-  const FIELD_PATTERN = /^(front|back|tags):\s*(.*)/
+  const FIELD_PATTERN = /^(front|back|tags|id):\s*(.*)/
 
   for (const line of lines) {
     const fieldMatch = FIELD_PATTERN.exec(line)
@@ -190,10 +191,15 @@ function parseFields(content: string): { front?: string; back?: string; tags?: s
       if (currentField) {
         result[currentField] = currentLines.join('\n').trim()
       }
-      const fieldName = fieldMatch[1] as 'front' | 'back' | 'tags'
-      if (fieldName === 'tags') {
-        // Tags is a single-line field
-        result.tags = fieldMatch[2].trim()
+      const fieldName = fieldMatch[1] as 'front' | 'back' | 'tags' | 'id'
+      if (fieldName === 'tags' || fieldName === 'id') {
+        // Single-line fields: empty value (D-03: min-length-1) → undefined
+        const val = fieldMatch[2].trim()
+        if (fieldName === 'id') {
+          result.id = val.length > 0 ? val : undefined
+        } else {
+          result.tags = val
+        }
         currentField = null
         currentLines = []
       } else {
