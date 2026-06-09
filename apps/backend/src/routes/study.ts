@@ -194,25 +194,38 @@ study.post('/rate', async (c) => {
   )
   adjustedNextReview.setHours(0, 0, 0, 0)
 
-  // Upsert CardProgress using @@unique([userId, cardId]) compound index
-  const updated = await prisma.cardProgress.upsert({
-    where: { userId_cardId: { userId, cardId } },
-    update: {
-      easeFactor: sm2.easeFactor,
-      interval: sm2.interval,
-      repetitions: sm2.repetitions,
-      nextReview: adjustedNextReview,
-      lastReviewed: new Date(),
-    },
-    create: {
-      userId,
-      cardId,
-      easeFactor: sm2.easeFactor,
-      interval: sm2.interval,
-      repetitions: sm2.repetitions,
-      nextReview: adjustedNextReview,
-      lastReviewed: new Date(),
-    },
+  // Upsert CardProgress + write ReviewLog in one atomic transaction (D-10, STATS-05)
+  // deckId taken from the already-loaded card variable — never from request body (D-11)
+  const updated = await prisma.$transaction(async (tx) => {
+    const upserted = await tx.cardProgress.upsert({
+      where: { userId_cardId: { userId, cardId } },
+      update: {
+        easeFactor: sm2.easeFactor,
+        interval: sm2.interval,
+        repetitions: sm2.repetitions,
+        nextReview: adjustedNextReview,
+        lastReviewed: new Date(),
+      },
+      create: {
+        userId,
+        cardId,
+        easeFactor: sm2.easeFactor,
+        interval: sm2.interval,
+        repetitions: sm2.repetitions,
+        nextReview: adjustedNextReview,
+        lastReviewed: new Date(),
+      },
+    })
+    await tx.reviewLog.create({
+      data: {
+        userId,
+        cardId,
+        deckId: card.deckId,
+        rating,
+        reviewedAt: new Date(),
+      },
+    })
+    return upserted
   })
 
   return c.json(
