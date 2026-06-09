@@ -48,7 +48,7 @@ Full details: [.planning/milestones/v1.2-ROADMAP.md](milestones/v1.2-ROADMAP.md)
 
 ### v1.3.0 Stats & Import Update
 
-- [ ] **Phase 14: Schema Foundation** — Prisma migration (ReviewLog + Card.kartexId), parser id: field, shared schema extensions
+- [x] **Phase 14: Schema Foundation** — Prisma migration (ReviewLog + Card.kartexId), parser id: field, shared schema extensions (completed 2026-06-09)
 - [ ] **Phase 15: Stats Feature** — GET /api/stats/summary, StatsSummaryPanel, DashboardPage integration
 - [ ] **Phase 16: Import Update Feature** — preview + apply endpoints, DeckUpdateModal, DeckDetailPage update flow
 
@@ -179,8 +179,8 @@ Full details: [.planning/milestones/v1.2-ROADMAP.md](milestones/v1.2-ROADMAP.md)
 
 **Wave 2** *(blocked on Wave 1)*
 
-- [ ] 14-02-PLAN.md — Parser `id:` field implementation (TDD) + docs/kartex-format.md update (IMP-07, D-04)
-- [ ] 14-03-PLAN.md — [BLOCKING] prisma migrate deploy + rate endpoint transaction with ReviewLog write (STATS-05)
+- [x] 14-02-PLAN.md — Parser `id:` field implementation (TDD) + docs/kartex-format.md update (IMP-07, D-04)
+- [x] 14-03-PLAN.md — [BLOCKING] prisma migrate deploy + rate endpoint transaction with ReviewLog write (STATS-05)
 
 ### Phase 15: Stats Feature
 
@@ -234,6 +234,6 @@ Full details: [.planning/milestones/v1.2-ROADMAP.md](milestones/v1.2-ROADMAP.md)
 | 11. SM-2 Preset Modes | v1.2 | 4/4 | Complete | 2026-06-03 |
 | 12. PWA Shell | v1.2 | 4/4 | Complete | 2026-06-03 |
 | 13. Documentation | v1.2 | 3/3 | Complete | 2026-06-04 |
-| 14. Schema Foundation | v1.3.0 | 1/3 | In Progress|  |
+| 14. Schema Foundation | v1.3.0 | 3/3 | Complete   | 2026-06-09 |
 | 15. Stats Feature | v1.3.0 | 0/TBD | Not started | - |
 | 16. Import Update Feature | v1.3.0 | 0/TBD | Not started | - |
