@@ -41,11 +41,12 @@ model User {
   studyMode     String         @default("normal")
   createdAt     DateTime       @default(now())
 
-  refreshTokens RefreshToken[]
+  refreshTokens  RefreshToken[]
   inviteCodeUsed InviteCode?
-  decks         Deck[]
-  sharedDecks   DeckShare[]
-  progress      CardProgress[]
+  decks          Deck[]
+  sharedDecks    DeckShare[]
+  progress       CardProgress[]
+  reviewLogs     ReviewLog[]
 }
 
 model InviteCode {
@@ -100,10 +101,14 @@ model Card {
   frontContent String
   backContent  String
   tags         String[]
+  kartexId     String?
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
 
-  progress CardProgress[]
+  progress   CardProgress[]
+  reviewLogs ReviewLog[]
+
+  @@unique([deckId, kartexId])
 }
 
 model CardProgress {
@@ -119,6 +124,19 @@ model CardProgress {
   lastReviewed DateTime?
 
   @@unique([userId, cardId])
+}
+
+model ReviewLog {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  cardId      String
+  card        Card     @relation(fields: [cardId], references: [id], onDelete: Cascade)
+  deckId      String
+  rating      Int
+  reviewedAt  DateTime @default(now())
+
+  @@index([userId, reviewedAt])
 }
 
 model Media {
