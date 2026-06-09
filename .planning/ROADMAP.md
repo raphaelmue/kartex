@@ -175,7 +175,7 @@ Full details: [.planning/milestones/v1.2-ROADMAP.md](milestones/v1.2-ROADMAP.md)
 
 **Wave 1**
 
-- [ ] 14-01-PLAN.md — Prisma schema (ReviewLog + Card.kartexId) + hand-written SQL migration + shared Zod schemas (stats.ts, update.ts, ParsedCardSchema.id)
+- [x] 14-01-PLAN.md — Prisma schema (ReviewLog + Card.kartexId) + hand-written SQL migration + shared Zod schemas (stats.ts, update.ts, ParsedCardSchema.id)
 
 **Wave 2** *(blocked on Wave 1)*
 
@@ -234,6 +234,6 @@ Full details: [.planning/milestones/v1.2-ROADMAP.md](milestones/v1.2-ROADMAP.md)
 | 11. SM-2 Preset Modes | v1.2 | 4/4 | Complete | 2026-06-03 |
 | 12. PWA Shell | v1.2 | 4/4 | Complete | 2026-06-03 |
 | 13. Documentation | v1.2 | 3/3 | Complete | 2026-06-04 |
-| 14. Schema Foundation | v1.3.0 | 0/3 | Not started | - |
+| 14. Schema Foundation | v1.3.0 | 1/3 | In Progress|  |
 | 15. Stats Feature | v1.3.0 | 0/TBD | Not started | - |
 | 16. Import Update Feature | v1.3.0 | 0/TBD | Not started | - |
