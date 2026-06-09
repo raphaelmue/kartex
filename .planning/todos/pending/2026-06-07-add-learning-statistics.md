@@ -2,6 +2,7 @@
 created: 2026-06-07T00:00:00Z
 title: Add learning statistics to dashboard and study sessions
 area: ui
+resolves_phase: 15
 files:
   - apps/frontend/src/pages/DashboardPage.tsx
   - apps/backend/src/routes/stats.ts

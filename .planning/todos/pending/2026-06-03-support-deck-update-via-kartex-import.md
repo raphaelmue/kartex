@@ -2,6 +2,7 @@
 created: 2026-06-03T00:00:00.000Z
 title: Support deck update via .kartex import
 area: api
+resolves_phase: 16
 files:
   - apps/backend/src/routes/import.ts
   - apps/frontend/src/pages/ImportPage.tsx
