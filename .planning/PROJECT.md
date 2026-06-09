@@ -7,15 +7,13 @@
 **Total plans shipped:** 42 (18 in v1.0 + 8 in v1.1 + 16 in v1.2)
 **TypeScript LOC:** ~9,531
 
-## Current Milestone: v1.2 Study Control & PWA
+## Current Milestone: v1.3.0 Stats & Import Update
 
-**Goal:** Give users fine-grained control over which decks they study and how aggressively, make the app installable as a PWA, and add project documentation.
+**Goal:** Surface meaningful learning progress to users on the dashboard, and allow existing decks to be updated in place via re-import without losing SM-2 history.
 
 **Target features:**
-- Active deck rotation — `isActive` boolean on Deck (schema change), deck picker on /study, session size picker on /study
-- SM-2 preset modes — Normal / Intensive / Exam Prep stored in user settings (server-side)
-- PWA shell — manifest.json + vite-plugin-pwa, static asset caching, installable app shell (API still requires network; full offline study is v2)
-- Docs — root README.md + refresh design.md and kartex-format.md
+- Learning Statistics (dashboard) — stat chips on the existing dashboard: total reviewed, retention rate (% Good/Easy last 30 days), card difficulty breakdown (Easy/Good/Hard/Again counts), per-deck progress (due, mastered, in-learning). New `GET /api/stats/summary` endpoint.
+- Deck Update via Import — re-import a `.kartex` file to update an existing deck. Cards matched by ID: update content in place (SM-2 progress preserved), add new cards, remove deleted cards. Triggered from Deck Detail page with confirmation preview.
 
 ## What This Is
 
@@ -79,7 +77,17 @@ A user can open their dashboard, see their due cards, and complete a spaced-repe
 
 ### Active
 
-No active development. v1.2 is complete.
+**v1.3.0 target requirements:**
+
+- [ ] **STATS-01**: Dashboard displays total cards reviewed (all time) and this week
+- [ ] **STATS-02**: Dashboard displays retention rate (% ratings ≥ Good in last 30 days)
+- [ ] **STATS-03**: Dashboard displays card difficulty breakdown (Easy / Good / Hard / Again counts)
+- [ ] **STATS-04**: Dashboard displays per-deck progress summary (due, mastered, in-learning)
+- [ ] **IMP-01**: User can trigger a deck update from the Deck Detail page by uploading a new `.kartex` file
+- [ ] **IMP-02**: Cards matched by ID are updated in place (content refreshed, SM-2 progress preserved)
+- [ ] **IMP-03**: Cards present in the file but absent in the deck are added as new cards
+- [ ] **IMP-04**: Cards present in the deck but absent in the file are removed from the deck
+- [ ] **IMP-05**: A confirmation preview shows the diff (added / updated / removed counts) before the user commits the update
 
 ### Out of Scope
 
@@ -155,4 +163,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-06-06 after v1.2 milestone — v1.0: 25 requirements shipped. v1.1: 10 requirements shipped. v1.2: 16 requirements shipped (16/16 complete).*
+*Last updated: 2026-06-09 — v1.3.0 started. v1.0: 25 requirements shipped. v1.1: 10 requirements shipped. v1.2: 16 requirements shipped (16/16 complete).*

@@ -1,17 +1,16 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.2
-milestone_name: Study Control & PWA
-status: complete
-stopped_at: v1.2.0 milestone archived and tagged (2026-06-06)
-last_updated: "2026-06-06T00:00:00.000Z"
-last_activity: "2026-06-06 - v1.2.0 archived: milestones/, ROADMAP.md collapsed, REQUIREMENTS.md removed, tag v1.2.0 created"
+milestone: v1.3.0
+milestone_name: Stats & Import Update
+status: planning
+last_updated: "2026-06-09T17:49:21.242Z"
+last_activity: 2026-06-09
 progress:
-  total_phases: 4
-  completed_phases: 4
-  total_plans: 16
-  completed_plans: 16
-  percent: 100
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # Project State
@@ -25,10 +24,10 @@ See: .planning/PROJECT.md (updated 2026-06-02)
 
 ## Current Position
 
-Phase: 13 — Documentation (3/3 plans complete)
-Plan: 03 — all plans executed
-Status: Complete
-Last activity: 2026-06-04 - Completed quick task 260604-001: language switcher moved to settings, CI lint fixed
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-06-09 — Milestone v1.3.0 started
 
 ## Performance Metrics
 
