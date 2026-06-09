@@ -48,24 +48,24 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| STATS-01 | TBD | Pending |
-| STATS-02 | TBD | Pending |
-| STATS-03 | TBD | Pending |
-| STATS-04 | TBD | Pending |
-| STATS-05 | TBD | Pending |
-| IMP-01 | TBD | Pending |
-| IMP-02 | TBD | Pending |
-| IMP-03 | TBD | Pending |
-| IMP-04 | TBD | Pending |
-| IMP-05 | TBD | Pending |
-| IMP-06 | TBD | Pending |
-| IMP-07 | TBD | Pending |
+| STATS-01 | Phase 15 | Pending |
+| STATS-02 | Phase 15 | Pending |
+| STATS-03 | Phase 15 | Pending |
+| STATS-04 | Phase 15 | Pending |
+| STATS-05 | Phase 14 | Pending |
+| IMP-01 | Phase 16 | Pending |
+| IMP-02 | Phase 16 | Pending |
+| IMP-03 | Phase 16 | Pending |
+| IMP-04 | Phase 16 | Pending |
+| IMP-05 | Phase 16 | Pending |
+| IMP-06 | Phase 16 | Pending |
+| IMP-07 | Phase 14 | Pending |
 
 **Coverage:**
 - v1.3.0 requirements: 12 total
-- Mapped to phases: 0 (roadmap pending)
-- Unmapped: 12 ⚠️
+- Mapped to phases: 12
+- Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-06-09*
-*Last updated: 2026-06-09 — initial definition for v1.3.0 milestone*
+*Last updated: 2026-06-09 — traceability filled in after v1.3.0 roadmap creation (Phases 14–16)*

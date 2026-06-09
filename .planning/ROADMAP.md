@@ -5,6 +5,7 @@
 - ✅ **v1.0 MVP** — Phases 1–6 (shipped 2026-05-30)
 - ✅ **v1.1 Study Experience & Polish** — Phases 7–9 (shipped 2026-06-01)
 - ✅ **v1.2 Study Control & PWA** — Phases 10–13 (shipped 2026-06-04) — [archive](milestones/v1.2-ROADMAP.md)
+- 🚧 **v1.3.0 Stats & Import Update** — Phases 14–16 (in progress)
 
 ## Phases
 
@@ -44,6 +45,12 @@ Full details: [.planning/milestones/v1.1-ROADMAP.md](milestones/v1.1-ROADMAP.md)
 Full details: [.planning/milestones/v1.2-ROADMAP.md](milestones/v1.2-ROADMAP.md)
 
 </details>
+
+### v1.3.0 Stats & Import Update
+
+- [ ] **Phase 14: Schema Foundation** — Prisma migration (ReviewLog + Card.kartexId), parser id: field, shared schema extensions
+- [ ] **Phase 15: Stats Feature** — GET /api/stats/summary, StatsSummaryPanel, DashboardPage integration
+- [ ] **Phase 16: Import Update Feature** — preview + apply endpoints, DeckUpdateModal, DeckDetailPage update flow
 
 ---
 
@@ -151,6 +158,56 @@ Full details: [.planning/milestones/v1.2-ROADMAP.md](milestones/v1.2-ROADMAP.md)
 
 ---
 
+### Phase 14: Schema Foundation
+
+**Goal**: The database schema and shared parser support stable card identity and review history logging, unblocking both the stats and import-update features
+**Depends on**: Phase 13 (v1.2 complete)
+**Requirements**: STATS-05, IMP-07
+**Success Criteria** (what must be TRUE):
+
+  1. Running `prisma migrate deploy` applies a single migration that adds the `ReviewLog` table and the nullable `Card.kartexId` column; the migration is safe on a populated database (no data loss, all new columns have defaults or are nullable)
+  2. `POST /api/study/rate` writes one `ReviewLog` row (userId, cardId, deckId, rating, reviewedAt) inside the existing `cardProgress.upsert` transaction — verifiable by querying the `ReviewLog` table after a rating call
+  3. A `.kartex` file containing an `id:` field per card block is parsed without error and the `id` value is available on the resulting `ParsedCard` object; a `.kartex` file without any `id:` fields continues to import correctly (backward compatible)
+  4. `ParsedCardSchema` in `packages/shared` exposes an optional `id` field; `StatsSummarySchema` and `DeckUpdatePreviewSchema`/`DeckUpdateResultSchema` exist as shared Zod types
+  5. `docs/kartex-format.md` documents the optional `id:` card field
+
+**Plans**: TBD
+
+### Phase 15: Stats Feature
+
+**Goal**: Users can see their learning progress at a glance on the dashboard — total cards studied, retention rate, difficulty breakdown, and per-deck status
+**Depends on**: Phase 14 (ReviewLog table required for STATS-02/03; STATS-01/04 could run earlier but a single phase minimises deployment cycles)
+**Requirements**: STATS-01, STATS-02, STATS-03, STATS-04
+**Success Criteria** (what must be TRUE):
+
+  1. The dashboard displays a "Total reviewed" chip showing all-time count and this-week count, computed from `CardProgress` records for the authenticated user
+  2. The dashboard displays a "Retention rate" chip showing the percentage of ratings >= Good in the last 30 days from `ReviewLog`; when no review history exists, the chip shows an explicit empty state (e.g., "No data yet") rather than 0% or an error
+  3. The dashboard displays a "Difficulty breakdown" chip showing Easy / Good / Hard / Again counts from `ReviewLog`; when no review history exists, the chip shows an explicit empty state
+  4. The dashboard displays a per-deck progress section listing each deck with its due count, mastered count (interval >= 21 AND repetitions >= 3), and in-learning count; decks with no cards show zero counts rather than disappearing
+  5. The stats section loads in parallel with the existing dashboard study CTA — a stats fetch failure produces a silent empty state, never a blank dashboard
+
+**Plans**: TBD
+**UI hint**: yes
+
+### Phase 16: Import Update Feature
+
+**Goal**: Users can update an existing deck in place by uploading a new `.kartex` file, with a preview of the diff before committing and control over removed cards
+**Depends on**: Phase 14 (Card.kartexId column and parser id: field required for card matching)
+**Requirements**: IMP-01, IMP-02, IMP-03, IMP-04, IMP-05, IMP-06
+**Success Criteria** (what must be TRUE):
+
+  1. The Deck Detail page (owner view only) shows an "Update from file" button; clicking it opens a file picker that accepts `.kartex` files
+  2. After selecting a file, a preview modal appears showing the diff counts (X added / Y updated / Z unchanged / W removed) before any changes are committed to the database
+  3. Cards matched by `kartexId` between the file and the existing deck have their front/back content and tags updated; their `CardProgress` records (SM-2 state) are untouched
+  4. Cards present in the uploaded file but absent from the deck are created as new cards in the deck
+  5. Cards present in the deck but absent from the file are listed as "removed" in the preview; with the "Keep removed cards" toggle on (default), those cards remain in the deck after apply; with the toggle off, they are deleted
+  6. The apply operation executes as a single Prisma interactive transaction — a failure at any step leaves the deck unchanged (no partial updates)
+
+**Plans**: TBD
+**UI hint**: yes
+
+---
+
 ## Progress
 
 | Phase | Milestone | Plans Complete | Status | Completed |
@@ -168,3 +225,6 @@ Full details: [.planning/milestones/v1.2-ROADMAP.md](milestones/v1.2-ROADMAP.md)
 | 11. SM-2 Preset Modes | v1.2 | 4/4 | Complete | 2026-06-03 |
 | 12. PWA Shell | v1.2 | 4/4 | Complete | 2026-06-03 |
 | 13. Documentation | v1.2 | 3/3 | Complete | 2026-06-04 |
+| 14. Schema Foundation | v1.3.0 | 0/TBD | Not started | - |
+| 15. Stats Feature | v1.3.0 | 0/TBD | Not started | - |
+| 16. Import Update Feature | v1.3.0 | 0/TBD | Not started | - |

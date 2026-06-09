@@ -3,10 +3,10 @@ gsd_state_version: 1.0
 milestone: v1.3.0
 milestone_name: Stats & Import Update
 status: planning
-last_updated: "2026-06-09T17:49:21.242Z"
+last_updated: "2026-06-09T00:00:00.000Z"
 last_activity: 2026-06-09
 progress:
-  total_phases: 0
+  total_phases: 3
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -17,17 +17,17 @@ progress:
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-06-02)
+See: .planning/PROJECT.md (updated 2026-06-09)
 
 **Core value:** A user can open their dashboard, see their due cards, and complete a spaced-repetition study session — that loop must always work.
-**Current focus:** v1.2 roadmap defined — ready to plan Phase 10
+**Current focus:** v1.3.0 roadmap defined — ready to plan Phase 14
 
 ## Current Position
 
-Phase: Not started (defining requirements)
+Phase: 14 (Schema Foundation) — Not started
 Plan: —
-Status: Defining requirements
-Last activity: 2026-06-09 — Milestone v1.3.0 started
+Status: Roadmap defined, ready for /gsd-plan-phase 14
+Last activity: 2026-06-09 — v1.3.0 roadmap created (Phases 14–16)
 
 ## Performance Metrics
 
@@ -124,15 +124,24 @@ Recent decisions affecting current work:
 - 12-03: globPatterns: ['**/*.{js,css,html}'] — wasm explicitly excluded to prevent Typst WASM 28 MB precache failure
 - 12-04: maximumFileSizeToCacheInBytes set to 3 MiB — main bundle (2.16 MB) exceeds Workbox default 2 MiB limit
 - 12-04: seedAdminIfNeeded wrapped in try-catch in Hono index.ts — server starts gracefully without DB connection
+- v1.3-research: ReviewLog add in v1.3 migration — required for future STATS-02/03; append-only, cheap writes per rating call
+- v1.3-research: STATS-02/03 ship with empty-state handling ("No data yet") on day 1 — no data until ReviewLog accumulates reviews
+- v1.3-research: Mastered threshold locked at interval >= 21 days AND repetitions >= 3 (aligns with Anki/CleverDeck)
+- v1.3-research: Stats endpoint separate from /api/dashboard/stats — keeps study CTA fast; stats degrade gracefully without blocking core loop
+- v1.3-research: Import preview + apply are stateless — file re-uploaded on apply; no server-side session; diff re-computed server-side (prevents TOCTOU)
+- v1.3-research: Import-update authorized owner only (not EDIT-level shares) in v1.3
+- v1.3-research: All merge operations (createMany/update/deleteMany) inside single Prisma interactive transaction
+- v1.3-research: card.updateMany unusable for content updates — use individual card.update calls inside transaction (each card has different data)
+- v1.3-research: Every CardProgress query in stats.ts must include where: { userId } to hit compound index (prevent full-table scan)
+- v1.3-research: i18n parity — ~15-25 new keys in v1.3; add each to both en.json and de.json in same commit
 
 ### Pending Todos
 
-**v1.2 active:**
+**v1.3.0 active:**
 
-- Phase 10: Active Deck Rotation — Prisma migration + DECK-01/02/03/04
-- Phase 11: SM-2 Preset Modes — Settings page + rate endpoint multiplier — SM2-01/02/03/04
-- Phase 12: PWA Shell — vite-plugin-pwa + manifest + COEP/COOP headers — PWA-01/02/03/04/05
-- Phase 13: Documentation — README.md + docs refresh — DOCS-01/02/03
+- Phase 14: Schema Foundation — Prisma migration (ReviewLog + Card.kartexId), parser id: field, shared schemas — STATS-05, IMP-07
+- Phase 15: Stats Feature — GET /api/stats/summary, StatsSummaryPanel, DashboardPage integration — STATS-01, STATS-02, STATS-03, STATS-04
+- Phase 16: Import Update Feature — preview + apply endpoints, DeckUpdateModal, DeckDetailPage update flow — IMP-01, IMP-02, IMP-03, IMP-04, IMP-05, IMP-06
 
 **Captured todos:**
 
@@ -173,6 +182,6 @@ Items acknowledged and deferred at milestone close on 2026-05-30:
 
 ## Session Continuity
 
-Last session: 2026-06-06T00:00:00.000Z
-Stopped at: v1.2.0 milestone archived — all phases complete, tag created
-Resume with: /gsd-new-milestone to start v1.3
+Last session: 2026-06-09T00:00:00.000Z
+Stopped at: v1.3.0 roadmap defined — Phases 14–16 created
+Resume with: /gsd-plan-phase 14
