@@ -186,7 +186,11 @@ export function DeckUpdateModal({
 
         <DialogFooter>
           {(step === 'previewing' || step === 'applying') && (
-            <Button variant="outline" onClick={() => onOpenChange(false)}>
+            <Button
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+              disabled={step === 'applying'}
+            >
               {t('common.cancel')}
             </Button>
           )}
