@@ -51,6 +51,9 @@ vi.mock('sonner', () => ({
   toast: { error: vi.fn(), success: vi.fn() },
 }))
 
+// 5. Mock DeckUpdateModal — prevents it from triggering its own api calls in DeckDetailPage tests
+vi.mock('@/components/DeckUpdateModal', () => ({ DeckUpdateModal: () => null }))
+
 // Test card data
 const cardBio = {
   id: 'c1',
@@ -183,5 +186,101 @@ describe('DeckDetailPage tag section rendering', () => {
 
     // No h3 section headers — flat table design
     expect(screen.queryByRole('heading', { level: 3, name: /bio/i })).toBeNull()
+  })
+})
+
+// -------------------------------------------------------------------
+// Block 3: "Update from file" button owner visibility (T-16-FE-07, T-16-FE-08)
+// -------------------------------------------------------------------
+describe('DeckDetailPage update from file button visibility', () => {
+  beforeEach(() => {
+    mockApiGet.mockReset()
+  })
+
+  it('T-16-FE-07: Update from file button visible when deck.ownerId === user.id', async () => {
+    // user.id === 'user-1' (from AuthContext mock above)
+    // Note: this test file uses real i18next (no vi.mock for react-i18next),
+    // so the button renders the actual en.json translation: "Update from file"
+    mockApiGet.mockImplementation((url: string) => {
+      if (url === '/api/decks/deck-abc') {
+        return Promise.resolve({
+          ok: true,
+          json: async () => ({
+            id: 'deck-abc',
+            title: 'Owner Deck',
+            description: null,
+            visibility: 'PRIVATE',
+            ownerId: 'user-1',
+            isActive: true,
+            userPermission: null,
+            owner: null,
+            shareCode: null,
+            sharedBy: null,
+          }),
+        })
+      }
+      if (url === '/api/decks/deck-abc/cards') {
+        return Promise.resolve({
+          ok: true,
+          json: async () => [],
+        })
+      }
+      if (url === '/api/decks/deck-abc/shares') {
+        return Promise.resolve({
+          ok: true,
+          json: async () => [],
+        })
+      }
+      return Promise.resolve({ ok: false, json: async () => ({}) })
+    })
+
+    render(
+      <MemoryRouter>
+        <DeckDetailPage />
+      </MemoryRouter>,
+    )
+
+    await waitFor(() => screen.getByText('Update from file'))
+    expect(screen.getByText('Update from file')).toBeInTheDocument()
+  })
+
+  it('T-16-FE-08: Update from file button absent when user is not owner', async () => {
+    // ownerId !== user.id ('other-user' !== 'user-1')
+    // Note: this test file uses real i18next; button text would be "Update from file" if rendered
+    mockApiGet.mockImplementation((url: string) => {
+      if (url === '/api/decks/deck-abc') {
+        return Promise.resolve({
+          ok: true,
+          json: async () => ({
+            id: 'deck-abc',
+            title: 'Non-owner Deck',
+            description: null,
+            visibility: 'PRIVATE',
+            ownerId: 'other-user',
+            isActive: true,
+            userPermission: null,
+            owner: null,
+            shareCode: null,
+            sharedBy: null,
+          }),
+        })
+      }
+      if (url === '/api/decks/deck-abc/cards') {
+        return Promise.resolve({
+          ok: true,
+          json: async () => [],
+        })
+      }
+      return Promise.resolve({ ok: false, json: async () => ({}) })
+    })
+
+    render(
+      <MemoryRouter>
+        <DeckDetailPage />
+      </MemoryRouter>,
+    )
+
+    await waitFor(() => screen.getByText('Non-owner Deck'))
+    expect(screen.queryByText('Update from file')).not.toBeInTheDocument()
   })
 })
