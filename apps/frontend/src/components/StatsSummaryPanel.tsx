@@ -148,7 +148,7 @@ export function StatsSummaryPanel({ summary, loading }: StatsSummaryPanelProps) 
                   colSpan={4}
                   className="text-center text-sm text-muted-foreground py-6"
                 >
-                  No decks yet.
+                  {t('dashboard.stats.noDecksYet')}
                 </TableCell>
               </TableRow>
             ) : (

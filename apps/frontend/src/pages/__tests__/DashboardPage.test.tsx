@@ -83,7 +83,7 @@ describe('DashboardPage stats integration (Phase 15)', () => {
     })
   })
 
-  it('fires /api/dashboard/stats and /api/stats/summary in parallel via Promise.allSettled (STATS-01)', async () => {
+  it('fires /api/dashboard/stats and /api/stats/summary in parallel on mount (STATS-01)', async () => {
     renderPage()
     await waitFor(() => {
       expect(mockApiGet).toHaveBeenCalledWith('/api/dashboard/stats')
@@ -122,8 +122,6 @@ describe('DashboardPage stats integration (Phase 15)', () => {
   })
 
   it('passes statsLoading to StatsSummaryPanel so skeletons show while the summary fetch is pending', async () => {
-    // Make BOTH fetches delay so we can catch the skeleton state in the initial loading phase
-    // Note: Promise.allSettled awaits both — skeleton is visible when both are pending
     let resolveDash!: (value: unknown) => void
     let resolveSummary!: (value: unknown) => void
     const dashPromise = new Promise((res) => { resolveDash = res })
@@ -138,22 +136,21 @@ describe('DashboardPage stats integration (Phase 15)', () => {
 
     renderPage()
 
-    // While both fetches are pending (loading=true), the page shows the spinner — not the stats panel.
-    // The DashboardPage loading guard is checked first; statsLoading=true means
-    // StatsSummaryPanel would show aria-busy once the loading guard passes.
-    // Verify initial render state: the dashboard is in loading state
+    // Initial state: dashboard loading → full-page spinner
     expect(screen.getByText('common.loading')).toBeTruthy()
 
-    // Resolve both fetches — after settling, StatsSummaryPanel renders with skeleton gone
+    // Resolve dashboard stats first — hero renders, statsLoading still true
     resolveDash(undefined)
-    resolveSummary(undefined)
-
     await waitFor(() => {
-      // After both settle, loading spinner gone and stats summary renders (skeleton removed)
-      expect(screen.queryByText('common.loading')).toBeNull()
       expect(screen.getByText('dashboard.cardsDueToday')).toBeTruthy()
     })
-    // statsLoading becomes false in same batch → no skeleton in final state
-    expect(document.querySelector('[aria-busy="true"]')).toBeNull()
+    // StatsSummaryPanel is mounted and in skeleton state (statsLoading=true)
+    expect(document.querySelector('[aria-busy="true"]')).not.toBeNull()
+
+    // Resolve stats summary — skeleton disappears
+    resolveSummary(undefined)
+    await waitFor(() => {
+      expect(document.querySelector('[aria-busy="true"]')).toBeNull()
+    })
   })
 })

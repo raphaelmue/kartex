@@ -83,7 +83,8 @@
       "easyLabel": "Easy",
       "goodLabel": "Good",
       "hardLabel": "Hard",
-      "againLabel": "Again"
+      "againLabel": "Again",
+      "noDecksYet": "No decks yet."
     }
   },
   "decks": {

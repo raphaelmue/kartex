@@ -83,7 +83,8 @@
       "easyLabel": "Einfach",
       "goodLabel": "Gut",
       "hardLabel": "Schwer",
-      "againLabel": "Nochmal"
+      "againLabel": "Nochmal",
+      "noDecksYet": "Noch keine Stapel."
     }
   },
   "decks": {
