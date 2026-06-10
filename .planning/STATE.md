@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.3.0
 milestone_name: Stats & Import Update
-status: executing
-stopped_at: Phase 15 Plan 02 complete
-last_updated: "2026-06-10T09:05:44Z"
+status: completed
+stopped_at: Completed Phase 15 Plan 03 (StatsSummaryPanel + DashboardPage integration)
+last_updated: "2026-06-10T09:19:50.228Z"
 last_activity: 2026-06-10 -- Completed Phase 15 Plan 02 (stats backend + i18n)
 progress:
   total_phases: 7
-  completed_phases: 5
+  completed_phases: 6
   total_plans: 22
-  completed_plans: 21
-  percent: 73
+  completed_plans: 22
+  percent: 86
 ---
 
 # Project State
@@ -59,6 +59,7 @@ Last activity: 2026-06-10 -- Completed Phase 15 Plan 02 (stats backend + i18n)
 *Updated after each plan completion*
 | Phase 15-stats-feature P01 | 2 | 2 tasks | 3 files |
 | Phase 15-stats-feature P02 | 6 | 2 tasks | 4 files |
+| Phase 15-stats-feature P03 | 8 | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -141,6 +142,9 @@ Recent decisions affecting current work:
 - 15-02: Prisma generate required after Phase 14 ReviewLog migration — generated client was stale; run prisma generate before backend build
 - 15-02: retentionRate = null (not 0) when totalLast30 === 0; difficultyBreakdown = null (not zero-filled) when breakdown.length === 0 — honors T-15-02 empty-state contract
 - 15-02: perDeck uses ownerId: userId scope — shared decks out of scope for Phase 15 stats (consistent with dashboard.ts, RESEARCH Pitfall 6)
+- [Phase ?]: 15-03: Promise.allSettled for DashboardPage parallel fetch
+- [Phase ?]: 15-03: StatsSummaryPanel pure display — summary:StatsSummary|null + loading:boolean; skeleton when loading=true, null-safe chips otherwise
+- [Phase ?]: 15-03: mockApiGet.mockImplementation(url =>) for parallel-fetch test mocking (not mockResolvedValueOnce)
 
 ### Pending Todos
 
@@ -189,6 +193,6 @@ Items acknowledged and deferred at milestone close on 2026-05-30:
 
 ## Session Continuity
 
-Last session: 2026-06-10T09:05:44Z
-Stopped at: Completed Phase 15 Plan 02 (GET /api/stats/summary + i18n keys)
+Last session: 2026-06-10T09:19:50.213Z
+Stopped at: Completed Phase 15 Plan 03 (StatsSummaryPanel + DashboardPage integration)
 Resume with: /gsd-execute-phase 15 (Plan 03 — StatsSummaryPanel + DashboardPage integration)

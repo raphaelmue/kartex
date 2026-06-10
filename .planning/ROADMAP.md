@@ -49,7 +49,7 @@ Full details: [.planning/milestones/v1.2-ROADMAP.md](milestones/v1.2-ROADMAP.md)
 ### v1.3.0 Stats & Import Update
 
 - [x] **Phase 14: Schema Foundation** — Prisma migration (ReviewLog + Card.kartexId), parser id: field, shared schema extensions (completed 2026-06-09)
-- [ ] **Phase 15: Stats Feature** — GET /api/stats/summary, StatsSummaryPanel, DashboardPage integration
+- [x] **Phase 15: Stats Feature** — GET /api/stats/summary, StatsSummaryPanel, DashboardPage integration (completed 2026-06-10)
 - [ ] **Phase 16: Import Update Feature** — preview + apply endpoints, DeckUpdateModal, DeckDetailPage update flow
 
 ---
@@ -207,7 +207,7 @@ Full details: [.planning/milestones/v1.2-ROADMAP.md](milestones/v1.2-ROADMAP.md)
 
 **Wave 2** *(blocked on Wave 1)*
 
-- [ ] 15-03-PLAN.md — StatsSummaryPanel component + DashboardPage parallel fetch integration; upgrade Wave 0 stubs to real tests (STATS-01..04, SC-5)
+- [x] 15-03-PLAN.md — StatsSummaryPanel component + DashboardPage parallel fetch integration; upgrade Wave 0 stubs to real tests (STATS-01..04, SC-5)
 
 **UI hint**: yes
 
@@ -248,5 +248,5 @@ Full details: [.planning/milestones/v1.2-ROADMAP.md](milestones/v1.2-ROADMAP.md)
 | 12. PWA Shell | v1.2 | 4/4 | Complete | 2026-06-03 |
 | 13. Documentation | v1.2 | 3/3 | Complete | 2026-06-04 |
 | 14. Schema Foundation | v1.3.0 | 3/3 | Complete    | 2026-06-09 |
-| 15. Stats Feature | v1.3.0 | 2/3 | In Progress|  |
+| 15. Stats Feature | v1.3.0 | 3/3 | Complete   | 2026-06-10 |
 | 16. Import Update Feature | v1.3.0 | 0/TBD | Not started | - |
