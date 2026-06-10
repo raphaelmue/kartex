@@ -1,5 +1,5 @@
 import { BookOpen } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'sonner'
@@ -26,6 +26,7 @@ import {
 import { Switch } from '@/components/ui/switch'
 import { CardEditorModal } from '@/components/CardEditorModal'
 import { DeckFormModal } from '@/components/DeckFormModal'
+import { DeckUpdateModal } from '@/components/DeckUpdateModal'
 
 function VisibilityBadge({ visibility }: { visibility: 'PRIVATE' | 'SHARED' | 'PUBLIC' }) {
   const { t } = useTranslation()
@@ -134,6 +135,8 @@ export function DeckDetailPage() {
   const [sharePermission, setSharePermission] = useState<'READ' | 'EDIT' | 'MANAGE'>('READ')
   const [shareError, setShareError] = useState<string | null>(null)
   const [shareLoading, setShareLoading] = useState(false)
+  const [updateFile, setUpdateFile] = useState<File | null>(null)
+  const updateFileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     // Edge Case 1: deck.title is user content — not wrapped in t() (D-07)
@@ -354,6 +357,13 @@ export function DeckDetailPage() {
               <Button size="sm" variant="outline" onClick={() => setDeckModalOpen(true)}>
                 {t('deckDetail.editDeck')}
               </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => updateFileInputRef.current?.click()}
+              >
+                {t('deckUpdate.updateFromFile')}
+              </Button>
               {confirmDeleteDeck ? (
                 <div className="flex items-center gap-2" role="alert">
                   <span className="text-sm text-muted-foreground">{t('common.confirm')}</span>
@@ -550,6 +560,29 @@ export function DeckDetailPage() {
           onOpenChange={setCardModalOpen}
           deckId={deckId}
           card={editCard}
+          onSuccess={fetchCards}
+        />
+      )}
+
+      <input
+        ref={updateFileInputRef}
+        type="file"
+        accept=".kartex"
+        className="sr-only"
+        aria-hidden="true"
+        onChange={(e) => {
+          const file = e.target.files?.[0]
+          if (file) setUpdateFile(file)
+          e.target.value = ''
+        }}
+      />
+
+      {deckId && (
+        <DeckUpdateModal
+          open={updateFile !== null}
+          onOpenChange={(open) => { if (!open) setUpdateFile(null) }}
+          deckId={deckId}
+          file={updateFile}
           onSuccess={fetchCards}
         />
       )}
