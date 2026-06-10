@@ -569,7 +569,7 @@ useEffect(() => { void fetchAll() }, []) // eslint-disable-line
 
 ---
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **`totalReviewed` semantics: unique cards vs. total reviews**
    - What we know: REQUIREMENTS.md says "total cards reviewed (all time)" and the UI-SPEC chip label is "Total Reviewed"
