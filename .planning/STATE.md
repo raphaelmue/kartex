@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v1.3.0
 milestone_name: Stats & Import Update
 status: executing
-stopped_at: Completed 16-01-PLAN.md (Wave 0 test stubs — 18 it.todo entries, 2 files)
-last_updated: "2026-06-10T14:55:57Z"
-last_activity: 2026-06-10 -- Phase 16 Plan 01 complete (Wave 0 scaffold)
+stopped_at: Completed 16-02-PLAN.md (Wave 1 backend routes — deckUpdateRouter, computeDiff, 16 i18n keys)
+last_updated: "2026-06-10T15:19:00Z"
+last_activity: 2026-06-10 -- Phase 16 Plan 02 complete (Wave 1 backend implementation)
 progress:
   total_phases: 7
   completed_phases: 6
@@ -26,9 +26,9 @@ See: .planning/PROJECT.md (updated 2026-06-09)
 ## Current Position
 
 Phase: 16 (import-update-feature) — EXECUTING
-Plan: 2 of 4
-Status: Executing Phase 16 (Plan 01 complete — Wave 0 scaffold)
-Last activity: 2026-06-10 -- Phase 16 Plan 01 complete (Wave 0 test stubs)
+Plan: 3 of 4
+Status: Executing Phase 16 (Plan 02 complete — Wave 1 backend routes)
+Last activity: 2026-06-10 -- Phase 16 Plan 02 complete (Wave 1 backend implementation)
 
 ## Performance Metrics
 
@@ -61,6 +61,7 @@ Last activity: 2026-06-10 -- Phase 16 Plan 01 complete (Wave 0 test stubs)
 | Phase 15-stats-feature P02 | 6 | 2 tasks | 4 files |
 | Phase 15-stats-feature P03 | 8 | 2 tasks | 4 files |
 | Phase 16-import-update P01 | 4 | 2 tasks | 2 files |
+| Phase 16-import-update P02 | 10 | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -147,6 +148,10 @@ Recent decisions affecting current work:
 - 15-03: CR-01 fix — dashboard.stats.noDecksYet key added to en.json + de.json; StatsSummaryPanel uses t('dashboard.stats.noDecksYet') instead of hardcoded English string
 - 15-03: StatsSummaryPanel pure display — summary:StatsSummary|null + loading:boolean; skeleton when loading=true, null-safe chips otherwise
 - 15-03: mockApiGet.mockImplementation(url =>) for parallel-fetch test mocking (not mockResolvedValueOnce)
+- 16-02: computeDiff uses sortedTagsJson (JSON.stringify([...tags].sort())) for tag equality — order-independent comparison
+- 16-02: keepRemoved defaults to true (string !== 'false') — absent keepRemoved body field keeps cards (safe default)
+- 16-02: apply route re-fetches deck and re-parses file independently of preview — stateless, prevents TOCTOU
+- 16-02: tx.card.update data payload contains only frontContent/backContent/tags — kartexId and CardProgress fields intentionally excluded
 
 ### Pending Todos
 
@@ -193,6 +198,6 @@ Items acknowledged and deferred at milestone close on 2026-05-30:
 
 ## Session Continuity
 
-Last session: 2026-06-10T11:35:00.000Z
-Stopped at: Verified Phase 15 complete (15-VERIFICATION.md — passed, 5/5)
-Resume with: /gsd-plan-phase 16 (Import Update Feature)
+Last session: 2026-06-10T15:19:00Z
+Stopped at: Completed 16-02-PLAN.md (Wave 1 backend — deckUpdateRouter, computeDiff, 16 i18n keys)
+Resume with: /gsd-execute-phase 16 (continue with Plan 03 — DeckUpdateModal frontend)

@@ -233,7 +233,7 @@ Full details: [.planning/milestones/v1.2-ROADMAP.md](milestones/v1.2-ROADMAP.md)
 
 **Wave 1** *(blocked on Wave 0)*
 
-- [ ] 16-02-PLAN.md — Backend deckUpdate.ts (computeDiff + preview + apply routes) + index.ts mount + deckUpdate.* i18n keys en+de (IMP-02, IMP-03, IMP-04, IMP-05, IMP-06)
+- [x] 16-02-PLAN.md — Backend deckUpdate.ts (computeDiff + preview + apply routes) + index.ts mount + deckUpdate.* i18n keys en+de (IMP-02, IMP-03, IMP-04, IMP-05, IMP-06)
 
 **Wave 2** *(blocked on Wave 1)*
 
