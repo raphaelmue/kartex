@@ -5,7 +5,7 @@
 - ✅ **v1.0 MVP** — Phases 1–6 (shipped 2026-05-30)
 - ✅ **v1.1 Study Experience & Polish** — Phases 7–9 (shipped 2026-06-01)
 - ✅ **v1.2 Study Control & PWA** — Phases 10–13 (shipped 2026-06-04) — [archive](milestones/v1.2-ROADMAP.md)
-- 🚧 **v1.3.0 Stats & Import Update** — Phases 14–16 (in progress)
+- ✅ **v1.3.0 Stats & Import Update** — Phases 14–16 (shipped 2026-06-10)
 
 ## Phases
 
@@ -264,6 +264,6 @@ Full details: [.planning/milestones/v1.2-ROADMAP.md](milestones/v1.2-ROADMAP.md)
 | 11. SM-2 Preset Modes | v1.2 | 4/4 | Complete | 2026-06-03 |
 | 12. PWA Shell | v1.2 | 4/4 | Complete | 2026-06-03 |
 | 13. Documentation | v1.2 | 3/3 | Complete | 2026-06-04 |
-| 14. Schema Foundation | v1.3.0 | 3/3 | Complete    | 2026-06-09 |
-| 15. Stats Feature | v1.3.0 | 3/3 | Complete   | 2026-06-10 |
-| 16. Import Update Feature | v1.3.0 | 4/4 | Complete   | 2026-06-10 |
+| 14. Schema Foundation | v1.3.0 | 3/3 | Complete | 2026-06-09 |
+| 15. Stats Feature | v1.3.0 | 3/3 | Complete | 2026-06-10 |
+| 16. Import Update Feature | v1.3.0 | 4/4 | Complete | 2026-06-10 |

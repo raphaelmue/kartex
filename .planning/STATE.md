@@ -2,10 +2,10 @@
 gsd_state_version: 1.0
 milestone: v1.3.0
 milestone_name: Stats & Import Update
-status: verifying
+status: complete
 stopped_at: Completed 16-04-PLAN.md (Wave 3 frontend — DeckDetailPage update flow wiring + T-16-FE-07/08 tests)
-last_updated: "2026-06-10T15:41:53.216Z"
-last_activity: 2026-06-10 -- Phase 16 Plan 02 complete (Wave 1 backend implementation)
+last_updated: "2026-06-10T16:00:00Z"
+last_activity: 2026-06-10 -- Phase 16 verification passed — 24/24 criteria (CR-01+CR-02 fixed)
 progress:
   total_phases: 7
   completed_phases: 7
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-06-09)
 
 **Core value:** A user can open their dashboard, see their due cards, and complete a spaced-repetition study session — that loop must always work.
-**Current focus:** Phase 16 — import-update-feature
+**Current focus:** v1.3.0 milestone complete — all phases verified
 
 ## Current Position
 
-Phase: 16 (import-update-feature) — EXECUTING
+Phase: 16 (import-update-feature) — COMPLETE
 Plan: 4 of 4
-Status: Phase complete — ready for verification
-Last activity: 2026-06-10 -- Phase 16 Plan 02 complete (Wave 1 backend implementation)
+Status: Verified — 24/24 must-haves passed (re-verification after CR-01+CR-02 fixes)
+Last activity: 2026-06-10 -- Phase 16 verification passed — 24/24 criteria (CR-01+CR-02 fixed)
 
 ## Performance Metrics
 
