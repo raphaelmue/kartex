@@ -15,12 +15,12 @@
 
 ### Deck Update via Import (IMP)
 
-- [ ] **IMP-01**: User can upload a `.kartex` file from the Deck Detail page to update an existing deck
-- [ ] **IMP-02**: A preview modal shows the diff (added / updated / unchanged / removed card counts) before the user commits
+- [x] **IMP-01**: User can upload a `.kartex` file from the Deck Detail page to update an existing deck
+- [x] **IMP-02**: A preview modal shows the diff (added / updated / unchanged / removed card counts) before the user commits
 - [ ] **IMP-03**: Cards matched by `kartexId` field are updated in place (content refreshed, SM-2 progress preserved)
 - [ ] **IMP-04**: Cards present in the file but absent in the deck are added as new cards
 - [ ] **IMP-05**: Cards present in the deck but absent in the file are listed as "removed" in the preview
-- [ ] **IMP-06**: User can toggle "keep removed cards" on the confirmation dialog; when on (default), removed cards are kept; when off, they are deleted
+- [x] **IMP-06**: User can toggle "keep removed cards" on the confirmation dialog; when on (default), removed cards are kept; when off, they are deleted
 - [x] **IMP-07**: The `.kartex` format accepts an optional `id:` field per card block; existing files without `id:` import normally (backward compatible)
 
 ## Future Requirements
@@ -53,12 +53,12 @@
 | STATS-03 | Phase 15 | Complete |
 | STATS-04 | Phase 15 | Complete |
 | STATS-05 | Phase 14 | Complete |
-| IMP-01 | Phase 16 | Pending |
-| IMP-02 | Phase 16 | Pending |
+| IMP-01 | Phase 16 | Complete |
+| IMP-02 | Phase 16 | Complete |
 | IMP-03 | Phase 16 | Pending |
 | IMP-04 | Phase 16 | Pending |
 | IMP-05 | Phase 16 | Pending |
-| IMP-06 | Phase 16 | Pending |
+| IMP-06 | Phase 16 | Complete |
 | IMP-07 | Phase 14 | Complete |
 
 **Coverage:**

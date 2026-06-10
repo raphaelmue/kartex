@@ -229,19 +229,19 @@ Full details: [.planning/milestones/v1.2-ROADMAP.md](milestones/v1.2-ROADMAP.md)
 
 **Wave 0**
 
-- [x] 16-01-PLAN.md — RED test stubs: backend deck-update (T-16-01..12) + frontend DeckUpdateModal (T-16-FE-01..06) (IMP-01..IMP-06)
+- [x] 16-01-PLAN.md ï¿½ RED test stubs: backend deck-update (T-16-01..12) + frontend DeckUpdateModal (T-16-FE-01..06) (IMP-01..IMP-06)
 
 **Wave 1** *(blocked on Wave 0)*
 
-- [x] 16-02-PLAN.md — Backend deckUpdate.ts (computeDiff + preview + apply routes) + index.ts mount + deckUpdate.* i18n keys en+de (IMP-02, IMP-03, IMP-04, IMP-05, IMP-06)
+- [x] 16-02-PLAN.md ï¿½ Backend deckUpdate.ts (computeDiff + preview + apply routes) + index.ts mount + deckUpdate.* i18n keys en+de (IMP-02, IMP-03, IMP-04, IMP-05, IMP-06)
 
 **Wave 2** *(blocked on Wave 1)*
 
-- [ ] 16-03-PLAN.md — DeckUpdateModal.tsx component + DeckUpdateModal tests upgraded (T-16-FE-01..06) (IMP-01, IMP-02, IMP-06)
+- [x] 16-03-PLAN.md ï¿½ DeckUpdateModal.tsx component + DeckUpdateModal tests upgraded (T-16-FE-01..06) (IMP-01, IMP-02, IMP-06)
 
 **Wave 3** *(blocked on Wave 2)*
 
-- [ ] 16-04-PLAN.md — DeckDetailPage wire-up (hidden input + button + modal mount) + DeckDetailPage tests T-16-FE-07..08 (IMP-01)
+- [ ] 16-04-PLAN.md ï¿½ DeckDetailPage wire-up (hidden input + button + modal mount) + DeckDetailPage tests T-16-FE-07..08 (IMP-01)
 
 **UI hint**: yes
 
@@ -266,4 +266,4 @@ Full details: [.planning/milestones/v1.2-ROADMAP.md](milestones/v1.2-ROADMAP.md)
 | 13. Documentation | v1.2 | 3/3 | Complete | 2026-06-04 |
 | 14. Schema Foundation | v1.3.0 | 3/3 | Complete    | 2026-06-09 |
 | 15. Stats Feature | v1.3.0 | 3/3 | Complete   | 2026-06-10 |
-| 16. Import Update Feature | v1.3.0 | 0/4 | Not started | - |
+| 16. Import Update Feature | v1.3.0 | 3/4 | In Progress|  |
