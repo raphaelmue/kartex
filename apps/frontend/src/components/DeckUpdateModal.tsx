@@ -59,11 +59,19 @@ export function DeckUpdateModal({
   }, [open, file])
 
   async function runPreview() {
+    if (!file) return
     setStep('uploading')
     const formData = new FormData()
-    formData.append('file', file!)
+    formData.append('file', file)
     try {
       const res = await api.postForm(`/api/decks/${deckId}/update/preview`, formData)
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        const message = (data as { error?: string }).error ?? t('deckUpdate.parseError')
+        setErrorMsg(message)
+        setStep('error')
+        return
+      }
       const data = await res.json()
       setPreview(data)
       setStep('previewing')
@@ -75,12 +83,20 @@ export function DeckUpdateModal({
   }
 
   async function runApply() {
+    if (!file) return
     setStep('applying')
     const formData = new FormData()
-    formData.append('file', file!)
+    formData.append('file', file)
     formData.append('keepRemoved', String(keepRemoved))
     try {
-      await api.postForm(`/api/decks/${deckId}/update/apply`, formData)
+      const res = await api.postForm(`/api/decks/${deckId}/update/apply`, formData)
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        const message = (data as { error?: string }).error ?? t('deckUpdate.parseError')
+        setErrorMsg(message)
+        setStep('error')
+        return
+      }
       setStep('done')
       toast.success(t('deckUpdate.successToast'))
       onSuccess()
