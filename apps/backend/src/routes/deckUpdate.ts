@@ -83,9 +83,10 @@ function computeDiff(fileCards: FileCard[], deckCards: DeckCard[]): DiffResult {
   }
 
   // Cards in deck that were not matched by any file card → removed bucket
+  // Exclude cards with kartexId = null (manually created — not import-managed)
   const removedIds: string[] = []
   for (const dc of deckCards) {
-    if (!matchedDeckCardIds.has(dc.id)) {
+    if (dc.kartexId != null && !matchedDeckCardIds.has(dc.id)) {
       removedIds.push(dc.id)
     }
   }
