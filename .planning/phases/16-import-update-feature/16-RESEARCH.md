@@ -612,22 +612,25 @@ No new external dependencies. All tools, runtimes, and services required by this
 
 ---
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **Duplicate kartexId in uploaded file — error or deduplicate?**
    - What we know: Parser allows duplicate ids (Phase 14 Test 3). DB constraint `@@unique([deckId, kartexId])` will reject the second insert.
    - What's unclear: Should the backend return 422 with "duplicate ids in file" or silently use first-wins?
    - Recommendation: Return 422 with a clear error message. Simpler, and informs the user their file has a problem.
+   - **RESOLVED:** Return 422 with `"Duplicate id values in file."` — per Plan 16-02 behavior block (T-16-03 and duplicate-guard logic in preview + apply routes).
 
 2. **kartexId not updated on apply for matched cards**
    - What we know: The kartexId is the match key. Updating it would break future matches.
    - What's unclear: If a user changes the `id:` field value in their .kartex file, should that be treated as a new card (added) and the old one as removed?
    - Recommendation: Yes — kartexId is the identity key. Changing it = new identity. The old deck card appears in "removed"; the new file card appears in "added". This is correct behavior and requires no special handling — the diff algorithm handles it naturally.
+   - **RESOLVED:** kartexId is intentionally never updated on apply — per Plan 16-02 action (`tx.card.update` omits `kartexId` explicitly). Changed id = new identity; handled naturally by computeDiff.
 
 3. **Unchanged count: include deck cards with no kartexId?**
    - What we know: Deck cards with `kartexId=null` are unmatchable by any file card with an id.
    - What's unclear: If the deck has old null-kartexId cards (imported before Phase 14), they always appear in "removed" since no file card can match them by id.
    - Recommendation: Explicitly note this in the preview UI or in a tooltip: "Cards added before the id: field was supported cannot be matched and will appear as removed." The planner should flag this to the user in the modal.
+   - **RESOLVED:** Null-kartexId deck cards fall into the `removedIds` bucket (they are never matched by file cards) — per Plan 16-02 computeDiff logic. The DeckUpdateModal previewing state displays the removed count so users see the impact before applying.
 
 ---
 
