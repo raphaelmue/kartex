@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.3.0
 milestone_name: Stats & Import Update
 status: executing
-stopped_at: Phase 15 UI-SPEC approved
-last_updated: "2026-06-10T08:58:13.367Z"
-last_activity: 2026-06-10 -- Phase 15 execution started
+stopped_at: Phase 15 Plan 02 complete
+last_updated: "2026-06-10T09:05:44Z"
+last_activity: 2026-06-10 -- Completed Phase 15 Plan 02 (stats backend + i18n)
 progress:
   total_phases: 7
   completed_phases: 5
   total_plans: 22
-  completed_plans: 20
-  percent: 71
+  completed_plans: 21
+  percent: 73
 ---
 
 # Project State
@@ -26,9 +26,9 @@ See: .planning/PROJECT.md (updated 2026-06-09)
 ## Current Position
 
 Phase: 15 (stats-feature) — EXECUTING
-Plan: 2 of 3
-Status: Ready to execute
-Last activity: 2026-06-10 -- Phase 15 execution started
+Plan: 3 of 3 (ready for Wave 2)
+Status: Plan 02 complete — ready for Plan 03 (StatsSummaryPanel + DashboardPage)
+Last activity: 2026-06-10 -- Completed Phase 15 Plan 02 (stats backend + i18n)
 
 ## Performance Metrics
 
@@ -58,6 +58,7 @@ Last activity: 2026-06-10 -- Phase 15 execution started
 
 *Updated after each plan completion*
 | Phase 15-stats-feature P01 | 2 | 2 tasks | 3 files |
+| Phase 15-stats-feature P02 | 6 | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -137,6 +138,9 @@ Recent decisions affecting current work:
 - v1.3-research: card.updateMany unusable for content updates — use individual card.update calls inside transaction (each card has different data)
 - v1.3-research: Every CardProgress query in stats.ts must include where: { userId } to hit compound index (prevent full-table scan)
 - v1.3-research: i18n parity — ~15-25 new keys in v1.3; add each to both en.json and de.json in same commit
+- 15-02: Prisma generate required after Phase 14 ReviewLog migration — generated client was stale; run prisma generate before backend build
+- 15-02: retentionRate = null (not 0) when totalLast30 === 0; difficultyBreakdown = null (not zero-filled) when breakdown.length === 0 — honors T-15-02 empty-state contract
+- 15-02: perDeck uses ownerId: userId scope — shared decks out of scope for Phase 15 stats (consistent with dashboard.ts, RESEARCH Pitfall 6)
 
 ### Pending Todos
 
@@ -185,6 +189,6 @@ Items acknowledged and deferred at milestone close on 2026-05-30:
 
 ## Session Continuity
 
-Last session: 2026-06-10T08:58:13.352Z
-Stopped at: Phase 15 UI-SPEC approved
-Resume with: /gsd-plan-phase 14
+Last session: 2026-06-10T09:05:44Z
+Stopped at: Completed Phase 15 Plan 02 (GET /api/stats/summary + i18n keys)
+Resume with: /gsd-execute-phase 15 (Plan 03 — StatsSummaryPanel + DashboardPage integration)

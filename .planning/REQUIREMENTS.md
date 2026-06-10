@@ -7,10 +7,10 @@
 
 ### Learning Statistics (STATS)
 
-- [ ] **STATS-01**: Dashboard displays total cards reviewed (all time) and this week
-- [ ] **STATS-02**: Dashboard displays retention rate (% ratings ≥ Good in last 30 days), showing "No data yet" when review history is empty
-- [ ] **STATS-03**: Dashboard displays card difficulty breakdown (Easy / Good / Hard / Again counts), showing "No data yet" when review history is empty
-- [ ] **STATS-04**: Dashboard displays per-deck progress summary (due, mastered, in-learning)
+- [x] **STATS-01**: Dashboard displays total cards reviewed (all time) and this week
+- [x] **STATS-02**: Dashboard displays retention rate (% ratings ≥ Good in last 30 days), showing "No data yet" when review history is empty
+- [x] **STATS-03**: Dashboard displays card difficulty breakdown (Easy / Good / Hard / Again counts), showing "No data yet" when review history is empty
+- [x] **STATS-04**: Dashboard displays per-deck progress summary (due, mastered, in-learning)
 - [x] **STATS-05**: Each card rating is recorded in a new `ReviewLog` table (userId, cardId, deckId, rating, reviewedAt) inside the existing `POST /api/study/rate` transaction
 
 ### Deck Update via Import (IMP)
@@ -48,10 +48,10 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| STATS-01 | Phase 15 | Pending |
-| STATS-02 | Phase 15 | Pending |
-| STATS-03 | Phase 15 | Pending |
-| STATS-04 | Phase 15 | Pending |
+| STATS-01 | Phase 15 | Complete |
+| STATS-02 | Phase 15 | Complete |
+| STATS-03 | Phase 15 | Complete |
+| STATS-04 | Phase 15 | Complete |
 | STATS-05 | Phase 14 | Complete |
 | IMP-01 | Phase 16 | Pending |
 | IMP-02 | Phase 16 | Pending |
