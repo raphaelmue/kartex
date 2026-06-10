@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.3.0
 milestone_name: Stats & Import Update
-status: completed
-stopped_at: Completed Phase 15 Plan 03 (StatsSummaryPanel + DashboardPage integration)
-last_updated: "2026-06-10T09:19:50.228Z"
-last_activity: 2026-06-10 -- Completed Phase 15 Plan 02 (stats backend + i18n)
+status: in_progress
+stopped_at: Verified Phase 15 complete (15-VERIFICATION.md — passed, 5/5)
+last_updated: "2026-06-10T11:35:00.000Z"
+last_activity: 2026-06-10 -- Phase 15 verification passed (5/5 success criteria)
 progress:
   total_phases: 7
-  completed_phases: 6
+  completed_phases: 7
   total_plans: 22
   completed_plans: 22
-  percent: 86
+  percent: 100
 ---
 
 # Project State
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-06-09)
 
 **Core value:** A user can open their dashboard, see their due cards, and complete a spaced-repetition study session — that loop must always work.
-**Current focus:** Phase 15 — stats-feature
+**Current focus:** Phase 16 — Import Update Feature (next)
 
 ## Current Position
 
-Phase: 15 (stats-feature) — EXECUTING
-Plan: 3 of 3 (ready for Wave 2)
-Status: Plan 02 complete — ready for Plan 03 (StatsSummaryPanel + DashboardPage)
-Last activity: 2026-06-10 -- Completed Phase 15 Plan 02 (stats backend + i18n)
+Phase: 15 (stats-feature) — VERIFIED COMPLETE
+Plan: 3 of 3 — all plans complete, verification passed (5/5 ROADMAP success criteria)
+Status: Phase 15 verified — ready to plan Phase 16
+Last activity: 2026-06-10 -- Phase 15 verification passed (5/5 success criteria)
 
 ## Performance Metrics
 
@@ -142,21 +142,20 @@ Recent decisions affecting current work:
 - 15-02: Prisma generate required after Phase 14 ReviewLog migration — generated client was stale; run prisma generate before backend build
 - 15-02: retentionRate = null (not 0) when totalLast30 === 0; difficultyBreakdown = null (not zero-filled) when breakdown.length === 0 — honors T-15-02 empty-state contract
 - 15-02: perDeck uses ownerId: userId scope — shared decks out of scope for Phase 15 stats (consistent with dashboard.ts, RESEARCH Pitfall 6)
-- [Phase ?]: 15-03: Promise.allSettled for DashboardPage parallel fetch
-- [Phase ?]: 15-03: StatsSummaryPanel pure display — summary:StatsSummary|null + loading:boolean; skeleton when loading=true, null-safe chips otherwise
-- [Phase ?]: 15-03: mockApiGet.mockImplementation(url =>) for parallel-fetch test mocking (not mockResolvedValueOnce)
+- 15-03: CR-02 fix — separate void fetchDashboardStats() + void fetchStatsSummary() from same useEffect replaces Promise.allSettled; decouples loading states so skeleton IS reachable when dashboard resolves first
+- 15-03: CR-01 fix — dashboard.stats.noDecksYet key added to en.json + de.json; StatsSummaryPanel uses t('dashboard.stats.noDecksYet') instead of hardcoded English string
+- 15-03: StatsSummaryPanel pure display — summary:StatsSummary|null + loading:boolean; skeleton when loading=true, null-safe chips otherwise
+- 15-03: mockApiGet.mockImplementation(url =>) for parallel-fetch test mocking (not mockResolvedValueOnce)
 
 ### Pending Todos
 
 **v1.3.0 active:**
 
-- Phase 14: Schema Foundation — Prisma migration (ReviewLog + Card.kartexId), parser id: field, shared schemas — STATS-05, IMP-07
-- Phase 15: Stats Feature — GET /api/stats/summary, StatsSummaryPanel, DashboardPage integration — STATS-01, STATS-02, STATS-03, STATS-04
 - Phase 16: Import Update Feature — preview + apply endpoints, DeckUpdateModal, DeckDetailPage update flow — IMP-01, IMP-02, IMP-03, IMP-04, IMP-05, IMP-06
 
 **Captured todos:**
 
-- [2026-06-07] Add learning statistics to dashboard — overall progress, easy/hard card counts, retention rate, per-deck stats (`2026-06-07-add-learning-statistics.md`)
+- [2026-06-07] Add learning statistics to dashboard — overall progress, easy/hard card counts, retention rate, per-deck stats (`2026-06-07-add-learning-statistics.md`) — RESOLVED (Phase 15 complete)
 
 **Completed:**
 
@@ -193,6 +192,6 @@ Items acknowledged and deferred at milestone close on 2026-05-30:
 
 ## Session Continuity
 
-Last session: 2026-06-10T09:19:50.213Z
-Stopped at: Completed Phase 15 Plan 03 (StatsSummaryPanel + DashboardPage integration)
-Resume with: /gsd-execute-phase 15 (Plan 03 — StatsSummaryPanel + DashboardPage integration)
+Last session: 2026-06-10T11:35:00.000Z
+Stopped at: Verified Phase 15 complete (15-VERIFICATION.md — passed, 5/5)
+Resume with: /gsd-plan-phase 16 (Import Update Feature)
