@@ -70,7 +70,21 @@
     "noDueAnyDeck": "No cards due across any deck.",
     "reviewedToday": "Reviewed today",
     "streak": "Streak",
-    "streakDays": "{{count}} days"
+    "streakDays": "{{count}} days",
+    "stats": {
+      "totalReviewed": "Total Reviewed",
+      "thisWeek": "{{count}} this week",
+      "retentionRate": "Retention Rate (30 days)",
+      "difficultyBreakdown": "Difficulty Breakdown",
+      "noData": "No data yet",
+      "perDeckProgress": "Per-Deck Progress",
+      "masteredColumn": "Mastered",
+      "inLearningColumn": "In Learning",
+      "easyLabel": "Easy",
+      "goodLabel": "Good",
+      "hardLabel": "Hard",
+      "againLabel": "Again"
+    }
   },
   "decks": {
     "title": "Decks — Kartex",

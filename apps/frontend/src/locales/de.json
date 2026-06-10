@@ -70,7 +70,21 @@
     "noDueAnyDeck": "Keine fälligen Karten in einem Deck.",
     "reviewedToday": "Heute wiederholt",
     "streak": "Serie",
-    "streakDays": "{{count}} Tage"
+    "streakDays": "{{count}} Tage",
+    "stats": {
+      "totalReviewed": "Insgesamt gelernt",
+      "thisWeek": "{{count}} diese Woche",
+      "retentionRate": "Behaltenquote (30 Tage)",
+      "difficultyBreakdown": "Schwierigkeitsverteilung",
+      "noData": "Noch keine Daten",
+      "perDeckProgress": "Fortschritt je Stapel",
+      "masteredColumn": "Gemeistert",
+      "inLearningColumn": "In Bearbeitung",
+      "easyLabel": "Einfach",
+      "goodLabel": "Gut",
+      "hardLabel": "Schwer",
+      "againLabel": "Nochmal"
+    }
   },
   "decks": {
     "title": "Decks — Kartex",
