@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
-import type { DashboardStats } from '@kartex/shared'
+import type { DashboardStats, StatsSummary } from '@kartex/shared'
 import { api } from '@/lib/api'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -15,34 +15,44 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { StatsSummaryPanel } from '@/components/StatsSummaryPanel'
 
 export function DashboardPage() {
   const { t, i18n } = useTranslation()
   const navigate = useNavigate()
   const [stats, setStats] = useState<DashboardStats | null>(null)
   const [loading, setLoading] = useState(true)
+  const [statsSummary, setStatsSummary] = useState<StatsSummary | null>(null)
+  const [statsLoading, setStatsLoading] = useState(true)
 
   useEffect(() => {
     document.title = t('dashboard.title')
   }, [t, i18n.language])
 
-  const fetchStats = async () => {
-    try {
-      const res = await api.get('/api/dashboard/stats')
-      if (res.ok) {
-        setStats((await res.json()) as DashboardStats)
-      } else {
-        toast.error(t('common.somethingWrong'))
-      }
-    } catch {
-      toast.error(t('common.serverUnreachable'))
-    } finally {
-      setLoading(false)
+  const fetchAll = async () => {
+    const [dashResult, summaryResult] = await Promise.allSettled([
+      api.get('/api/dashboard/stats'),
+      api.get('/api/stats/summary'),
+    ])
+
+    // Dashboard stats: show toast on failure (preserves existing behavior)
+    if (dashResult.status === 'fulfilled' && dashResult.value.ok) {
+      setStats((await dashResult.value.json()) as DashboardStats)
+    } else {
+      toast.error(t('common.somethingWrong'))
     }
+    setLoading(false)
+
+    // Stats summary: silent failure — statsSummary stays null → empty states
+    if (summaryResult.status === 'fulfilled' && summaryResult.value.ok) {
+      setStatsSummary((await summaryResult.value.json()) as StatsSummary)
+    }
+    // On any failure: leave statsSummary as null (no toast — SC-5 / T-15-04)
+    setStatsLoading(false)
   }
 
   useEffect(() => {
-    void fetchStats()
+    void fetchAll()
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -154,6 +164,9 @@ export function DashboardPage() {
           </p>
         </div>
       </div>
+
+      {/* ── 1d. Stats Summary Panel (Phase 15) ──────────────────────── */}
+      <StatsSummaryPanel summary={statsSummary} loading={statsLoading} />
     </div>
   )
 }
