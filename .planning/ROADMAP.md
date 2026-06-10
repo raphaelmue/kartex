@@ -195,7 +195,20 @@ Full details: [.planning/milestones/v1.2-ROADMAP.md](milestones/v1.2-ROADMAP.md)
   4. The dashboard displays a per-deck progress section listing each deck with its due count, mastered count (interval >= 21 AND repetitions >= 3), and in-learning count; decks with no cards show zero counts rather than disappearing
   5. The stats section loads in parallel with the existing dashboard study CTA — a stats fetch failure produces a silent empty state, never a blank dashboard
 
-**Plans**: TBD
+**Plans**: 3 plans
+
+**Wave 0** *(RED test scaffold)*
+
+- [ ] 15-01-PLAN.md — Test stubs: backend stats-summary + StatsSummaryPanel + DashboardPage (it.todo) for STATS-01..04
+
+**Wave 1** *(parallel — no shared files)*
+
+- [ ] 15-02-PLAN.md — Backend GET /api/stats/summary route + index.ts registration + dashboard.stats.* i18n keys (en + de) (STATS-01, STATS-02, STATS-03, STATS-04)
+
+**Wave 2** *(blocked on Wave 1)*
+
+- [ ] 15-03-PLAN.md — StatsSummaryPanel component + DashboardPage parallel fetch integration; upgrade Wave 0 stubs to real tests (STATS-01..04, SC-5)
+
 **UI hint**: yes
 
 ### Phase 16: Import Update Feature
@@ -235,5 +248,5 @@ Full details: [.planning/milestones/v1.2-ROADMAP.md](milestones/v1.2-ROADMAP.md)
 | 12. PWA Shell | v1.2 | 4/4 | Complete | 2026-06-03 |
 | 13. Documentation | v1.2 | 3/3 | Complete | 2026-06-04 |
 | 14. Schema Foundation | v1.3.0 | 3/3 | Complete    | 2026-06-09 |
-| 15. Stats Feature | v1.3.0 | 0/TBD | Not started | - |
+| 15. Stats Feature | v1.3.0 | 0/3 | Not started | - |
 | 16. Import Update Feature | v1.3.0 | 0/TBD | Not started | - |
