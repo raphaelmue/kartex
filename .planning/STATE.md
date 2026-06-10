@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.3.0
 milestone_name: Stats & Import Update
-status: executing
-stopped_at: Completed 16-02-PLAN.md (Wave 1 backend — deckUpdateRouter, computeDiff, 16 i18n keys)
-last_updated: "2026-06-10T15:32:43.300Z"
+status: verifying
+stopped_at: Completed 16-04-PLAN.md (Wave 3 frontend — DeckDetailPage update flow wiring + T-16-FE-07/08 tests)
+last_updated: "2026-06-10T15:41:53.216Z"
 last_activity: 2026-06-10 -- Phase 16 Plan 02 complete (Wave 1 backend implementation)
 progress:
   total_phases: 7
-  completed_phases: 6
+  completed_phases: 7
   total_plans: 26
-  completed_plans: 25
-  percent: 86
+  completed_plans: 26
+  percent: 100
 ---
 
 # Project State
@@ -27,7 +27,7 @@ See: .planning/PROJECT.md (updated 2026-06-09)
 
 Phase: 16 (import-update-feature) — EXECUTING
 Plan: 4 of 4
-Status: Ready to execute
+Status: Phase complete — ready for verification
 Last activity: 2026-06-10 -- Phase 16 Plan 02 complete (Wave 1 backend implementation)
 
 ## Performance Metrics
@@ -62,6 +62,7 @@ Last activity: 2026-06-10 -- Phase 16 Plan 02 complete (Wave 1 backend implement
 | Phase 15-stats-feature P03 | 8 | 2 tasks | 4 files |
 | Phase 16-import-update P01 | 4 | 2 tasks | 2 files |
 | Phase 16-import-update P02 | 10 | 2 tasks | 4 files |
+| Phase 16-import-update-feature P04 | 7 | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -152,6 +153,7 @@ Recent decisions affecting current work:
 - 16-02: keepRemoved defaults to true (string !== 'false') — absent keepRemoved body field keeps cards (safe default)
 - 16-02: apply route re-fetches deck and re-parses file independently of preview — stateless, prevents TOCTOU
 - 16-02: tx.card.update data payload contains only frontContent/backContent/tags — kartexId and CardProgress fields intentionally excluded
+- [Phase ?]: 16-04: DeckDetailPage.test.tsx uses real i18next (no react-i18next mock) — button text assertions must use actual en.json translation values, not i18n key strings
 
 ### Pending Todos
 
@@ -198,6 +200,6 @@ Items acknowledged and deferred at milestone close on 2026-05-30:
 
 ## Session Continuity
 
-Last session: 2026-06-10T15:32:43.283Z
-Stopped at: Completed 16-02-PLAN.md (Wave 1 backend — deckUpdateRouter, computeDiff, 16 i18n keys)
+Last session: 2026-06-10T15:41:53.185Z
+Stopped at: Completed 16-04-PLAN.md (Wave 3 frontend — DeckDetailPage update flow wiring + T-16-FE-07/08 tests)
 Resume with: /gsd-execute-phase 16 (continue with Plan 03 — DeckUpdateModal frontend)
