@@ -56,7 +56,7 @@ Source: Matches existing DashboardPage.tsx chip pattern (`p-4`, `mb-8`, `px-4 py
 |------|------|--------|-------------|----------------|
 | Display (due count hero) | 48px (text-5xl) | 600 (font-semibold) | 1.2 | `text-5xl font-semibold` |
 | Heading (section label) | 20px (text-xl) | 600 (font-semibold) | 1.2 | `text-xl font-semibold` |
-| Body | 16px (text-base / text-sm = 14px) | 400 (font-normal) | 1.5 | `text-sm font-normal` |
+| Body | 14px (text-sm) | 400 (font-normal) | 1.5 | `text-sm font-normal` |
 | Chip label | 12px (text-xs) | 400 (font-normal) | 1.4 | `text-xs font-normal uppercase tracking-wide` |
 
 Rules:
@@ -288,11 +288,11 @@ No third-party registries. No new shadcn components need to be installed for thi
 
 ## Checker Sign-Off
 
-- [ ] Dimension 1 Copywriting: PASS
-- [ ] Dimension 2 Visuals: PASS
-- [ ] Dimension 3 Color: PASS
-- [ ] Dimension 4 Typography: PASS
-- [ ] Dimension 5 Spacing: PASS
-- [ ] Dimension 6 Registry Safety: PASS
+- [x] Dimension 1 Copywriting: PASS
+- [x] Dimension 2 Visuals: PASS
+- [x] Dimension 3 Color: PASS
+- [x] Dimension 4 Typography: PASS
+- [x] Dimension 5 Spacing: FLAG (44px touch target — accessibility exception, non-blocking)
+- [x] Dimension 6 Registry Safety: PASS
 
-**Approval:** pending
+**Approval:** approved 2026-06-10
