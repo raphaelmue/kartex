@@ -229,7 +229,7 @@ Full details: [.planning/milestones/v1.2-ROADMAP.md](milestones/v1.2-ROADMAP.md)
 
 **Wave 0**
 
-- [ ] 16-01-PLAN.md — RED test stubs: backend deck-update (T-16-01..12) + frontend DeckUpdateModal (T-16-FE-01..06) (IMP-01..IMP-06)
+- [x] 16-01-PLAN.md — RED test stubs: backend deck-update (T-16-01..12) + frontend DeckUpdateModal (T-16-FE-01..06) (IMP-01..IMP-06)
 
 **Wave 1** *(blocked on Wave 0)*
 

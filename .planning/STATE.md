@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.3.0
 milestone_name: Stats & Import Update
-status: in_progress
-stopped_at: Verified Phase 15 complete (15-VERIFICATION.md — passed, 5/5)
-last_updated: "2026-06-10T11:35:00.000Z"
-last_activity: 2026-06-10 -- Phase 15 verification passed (5/5 success criteria)
+status: executing
+stopped_at: Completed 16-01-PLAN.md (Wave 0 test stubs — 18 it.todo entries, 2 files)
+last_updated: "2026-06-10T14:55:57Z"
+last_activity: 2026-06-10 -- Phase 16 Plan 01 complete (Wave 0 scaffold)
 progress:
   total_phases: 7
-  completed_phases: 7
-  total_plans: 22
-  completed_plans: 22
-  percent: 100
+  completed_phases: 6
+  total_plans: 26
+  completed_plans: 23
+  percent: 88
 ---
 
 # Project State
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-06-09)
 
 **Core value:** A user can open their dashboard, see their due cards, and complete a spaced-repetition study session — that loop must always work.
-**Current focus:** Phase 16 — Import Update Feature (next)
+**Current focus:** Phase 16 — import-update-feature
 
 ## Current Position
 
-Phase: 15 (stats-feature) — VERIFIED COMPLETE
-Plan: 3 of 3 — all plans complete, verification passed (5/5 ROADMAP success criteria)
-Status: Phase 15 verified — ready to plan Phase 16
-Last activity: 2026-06-10 -- Phase 15 verification passed (5/5 success criteria)
+Phase: 16 (import-update-feature) — EXECUTING
+Plan: 2 of 4
+Status: Executing Phase 16 (Plan 01 complete — Wave 0 scaffold)
+Last activity: 2026-06-10 -- Phase 16 Plan 01 complete (Wave 0 test stubs)
 
 ## Performance Metrics
 
@@ -60,6 +60,7 @@ Last activity: 2026-06-10 -- Phase 15 verification passed (5/5 success criteria)
 | Phase 15-stats-feature P01 | 2 | 2 tasks | 3 files |
 | Phase 15-stats-feature P02 | 6 | 2 tasks | 4 files |
 | Phase 15-stats-feature P03 | 8 | 2 tasks | 4 files |
+| Phase 16-import-update P01 | 4 | 2 tasks | 2 files |
 
 ## Accumulated Context
 
