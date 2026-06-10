@@ -11,6 +11,7 @@ import { decksRouter } from './routes/decks.js'
 import { mediaRouter, mediaPublicRouter } from './routes/media.js'
 import { studyRouter } from './routes/study.js'
 import { dashboardRouter } from './routes/dashboard.js'
+import { statsRouter } from './routes/stats.js'
 import { importRouter } from './routes/import.js'
 import { exploreRouter } from './routes/explore.js'
 import { seedAdminIfNeeded } from './lib/seed.js'
@@ -62,6 +63,7 @@ app.route('/api/media', mediaRouter)
 // ─── 5c. Study + Dashboard routes (JWT required — inherited from step 4) ──────
 app.route('/api/study', studyRouter)
 app.route('/api/dashboard', dashboardRouter)
+app.route('/api/stats', statsRouter)
 
 // ─── 5d. Import route (JWT required — inherited from step 4) ──────────────────
 app.route('/api/import', importRouter)
