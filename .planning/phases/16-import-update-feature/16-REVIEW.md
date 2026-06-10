@@ -1,6 +1,6 @@
 ---
 phase: 16
-status: has-findings
+status: fixed
 critical: 2
 warning: 3
 info: 2
