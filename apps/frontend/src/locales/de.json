@@ -342,5 +342,23 @@
   "lang": {
     "en": "EN",
     "de": "DE"
+  },
+  "deckUpdate": {
+    "updateFromFile": "Aus Datei aktualisieren",
+    "modalTitle": "Deck aus Datei aktualisieren",
+    "uploading": "Hochladen...",
+    "previewHeading": "Änderungsvorschau",
+    "added": "{{count}} hinzugefügt",
+    "updated": "{{count}} aktualisiert",
+    "unchanged": "{{count}} unverändert",
+    "removed": "{{count}} entfernt",
+    "keepRemovedLabel": "Entfernte Karten behalten",
+    "keepRemovedHint": "Wenn deaktiviert, werden Karten, die nicht in der Datei enthalten sind, gelöscht.",
+    "apply": "Änderungen übernehmen",
+    "applying": "Wird übernommen...",
+    "successToast": "Deck erfolgreich aktualisiert",
+    "errorTitle": "Aktualisierung fehlgeschlagen",
+    "parseError": "Datei konnte nicht verarbeitet werden. Bitte prüfen Sie, ob es eine gültige .kartex-Datei ist.",
+    "fileTooLarge": "Datei ist zu groß."
   }
 }

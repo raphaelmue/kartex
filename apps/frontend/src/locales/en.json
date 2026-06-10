@@ -342,5 +342,23 @@
   "lang": {
     "en": "EN",
     "de": "DE"
+  },
+  "deckUpdate": {
+    "updateFromFile": "Update from file",
+    "modalTitle": "Update Deck from File",
+    "uploading": "Uploading...",
+    "previewHeading": "Changes preview",
+    "added": "{{count}} added",
+    "updated": "{{count}} updated",
+    "unchanged": "{{count}} unchanged",
+    "removed": "{{count}} removed",
+    "keepRemovedLabel": "Keep removed cards",
+    "keepRemovedHint": "When off, cards absent from the file will be deleted.",
+    "apply": "Apply changes",
+    "applying": "Applying...",
+    "successToast": "Deck updated successfully",
+    "errorTitle": "Update failed",
+    "parseError": "Could not parse the file. Check it is a valid .kartex file.",
+    "fileTooLarge": "File is too large."
   }
 }

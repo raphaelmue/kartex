@@ -14,6 +14,7 @@ import { dashboardRouter } from './routes/dashboard.js'
 import { statsRouter } from './routes/stats.js'
 import { importRouter } from './routes/import.js'
 import { exploreRouter } from './routes/explore.js'
+import { deckUpdateRouter } from './routes/deckUpdate.js'
 import { seedAdminIfNeeded } from './lib/seed.js'
 
 const app = new Hono()
@@ -70,6 +71,9 @@ app.route('/api/import', importRouter)
 
 // ─── 5e. Explore route (JWT required — inherited from step 4) ─────────────────
 app.route('/api/explore', exploreRouter)
+
+// ─── 5f. Deck update route (JWT required — inherited from step 4) ─────────────
+app.route('/api/decks', deckUpdateRouter)
 
 // ─── 6. Admin routes (JWT + ADMIN role required) ──────────────────────────────
 app.use('/api/admin/*', requireAdmin)
