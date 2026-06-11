@@ -253,7 +253,7 @@ export function AppShell() {
         </header>
 
         {/* Main content */}
-        <main className="flex-1 overflow-y-auto bg-background p-4 md:p-8">
+        <main className="flex-1 overflow-y-auto overflow-x-hidden bg-background p-4 md:p-8">
           <Outlet />
         </main>
 
