@@ -6,6 +6,7 @@
 - ✅ **v1.1 Study Experience & Polish** — Phases 7–9 (shipped 2026-06-01)
 - ✅ **v1.2 Study Control & PWA** — Phases 10–13 (shipped 2026-06-04) — [archive](milestones/v1.2-ROADMAP.md)
 - ✅ **v1.3.0 Stats & Import Update** — Phases 14–16 (shipped 2026-06-11) — [archive](milestones/v1.3.0-ROADMAP.md)
+- 🔧 **v1.3.1 Bug Fixes & Mobile Polish** — Phases 17–18 (in progress)
 
 ## Phases
 
@@ -161,6 +162,42 @@ Full details: [.planning/milestones/v1.3.0-ROADMAP.md](milestones/v1.3.0-ROADMAP
 - [x] 13-02-PLAN.md — Fix stale sections in docs/design.md: remove Nginx/pnpm references, update architecture diagram, services table, data model, Docker Compose example (DOCS-02)
 - [x] 13-03-PLAN.md — Verify docs/kartex-format.md accuracy against parser source; fix any discrepancies found (DOCS-03)
 
+### Phase 17: Mobile UI Polish
+
+**Goal**: Mobile viewport renders cleanly and deck card action buttons are fully contained — no overflow on any screen size
+**Depends on**: Nothing (pure frontend)
+**Requirements**: MOB-01, DECK-05
+**Success Criteria** (what must be TRUE):
+
+  1. On a 375px mobile viewport, main content area has appropriate padding and no element overflows its container (stats table, cards, other sections)
+  2. On a 375px mobile viewport, deck card action buttons are fully visible within the card boundary — no button clipped or overflowing
+  3. On a 1280px desktop viewport, deck card action buttons are fully visible within the card boundary — no button clipped or overflowing
+  4. No regression in existing desktop layout after changes
+
+**Plans**: 2 plans
+
+- [ ] 17-01-PLAN.md — Audit mobile layout: identify remaining overflow issues in main padding + stats table; fix root causes (MOB-01)
+- [ ] 17-02-PLAN.md — Fix deck card button overflow: audit `CardFooter` layout in `DecksPage`, apply `flex-wrap` or restructure; verify at 375px + 1280px (DECK-05)
+
+---
+
+### Phase 18: Library Deck Toggle
+
+**Goal**: Users can activate or deactivate decks they've added from the Explore page, giving them the same study queue control as owned decks
+**Depends on**: Nothing (can run in parallel with Phase 17)
+**Requirements**: LIB-01
+**Success Criteria** (what must be TRUE):
+
+  1. A library deck (forked or added via Explore) shows an active/inactive toggle on DecksPage identical in appearance to the owned-deck toggle
+  2. Toggling a library deck active/inactive persists after page refresh
+  3. Starting a /study session only includes library decks the user has marked active (inactive library decks excluded from queue)
+  4. Toggling a library deck does not affect the deck owner's isActive state for that deck
+
+**Plans**: 2 plans
+
+- [ ] 18-01-PLAN.md — Investigate data model: determine where per-user isActive state lives for library decks (DeckShare, fork, or new field); implement backend support if needed (LIB-01 backend)
+- [ ] 18-02-PLAN.md — Frontend: expose isActive toggle for library decks on DecksPage; wire to correct API; cover with tests (LIB-01 frontend)
+
 ---
 
 ## Progress
@@ -183,3 +220,5 @@ Full details: [.planning/milestones/v1.3.0-ROADMAP.md](milestones/v1.3.0-ROADMAP
 | 14. Schema Foundation | v1.3.0 | 3/3 | Complete | 2026-06-09 |
 | 15. Stats Feature | v1.3.0 | 3/3 | Complete | 2026-06-10 |
 | 16. Import Update Feature | v1.3.0 | 4/4 | Complete | 2026-06-10 |
+| 17. Mobile UI Polish | v1.3.1 | 0/2 | In Progress | — |
+| 18. Library Deck Toggle | v1.3.1 | 0/2 | In Progress | — |

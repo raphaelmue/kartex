@@ -30,6 +30,6 @@
 
 | REQ-ID | Phase | Plans | Status |
 |--------|-------|-------|--------|
-| MOB-01 | — | — | Pending roadmap |
-| LIB-01 | — | — | Pending roadmap |
-| DECK-05 | — | — | Pending roadmap |
+| MOB-01 | 17 — Mobile UI Polish | 17-01 | Pending |
+| DECK-05 | 17 — Mobile UI Polish | 17-02 | Pending |
+| LIB-01 | 18 — Library Deck Toggle | 18-01, 18-02 | Pending |
