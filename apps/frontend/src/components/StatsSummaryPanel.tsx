@@ -124,6 +124,7 @@ export function StatsSummaryPanel({ summary, loading }: StatsSummaryPanelProps) 
         <p className="text-sm font-semibold text-foreground mb-2">
           {t('dashboard.stats.perDeckProgress')}
         </p>
+        <div className="overflow-x-auto" role="region" aria-label={t('dashboard.stats.perDeckProgress')}>
         <Table>
           <TableHeader>
             <TableRow>
@@ -175,6 +176,7 @@ export function StatsSummaryPanel({ summary, loading }: StatsSummaryPanelProps) 
             )}
           </TableBody>
         </Table>
+        </div>
       </div>
     </div>
   )
