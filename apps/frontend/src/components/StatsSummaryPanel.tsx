@@ -124,7 +124,6 @@ export function StatsSummaryPanel({ summary, loading }: StatsSummaryPanelProps) 
         <p className="text-sm font-semibold text-foreground mb-2">
           {t('dashboard.stats.perDeckProgress')}
         </p>
-        <div className="overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>
@@ -134,10 +133,10 @@ export function StatsSummaryPanel({ summary, loading }: StatsSummaryPanelProps) 
               <TableHead className="text-xs font-normal uppercase tracking-wide text-muted-foreground text-right">
                 {t('dashboard.dueColumn')}
               </TableHead>
-              <TableHead className="text-xs font-normal uppercase tracking-wide text-muted-foreground text-right">
+              <TableHead className="hidden sm:table-cell text-xs font-normal uppercase tracking-wide text-muted-foreground text-right">
                 {t('dashboard.stats.masteredColumn')}
               </TableHead>
-              <TableHead className="text-xs font-normal uppercase tracking-wide text-muted-foreground text-right">
+              <TableHead className="hidden sm:table-cell text-xs font-normal uppercase tracking-wide text-muted-foreground text-right">
                 {t('dashboard.stats.inLearningColumn')}
               </TableHead>
             </TableRow>
@@ -165,10 +164,10 @@ export function StatsSummaryPanel({ summary, loading }: StatsSummaryPanelProps) 
                       <span className="text-sm text-muted-foreground">{d.dueCount}</span>
                     )}
                   </TableCell>
-                  <TableCell className="text-right">
+                  <TableCell className="hidden sm:table-cell text-right">
                     <span className="text-sm text-foreground">{d.masteredCount}</span>
                   </TableCell>
-                  <TableCell className="text-right">
+                  <TableCell className="hidden sm:table-cell text-right">
                     <span className="text-sm text-foreground">{d.inLearningCount}</span>
                   </TableCell>
                 </TableRow>
@@ -176,7 +175,6 @@ export function StatsSummaryPanel({ summary, loading }: StatsSummaryPanelProps) 
             )}
           </TableBody>
         </Table>
-        </div>
       </div>
     </div>
   )
