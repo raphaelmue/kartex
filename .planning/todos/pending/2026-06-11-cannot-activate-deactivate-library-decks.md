@@ -2,6 +2,7 @@
 created: 2026-06-11T15:00:00Z
 title: Cannot activate / deactivate public decks added to library
 area: ui
+resolves_phase: 18
 files:
   - apps/frontend/src/pages/ExplorePage.tsx
   - apps/frontend/src/pages/DecksPage.tsx
