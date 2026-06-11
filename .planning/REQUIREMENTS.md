@@ -1,0 +1,35 @@
+# Requirements: Kartex v1.3.1 Bug Fixes & Mobile Polish
+
+**Milestone:** v1.3.1 Bug Fixes & Mobile Polish
+**Status:** Active
+**Created:** 2026-06-11
+
+## Mobile Layout (MOB)
+
+- [ ] **MOB-01**: Mobile viewport (375px) renders without visible overflow or unwanted spacing — main content padding and stats table display correctly with no element exceeding its container
+
+## Library Deck Toggle (LIB)
+
+- [ ] **LIB-01**: User can toggle a library deck (public/shared deck added via Explore) active or inactive; the toggle state persists and filters the /study queue identically to owned deck toggles
+
+## Deck Card UI (DECK)
+
+- [ ] **DECK-05**: Deck card action buttons are fully contained within their card boundary on both 375px mobile and 1280px desktop viewports (no overflow, no wrapping outside container)
+
+## Future Requirements (Deferred)
+
+*(none identified for this patch)*
+
+## Out of Scope
+
+- New features — this is a patch release; no new user-facing capabilities
+- Schema changes — no Prisma migrations expected
+- i18n additions — no new translation keys unless a label change is needed to fix a bug
+
+## Traceability
+
+| REQ-ID | Phase | Plans | Status |
+|--------|-------|-------|--------|
+| MOB-01 | — | — | Pending roadmap |
+| LIB-01 | — | — | Pending roadmap |
+| DECK-05 | — | — | Pending roadmap |
