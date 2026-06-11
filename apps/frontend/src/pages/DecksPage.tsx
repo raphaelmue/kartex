@@ -24,7 +24,6 @@ import {
 } from '@/components/ui/dropdown-menu'
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -231,12 +230,13 @@ export function DecksPage() {
             <AlertDialogCancel>
               {t('common.cancel')}
             </AlertDialogCancel>
-            <AlertDialogAction
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            {/* Use Button instead of AlertDialogAction to control dismiss timing */}
+            <Button
+              variant="destructive"
               onClick={() => { if (deleteTargetId) void handleDelete(deleteTargetId) }}
             >
               {t('decks.deleteButton')}
-            </AlertDialogAction>
+            </Button>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
