@@ -1,17 +1,16 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.4.0
-milestone_name: TBD
-status: idle
-stopped_at: v1.3.0 milestone archived and tagged 2026-06-11
-last_updated: "2026-06-11T14:40:00Z"
-last_activity: 2026-06-11 -- quick fix: mobile stats table overflow (faf3973)
+milestone: v1.3.1
+milestone_name: Bug Fixes & Mobile Polish
+status: planning
+last_updated: "2026-06-11T13:25:14.624Z"
+last_activity: 2026-06-11
 progress:
-  total_phases: 7
-  completed_phases: 7
-  total_plans: 26
-  completed_plans: 26
-  percent: 100
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # Project State
@@ -25,10 +24,10 @@ See: .planning/PROJECT.md (updated 2026-06-09)
 
 ## Current Position
 
-Phase: 16 (import-update-feature) — COMPLETE
-Plan: 4 of 4
-Status: Verified — 24/24 must-haves passed (re-verification after CR-01+CR-02 fixes)
-Last activity: 2026-06-10 -- Phase 16 verification passed — 24/24 criteria (CR-01+CR-02 fixed)
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-06-11 — Milestone v1.3.1 started
 
 ## Performance Metrics
 

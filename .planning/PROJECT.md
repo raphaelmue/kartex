@@ -1,5 +1,14 @@
 # Kartex
 
+## Current Milestone: v1.3.1 Bug Fixes & Mobile Polish
+
+**Goal:** Resolve post-v1.3.0 UI regressions — mobile layout polish and two deck interaction bugs that affect core usability.
+
+**Target fixes:**
+- Mobile layout remaining issues (padding + stats table overflow/spacing still visible after partial commits)
+- Library deck isActive toggle — public/shared decks added to library cannot be activated or deactivated
+- Deck card buttons overflow — action buttons spill out of card container on mobile and desktop
+
 ## Current State: v1.3.0 — SHIPPED 2026-06-11
 
 **Current milestone:** v1.3.0 Stats & Import Update — SHIPPED 2026-06-11
@@ -89,7 +98,11 @@ A user can open their dashboard, see their due cards, and complete a spaced-repe
 
 ### Active
 
-No active requirements. Next milestone not yet defined — run `/gsd-new-milestone` to start v1.4.
+**v1.3.1 Bug Fixes & Mobile Polish:**
+
+- [ ] **MOB-01**: Mobile layout renders without overflow or spacing issues (padding + stats table)
+- [ ] **LIB-01**: User can activate/deactivate a library deck (public/shared deck added via Explore page)
+- [ ] **DECK-05**: Deck card action buttons do not overflow their card container on mobile (375px) or desktop
 
 ### Out of Scope
 
@@ -165,4 +178,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-06-11 — v1.3.0 complete (Stats & Import Update). ReviewLog table, stats endpoint, StatsSummaryPanel, computeDiff algorithm, DeckUpdateModal, DeckDetailPage wiring. v1.0: 25 requirements shipped. v1.1: 10 requirements shipped. v1.2: 16 requirements shipped. v1.3.0: 12 requirements shipped (63 total).*
+*Last updated: 2026-06-11 — v1.3.1 started (Bug Fixes & Mobile Polish). 3 active requirements: MOB-01 mobile layout, LIB-01 library deck toggle, DECK-05 deck card button overflow.*
