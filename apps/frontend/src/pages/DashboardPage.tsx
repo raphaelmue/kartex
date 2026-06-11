@@ -107,7 +107,7 @@ export function DashboardPage() {
       </div>
 
       {/* ── 1b. Per-Deck Due Counts Table (D-07 — locked) ─────────────── */}
-      <div className="mb-8">
+      <div className="mb-8 overflow-x-auto">
         <Table aria-label={t('dashboard.deckColumn')}>
           <TableHeader>
             <TableRow>
