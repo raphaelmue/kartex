@@ -15,6 +15,7 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { Switch } from '@/components/ui/switch'
+import { useAuth } from '@/context/AuthContext'
 import { DeckFormModal } from '@/components/DeckFormModal'
 import {
   DropdownMenu,
@@ -57,6 +58,7 @@ function VisibilityBadge({ visibility }: { visibility: 'PRIVATE' | 'SHARED' | 'P
 
 export function DecksPage() {
   const { t, i18n } = useTranslation()
+  const { user } = useAuth()
   const navigate = useNavigate()
   const [decks, setDecks] = useState<DeckListItem[]>([])
   const [modalOpen, setModalOpen] = useState(false)
@@ -162,7 +164,7 @@ export function DecksPage() {
                   {t('common.nCards', { count: deck._count?.cards ?? 0 })}
                 </p>
               </CardContent>
-              {deck.sharedByUsername ? (
+              {deck.ownerId !== user?.id ? (
                 <CardFooter className="flex items-center gap-2">
                   <Button size="sm" onClick={() => navigate(`/decks/${deck.id}/learn`)}>
                     {t('decks.studyButton')}
