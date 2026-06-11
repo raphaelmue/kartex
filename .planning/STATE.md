@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.3.1
 milestone_name: milestone
-status: Defining requirements
-stopped_at: Phase 17 context gathered
-last_updated: "2026-06-11T13:40:52.287Z"
-last_activity: 2026-06-11 — Milestone v1.3.1 started
+status: executing
+stopped_at: Phase 17 Plan 01 complete
+last_updated: "2026-06-11T14:10:00Z"
+last_activity: 2026-06-11 -- Phase 17 Plan 01 complete
 progress:
   total_phases: 6
   completed_phases: 4
-  total_plans: 16
-  completed_plans: 16
-  percent: 67
+  total_plans: 18
+  completed_plans: 17
+  percent: 72
 ---
 
 # Project State
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-06-09)
 
 **Core value:** A user can open their dashboard, see their due cards, and complete a spaced-repetition study session — that loop must always work.
-**Current focus:** v1.3.0 milestone complete — all phases verified
+**Current focus:** Phase 17 — mobile-ui-polish
 
 ## Current Position
 
-Phase: Not started (defining requirements)
-Plan: —
-Status: Defining requirements
-Last activity: 2026-06-11 — Milestone v1.3.1 started
+Phase: 17 (mobile-ui-polish) — EXECUTING
+Plan: 2 of 2
+Status: Executing Phase 17
+Last activity: 2026-06-11 -- Phase 17 Plan 01 complete
 
 ## Performance Metrics
 
@@ -63,6 +63,7 @@ Last activity: 2026-06-11 — Milestone v1.3.1 started
 | Phase 16-import-update P01 | 4 | 2 tasks | 2 files |
 | Phase 16-import-update P02 | 10 | 2 tasks | 4 files |
 | Phase 16-import-update-feature P04 | 7 | 2 tasks | 2 files |
+| Phase 17-mobile-ui-polish P01 | 2 | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -154,6 +155,8 @@ Recent decisions affecting current work:
 - 16-02: apply route re-fetches deck and re-parses file independently of preview — stateless, prevents TOCTOU
 - 16-02: tx.card.update data payload contains only frontContent/backContent/tags — kartexId and CardProgress fields intentionally excluded
 - [Phase ?]: 16-04: DeckDetailPage.test.tsx uses real i18next (no react-i18next mock) — button text assertions must use actual en.json translation values, not i18n key strings
+- 17-01: overflow-x-auto wrapper placed only around <Table> in StatsSummaryPanel, not the <p> heading — heading stays visible without scrolling, only table scrolls
+- 17-01: overflow-x-hidden added unconditionally to AppShell main — fixed-position -translate-x-full drawer can contribute to scrollable content area in some browser engines
 
 ### Pending Todos
 
@@ -203,6 +206,6 @@ Items acknowledged and deferred at milestone close on 2026-05-30:
 
 ## Session Continuity
 
-Last session: 2026-06-11T13:40:52.249Z
-Stopped at: Phase 17 context gathered
-Resume with: /gsd-execute-phase 16 (continue with Plan 03 — DeckUpdateModal frontend)
+Last session: 2026-06-11T14:10:00Z
+Stopped at: Phase 17 Plan 01 complete
+Resume with: /gsd-execute-phase 17 (continue with Plan 02 — DecksPage DropdownMenu restructure)

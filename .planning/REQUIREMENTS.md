@@ -6,7 +6,7 @@
 
 ## Mobile Layout (MOB)
 
-- [ ] **MOB-01**: Mobile viewport (375px) renders without visible overflow or unwanted spacing — main content padding and stats table display correctly with no element exceeding its container
+- [x] **MOB-01**: Mobile viewport (375px) renders without visible overflow or unwanted spacing — main content padding and stats table display correctly with no element exceeding its container
 
 ## Library Deck Toggle (LIB)
 
@@ -30,6 +30,6 @@
 
 | REQ-ID | Phase | Plans | Status |
 |--------|-------|-------|--------|
-| MOB-01 | 17 — Mobile UI Polish | 17-01 | Pending |
+| MOB-01 | 17 — Mobile UI Polish | 17-01 | Complete |
 | DECK-05 | 17 — Mobile UI Polish | 17-02 | Pending |
 | LIB-01 | 18 — Library Deck Toggle | 18-01, 18-02 | Pending |

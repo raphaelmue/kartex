@@ -176,7 +176,7 @@ Full details: [.planning/milestones/v1.3.0-ROADMAP.md](milestones/v1.3.0-ROADMAP
 
 **Plans**: 2 plans
 
-- [ ] 17-01-PLAN.md — Wrap StatsSummaryPanel per-deck Table in overflow-x-auto; add overflow-x-hidden to AppShell main (MOB-01)
+- [x] 17-01-PLAN.md — Wrap StatsSummaryPanel per-deck Table in overflow-x-auto; add overflow-x-hidden to AppShell main (MOB-01)
 - [ ] 17-02-PLAN.md — Install DropdownMenu + AlertDialog; restructure DecksPage CardFooter with ⋮ menu replacing inline Edit/Delete; remove confirmDeleteId (DECK-05)
 
 ---
@@ -220,5 +220,5 @@ Full details: [.planning/milestones/v1.3.0-ROADMAP.md](milestones/v1.3.0-ROADMAP
 | 14. Schema Foundation | v1.3.0 | 3/3 | Complete | 2026-06-09 |
 | 15. Stats Feature | v1.3.0 | 3/3 | Complete | 2026-06-10 |
 | 16. Import Update Feature | v1.3.0 | 4/4 | Complete | 2026-06-10 |
-| 17. Mobile UI Polish | v1.3.1 | 0/2 | In Progress | — |
+| 17. Mobile UI Polish | v1.3.1 | 1/2 | In Progress | — |
 | 18. Library Deck Toggle | v1.3.1 | 0/2 | In Progress | — |
