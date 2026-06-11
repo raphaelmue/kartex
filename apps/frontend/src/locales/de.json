@@ -104,7 +104,10 @@
     "toggleActive": "Deck aktivieren/deaktivieren",
     "activatedToast": "Deck zur Lernwarteschlange hinzugefügt",
     "deactivatedToast": "Deck aus der Lernwarteschlange entfernt",
-    "failedToToggle": "Deck konnte nicht aktualisiert werden — bitte erneut versuchen"
+    "failedToToggle": "Deck konnte nicht aktualisiert werden — bitte erneut versuchen",
+    "moreActions": "Weitere Aktionen",
+    "deleteConfirmTitle": "Deck löschen?",
+    "deleteConfirmBody": "Dies kann nicht rückgängig gemacht werden."
   },
   "deckDetail": {
     "title": "Deck — Kartex",

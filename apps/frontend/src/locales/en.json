@@ -104,7 +104,10 @@
     "toggleActive": "Toggle deck active",
     "activatedToast": "Deck added to study queue",
     "deactivatedToast": "Deck removed from study queue",
-    "failedToToggle": "Failed to update deck — try again"
+    "failedToToggle": "Failed to update deck — try again",
+    "moreActions": "More actions",
+    "deleteConfirmTitle": "Delete deck?",
+    "deleteConfirmBody": "This cannot be undone."
   },
   "deckDetail": {
     "title": "Deck — Kartex",
