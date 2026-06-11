@@ -4,8 +4,8 @@ milestone: v1.4.0
 milestone_name: TBD
 status: idle
 stopped_at: v1.3.0 milestone archived and tagged 2026-06-11
-last_updated: "2026-06-11T10:15:00Z"
-last_activity: 2026-06-11 -- v1.3.0 milestone complete — archived, tagged, REQUIREMENTS.md deleted
+last_updated: "2026-06-11T14:40:00Z"
+last_activity: 2026-06-11 -- quick fix: mobile stats table overflow (faf3973)
 progress:
   total_phases: 7
   completed_phases: 7
@@ -187,6 +187,7 @@ None.
 | 260530-005 | Fix backend Dockerfile for Prisma 7 migration entrypoint | 2026-05-30 | 0398325 | [260530-005-backend-dockerfile](.planning/quick/260530-005-backend-dockerfile/) |
 | 260604-001 | Move language switcher to settings; fix CI lint (unused ComingSoon) | 2026-06-04 | 0a96ef8 | [260604-001-lang-switcher-to-settings](.planning/quick/260604-001-lang-switcher-to-settings/) |
 | 260607-001 | Study card: cap card height, make back content scrollable, bump v1.2.1 | 2026-06-07 | 048f4fe | [260607-001-study-card-scrollable-text](.planning/quick/20260607-001-study-card-scrollable-text/) |
+| 20260611-001 | Mobile: wrap stats tables in overflow-x-auto to prevent layout overflow | 2026-06-11 | faf3973 | [20260611-001-mobile-stats-table-fix](.planning/quick/20260611-001-mobile-stats-table-fix/) |
 
 ## Deferred Items
 
