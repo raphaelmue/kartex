@@ -176,8 +176,8 @@ Full details: [.planning/milestones/v1.3.0-ROADMAP.md](milestones/v1.3.0-ROADMAP
 
 **Plans**: 2 plans
 
-- [ ] 17-01-PLAN.md — Audit mobile layout: identify remaining overflow issues in main padding + stats table; fix root causes (MOB-01)
-- [ ] 17-02-PLAN.md — Fix deck card button overflow: audit `CardFooter` layout in `DecksPage`, apply `flex-wrap` or restructure; verify at 375px + 1280px (DECK-05)
+- [ ] 17-01-PLAN.md — Wrap StatsSummaryPanel per-deck Table in overflow-x-auto; add overflow-x-hidden to AppShell main (MOB-01)
+- [ ] 17-02-PLAN.md — Install DropdownMenu + AlertDialog; restructure DecksPage CardFooter with ⋮ menu replacing inline Edit/Delete; remove confirmDeleteId (DECK-05)
 
 ---
 
