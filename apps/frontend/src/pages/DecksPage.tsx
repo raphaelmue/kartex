@@ -1,4 +1,4 @@
-import { BookOpen } from 'lucide-react'
+import { BookOpen, MoreVertical } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useNavigate } from 'react-router-dom'
@@ -16,6 +16,22 @@ import {
 } from '@/components/ui/card'
 import { Switch } from '@/components/ui/switch'
 import { DeckFormModal } from '@/components/DeckFormModal'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
 
 function VisibilityBadge({ visibility }: { visibility: 'PRIVATE' | 'SHARED' | 'PUBLIC' }) {
   const { t } = useTranslation()
@@ -46,7 +62,7 @@ export function DecksPage() {
   const [decks, setDecks] = useState<DeckListItem[]>([])
   const [modalOpen, setModalOpen] = useState(false)
   const [editDeck, setEditDeck] = useState<DeckListItem | undefined>(undefined)
-  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null)
+  const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null)
 
   useEffect(() => {
     document.title = t('decks.title')
@@ -73,7 +89,7 @@ export function DecksPage() {
       if (res.ok) {
         toast.success(t('decks.deckDeleted'))
         setDecks((prev) => prev.filter((d) => d.id !== id))
-        setConfirmDeleteId(null)
+        setDeleteTargetId(null)
       } else {
         toast.error(t('common.somethingWrong'))
       }
@@ -147,8 +163,17 @@ export function DecksPage() {
                   {t('common.nCards', { count: deck._count?.cards ?? 0 })}
                 </p>
               </CardContent>
-              <CardFooter className="flex items-center gap-2">
-                {!deck.sharedByUsername && (
+              {deck.sharedByUsername ? (
+                <CardFooter className="flex items-center gap-2">
+                  <Button size="sm" onClick={() => navigate(`/decks/${deck.id}/learn`)}>
+                    {t('decks.studyButton')}
+                  </Button>
+                  <Button size="sm" variant="outline" asChild>
+                    <Link to={`/decks/${deck.id}`}>{t('decks.openButton')}</Link>
+                  </Button>
+                </CardFooter>
+              ) : (
+                <CardFooter className="flex items-center gap-2">
                   <div className="flex items-center gap-2 mr-auto">
                     <Switch
                       checked={deck.isActive}
@@ -160,53 +185,61 @@ export function DecksPage() {
                       {t('decks.activeLabel')}
                     </label>
                   </div>
-                )}
-                <Button size="sm" onClick={() => navigate(`/decks/${deck.id}/learn`)}>
-                  {t('decks.studyButton')}
-                </Button>
-                <Button size="sm" variant="outline" asChild>
-                  <Link to={`/decks/${deck.id}`}>{t('decks.openButton')}</Link>
-                </Button>
-                {!deck.sharedByUsername && (
-                  <>
-                    <Button size="sm" variant="outline" onClick={() => openEdit(deck)}>
-                      {t('decks.editButton')}
-                    </Button>
-                    {confirmDeleteId === deck.id ? (
-                      <div className="flex items-center gap-2" role="alert">
-                        <span className="text-sm text-muted-foreground">{t('common.confirm')}</span>
-                        <Button
-                          size="sm"
-                          variant="destructive"
-                          onClick={() => void handleDelete(deck.id)}
-                        >
-                          {t('common.yesDelete')}
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => setConfirmDeleteId(null)}
-                        >
-                          {t('common.cancel')}
-                        </Button>
-                      </div>
-                    ) : (
-                      <Button
-                        size="sm"
-                        variant="destructive"
-                        onClick={() => setConfirmDeleteId(deck.id)}
+                  <Button size="sm" onClick={() => navigate(`/decks/${deck.id}/learn`)}>
+                    {t('decks.studyButton')}
+                  </Button>
+                  <Button size="sm" variant="outline" asChild>
+                    <Link to={`/decks/${deck.id}`}>{t('decks.openButton')}</Link>
+                  </Button>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button size="sm" variant="ghost" aria-label={t('decks.moreActions')}>
+                        <MoreVertical className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem onClick={() => openEdit(deck)}>
+                        {t('decks.editButton')}
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        className="text-destructive focus:text-destructive"
+                        onClick={() => setDeleteTargetId(deck.id)}
                       >
                         {t('decks.deleteButton')}
-                      </Button>
-                    )}
-                  </>
-                )}
-              </CardFooter>
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </CardFooter>
+              )}
             </Card>
             </div>
           ))}
         </div>
       )}
+
+      <AlertDialog open={deleteTargetId !== null} onOpenChange={(open) => { if (!open) setDeleteTargetId(null) }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {t('decks.deleteConfirmTitle')}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {t('decks.deleteConfirmBody')}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>
+              {t('common.cancel')}
+            </AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={() => { if (deleteTargetId) void handleDelete(deleteTargetId) }}
+            >
+              {t('decks.deleteButton')}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <DeckFormModal
         open={modalOpen}
