@@ -42,22 +42,6 @@ export function DeckUpdateModal({
   const [keepRemoved, setKeepRemoved] = useState(true)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
 
-  useEffect(() => {
-    if (!open) {
-      setStep('uploading')
-      setPreview(null)
-      setErrorMsg(null)
-      setKeepRemoved(true)
-    }
-  }, [open])
-
-  useEffect(() => {
-    if (open && file) {
-      void runPreview()
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open, file])
-
   async function runPreview() {
     if (!file) return
     setStep('uploading')
@@ -107,6 +91,22 @@ export function DeckUpdateModal({
       setStep('error')
     }
   }
+
+  useEffect(() => {
+    if (!open) {
+      setStep('uploading')
+      setPreview(null)
+      setErrorMsg(null)
+      setKeepRemoved(true)
+    }
+  }, [open])
+
+  useEffect(() => {
+    if (open && file) {
+      void runPreview()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, file])
 
   const chips = preview
     ? [
