@@ -1,19 +1,17 @@
 # Kartex
 
-## Current State: v1.3.0 In Progress — Phase 14 Complete
+## Current State: v1.3.0 — SHIPPED 2026-06-11
 
-**Current milestone:** v1.2 Study Control & PWA — SHIPPED 2026-06-04
-**Phases shipped:** 1–13 (v1.0: 1–6, v1.1: 7–9, v1.2: 10–13)
-**Total plans shipped:** 42 (18 in v1.0 + 8 in v1.1 + 16 in v1.2)
-**TypeScript LOC:** ~9,531
+**Current milestone:** v1.3.0 Stats & Import Update — SHIPPED 2026-06-11
+**Phases shipped:** 1–16 (v1.0: 1–6, v1.1: 7–9, v1.2: 10–13, v1.3.0: 14–16)
+**Total plans shipped:** 52 (18 in v1.0 + 8 in v1.1 + 16 in v1.2 + 10 in v1.3.0)
+**TypeScript LOC:** ~9,531 + ~2,000 (v1.3.0 estimate)
 
-## Current Milestone: v1.3.0 Stats & Import Update
+**v1.3.0 shipped:**
+- Dashboard stat chips: Total Reviewed, Retention Rate, Difficulty Breakdown, Per-Deck Progress (via `GET /api/stats/summary` + `ReviewLog` table)
+- Deck update-via-import: upload `.kartex` → preview diff → apply with atomic transaction; SM-2 progress preserved; keepRemoved toggle
 
-**Goal:** Surface meaningful learning progress to users on the dashboard, and allow existing decks to be updated in place via re-import without losing SM-2 history.
-
-**Target features:**
-- Learning Statistics (dashboard) — stat chips on the existing dashboard: total reviewed, retention rate (% Good/Easy last 30 days), card difficulty breakdown (Easy/Good/Hard/Again counts), per-deck progress (due, mastered, in-learning). New `GET /api/stats/summary` endpoint.
-- Deck Update via Import — re-import a `.kartex` file to update an existing deck. Cards matched by ID: update content in place (SM-2 progress preserved), add new cards, remove deleted cards. Triggered from Deck Detail page with confirmation preview.
+**Next milestone:** v1.4 (not yet defined — run `/gsd-new-milestone` to start)
 
 ## What This Is
 
@@ -75,19 +73,23 @@ A user can open their dashboard, see their due cards, and complete a spaced-repe
 - ✓ README.md exists at repo root with overview, stack, quick-start, and doc links — v1.2 Phase 13
 - ✓ design.md and kartex-format.md are accurate against v1.2 codebase — v1.2 Phase 13
 
+### Validated in v1.3.0
+
+- ✓ Dashboard displays total cards reviewed (all-time + this-week) from `CardProgress` — v1.3.0 Phase 15
+- ✓ Dashboard displays retention rate from `ReviewLog` (last 30 days), with "No data yet" empty state — v1.3.0 Phase 15
+- ✓ Dashboard displays difficulty breakdown (Easy/Good/Hard/Again) from `ReviewLog`, with "No data yet" empty state — v1.3.0 Phase 15
+- ✓ Dashboard displays per-deck progress (due/mastered/in-learning), including zero-card decks — v1.3.0 Phase 15
+- ✓ Every card rating writes a `ReviewLog` row inside the existing `POST /api/study/rate` transaction — v1.3.0 Phase 14
+- ✓ User can update a deck in place by uploading a `.kartex` file from the Deck Detail page (owner only) — v1.3.0 Phase 16
+- ✓ Preview modal shows diff (added/updated/unchanged/removed) before committing — v1.3.0 Phase 16
+- ✓ Cards matched by `kartexId` have content updated; SM-2 progress untouched — v1.3.0 Phase 16
+- ✓ New file cards are added; missing file cards are flagged as removed with keepRemoved toggle — v1.3.0 Phase 16
+- ✓ Apply executes as a single `prisma.$transaction` (atomic) — v1.3.0 Phase 16
+- ✓ `.kartex` format accepts optional `id:` field per card; backward compatible — v1.3.0 Phase 14
+
 ### Active
 
-**v1.3.0 target requirements:**
-
-- [ ] **STATS-01**: Dashboard displays total cards reviewed (all time) and this week
-- [ ] **STATS-02**: Dashboard displays retention rate (% ratings ≥ Good in last 30 days)
-- [ ] **STATS-03**: Dashboard displays card difficulty breakdown (Easy / Good / Hard / Again counts)
-- [ ] **STATS-04**: Dashboard displays per-deck progress summary (due, mastered, in-learning)
-- [ ] **IMP-01**: User can trigger a deck update from the Deck Detail page by uploading a new `.kartex` file
-- [ ] **IMP-02**: Cards matched by ID are updated in place (content refreshed, SM-2 progress preserved)
-- [ ] **IMP-03**: Cards present in the file but absent in the deck are added as new cards
-- [ ] **IMP-04**: Cards present in the deck but absent in the file are removed from the deck
-- [ ] **IMP-05**: A confirmation preview shows the diff (added / updated / removed counts) before the user commits the update
+No active requirements. Next milestone not yet defined — run `/gsd-new-milestone` to start v1.4.
 
 ### Out of Scope
 
@@ -163,4 +165,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-06-10 — Phase 14 complete (Schema Foundation). ReviewLog model, Card.kartexId, parser id: field, shared Zod schemas, and rate endpoint transaction. v1.0: 25 requirements shipped. v1.1: 10 requirements shipped. v1.2: 16 requirements shipped (16/16 complete).*
+*Last updated: 2026-06-11 — v1.3.0 complete (Stats & Import Update). ReviewLog table, stats endpoint, StatsSummaryPanel, computeDiff algorithm, DeckUpdateModal, DeckDetailPage wiring. v1.0: 25 requirements shipped. v1.1: 10 requirements shipped. v1.2: 16 requirements shipped. v1.3.0: 12 requirements shipped (63 total).*

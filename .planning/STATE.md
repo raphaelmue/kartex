@@ -1,11 +1,11 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.3.0
-milestone_name: Stats & Import Update
-status: complete
-stopped_at: Completed 16-04-PLAN.md (Wave 3 frontend — DeckDetailPage update flow wiring + T-16-FE-07/08 tests)
-last_updated: "2026-06-10T16:00:00Z"
-last_activity: 2026-06-10 -- Phase 16 verification passed — 24/24 criteria (CR-01+CR-02 fixed)
+milestone: v1.4.0
+milestone_name: TBD
+status: idle
+stopped_at: v1.3.0 milestone archived and tagged 2026-06-11
+last_updated: "2026-06-11T10:15:00Z"
+last_activity: 2026-06-11 -- v1.3.0 milestone complete — archived, tagged, REQUIREMENTS.md deleted
 progress:
   total_phases: 7
   completed_phases: 7
@@ -200,6 +200,6 @@ Items acknowledged and deferred at milestone close on 2026-05-30:
 
 ## Session Continuity
 
-Last session: 2026-06-10T15:41:53.185Z
-Stopped at: Completed 16-04-PLAN.md (Wave 3 frontend — DeckDetailPage update flow wiring + T-16-FE-07/08 tests)
+Last session: 2026-06-11T08:08:02.932Z
+Stopped at: context exhaustion at 75% (2026-06-11)
 Resume with: /gsd-execute-phase 16 (continue with Plan 03 — DeckUpdateModal frontend)
