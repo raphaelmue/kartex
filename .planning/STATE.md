@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.3.1
 milestone_name: milestone
-status: executing
-stopped_at: Phase 17 Plan 01 complete
-last_updated: "2026-06-11T14:10:00Z"
-last_activity: 2026-06-11 -- Phase 17 Plan 01 complete
+status: complete
+stopped_at: Phase 17 Plan 02 complete — Phase 17 all plans done
+last_updated: "2026-06-11T14:16:00Z"
+last_activity: 2026-06-11 -- Phase 17 Plan 02 complete
 progress:
   total_phases: 6
-  completed_phases: 4
+  completed_phases: 5
   total_plans: 18
-  completed_plans: 17
-  percent: 72
+  completed_plans: 18
+  percent: 100
 ---
 
 # Project State
@@ -64,6 +64,7 @@ Last activity: 2026-06-11 -- Phase 17 Plan 01 complete
 | Phase 16-import-update P02 | 10 | 2 tasks | 4 files |
 | Phase 16-import-update-feature P04 | 7 | 2 tasks | 2 files |
 | Phase 17-mobile-ui-polish P01 | 2 | 2 tasks | 2 files |
+| Phase 17-mobile-ui-polish P02 | 6 | 3 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -157,6 +158,9 @@ Recent decisions affecting current work:
 - [Phase ?]: 16-04: DeckDetailPage.test.tsx uses real i18next (no react-i18next mock) — button text assertions must use actual en.json translation values, not i18n key strings
 - 17-01: overflow-x-auto wrapper placed only around <Table> in StatsSummaryPanel, not the <p> heading — heading stays visible without scrolling, only table scrolls
 - 17-01: overflow-x-hidden added unconditionally to AppShell main — fixed-position -translate-x-full drawer can contribute to scrollable content area in some browser engines
+- 17-02: deleteTargetId replaces confirmDeleteId — AlertDialog open state controls delete flow; no separate boolean needed
+- 17-02: DropdownMenuItem destructive style via className (text-destructive focus:text-destructive) — shadcn DropdownMenuItem has no variant prop
+- 17-02: Single AlertDialog outside map loop — one shared instance avoids N dialog instances in DOM when N deck cards rendered
 
 ### Pending Todos
 
@@ -206,6 +210,6 @@ Items acknowledged and deferred at milestone close on 2026-05-30:
 
 ## Session Continuity
 
-Last session: 2026-06-11T14:10:00Z
-Stopped at: Phase 17 Plan 01 complete
-Resume with: /gsd-execute-phase 17 (continue with Plan 02 — DecksPage DropdownMenu restructure)
+Last session: 2026-06-11T14:16:00Z
+Stopped at: Phase 17 Plan 02 complete — Phase 17 all plans done
+Resume with: Phase 17 complete. All milestone v1.3.1 plans executed.
