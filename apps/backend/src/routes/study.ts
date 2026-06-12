@@ -19,17 +19,17 @@ study.get('/due', async (c) => {
   const endOfToday = new Date()
   endOfToday.setHours(23, 59, 59, 999)
 
-  // Deck IDs shared with this user
+  // Deck IDs shared with this user where the share is active (D-03, D-10)
   const sharedRows = await prisma.deckShare.findMany({
-    where: { sharedWithUserId: userId },
+    where: { sharedWithUserId: userId, isActive: true },
     select: { deckId: true },
   })
-  const sharedDeckIds = sharedRows.map((r: { deckId: string }) => r.deckId)
+  const activeSharedDeckIds = sharedRows.map((r: { deckId: string }) => r.deckId)
 
   const deckFilter = {
     OR: [
       { ownerId: userId, isActive: true },
-      { id: { in: sharedDeckIds }, isActive: true },
+      { id: { in: activeSharedDeckIds } },
     ],
   }
 
