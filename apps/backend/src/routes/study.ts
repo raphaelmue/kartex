@@ -163,6 +163,7 @@ study.post('/rate', async (c) => {
       where: { deckId_sharedWithUserId: { deckId: card.deckId, sharedWithUserId: userId } },
     })
     if (!share) return c.json({ error: 'Forbidden.' }, 403)
+    if (!share.isActive) return c.json({ error: 'Forbidden.' }, 403)
   }
 
   // Fetch current CardProgress and user studyMode in parallel

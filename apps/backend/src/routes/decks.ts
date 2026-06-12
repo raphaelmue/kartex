@@ -98,7 +98,7 @@ decks.get('/:id', async (c) => {
     where: { deckId_sharedWithUserId: { deckId: id, sharedWithUserId: userId } },
   })
   if (!share) return c.json({ error: 'Forbidden.' }, 403)
-  return c.json({ ...deck, userPermission: share.permission }, 200)
+  return c.json({ ...deck, isActive: share.isActive, userPermission: share.permission }, 200)
 })
 
 // ─── PATCH /api/decks/:id — update deck (owner only) ────────────────────────
