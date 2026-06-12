@@ -90,6 +90,7 @@ model DeckShare {
   sharedWithUserId String
   sharedWithUser   User       @relation(fields: [sharedWithUserId], references: [id])
   permission       Permission @default(READ)
+  isActive         Boolean    @default(true)
 
   @@unique([deckId, sharedWithUserId])
 }

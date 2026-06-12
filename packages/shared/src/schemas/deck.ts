@@ -11,6 +11,9 @@ export type CreateDeckInput = z.infer<typeof CreateDeckSchema>
 export const UpdateDeckSchema = CreateDeckSchema.partial()
 export type UpdateDeckInput = z.infer<typeof UpdateDeckSchema>
 
+export const UpdateLibrarySchema = z.object({ isActive: z.boolean() })
+export type UpdateLibraryInput = z.infer<typeof UpdateLibrarySchema>
+
 export const DeckSchema = z.object({
   id: z.string(),
   title: z.string(),
