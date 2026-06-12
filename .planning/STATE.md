@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.3.1
 milestone_name: milestone
-status: complete
-stopped_at: Phase 17 Plan 02 complete — Phase 17 all plans done
-last_updated: "2026-06-11T14:30:00Z"
-last_activity: 2026-06-11 -- Phase 17 verification passed
+status: executing
+stopped_at: Phase 18 Plan 01 complete — backend LIB-01 done
+last_updated: "2026-06-12T13:35:04Z"
+last_activity: 2026-06-12 -- Phase 18 Plan 01 complete
 progress:
   total_phases: 6
-  completed_phases: 6
-  total_plans: 18
-  completed_plans: 18
-  percent: 100
+  completed_phases: 5
+  total_plans: 20
+  completed_plans: 19
+  percent: 90
 ---
 
 # Project State
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-06-09)
 
 **Core value:** A user can open their dashboard, see their due cards, and complete a spaced-repetition study session — that loop must always work.
-**Current focus:** Phase 17 — mobile-ui-polish
+**Current focus:** Phase 18 — library-deck-toggle
 
 ## Current Position
 
-Phase: 17 (mobile-ui-polish) — EXECUTING
+Phase: 18 (library-deck-toggle) — EXECUTING
 Plan: 2 of 2
-Status: Phase 17 complete and verified
-Last activity: 2026-06-11 -- Phase 17 verification passed
+Status: Executing Phase 18 — Plan 01 complete
+Last activity: 2026-06-12 -- Phase 18 Plan 01 complete
 
 ## Performance Metrics
 
@@ -65,6 +65,7 @@ Last activity: 2026-06-11 -- Phase 17 verification passed
 | Phase 16-import-update-feature P04 | 7 | 2 tasks | 2 files |
 | Phase 17-mobile-ui-polish P01 | 2 | 2 tasks | 2 files |
 | Phase 17-mobile-ui-polish P02 | 6 | 3 tasks | 5 files |
+| Phase 18-library-deck-toggle P01 | 5 | 3 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -161,6 +162,9 @@ Recent decisions affecting current work:
 - 17-02: deleteTargetId replaces confirmDeleteId — AlertDialog open state controls delete flow; no separate boolean needed
 - 17-02: DropdownMenuItem destructive style via className (text-destructive focus:text-destructive) — shadcn DropdownMenuItem has no variant prop
 - 17-02: Single AlertDialog outside map loop — one shared instance avoids N dialog instances in DOM when N deck cards rendered
+- 18-01: prisma migrate deploy unavailable without DATABASE_URL — hand-written migration SQL applied via Docker Compose entrypoint (consistent with 10-02 pattern)
+- 18-01: isActive: r.isActive override before sharedByUsername in sharedRows.map — shadows r.deck.isActive (owner's setting) with DeckShare.isActive (recipient's setting)
+- 18-01: OR[1] deckFilter for shared decks drops Deck.isActive — DeckShare.isActive already gates; owner's toggle must not exclude shared deck from recipient's study queue (D-03, D-10)
 
 ### Pending Todos
 
@@ -210,6 +214,6 @@ Items acknowledged and deferred at milestone close on 2026-05-30:
 
 ## Session Continuity
 
-Last session: 2026-06-11T14:16:00Z
-Stopped at: Phase 17 Plan 02 complete — Phase 17 all plans done
-Resume with: Phase 17 complete. All milestone v1.3.1 plans executed.
+Last session: 2026-06-12T13:35:04Z
+Stopped at: Phase 18 Plan 01 complete — backend LIB-01 done
+Resume with: Phase 18 Plan 02 — frontend library deck toggle (handleToggleLibraryActive, CardFooter Switch, tests)
