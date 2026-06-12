@@ -115,6 +115,22 @@ export function DecksPage() {
     }
   }
 
+  const handleToggleLibraryActive = async (deckId: string, checked: boolean) => {
+    setDecks((prev) =>
+      prev.map((d) => (d.id === deckId ? { ...d, isActive: checked } : d))
+    )
+    try {
+      const res = await api.patch(`/api/decks/${deckId}/library`, { isActive: checked })
+      if (!res.ok) throw new Error('PATCH failed')
+      toast.success(checked ? t('decks.activatedToast') : t('decks.deactivatedToast'))
+    } catch {
+      setDecks((prev) =>
+        prev.map((d) => (d.id === deckId ? { ...d, isActive: !checked } : d))
+      )
+      toast.error(t('decks.failedToToggle'))
+    }
+  }
+
   const openCreate = () => {
     setEditDeck(undefined)
     setModalOpen(true)
@@ -166,6 +182,17 @@ export function DecksPage() {
               </CardContent>
               {deck.ownerId !== user?.id ? (
                 <CardFooter className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 mr-auto">
+                    <Switch
+                      checked={deck.isActive}
+                      onCheckedChange={(checked) => void handleToggleLibraryActive(deck.id, checked)}
+                      aria-label={t('decks.toggleActive')}
+                      id={`active-lib-${deck.id}`}
+                    />
+                    <label htmlFor={`active-lib-${deck.id}`} className="text-sm text-muted-foreground cursor-pointer">
+                      {t('decks.activeLabel')}
+                    </label>
+                  </div>
                   <Button size="sm" onClick={() => navigate(`/decks/${deck.id}/learn`)}>
                     {t('decks.studyButton')}
                   </Button>
