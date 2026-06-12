@@ -33,7 +33,15 @@ vi.mock('sonner', () => ({
   toast: { error: vi.fn(), success: vi.fn() },
 }))
 
-// No AuthContext mock — DecksPage does not import useAuth
+// AuthContext mock required — DecksPage uses useAuth for user.id check (ownerId guard)
+vi.mock('@/context/AuthContext', () => ({
+  useAuth: () => ({
+    user: { id: 'user-1', username: 'testuser', role: 'USER', isActive: true, studyMode: 'normal', createdAt: '2026-01-01' },
+    loading: false,
+    setUser: vi.fn(),
+    logout: vi.fn(),
+  }),
+}))
 
 // Helper deck factory
 // isActive is not yet on DeckListItem schema (Plan 02 adds it), so we cast to any.
@@ -50,6 +58,21 @@ function makeDeck(id: string, isActive = true) {
     updatedAt: '2026-01-01',
     _count: { cards: 3 },
     // No sharedByUsername — toggle is expected to render for owned decks
+  } as unknown as import('@kartex/shared').DeckListItem & { isActive: boolean }
+}
+
+function makeLibraryDeck(id: string, isActive = true) {
+  return {
+    id,
+    title: `Library Deck ${id}`,
+    description: null,
+    visibility: 'PUBLIC' as const,
+    ownerId: 'other-user',
+    isActive,
+    createdAt: '2026-01-01',
+    updatedAt: '2026-01-01',
+    _count: { cards: 5 },
+    sharedByUsername: 'other-user',
   } as unknown as import('@kartex/shared').DeckListItem & { isActive: boolean }
 }
 
@@ -149,6 +172,88 @@ describe('DecksPage isActive toggle', () => {
 
     await waitFor(() => {
       // Switch must revert back to checked (optimistic revert)
+      expect(
+        switchEl.getAttribute('aria-checked') === 'true' ||
+          switchEl.getAttribute('data-state') === 'checked',
+      ).toBe(true)
+    })
+  })
+})
+
+describe('DecksPage library deck toggle (LIB-01)', () => {
+  beforeEach(() => {
+    mockApiGet.mockReset()
+    mockApiPatch.mockReset()
+    mockApiPatch.mockResolvedValue({ ok: true })
+  })
+
+  it('LIB-01a: library Switch renders checked when deck.isActive === true', async () => {
+    mockApiGet.mockResolvedValue({
+      ok: true,
+      json: async () => [makeLibraryDeck('d3', true)],
+    })
+
+    renderPage()
+
+    const switchEl = await screen.findByRole('switch', { name: /toggle deck active/i })
+    expect(switchEl.id).toContain('active-lib-')
+    expect(
+      switchEl.getAttribute('aria-checked') === 'true' ||
+        switchEl.getAttribute('data-state') === 'checked',
+    ).toBe(true)
+  })
+
+  it('LIB-01b: library Switch renders unchecked when deck.isActive === false', async () => {
+    mockApiGet.mockResolvedValue({
+      ok: true,
+      json: async () => [makeLibraryDeck('d3', false)],
+    })
+
+    renderPage()
+
+    const switchEl = await screen.findByRole('switch', { name: /toggle deck active/i })
+    expect(
+      switchEl.getAttribute('aria-checked') === 'false' ||
+        switchEl.getAttribute('data-state') === 'unchecked',
+    ).toBe(true)
+  })
+
+  it('LIB-01c: clicking library Switch calls api.patch with /library path', async () => {
+    mockApiGet.mockResolvedValue({
+      ok: true,
+      json: async () => [makeLibraryDeck('d3', true)],
+    })
+
+    renderPage()
+
+    const switchEl = await screen.findByRole('switch', { name: /toggle deck active/i })
+    fireEvent.click(switchEl)
+
+    await waitFor(() => {
+      expect(mockApiPatch).toHaveBeenCalledWith('/api/decks/d3/library', { isActive: false })
+    })
+  })
+
+  it('LIB-01d: on PATCH failure, library Switch reverts and toast.error is called', async () => {
+    mockApiPatch.mockResolvedValue({ ok: false })
+
+    mockApiGet.mockResolvedValue({
+      ok: true,
+      json: async () => [makeLibraryDeck('d3', true)],
+    })
+
+    const { toast } = await import('sonner')
+
+    renderPage()
+
+    const switchEl = await screen.findByRole('switch', { name: /toggle deck active/i })
+    fireEvent.click(switchEl)
+
+    await waitFor(() => {
+      expect(toast.error).toHaveBeenCalled()
+    })
+
+    await waitFor(() => {
       expect(
         switchEl.getAttribute('aria-checked') === 'true' ||
           switchEl.getAttribute('data-state') === 'checked',
