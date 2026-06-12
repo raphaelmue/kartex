@@ -195,8 +195,9 @@ Full details: [.planning/milestones/v1.3.0-ROADMAP.md](milestones/v1.3.0-ROADMAP
 
 **Plans**: 2 plans
 
-- [ ] 18-01-PLAN.md — Investigate data model: determine where per-user isActive state lives for library decks (DeckShare, fork, or new field); implement backend support if needed (LIB-01 backend)
-- [ ] 18-02-PLAN.md — Frontend: expose isActive toggle for library decks on DecksPage; wire to correct API; cover with tests (LIB-01 frontend)
+Plans:
+- [ ] 18-01-PLAN.md — Schema migration (DeckShare.isActive), UpdateLibrarySchema, GET /api/decks isActive override, PATCH /api/decks/:id/library endpoint, GET /api/study/due filter fix (LIB-01 backend)
+- [ ] 18-02-PLAN.md — handleToggleLibraryActive handler, library CardFooter Switch, DecksPage.test.tsx LIB-01 cases, library-toggle.test.ts backend stubs (LIB-01 frontend)
 
 ---
 
