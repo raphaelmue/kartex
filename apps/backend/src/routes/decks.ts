@@ -1,7 +1,7 @@
 import { Hono } from 'hono'
 import { Prisma } from '@prisma/client'
 import { prisma } from '../lib/prisma.js'
-import { CreateDeckSchema, UpdateDeckSchema, CreateShareSchema, UpdateShareSchema } from '@kartex/shared'
+import { CreateDeckSchema, UpdateDeckSchema, CreateShareSchema, UpdateShareSchema, UpdateLibrarySchema } from '@kartex/shared'
 import { cardsRouter } from './cards.js'
 
 const decks = new Hono<{ Variables: { userId: string } }>()
@@ -57,6 +57,7 @@ decks.get('/', async (c) => {
     ...ownDecks,
     ...sharedRows.map((r: (typeof sharedRows)[number]) => ({
       ...r.deck,
+      isActive: r.isActive,
       sharedByUsername: r.deck.owner.username,
     })),
   ]
@@ -293,6 +294,26 @@ decks.post('/:id/library', async (c) => {
     create: { deckId: id, sharedWithUserId: userId, permission: 'READ' },
   })
   return c.json(share, 201)
+})
+
+// ─── PATCH /api/decks/:id/library — toggle isActive for share recipient ──────
+// D-08: only the share recipient (sharedWithUserId === userId) may call this.
+decks.patch('/:id/library', async (c) => {
+  const { id } = c.req.param()
+  const userId = c.get('userId')
+  const body = UpdateLibrarySchema.safeParse(await c.req.json())
+  if (!body.success) {
+    return c.json({ error: 'Validation failed.', details: body.error.flatten() }, 400)
+  }
+  const share = await prisma.deckShare.findUnique({
+    where: { deckId_sharedWithUserId: { deckId: id, sharedWithUserId: userId } },
+  })
+  if (!share) return c.json({ error: 'Forbidden.' }, 403)
+  const updated = await prisma.deckShare.update({
+    where: { deckId_sharedWithUserId: { deckId: id, sharedWithUserId: userId } },
+    data: { isActive: body.data.isActive },
+  })
+  return c.json({ isActive: updated.isActive }, 200)
 })
 
 export { decks as decksRouter }
