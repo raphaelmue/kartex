@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.3.1
 milestone_name: milestone
-status: executing
-stopped_at: Phase 18 Plan 01 complete — backend LIB-01 done
-last_updated: "2026-06-12T13:35:04Z"
-last_activity: 2026-06-12 -- Phase 18 Plan 01 complete
+status: complete
+stopped_at: Phase 18 Plan 02 complete — frontend LIB-01 done
+last_updated: "2026-06-12T13:43:28Z"
+last_activity: 2026-06-12 -- Phase 18 Plan 02 complete
 progress:
   total_phases: 6
-  completed_phases: 5
+  completed_phases: 6
   total_plans: 20
-  completed_plans: 19
-  percent: 90
+  completed_plans: 20
+  percent: 100
 ---
 
 # Project State
@@ -25,10 +25,10 @@ See: .planning/PROJECT.md (updated 2026-06-09)
 
 ## Current Position
 
-Phase: 18 (library-deck-toggle) — EXECUTING
+Phase: 18 (library-deck-toggle) — COMPLETE
 Plan: 2 of 2
-Status: Executing Phase 18 — Plan 01 complete
-Last activity: 2026-06-12 -- Phase 18 Plan 01 complete
+Status: Phase 18 complete — all plans done
+Last activity: 2026-06-12 -- Phase 18 Plan 02 complete
 
 ## Performance Metrics
 
@@ -66,6 +66,7 @@ Last activity: 2026-06-12 -- Phase 18 Plan 01 complete
 | Phase 17-mobile-ui-polish P01 | 2 | 2 tasks | 2 files |
 | Phase 17-mobile-ui-polish P02 | 6 | 3 tasks | 5 files |
 | Phase 18-library-deck-toggle P01 | 5 | 3 tasks | 5 files |
+| Phase 18-library-deck-toggle P02 | 4 | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -165,6 +166,8 @@ Recent decisions affecting current work:
 - 18-01: prisma migrate deploy unavailable without DATABASE_URL — hand-written migration SQL applied via Docker Compose entrypoint (consistent with 10-02 pattern)
 - 18-01: isActive: r.isActive override before sharedByUsername in sharedRows.map — shadows r.deck.isActive (owner's setting) with DeckShare.isActive (recipient's setting)
 - 18-01: OR[1] deckFilter for shared decks drops Deck.isActive — DeckShare.isActive already gates; owner's toggle must not exclude shared deck from recipient's study queue (D-03, D-10)
+- 18-02: Library Switch uses id=active-lib-{id} prefix to prevent DOM id collision with owned-deck Switch id=active-{id} (T-18-07)
+- 18-02: AuthContext mock user includes studyMode field — required to match User interface shape; DeckDetailPage tests confirmed this pattern
 
 ### Pending Todos
 
@@ -214,6 +217,6 @@ Items acknowledged and deferred at milestone close on 2026-05-30:
 
 ## Session Continuity
 
-Last session: 2026-06-12T13:35:04Z
-Stopped at: Phase 18 Plan 01 complete — backend LIB-01 done
-Resume with: Phase 18 Plan 02 — frontend library deck toggle (handleToggleLibraryActive, CardFooter Switch, tests)
+Last session: 2026-06-12T13:43:28Z
+Stopped at: Phase 18 Plan 02 complete — Phase 18 fully done
+Resume with: None — all plans complete

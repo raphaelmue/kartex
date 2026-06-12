@@ -6,7 +6,7 @@
 - ✅ **v1.1 Study Experience & Polish** — Phases 7–9 (shipped 2026-06-01)
 - ✅ **v1.2 Study Control & PWA** — Phases 10–13 (shipped 2026-06-04) — [archive](milestones/v1.2-ROADMAP.md)
 - ✅ **v1.3.0 Stats & Import Update** — Phases 14–16 (shipped 2026-06-11) — [archive](milestones/v1.3.0-ROADMAP.md)
-- 🔧 **v1.3.1 Bug Fixes & Mobile Polish** — Phases 17–18 (in progress)
+- ✅ **v1.3.1 Bug Fixes & Mobile Polish** — Phases 17–18 (shipped 2026-06-12)
 
 ## Phases
 
@@ -197,7 +197,7 @@ Full details: [.planning/milestones/v1.3.0-ROADMAP.md](milestones/v1.3.0-ROADMAP
 
 Plans:
 - [x] 18-01-PLAN.md — Schema migration (DeckShare.isActive), UpdateLibrarySchema, GET /api/decks isActive override, PATCH /api/decks/:id/library endpoint, GET /api/study/due filter fix (LIB-01 backend)
-- [ ] 18-02-PLAN.md — handleToggleLibraryActive handler, library CardFooter Switch, DecksPage.test.tsx LIB-01 cases, library-toggle.test.ts backend stubs (LIB-01 frontend)
+- [x] 18-02-PLAN.md — handleToggleLibraryActive handler, library CardFooter Switch, DecksPage.test.tsx LIB-01 cases, library-toggle.test.ts backend stubs (LIB-01 frontend)
 
 ---
 
@@ -222,4 +222,4 @@ Plans:
 | 15. Stats Feature | v1.3.0 | 3/3 | Complete | 2026-06-10 |
 | 16. Import Update Feature | v1.3.0 | 4/4 | Complete | 2026-06-10 |
 | 17. Mobile UI Polish | v1.3.1 | 2/2 | Complete | 2026-06-11 |
-| 18. Library Deck Toggle | v1.3.1 | 1/2 | In Progress | — |
+| 18. Library Deck Toggle | v1.3.1 | 2/2 | Complete | 2026-06-12 |
