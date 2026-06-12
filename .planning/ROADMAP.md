@@ -6,7 +6,7 @@
 - ✅ **v1.1 Study Experience & Polish** — Phases 7–9 (shipped 2026-06-01)
 - ✅ **v1.2 Study Control & PWA** — Phases 10–13 (shipped 2026-06-04) — [archive](milestones/v1.2-ROADMAP.md)
 - ✅ **v1.3.0 Stats & Import Update** — Phases 14–16 (shipped 2026-06-11) — [archive](milestones/v1.3.0-ROADMAP.md)
-- ✅ **v1.3.1 Bug Fixes & Mobile Polish** — Phases 17–18 (shipped 2026-06-12)
+- ✅ **v1.3.1 Bug Fixes & Mobile Polish** — Phases 17–18 (shipped 2026-06-12) — [archive](milestones/v1.3.1-ROADMAP.md)
 
 ## Phases
 
@@ -55,6 +55,16 @@ Full details: [.planning/milestones/v1.2-ROADMAP.md](milestones/v1.2-ROADMAP.md)
 - [x] Phase 16: Import Update Feature (4/4 plans) — completed 2026-06-11
 
 Full details: [.planning/milestones/v1.3.0-ROADMAP.md](milestones/v1.3.0-ROADMAP.md)
+
+</details>
+
+<details>
+<summary>✅ v1.3.1 Bug Fixes & Mobile Polish (Phases 17–18) — SHIPPED 2026-06-12</summary>
+
+- [x] Phase 17: Mobile UI Polish (2/2 plans) — completed 2026-06-11
+- [x] Phase 18: Library Deck Toggle (2/2 plans) — completed 2026-06-12
+
+Full details: [.planning/milestones/v1.3.1-ROADMAP.md](milestones/v1.3.1-ROADMAP.md)
 
 </details>
 
@@ -161,45 +171,6 @@ Full details: [.planning/milestones/v1.3.0-ROADMAP.md](milestones/v1.3.0-ROADMAP
 - [x] 13-01-PLAN.md — Create README.md at repo root with project overview, tech stack, quick-start, and doc links (DOCS-01)
 - [x] 13-02-PLAN.md — Fix stale sections in docs/design.md: remove Nginx/pnpm references, update architecture diagram, services table, data model, Docker Compose example (DOCS-02)
 - [x] 13-03-PLAN.md — Verify docs/kartex-format.md accuracy against parser source; fix any discrepancies found (DOCS-03)
-
-### Phase 17: Mobile UI Polish
-
-**Goal**: Mobile viewport renders cleanly and deck card action buttons are fully contained — no overflow on any screen size
-**Depends on**: Nothing (pure frontend)
-**Requirements**: MOB-01, DECK-05
-**Success Criteria** (what must be TRUE):
-
-  1. On a 375px mobile viewport, main content area has appropriate padding and no element overflows its container (stats table, cards, other sections)
-  2. On a 375px mobile viewport, deck card action buttons are fully visible within the card boundary — no button clipped or overflowing
-  3. On a 1280px desktop viewport, deck card action buttons are fully visible within the card boundary — no button clipped or overflowing
-  4. No regression in existing desktop layout after changes
-
-**Plans**: 2 plans
-
-- [x] 17-01-PLAN.md — Wrap StatsSummaryPanel per-deck Table in overflow-x-auto; add overflow-x-hidden to AppShell main (MOB-01)
-- [x] 17-02-PLAN.md — Install DropdownMenu + AlertDialog; restructure DecksPage CardFooter with ⋮ menu replacing inline Edit/Delete; remove confirmDeleteId (DECK-05)
-
----
-
-### Phase 18: Library Deck Toggle
-
-**Goal**: Users can activate or deactivate decks they've added from the Explore page, giving them the same study queue control as owned decks
-**Depends on**: Nothing (can run in parallel with Phase 17)
-**Requirements**: LIB-01
-**Success Criteria** (what must be TRUE):
-
-  1. A library deck (forked or added via Explore) shows an active/inactive toggle on DecksPage identical in appearance to the owned-deck toggle
-  2. Toggling a library deck active/inactive persists after page refresh
-  3. Starting a /study session only includes library decks the user has marked active (inactive library decks excluded from queue)
-  4. Toggling a library deck does not affect the deck owner's isActive state for that deck
-
-**Plans**: 2 plans
-
-Plans:
-- [x] 18-01-PLAN.md — Schema migration (DeckShare.isActive), UpdateLibrarySchema, GET /api/decks isActive override, PATCH /api/decks/:id/library endpoint, GET /api/study/due filter fix (LIB-01 backend)
-- [x] 18-02-PLAN.md — handleToggleLibraryActive handler, library CardFooter Switch, DecksPage.test.tsx LIB-01 cases, library-toggle.test.ts backend stubs (LIB-01 frontend)
-
----
 
 ## Progress
 

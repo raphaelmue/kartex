@@ -1,24 +1,16 @@
 # Kartex
 
-## Current Milestone: v1.3.1 Bug Fixes & Mobile Polish
+## Current State: v1.3.1 — SHIPPED 2026-06-12
 
-**Goal:** Resolve post-v1.3.0 UI regressions — mobile layout polish and two deck interaction bugs that affect core usability.
+**Current milestone:** v1.3.1 Bug Fixes & Mobile Polish — SHIPPED 2026-06-12
+**Phases shipped:** 1–18 (v1.0: 1–6, v1.1: 7–9, v1.2: 10–13, v1.3.0: 14–16, v1.3.1: 17–18)
+**Total plans shipped:** 56 (18 + 8 + 16 + 10 + 4)
+**TypeScript LOC:** ~11,000 (estimate; +1,317 insertions in v1.3.1)
 
-**Target fixes:**
-- Mobile layout remaining issues (padding + stats table overflow/spacing still visible after partial commits)
-- Library deck isActive toggle — public/shared decks added to library cannot be activated or deactivated
-- Deck card buttons overflow — action buttons spill out of card container on mobile and desktop
-
-## Current State: v1.3.0 — SHIPPED 2026-06-11
-
-**Current milestone:** v1.3.0 Stats & Import Update — SHIPPED 2026-06-11
-**Phases shipped:** 1–16 (v1.0: 1–6, v1.1: 7–9, v1.2: 10–13, v1.3.0: 14–16)
-**Total plans shipped:** 52 (18 in v1.0 + 8 in v1.1 + 16 in v1.2 + 10 in v1.3.0)
-**TypeScript LOC:** ~9,531 + ~2,000 (v1.3.0 estimate)
-
-**v1.3.0 shipped:**
-- Dashboard stat chips: Total Reviewed, Retention Rate, Difficulty Breakdown, Per-Deck Progress (via `GET /api/stats/summary` + `ReviewLog` table)
-- Deck update-via-import: upload `.kartex` → preview diff → apply with atomic transaction; SM-2 progress preserved; keepRemoved toggle
+**v1.3.1 shipped:**
+- Mobile 375px viewport: no horizontal overflow on stats table or AppShell drawer (MOB-01)
+- Deck card action buttons: ⋮ DropdownMenu + shared AlertDialog — fully contained at all viewport sizes (DECK-05)
+- Library deck toggle: users can activate/deactivate public/shared decks from Explore page; study queue respects per-user state (LIB-01)
 
 **Next milestone:** v1.4 (not yet defined — run `/gsd-new-milestone` to start)
 
@@ -96,13 +88,15 @@ A user can open their dashboard, see their due cards, and complete a spaced-repe
 - ✓ Apply executes as a single `prisma.$transaction` (atomic) — v1.3.0 Phase 16
 - ✓ `.kartex` format accepts optional `id:` field per card; backward compatible — v1.3.0 Phase 14
 
+### Validated in v1.3.1
+
+- ✓ Mobile viewport (375px) renders without overflow — stats table scrolls horizontally, AppShell drawer no longer expands scroll area — v1.3.1 Phase 17
+- ✓ Deck card action buttons (Edit/Delete) are fully contained via ⋮ DropdownMenu + shared AlertDialog at all viewport sizes — v1.3.1 Phase 17
+- ✓ User can toggle a library deck (public/shared deck added via Explore) active or inactive; state persists and filters the /study queue — v1.3.1 Phase 18
+
 ### Active
 
-**v1.3.1 Bug Fixes & Mobile Polish:**
-
-- [ ] **MOB-01**: Mobile layout renders without overflow or spacing issues (padding + stats table)
-- [ ] **LIB-01**: User can activate/deactivate a library deck (public/shared deck added via Explore page)
-- [ ] **DECK-05**: Deck card action buttons do not overflow their card container on mobile (375px) or desktop
+*(none — v1.3.1 shipped all scoped requirements; run `/gsd-new-milestone` to define v1.4)*
 
 ### Out of Scope
 
@@ -124,8 +118,10 @@ A user can open their dashboard, see their due cards, and complete a spaced-repe
 - Target deployment: personal server or home lab, 2-5 concurrent users, no high-scale requirements
 - Shipped v1.0 with 8,135 TypeScript LOC across 226 files in 5 days
 - Shipped v1.1 with ~9,531 TypeScript LOC (46 files changed, +2,854 / -486 lines) in 2 days
-- i18n: react-i18next v26, 254 keys, `apps/frontend/src/locales/{en,de}.json` — de.json is placeholder-quality; needs native speaker review before shipping to German users
+- Shipped v1.3.1 with ~11,000 TypeScript LOC estimated (16 files changed, +1,317 / -23 lines in 1 day)
+- i18n: react-i18next v26, 254+ keys, `apps/frontend/src/locales/{en,de}.json` — de.json is placeholder-quality; needs native speaker review before shipping to German users
 - Uses yarn@4.15.0 workspaces (not pnpm despite original design doc — discovered in Phase 7)
+- Hand-written SQL migrations pattern established (Phases 10, 18) — `prisma migrate deploy` unavailable without `DATABASE_URL` in dev; migrations applied via Docker Compose entrypoint on deploy
 
 ## Constraints
 
@@ -178,4 +174,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-06-11 — v1.3.1 started (Bug Fixes & Mobile Polish). 3 active requirements: MOB-01 mobile layout, LIB-01 library deck toggle, DECK-05 deck card button overflow.*
+*Last updated: 2026-06-12 — after v1.3.1 milestone (Bug Fixes & Mobile Polish). All 3 requirements validated: MOB-01 mobile layout, LIB-01 library deck toggle, DECK-05 deck card button overflow. No active requirements; v1.4 not yet defined.*

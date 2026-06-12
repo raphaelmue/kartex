@@ -18,10 +18,10 @@ progress:
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-06-09)
+See: .planning/PROJECT.md (updated 2026-06-12)
 
 **Core value:** A user can open their dashboard, see their due cards, and complete a spaced-repetition study session — that loop must always work.
-**Current focus:** Phase 18 — library-deck-toggle
+**Current focus:** Planning next milestone (v1.4 — not yet defined)
 
 ## Current Position
 

@@ -89,9 +89,49 @@
 
 ---
 
+## Milestone: v1.3.1 — Bug Fixes & Mobile Polish
+
+**Shipped:** 2026-06-12
+**Phases:** 2 (17–18) | **Plans:** 4 | **Tasks:** 10 | **Timeline:** 1 day
+
+### What Was Built
+
+- `overflow-x-auto` on per-deck stats table + `overflow-x-hidden` on AppShell `<main>` — mobile 375px viewport no longer overflows (MOB-01)
+- ⋮ DropdownMenu + shared AlertDialog outside map loop — deck card Edit/Delete buttons fully contained at all viewport sizes (DECK-05)
+- `DeckShare.isActive` schema field + hand-written migration + PATCH `/api/decks/:id/library` endpoint + study queue filter fix — library deck per-user activation (LIB-01 backend)
+- `handleToggleLibraryActive` optimistic-update handler + library Switch in CardFooter + 4 LIB-01 test cases (LIB-01 frontend)
+
+### What Worked
+
+- **Milestone audit before Phase 18** — the audit correctly flagged LIB-01 as unimplemented (Phase 18 hadn't started). This confirmed the audit tool catches real gaps, not just stale docs.
+- **Parallel phase planning** — Phase 17 and 18 had no shared files; both could have run in parallel. The sequential execution was fine for 1 day but parallel would have been faster.
+- **Optimistic-update mirror pattern** — `handleToggleLibraryActive` was a clean copy of `handleToggleActive` with only the URL changed. The existing pattern paid off immediately.
+- **AuthContext mock fix as collateral** — Phase 18-02 fixed a pre-existing `useAuth must be used within an AuthProvider` error in DecksPage.test.tsx as a collateral improvement; all existing DECK-01a-d tests pass now.
+
+### What Was Inefficient
+
+- **REQUIREMENTS.md stale checkboxes** — DECK-05 and LIB-01 remained unchecked in REQUIREMENTS.md until milestone close. This is the same recurring pattern from v1.0 and v1.1 retrospectives — checkbox discipline at plan completion.
+- **Milestone audit was stale at close** — The audit file had `status: gaps_found` because it was generated before Phase 18 ran. The audit was technically correct at the time but misleading at close. Running the audit after all phases complete would be more useful.
+- **Phase Details section in ROADMAP.md** — The `## Phase Details` section still had v1.2 (Phases 10-13) entries alongside v1.3.1 entries; never cleaned up after v1.2 archive. Removed at v1.3.1 close.
+
+### Patterns Established
+
+- **`DeckShare.isActive` per-user library state** — owner's `Deck.isActive` and recipient's `DeckShare.isActive` are independent columns; OR branch in study filter drops `Deck.isActive` for shared decks (D-03, D-10)
+- **Single AlertDialog outside map loop** — one shared dialog instance for N cards avoids N dialog DOM nodes; controlled by nullable targetId state
+- **Library Switch id prefix** — `active-lib-{id}` vs `active-{id}` for owned deck Switch; required when same deck id could theoretically appear in both branches
+
+### Key Lessons
+
+- **Audit timing matters** — Running the milestone audit before all phases are executed creates a stale status at close. For v1.4, run the audit only after all phases complete.
+- **Checkbox updates at plan completion** — REQUIREMENTS.md checkboxes should be updated in the plan's commit, not at milestone close. Recurring issue across v1.0, v1.1, v1.3.1.
+- **`DeckShare.isActive @default(true)`** — The default ensures existing DeckShare rows (pre-migration) behave as active, which is the expected behavior. Always set sensible defaults for append-only migration columns.
+
+---
+
 ## Cross-Milestone Trends
 
 | Milestone | Phases | Plans | LOC | Days | Avg Plans/Day |
 |-----------|--------|-------|-----|------|---------------|
 | v1.0 MVP | 6 | 18 | 8,135 TS | 5 | 3.6 |
 | v1.1 Study & Polish | 3 | 8 | 9,531 TS | 2 | 4.0 |
+| v1.3.1 Bug Fixes | 2 | 4 | ~11,000 TS | 1 | 4.0 |

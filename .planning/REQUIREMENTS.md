@@ -10,11 +10,11 @@
 
 ## Library Deck Toggle (LIB)
 
-- [ ] **LIB-01**: User can toggle a library deck (public/shared deck added via Explore) active or inactive; the toggle state persists and filters the /study queue identically to owned deck toggles
+- [x] **LIB-01**: User can toggle a library deck (public/shared deck added via Explore) active or inactive; the toggle state persists and filters the /study queue identically to owned deck toggles
 
 ## Deck Card UI (DECK)
 
-- [ ] **DECK-05**: Deck card action buttons are fully contained within their card boundary on both 375px mobile and 1280px desktop viewports (no overflow, no wrapping outside container)
+- [x] **DECK-05**: Deck card action buttons are fully contained within their card boundary on both 375px mobile and 1280px desktop viewports (no overflow, no wrapping outside container)
 
 ## Future Requirements (Deferred)
 
@@ -31,5 +31,5 @@
 | REQ-ID | Phase | Plans | Status |
 |--------|-------|-------|--------|
 | MOB-01 | 17 — Mobile UI Polish | 17-01 | Complete |
-| DECK-05 | 17 — Mobile UI Polish | 17-02 | Pending |
-| LIB-01 | 18 — Library Deck Toggle | 18-01, 18-02 | Pending |
+| DECK-05 | 17 — Mobile UI Polish | 17-02 | Complete |
+| LIB-01 | 18 — Library Deck Toggle | 18-01, 18-02 | Complete |

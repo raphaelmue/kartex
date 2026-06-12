@@ -71,3 +71,52 @@ Active deck rotation with per-session overrides, SM-2 preset study modes enforce
 
 - Roadmap: [.planning/milestones/v1.2-ROADMAP.md](milestones/v1.2-ROADMAP.md)
 - Requirements: [.planning/milestones/v1.2-REQUIREMENTS.md](milestones/v1.2-REQUIREMENTS.md)
+
+---
+
+## v1.3.0 Stats & Import Update — Shipped 2026-06-11
+
+**Phases:** 14–16 | **Plans:** 10 | **Timeline:** 2 days (2026-06-09 → 2026-06-11)
+**Audit:** 12/12 requirements satisfied (tech_debt only — no blockers)
+
+### Delivered
+
+Learning statistics surfaced on the dashboard — total cards reviewed, retention rate (last 30 days), difficulty breakdown (Easy/Good/Hard/Again), and per-deck progress (due/mastered/in-learning). Deck update-via-import: upload a `.kartex` file from the Deck Detail page to update cards in place. SM-2 progress is preserved for matched cards; new cards are added; removed cards are controlled via a keepRemoved toggle. All mutations run as a single `prisma.$transaction`.
+
+### Key Accomplishments
+
+1. `ReviewLog` table + `Card.kartexId` field via hand-written migration; every rating writes a `ReviewLog` row inside the existing rate transaction (STATS-05, IMP-07)
+2. Parser `id:` field support — `.kartex` format accepts optional stable card IDs; backward compatible (IMP-07)
+3. `GET /api/stats/summary` — retention rate, difficulty breakdown, per-deck progress; all queries scoped by `userId` compound index (STATS-02/03/04)
+4. StatsSummaryPanel on DashboardPage — 4 stat chips with "No data yet" empty state; decoupled loading from dashboard hero (STATS-01/02/03/04)
+5. `/api/decks/:id/import/preview` — stateless diff (added/updated/unchanged/removed) re-computed server-side; prevents TOCTOU (IMP-01/02/03)
+6. `/api/decks/:id/import/apply` — atomic `prisma.$transaction` with keepRemoved toggle; SM-2 progress untouched for matched cards (IMP-04/05/06)
+
+### Archive
+
+- Roadmap: [.planning/milestones/v1.3.0-ROADMAP.md](milestones/v1.3.0-ROADMAP.md)
+- Requirements: [.planning/milestones/v1.3.0-REQUIREMENTS.md](milestones/v1.3.0-REQUIREMENTS.md)
+
+---
+
+## v1.3.1 Bug Fixes & Mobile Polish — Shipped 2026-06-12
+
+**Phases:** 17–18 | **Plans:** 4 | **Tasks:** 10 | **Timeline:** 1 day (2026-06-11 → 2026-06-12)
+**Files:** 16 changed, 1,317 insertions, 23 deletions
+**Requirements:** 3/3 satisfied — MOB-01, DECK-05, LIB-01
+
+### Delivered
+
+Mobile viewport rendering fixed (375px no-overflow), deck card action buttons restructured to ⋮ DropdownMenu + shared AlertDialog (buttons contained at all viewports), and library deck active/inactive toggle added so users can control whether public/shared decks from the Explore page appear in their study queue.
+
+### Key Accomplishments
+
+1. `overflow-x-auto` on per-deck stats Table + `overflow-x-hidden` on AppShell `<main>` — fixes 375px mobile horizontal overflow from stats table and always-in-DOM drawer (MOB-01)
+2. ⋮ DropdownMenu (shadcn) + shared AlertDialog outside map loop replaces inline Edit/Delete buttons in DecksPage — deck card buttons fully contained at all viewport sizes (DECK-05)
+3. `DeckShare.isActive` schema field + hand-written migration + PATCH `/api/decks/:id/library` endpoint + study queue filter fix — library deck per-user activation state (LIB-01 backend)
+4. `handleToggleLibraryActive` optimistic-update handler + library Switch in CardFooter + LIB-01 test coverage (4 passing tests) — library deck toggle fully wired (LIB-01 frontend)
+
+### Archive
+
+- Roadmap: [.planning/milestones/v1.3.1-ROADMAP.md](milestones/v1.3.1-ROADMAP.md)
+- Requirements: [.planning/milestones/v1.3.1-REQUIREMENTS.md](milestones/v1.3.1-REQUIREMENTS.md)
