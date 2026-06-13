@@ -13,18 +13,19 @@ vi.mock('react-router-dom', async () => {
   }
 })
 
-// 2. Mock api module — vi.hoisted ensures mockApiGet / mockApiPatch are available inside factory
-const { mockApiGet, mockApiPatch } = vi.hoisted(() => {
+// 2. Mock api module — vi.hoisted ensures mockApiGet / mockApiPatch / mockApiDelete are available inside factory
+const { mockApiGet, mockApiPatch, mockApiDelete } = vi.hoisted(() => {
   return {
     mockApiGet: vi.fn(),
     mockApiPatch: vi.fn(),
+    mockApiDelete: vi.fn(),
   }
 })
 vi.mock('@/lib/api', () => ({
   api: {
     get: mockApiGet,
     patch: mockApiPatch,
-    delete: vi.fn(),
+    delete: mockApiDelete,
   },
 }))
 
@@ -259,5 +260,117 @@ describe('DecksPage library deck toggle (LIB-01)', () => {
           switchEl.getAttribute('data-state') === 'checked',
       ).toBe(true)
     })
+  })
+})
+
+describe('DecksPage library deck remove from library (LIB-02)', () => {
+  beforeEach(() => {
+    mockApiGet.mockReset()
+    mockApiPatch.mockReset()
+    mockApiDelete.mockReset()
+    mockApiDelete.mockResolvedValue({ ok: true })
+  })
+
+  it('LIB-02a: library deck footer shows a More actions trigger (DropdownMenu)', async () => {
+    mockApiGet.mockResolvedValue({
+      ok: true,
+      json: async () => [makeLibraryDeck('d4', true)],
+    })
+
+    renderPage()
+
+    // Should render the MoreVertical trigger with aria-label "More actions"
+    const trigger = await screen.findByRole('button', { name: /more actions/i })
+    expect(trigger).toBeTruthy()
+  })
+
+  it('LIB-02b: clicking More actions reveals "Remove from library" item', async () => {
+    mockApiGet.mockResolvedValue({
+      ok: true,
+      json: async () => [makeLibraryDeck('d4', true)],
+    })
+
+    renderPage()
+
+    const trigger = await screen.findByRole('button', { name: /more actions/i })
+    fireEvent.click(trigger)
+
+    // The DropdownMenuItem "Remove from library" should be visible
+    const removeItem = await screen.findByText('Remove from library')
+    expect(removeItem).toBeTruthy()
+  })
+
+  it('LIB-02c: clicking "Remove from library" opens AlertDialog with correct title and body', async () => {
+    mockApiGet.mockResolvedValue({
+      ok: true,
+      json: async () => [makeLibraryDeck('d4', true)],
+    })
+
+    renderPage()
+
+    const trigger = await screen.findByRole('button', { name: /more actions/i })
+    fireEvent.click(trigger)
+
+    const removeItem = await screen.findByText('Remove from library')
+    fireEvent.click(removeItem)
+
+    // AlertDialog should appear with the title and body copy
+    await screen.findByText('Remove from library?')
+    await screen.findByText(/Your study progress for this deck will be preserved/)
+  })
+
+  it('LIB-02d: clicking destructive "Remove Deck" confirm calls api.delete with /library URL and removes deck from list', async () => {
+    mockApiGet.mockResolvedValue({
+      ok: true,
+      json: async () => [makeLibraryDeck('d4', true)],
+    })
+
+    const { toast } = await import('sonner')
+
+    renderPage()
+
+    const trigger = await screen.findByRole('button', { name: /more actions/i })
+    fireEvent.click(trigger)
+
+    const removeItem = await screen.findByText('Remove from library')
+    fireEvent.click(removeItem)
+
+    // Confirm dialog shown — click "Remove Deck" button
+    const confirmBtn = await screen.findByText('Remove Deck')
+    fireEvent.click(confirmBtn)
+
+    await waitFor(() => {
+      expect(mockApiDelete).toHaveBeenCalledWith('/api/decks/d4/library')
+    })
+
+    await waitFor(() => {
+      expect(toast.success).toHaveBeenCalled()
+    })
+
+    // Deck card should be removed from the list
+    await waitFor(() => {
+      expect(screen.queryByText('Library Deck d4')).toBeNull()
+    })
+  })
+
+  it('LIB-02e: owned deck (ownerId === user-1) does NOT show the Remove from library menu item', async () => {
+    mockApiGet.mockResolvedValue({
+      ok: true,
+      json: async () => [makeDeck('d5', true)],
+    })
+
+    renderPage()
+
+    // Wait for deck to load
+    await screen.findByText('Deck d5')
+
+    // The "More actions" trigger for owned deck should exist but no "Remove from library"
+    const trigger = await screen.findByRole('button', { name: /more actions/i })
+    fireEvent.click(trigger)
+
+    // Should show Edit and Delete but NOT "Remove from library"
+    await screen.findByText('Edit')
+    await screen.findByText('Delete')
+    expect(screen.queryByText('Remove from library')).toBeNull()
   })
 })
