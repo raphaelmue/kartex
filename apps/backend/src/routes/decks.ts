@@ -316,4 +316,22 @@ decks.patch('/:id/library', async (c) => {
   return c.json({ isActive: updated.isActive }, 200)
 })
 
+// ─── DELETE /api/decks/:id/library — remove public deck from own library ──────
+// D-08: only the share recipient may call this. Deletes DeckShare row only;
+// CardProgress rows are preserved (D-09).
+decks.delete('/:id/library', async (c) => {
+  const { id } = c.req.param()
+  const userId = c.get('userId')
+
+  const share = await prisma.deckShare.findUnique({
+    where: { deckId_sharedWithUserId: { deckId: id, sharedWithUserId: userId } },
+  })
+  if (!share) return c.json({ error: 'Forbidden.' }, 403)
+
+  await prisma.deckShare.delete({
+    where: { deckId_sharedWithUserId: { deckId: id, sharedWithUserId: userId } },
+  })
+  return c.body(null, 204)
+})
+
 export { decks as decksRouter }
