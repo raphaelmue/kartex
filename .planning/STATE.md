@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.3.2
 milestone_name: UX Polish & Changelog
-status: verifying
-stopped_at: Completed 19-01-PLAN.md
-last_updated: "2026-06-13T11:23:17.817Z"
-last_activity: 2026-06-13 -- Phase 19 execution started
+status: idle
+stopped_at: Phase 19 verified — ready for Phase 20
+last_updated: "2026-06-13T13:35:45Z"
+last_activity: 2026-06-13 -- Phase 19 verified
 progress:
   total_phases: 8
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 1
-  completed_plans: 1
+  completed_plans: 2
   percent: 13
 ---
 
@@ -21,17 +21,17 @@ progress:
 See: .planning/PROJECT.md (updated 2026-06-13)
 
 **Core value:** A user can open their dashboard, see their due cards, and complete a spaced-repetition study session — that loop must always work.
-**Current focus:** Phase 19 — library-remove-action
+**Current focus:** Phase 20 — logo-pwa-icons
 
 ## Current Position
 
-Phase: 19 (library-remove-action) — EXECUTING
+Phase: 19 (library-remove-action) — COMPLETE
 Plan: 1 of 1
-Status: Phase complete — ready for verification
-Last activity: 2026-06-13 -- Phase 19 execution started
+Status: Verified — all 6 must-haves passed
+Last activity: 2026-06-13 -- Phase 19 verified (LIB-02 complete)
 
 ```
-v1.3.2 Progress: [                    ] 0% (0/3 phases)
+v1.3.2 Progress: [====                ] 25% (1/4 phases)
 ```
 
 ## Performance Metrics
@@ -179,7 +179,6 @@ Recent decisions affecting current work:
 
 **Captured todos:**
 
-- [2026-06-13] Remove public deck from personal library (`2026-06-13-remove-public-deck-from-library.md`) — maps to Phase 19
 - [2026-06-13] Redesign Kartex logo with K motif on learning card (`2026-06-13-redesign-kartex-logo-with-k-motif-on-learning-card.md`) — maps to Phase 20
 - [2026-06-13] Verify and fix study session cross-deck shuffle (`2026-06-13-verify-and-fix-study-session-cross-deck-shuffle.md`) — maps to Phase 22
 - [2026-06-13] Show deck badge on study session cards (`2026-06-13-show-deck-badge-on-study-session-cards.md`) — maps to Phase 22
@@ -190,6 +189,7 @@ Recent decisions affecting current work:
 - [2026-05-28] Migrate to Prisma 7 — done as quick task 260530-002
 - [2026-05-28] Add dark mode — done as quick task 260530-003
 - [2026-05-28] Add GitHub Actions CI pipeline — done via Phase 6 (06-03) + quick task 260530-005
+- [2026-06-13] Remove public deck from personal library (LIB-02) — done in Phase 19
 - [2026-06-13] Add tag-based topic filter, card limit, footer, i18n, collapsible sidebar, deck rotation, README, PWA, SM-2 scaling, .kartex import update, learning statistics, library activate/deactivate, deck card button overflow — all resolved
 
 ### Blockers/Concerns
@@ -223,4 +223,4 @@ Items acknowledged and deferred at milestone close on 2026-05-30:
 
 Last session: 2026-06-13T11:23:17.810Z
 Stopped at: Completed 19-01-PLAN.md
-Resume with: `/gsd:plan-phase 19`
+Resume with: `/gsd:plan-phase 20`
