@@ -192,7 +192,12 @@ Full details: [.planning/milestones/v1.3.1-ROADMAP.md](milestones/v1.3.1-ROADMAP
   3. The removed deck disappears from the /study queue immediately — due cards from that deck are no longer surfaced in any study session
   4. Removing a deck from the library does not affect other users' library entries or the deck owner's deck
 
-**Plans**: TBD
+**Plans**: 1 plan
+
+Plans:
+- [ ] 19-01-PLAN.md — Backend DELETE /api/decks/:id/library route + i18n keys + DecksPage library-card remove UI (dropdown, AlertDialog, optimistic removal)
+
+> Note: per CONTEXT D-01/D-02 the remove action lives on the Decks page library-deck cards (⋮ menu), not the Explore page. Success criterion 1 (Explore-page placement) is superseded by D-01; criteria 2–4 are unchanged.
 **UI hint**: yes
 
 ### Phase 20: Logo & PWA Icons
