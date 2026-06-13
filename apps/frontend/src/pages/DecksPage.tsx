@@ -64,6 +64,7 @@ export function DecksPage() {
   const [modalOpen, setModalOpen] = useState(false)
   const [editDeck, setEditDeck] = useState<DeckListItem | undefined>(undefined)
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null)
+  const [removeTargetId, setRemoveTargetId] = useState<string | null>(null)
 
   useEffect(() => {
     document.title = t('decks.title')
@@ -91,6 +92,21 @@ export function DecksPage() {
         toast.success(t('decks.deckDeleted'))
         setDecks((prev) => prev.filter((d) => d.id !== id))
         setDeleteTargetId(null)
+      } else {
+        toast.error(t('common.somethingWrong'))
+      }
+    } catch {
+      toast.error(t('common.somethingWrong'))
+    }
+  }
+
+  const handleRemoveFromLibrary = async (id: string) => {
+    try {
+      const res = await api.delete(`/api/decks/${id}/library`)
+      if (res.ok) {
+        toast.success(t('decks.removedFromLibraryToast'))
+        setDecks((prev) => prev.filter((d) => d.id !== id))
+        setRemoveTargetId(null)
       } else {
         toast.error(t('common.somethingWrong'))
       }
@@ -199,6 +215,21 @@ export function DecksPage() {
                   <Button size="sm" variant="outline" asChild>
                     <Link to={`/decks/${deck.id}`}>{t('decks.openButton')}</Link>
                   </Button>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button size="sm" variant="ghost" aria-label={t('decks.moreActions')}>
+                        <MoreVertical className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem
+                        className="text-destructive focus:text-destructive"
+                        onClick={() => setRemoveTargetId(deck.id)}
+                      >
+                        {t('decks.removeFromLibrary')}
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </CardFooter>
               ) : (
                 <CardFooter className="flex items-center gap-2">
@@ -265,6 +296,30 @@ export function DecksPage() {
               onClick={() => { if (deleteTargetId) void handleDelete(deleteTargetId) }}
             >
               {t('decks.deleteButton')}
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog open={removeTargetId !== null} onOpenChange={(open) => { if (!open) setRemoveTargetId(null) }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {t('decks.removeFromLibraryTitle')}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {t('decks.removeFromLibraryBody')}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>
+              {t('common.cancel')}
+            </AlertDialogCancel>
+            <Button
+              variant="destructive"
+              onClick={() => { if (removeTargetId) void handleRemoveFromLibrary(removeTargetId) }}
+            >
+              {t('decks.removeFromLibraryConfirm')}
             </Button>
           </AlertDialogFooter>
         </AlertDialogContent>

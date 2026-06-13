@@ -293,6 +293,8 @@ describe('DecksPage library deck remove from library (LIB-02)', () => {
     renderPage()
 
     const trigger = await screen.findByRole('button', { name: /more actions/i })
+    // Radix UI DropdownMenu in JSDOM requires pointerdown before click to open
+    fireEvent.pointerDown(trigger)
     fireEvent.click(trigger)
 
     // The DropdownMenuItem "Remove from library" should be visible
@@ -309,6 +311,7 @@ describe('DecksPage library deck remove from library (LIB-02)', () => {
     renderPage()
 
     const trigger = await screen.findByRole('button', { name: /more actions/i })
+    fireEvent.pointerDown(trigger)
     fireEvent.click(trigger)
 
     const removeItem = await screen.findByText('Remove from library')
@@ -330,6 +333,7 @@ describe('DecksPage library deck remove from library (LIB-02)', () => {
     renderPage()
 
     const trigger = await screen.findByRole('button', { name: /more actions/i })
+    fireEvent.pointerDown(trigger)
     fireEvent.click(trigger)
 
     const removeItem = await screen.findByText('Remove from library')
@@ -366,6 +370,7 @@ describe('DecksPage library deck remove from library (LIB-02)', () => {
 
     // The "More actions" trigger for owned deck should exist but no "Remove from library"
     const trigger = await screen.findByRole('button', { name: /more actions/i })
+    fireEvent.pointerDown(trigger)
     fireEvent.click(trigger)
 
     // Should show Edit and Delete but NOT "Remove from library"
