@@ -51,17 +51,17 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| LIB-02 | — | Pending |
-| BRAND-01 | — | Pending |
-| BRAND-02 | — | Pending |
-| CHNG-01 | — | Pending |
-| CHNG-02 | — | Pending |
+| LIB-02 | Phase 19 | Pending |
+| BRAND-01 | Phase 20 | Pending |
+| BRAND-02 | Phase 20 | Pending |
+| CHNG-01 | Phase 21 | Pending |
+| CHNG-02 | Phase 21 | Pending |
 
 **Coverage:**
 - v1.3.2 requirements: 5 total
-- Mapped to phases: 0 (roadmap pending)
-- Unmapped: 5 ⚠️
+- Mapped to phases: 5 ✓
+- Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-06-13*
-*Last updated: 2026-06-13 — initial v1.3.2 definition*
+*Last updated: 2026-06-13 — traceability updated after v1.3.2 roadmap creation*

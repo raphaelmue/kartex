@@ -2,11 +2,11 @@
 gsd_state_version: 1.0
 milestone: v1.3.2
 milestone_name: UX Polish & Changelog
-status: planning
-last_updated: "2026-06-13T09:18:55.168Z"
+status: active
+last_updated: "2026-06-13T00:00:00.000Z"
 last_activity: 2026-06-13
 progress:
-  total_phases: 0
+  total_phases: 3
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -17,17 +17,21 @@ progress:
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-06-12)
+See: .planning/PROJECT.md (updated 2026-06-13)
 
 **Core value:** A user can open their dashboard, see their due cards, and complete a spaced-repetition study session — that loop must always work.
-**Current focus:** Planning next milestone (v1.4 — not yet defined)
+**Current focus:** v1.3.2 UX Polish & Changelog — Phase 19: Library Remove Action
 
 ## Current Position
 
-Phase: Not started (defining requirements)
+Phase: 19 — Library Remove Action
 Plan: —
-Status: Defining requirements
-Last activity: 2026-06-13 — Milestone v1.3.2 started
+Status: Roadmap defined — ready to plan Phase 19
+Last activity: 2026-06-13 — v1.3.2 roadmap created (Phases 19, 20, 21)
+
+```
+v1.3.2 Progress: [                    ] 0% (0/3 phases)
+```
 
 ## Performance Metrics
 
@@ -170,14 +174,10 @@ Recent decisions affecting current work:
 
 ### Pending Todos
 
-**v1.3.0 active:**
-
-- Phase 16: Import Update Feature — preview + apply endpoints, DeckUpdateModal, DeckDetailPage update flow — IMP-01, IMP-02, IMP-03, IMP-04, IMP-05, IMP-06
-
 **Captured todos:**
 
-- [2026-06-13] Remove public deck from personal library (`2026-06-13-remove-public-deck-from-library.md`)
-- [2026-06-13] Redesign Kartex logo with K motif on learning card (`2026-06-13-redesign-kartex-logo-with-k-motif-on-learning-card.md`)
+- [2026-06-13] Remove public deck from personal library (`2026-06-13-remove-public-deck-from-library.md`) — maps to Phase 19
+- [2026-06-13] Redesign Kartex logo with K motif on learning card (`2026-06-13-redesign-kartex-logo-with-k-motif-on-learning-card.md`) — maps to Phase 20
 
 **Completed:**
 
@@ -216,6 +216,6 @@ Items acknowledged and deferred at milestone close on 2026-05-30:
 
 ## Session Continuity
 
-Last session: 2026-06-13T09:09:15.735Z
-Stopped at: context exhaustion at 75% (2026-06-13)
-Resume with: None — all plans complete
+Last session: 2026-06-13T00:00:00.000Z
+Stopped at: v1.3.2 roadmap created — Phases 19, 20, 21 defined
+Resume with: `/gsd:plan-phase 19`

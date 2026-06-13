@@ -7,6 +7,7 @@
 - ✅ **v1.2 Study Control & PWA** — Phases 10–13 (shipped 2026-06-04) — [archive](milestones/v1.2-ROADMAP.md)
 - ✅ **v1.3.0 Stats & Import Update** — Phases 14–16 (shipped 2026-06-11) — [archive](milestones/v1.3.0-ROADMAP.md)
 - ✅ **v1.3.1 Bug Fixes & Mobile Polish** — Phases 17–18 (shipped 2026-06-12) — [archive](milestones/v1.3.1-ROADMAP.md)
+- 🔄 **v1.3.2 UX Polish & Changelog** — Phases 19–21 (in progress)
 
 ## Phases
 
@@ -67,6 +68,12 @@ Full details: [.planning/milestones/v1.3.0-ROADMAP.md](milestones/v1.3.0-ROADMAP
 Full details: [.planning/milestones/v1.3.1-ROADMAP.md](milestones/v1.3.1-ROADMAP.md)
 
 </details>
+
+### v1.3.2 UX Polish & Changelog
+
+- [ ] **Phase 19: Library Remove Action** - User can permanently remove a public/shared deck from their personal library
+- [ ] **Phase 20: Logo & PWA Icons** - New "K" on learning-card motif SVG replaces the existing logo; PWA icons regenerated
+- [ ] **Phase 21: Changelog** - CHANGELOG.md backfilled for all past milestones with structured, user-facing entries
 
 ---
 
@@ -172,6 +179,50 @@ Full details: [.planning/milestones/v1.3.1-ROADMAP.md](milestones/v1.3.1-ROADMAP
 - [x] 13-02-PLAN.md — Fix stale sections in docs/design.md: remove Nginx/pnpm references, update architecture diagram, services table, data model, Docker Compose example (DOCS-02)
 - [x] 13-03-PLAN.md — Verify docs/kartex-format.md accuracy against parser source; fix any discrepancies found (DOCS-03)
 
+### Phase 19: Library Remove Action
+
+**Goal**: Users can permanently remove a public/shared deck from their personal library, ending its effect on their study queue
+**Depends on**: Phase 18 (DeckShare.isActive field and library toggle infrastructure)
+**Requirements**: LIB-02
+**Success Criteria** (what must be TRUE):
+
+  1. On the Explore page, a library deck (one the user has already added) shows a "Remove from library" action alongside the existing active/inactive toggle
+  2. Confirming the remove action deletes the DeckShare row for that user; the deck no longer appears in the user's library view after the page updates
+  3. The removed deck disappears from the /study queue immediately — due cards from that deck are no longer surfaced in any study session
+  4. Removing a deck from the library does not affect other users' library entries or the deck owner's deck
+
+**Plans**: TBD
+**UI hint**: yes
+
+### Phase 20: Logo & PWA Icons
+
+**Goal**: The app displays a new "K" on learning-card motif SVG in the header and browser tab, with PWA icons regenerated to match
+**Depends on**: Phase 19 (no technical dependency — ordered for logical milestone flow)
+**Requirements**: BRAND-01, BRAND-02
+**Success Criteria** (what must be TRUE):
+
+  1. The AppShell header displays the new SVG logo featuring a stylised "K" on a learning-card motif; the old placeholder logo is no longer visible
+  2. The browser tab favicon reflects the new logo design
+  3. Installing the app as a PWA shows the new logo in the home screen icon (192×192) and splash screen icon (512×512 maskable); the apple-touch-icon (180×180) also uses the new design
+  4. Running `@vite-pwa/assets-generator` with the new SVG source produces all required icon sizes without manual intervention
+
+**Plans**: TBD
+**UI hint**: yes
+
+### Phase 21: Changelog
+
+**Goal**: Every shipped release has a durable, human-readable record at the repo root that any user or contributor can read without accessing git history
+**Depends on**: Phase 20 (CHANGELOG.md covers v1.3.2 which is complete only after Phase 20)
+**Requirements**: CHNG-01, CHNG-02
+**Success Criteria** (what must be TRUE):
+
+  1. CHANGELOG.md exists at the repo root and contains a versioned entry for each past milestone: v1.0, v1.1, v1.2, v1.3.0, v1.3.1, and v1.3.2
+  2. Each version entry lists user-facing change summary bullets that describe what changed from the user's perspective (not implementation details)
+  3. Each version entry lists the requirement IDs that were satisfied (e.g. LIB-01, MOB-01)
+  4. Each version entry includes a "Breaking Changes" section (populated or explicitly "None") and a "Migration Notes" section covering DB migrations and env var changes (populated or explicitly "None")
+
+**Plans**: TBD
+
 ## Progress
 
 | Phase | Milestone | Plans Complete | Status | Completed |
@@ -194,3 +245,6 @@ Full details: [.planning/milestones/v1.3.1-ROADMAP.md](milestones/v1.3.1-ROADMAP
 | 16. Import Update Feature | v1.3.0 | 4/4 | Complete | 2026-06-10 |
 | 17. Mobile UI Polish | v1.3.1 | 2/2 | Complete | 2026-06-11 |
 | 18. Library Deck Toggle | v1.3.1 | 2/2 | Complete | 2026-06-12 |
+| 19. Library Remove Action | v1.3.2 | 0/? | Not started | - |
+| 20. Logo & PWA Icons | v1.3.2 | 0/? | Not started | - |
+| 21. Changelog | v1.3.2 | 0/? | Not started | - |
