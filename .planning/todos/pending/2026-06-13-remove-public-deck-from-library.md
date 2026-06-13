@@ -2,6 +2,7 @@
 created: 2026-06-13T08:52:26.976Z
 title: Remove public deck from personal library
 area: ui
+resolves_phase: 19
 files:
   - apps/frontend/src/pages/DecksPage.tsx
   - apps/frontend/src/pages/ExplorePage.tsx

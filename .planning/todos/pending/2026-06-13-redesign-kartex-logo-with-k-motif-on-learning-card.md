@@ -2,6 +2,7 @@
 created: 2026-06-13T09:13:23.680Z
 title: Redesign Kartex logo with K motif on learning card
 area: ui
+resolves_phase: 20
 files: []
 ---
 
