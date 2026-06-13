@@ -55,9 +55,7 @@ All values inherited from the existing Kartex neutral-scale shadcn theme. Phase 
 | Role | Size | Weight | Line Height | Usage in this phase |
 |------|------|--------|-------------|---------------------|
 | Body | 14px (text-sm) | 400 | 1.5 | AlertDialogDescription, DropdownMenuItem labels |
-| Label | 14px (text-sm) | 500 | 1.25 | AlertDialogTitle (shadcn default renders as `text-lg font-semibold` — see note) |
 | Heading | 18px (text-lg) | 600 (semibold) | 1.25 | AlertDialogTitle — inherits `AlertDialogTitle` shadcn style |
-| Display | — | — | — | Not used in this phase |
 
 Note: `AlertDialogTitle` applies `text-lg font-semibold` internally via shadcn class definition. Do not override.
 
@@ -146,7 +144,7 @@ Structure mirrors the existing delete AlertDialog (lines 248–271 of `DecksPage
 | `AlertDialogTitle` | `{t('decks.removeFromLibraryTitle')}` → "Remove from library?" |
 | `AlertDialogDescription` | `{t('decks.removeFromLibraryBody')}` → "Your study progress for this deck will be preserved. You can re-add it from Explore at any time." |
 | Cancel button | `<AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>` |
-| Confirm button | `<Button variant="destructive" onClick={() => { if (removeTargetId) void handleRemoveFromLibrary(removeTargetId) }}>{t('decks.removeFromLibraryConfirm')}</Button>` |
+| Confirm button | `<Button variant="destructive" onClick={() => { if (removeTargetId) void handleRemoveFromLibrary(removeTargetId) }}>{t('decks.removeFromLibraryConfirm')}</Button>` → renders "Remove Deck" |
 
 The confirm button uses `Button variant="destructive"` (not `AlertDialogAction`) — same pattern as existing delete dialog, enabling controlled dismiss timing.
 
@@ -169,7 +167,7 @@ All copy pre-populated from D-05 and existing locale patterns.
 | DropdownMenuItem label | `decks.removeFromLibrary` | "Remove from library" |
 | AlertDialog title | `decks.removeFromLibraryTitle` | "Remove from library?" |
 | AlertDialog body | `decks.removeFromLibraryBody` | "Your study progress for this deck will be preserved. You can re-add it from Explore at any time." |
-| AlertDialog confirm button | `decks.removeFromLibraryConfirm` | "Remove" |
+| AlertDialog confirm button | `decks.removeFromLibraryConfirm` | "Remove Deck" |
 | Success toast | `decks.removedFromLibraryToast` | "Deck removed from your library" |
 | Cancel button | `common.cancel` | "Cancel" — already defined, reused |
 | Trigger aria-label | `decks.moreActions` | "More actions" — already defined, reused |
@@ -178,7 +176,7 @@ All copy pre-populated from D-05 and existing locale patterns.
 
 **Error state copy:** `common.somethingWrong` — "Something went wrong. Please try again." — already defined, reused for API failure.
 
-**Destructive confirmation approach:** AlertDialog with explicit destructive Button (variant="destructive") labeled "Remove". Title uses question form: "Remove from library?" — consistent with existing delete pattern "Delete deck?".
+**Destructive confirmation approach:** AlertDialog with explicit destructive Button (variant="destructive") labeled "Remove Deck". Title uses question form: "Remove from library?" — consistent with existing delete pattern "Delete deck?".
 
 **German locale:** All 5 new keys (`decks.removeFromLibrary`, `decks.removeFromLibraryTitle`, `decks.removeFromLibraryBody`, `decks.removeFromLibraryConfirm`, `decks.removedFromLibraryToast`) must be added to `de.json` in the same commit as `en.json` (D-10, pattern from decision 10-05).
 
