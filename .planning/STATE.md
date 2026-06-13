@@ -177,9 +177,6 @@ Recent decisions affecting current work:
 
 **Captured todos:**
 
-- [2026-06-07] Add learning statistics to dashboard — overall progress, easy/hard card counts, retention rate, per-deck stats (`2026-06-07-add-learning-statistics.md`) — RESOLVED (Phase 15 complete)
-- [2026-06-11] Cannot activate / deactivate public decks added to library (`2026-06-11-cannot-activate-deactivate-library-decks.md`)
-- [2026-06-11] Deck card buttons always overflowing on mobile and desktop (`2026-06-11-deck-card-buttons-overflowing-layout.md`)
 - [2026-06-13] Remove public deck from personal library (`2026-06-13-remove-public-deck-from-library.md`)
 
 **Completed:**
@@ -188,6 +185,7 @@ Recent decisions affecting current work:
 - [2026-05-28] Migrate to Prisma 7 — done as quick task 260530-002
 - [2026-05-28] Add dark mode — done as quick task 260530-003
 - [2026-05-28] Add GitHub Actions CI pipeline — done via Phase 6 (06-03) + quick task 260530-005
+- [2026-06-13] Add tag-based topic filter, card limit, footer, i18n, collapsible sidebar, deck rotation, README, PWA, SM-2 scaling, .kartex import update, learning statistics, library activate/deactivate, deck card button overflow — all resolved
 
 ### Blockers/Concerns
 
