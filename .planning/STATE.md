@@ -180,6 +180,7 @@ Recent decisions affecting current work:
 - [2026-06-07] Add learning statistics to dashboard — overall progress, easy/hard card counts, retention rate, per-deck stats (`2026-06-07-add-learning-statistics.md`) — RESOLVED (Phase 15 complete)
 - [2026-06-11] Cannot activate / deactivate public decks added to library (`2026-06-11-cannot-activate-deactivate-library-decks.md`)
 - [2026-06-11] Deck card buttons always overflowing on mobile and desktop (`2026-06-11-deck-card-buttons-overflowing-layout.md`)
+- [2026-06-13] Remove public deck from personal library (`2026-06-13-remove-public-deck-from-library.md`)
 
 **Completed:**
 
