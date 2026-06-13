@@ -178,6 +178,7 @@ Recent decisions affecting current work:
 **Captured todos:**
 
 - [2026-06-13] Remove public deck from personal library (`2026-06-13-remove-public-deck-from-library.md`)
+- [2026-06-13] Redesign Kartex logo with K motif on learning card (`2026-06-13-redesign-kartex-logo-with-k-motif-on-learning-card.md`)
 
 **Completed:**
 
