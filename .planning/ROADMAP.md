@@ -7,7 +7,7 @@
 - ✅ **v1.2 Study Control & PWA** — Phases 10–13 (shipped 2026-06-04) — [archive](milestones/v1.2-ROADMAP.md)
 - ✅ **v1.3.0 Stats & Import Update** — Phases 14–16 (shipped 2026-06-11) — [archive](milestones/v1.3.0-ROADMAP.md)
 - ✅ **v1.3.1 Bug Fixes & Mobile Polish** — Phases 17–18 (shipped 2026-06-12) — [archive](milestones/v1.3.1-ROADMAP.md)
-- 🔄 **v1.3.2 UX Polish & Changelog** — Phases 19–21 (in progress)
+- 🔄 **v1.3.2 UX Polish & Changelog** — Phases 19–22 (in progress)
 
 ## Phases
 
@@ -74,6 +74,7 @@ Full details: [.planning/milestones/v1.3.1-ROADMAP.md](milestones/v1.3.1-ROADMAP
 - [ ] **Phase 19: Library Remove Action** - User can permanently remove a public/shared deck from their personal library
 - [ ] **Phase 20: Logo & PWA Icons** - New "K" on learning-card motif SVG replaces the existing logo; PWA icons regenerated
 - [ ] **Phase 21: Changelog** - CHANGELOG.md backfilled for all past milestones with structured, user-facing entries
+- [ ] **Phase 22: Study Session UX** - Deck badge on study cards + verify/fix cross-deck shuffle
 
 ---
 
@@ -223,6 +224,21 @@ Full details: [.planning/milestones/v1.3.1-ROADMAP.md](milestones/v1.3.1-ROADMAP
 
 **Plans**: TBD
 
+### Phase 22: Study Session UX
+
+**Goal**: Study cards show which deck they belong to; cross-deck shuffle confirmed correct
+**Depends on**: Phase 21 (no technical dependency — ordered for logical milestone completion)
+**Requirements**: STUDY-04, STUDY-05
+**Success Criteria** (what must be TRUE):
+
+  1. During any study session (global SR or deck-specific), each card displays a badge showing the source deck name — visible on both front and back of the card
+  2. The badge visual style is consistent with the existing study mode badge (e.g. "Intensive") — same placement area, same design language
+  3. The global /study session verifiably shuffles cards across all active decks; a session with cards from 3 decks will show a mixed sequence, not deck-grouped blocks
+  4. If a shuffle bug is found (cards ordered per-deck), it is fixed; if the current implementation is correct, it is confirmed by runtime test and the requirement is closed
+
+**Plans**: TBD
+**UI hint**: yes
+
 ## Progress
 
 | Phase | Milestone | Plans Complete | Status | Completed |
@@ -248,3 +264,4 @@ Full details: [.planning/milestones/v1.3.1-ROADMAP.md](milestones/v1.3.1-ROADMAP
 | 19. Library Remove Action | v1.3.2 | 0/? | Not started | - |
 | 20. Logo & PWA Icons | v1.3.2 | 0/? | Not started | - |
 | 21. Changelog | v1.3.2 | 0/? | Not started | - |
+| 22. Study Session UX | v1.3.2 | 0/? | Not started | - |

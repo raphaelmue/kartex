@@ -5,9 +5,9 @@ milestone_name: UX Polish & Changelog
 status: planning
 stopped_at: Phase 19 context gathered
 last_updated: "2026-06-13T10:06:48.221Z"
-last_activity: 2026-06-13 — v1.3.2 roadmap created (Phases 19, 20, 21)
+last_activity: 2026-06-13 — Phase 22 added to v1.3.2 (Study Session UX: deck badge + shuffle verify)
 progress:
-  total_phases: 7
+  total_phases: 8
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -179,6 +179,8 @@ Recent decisions affecting current work:
 
 - [2026-06-13] Remove public deck from personal library (`2026-06-13-remove-public-deck-from-library.md`) — maps to Phase 19
 - [2026-06-13] Redesign Kartex logo with K motif on learning card (`2026-06-13-redesign-kartex-logo-with-k-motif-on-learning-card.md`) — maps to Phase 20
+- [2026-06-13] Verify and fix study session cross-deck shuffle (`2026-06-13-verify-and-fix-study-session-cross-deck-shuffle.md`) — maps to Phase 22
+- [2026-06-13] Show deck badge on study session cards (`2026-06-13-show-deck-badge-on-study-session-cards.md`) — maps to Phase 22
 
 **Completed:**
 
