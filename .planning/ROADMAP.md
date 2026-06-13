@@ -193,8 +193,8 @@ Full details: [.planning/milestones/v1.3.1-ROADMAP.md](milestones/v1.3.1-ROADMAP
   4. Removing a deck from the library does not affect other users' library entries or the deck owner's deck
 
 **Plans**: 1 plan
-
 Plans:
+
 - [ ] 19-01-PLAN.md — Backend DELETE /api/decks/:id/library route + i18n keys + DecksPage library-card remove UI (dropdown, AlertDialog, optimistic removal)
 
 > Note: per CONTEXT D-01/D-02 the remove action lives on the Decks page library-deck cards (⋮ menu), not the Explore page. Success criterion 1 (Explore-page placement) is superseded by D-01; criteria 2–4 are unchanged.

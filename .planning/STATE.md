@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v1.3.2
 milestone_name: UX Polish & Changelog
 status: planning
-stopped_at: Phase 19 context gathered
-last_updated: "2026-06-13T10:06:48.221Z"
-last_activity: 2026-06-13 — Phase 22 added to v1.3.2 (Study Session UX: deck badge + shuffle verify)
+stopped_at: Phase 19 UI-SPEC approved
+last_updated: "2026-06-13T11:11:11.980Z"
+last_activity: 2026-06-13 — v1.3.2 roadmap created (Phases 19, 20, 21)
 progress:
   total_phases: 8
   completed_phases: 0
@@ -219,6 +219,6 @@ Items acknowledged and deferred at milestone close on 2026-05-30:
 
 ## Session Continuity
 
-Last session: 2026-06-13T10:06:48.205Z
-Stopped at: Phase 19 context gathered
+Last session: 2026-06-13T10:44:41.591Z
+Stopped at: Phase 19 UI-SPEC approved
 Resume with: `/gsd:plan-phase 19`
