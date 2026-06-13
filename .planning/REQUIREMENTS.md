@@ -7,7 +7,7 @@
 
 ### Library Management
 
-- [ ] **LIB-02**: User can permanently remove a public/shared deck from their personal library (Explore page "Remove from library" action; deck disappears from library view and no longer affects study queue)
+- [x] **LIB-02**: User can permanently remove a public/shared deck from their personal library (Explore page "Remove from library" action; deck disappears from library view and no longer affects study queue)
 
 ### Branding
 
@@ -56,7 +56,7 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| LIB-02 | Phase 19 | Pending |
+| LIB-02 | Phase 19 | Complete |
 | BRAND-01 | Phase 20 | Pending |
 | BRAND-02 | Phase 20 | Pending |
 | CHNG-01 | Phase 21 | Pending |
@@ -65,6 +65,7 @@
 | STUDY-05 | Phase 22 | Pending |
 
 **Coverage:**
+
 - v1.3.2 requirements: 7 total
 - Mapped to phases: 7 ✓
 - Unmapped: 0 ✓

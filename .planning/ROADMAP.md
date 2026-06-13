@@ -71,7 +71,7 @@ Full details: [.planning/milestones/v1.3.1-ROADMAP.md](milestones/v1.3.1-ROADMAP
 
 ### v1.3.2 UX Polish & Changelog
 
-- [ ] **Phase 19: Library Remove Action** - User can permanently remove a public/shared deck from their personal library
+- [x] **Phase 19: Library Remove Action** - User can permanently remove a public/shared deck from their personal library (completed 2026-06-13)
 - [ ] **Phase 20: Logo & PWA Icons** - New "K" on learning-card motif SVG replaces the existing logo; PWA icons regenerated
 - [ ] **Phase 21: Changelog** - CHANGELOG.md backfilled for all past milestones with structured, user-facing entries
 - [ ] **Phase 22: Study Session UX** - Deck badge on study cards + verify/fix cross-deck shuffle
@@ -195,7 +195,7 @@ Full details: [.planning/milestones/v1.3.1-ROADMAP.md](milestones/v1.3.1-ROADMAP
 **Plans**: 1 plan
 Plans:
 
-- [ ] 19-01-PLAN.md — Backend DELETE /api/decks/:id/library route + i18n keys + DecksPage library-card remove UI (dropdown, AlertDialog, optimistic removal)
+- [x] 19-01-PLAN.md — Backend DELETE /api/decks/:id/library route + i18n keys + DecksPage library-card remove UI (dropdown, AlertDialog, optimistic removal)
 
 > Note: per CONTEXT D-01/D-02 the remove action lives on the Decks page library-deck cards (⋮ menu), not the Explore page. Success criterion 1 (Explore-page placement) is superseded by D-01; criteria 2–4 are unchanged.
 **UI hint**: yes
@@ -266,7 +266,7 @@ Plans:
 | 16. Import Update Feature | v1.3.0 | 4/4 | Complete | 2026-06-10 |
 | 17. Mobile UI Polish | v1.3.1 | 2/2 | Complete | 2026-06-11 |
 | 18. Library Deck Toggle | v1.3.1 | 2/2 | Complete | 2026-06-12 |
-| 19. Library Remove Action | v1.3.2 | 0/? | Not started | - |
+| 19. Library Remove Action | v1.3.2 | 1/1 | Complete   | 2026-06-13 |
 | 20. Logo & PWA Icons | v1.3.2 | 0/? | Not started | - |
 | 21. Changelog | v1.3.2 | 0/? | Not started | - |
 | 22. Study Session UX | v1.3.2 | 0/? | Not started | - |
