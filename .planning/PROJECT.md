@@ -1,8 +1,8 @@
 # Kartex
 
-## Current State: v1.3.1 — SHIPPED 2026-06-12
+## Current State: v1.3.2 — IN PROGRESS
 
-**Current milestone:** v1.3.1 Bug Fixes & Mobile Polish — SHIPPED 2026-06-12
+**Current milestone:** v1.3.2 UX Polish & Changelog — IN PROGRESS
 **Phases shipped:** 1–18 (v1.0: 1–6, v1.1: 7–9, v1.2: 10–13, v1.3.0: 14–16, v1.3.1: 17–18)
 **Total plans shipped:** 56 (18 + 8 + 16 + 10 + 4)
 **TypeScript LOC:** ~11,000 (estimate; +1,317 insertions in v1.3.1)
@@ -12,7 +12,14 @@
 - Deck card action buttons: ⋮ DropdownMenu + shared AlertDialog — fully contained at all viewport sizes (DECK-05)
 - Library deck toggle: users can activate/deactivate public/shared decks from Explore page; study queue respects per-user state (LIB-01)
 
-**Next milestone:** v1.4 (not yet defined — run `/gsd-new-milestone` to start)
+## Current Milestone: v1.3.2 UX Polish & Changelog
+
+**Goal:** Round off two UX rough edges and add a proper CHANGELOG.md so every shipped release has a durable, human-readable record.
+
+**Target features:**
+- Remove deck from library — users can permanently remove a public/shared deck from their personal library
+- Logo redesign — new SVG logo with "K" on a learning-card motif, PWA icons regenerated
+- CHANGELOG.md — user-facing change summary + REQ-IDs + breaking changes + migration notes, backfilled for all past milestones
 
 ## What This Is
 
@@ -96,7 +103,13 @@ A user can open their dashboard, see their due cards, and complete a spaced-repe
 
 ### Active
 
-*(none — v1.3.1 shipped all scoped requirements; run `/gsd-new-milestone` to define v1.4)*
+*(v1.3.2 — defined 2026-06-13)*
+
+- [ ] **LIB-02**: User can permanently remove a public/shared deck from their personal library
+- [ ] **BRAND-01**: App logo is replaced with a new SVG featuring a "K" on a learning-card motif
+- [ ] **BRAND-02**: PWA icons (192×192, 512×512, apple-touch-icon) are regenerated from the new logo
+- [ ] **CHNG-01**: CHANGELOG.md exists at repo root, backfilled for all past milestone releases (v1.0–v1.3.1)
+- [ ] **CHNG-02**: CHANGELOG.md entries include user-facing change summary, requirement IDs, breaking changes section, and migration notes per version
 
 ### Out of Scope
 
@@ -174,4 +187,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-06-12 — after v1.3.1 milestone (Bug Fixes & Mobile Polish). All 3 requirements validated: MOB-01 mobile layout, LIB-01 library deck toggle, DECK-05 deck card button overflow. No active requirements; v1.4 not yet defined.*
+*Last updated: 2026-06-13 — v1.3.2 milestone started (UX Polish & Changelog). 5 active requirements: LIB-02, BRAND-01, BRAND-02, CHNG-01, CHNG-02.*
