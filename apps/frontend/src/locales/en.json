@@ -107,7 +107,12 @@
     "failedToToggle": "Failed to update deck — try again",
     "moreActions": "More actions",
     "deleteConfirmTitle": "Delete deck?",
-    "deleteConfirmBody": "This cannot be undone."
+    "deleteConfirmBody": "This cannot be undone.",
+    "removeFromLibrary": "Remove from library",
+    "removeFromLibraryTitle": "Remove from library?",
+    "removeFromLibraryBody": "Your study progress for this deck will be preserved. You can re-add it from Explore at any time.",
+    "removeFromLibraryConfirm": "Remove Deck",
+    "removedFromLibraryToast": "Deck removed from your library"
   },
   "deckDetail": {
     "title": "Deck — Kartex",

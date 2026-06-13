@@ -107,7 +107,12 @@
     "failedToToggle": "Deck konnte nicht aktualisiert werden — bitte erneut versuchen",
     "moreActions": "Weitere Aktionen",
     "deleteConfirmTitle": "Deck löschen?",
-    "deleteConfirmBody": "Dies kann nicht rückgängig gemacht werden."
+    "deleteConfirmBody": "Dies kann nicht rückgängig gemacht werden.",
+    "removeFromLibrary": "Aus der Bibliothek entfernen",
+    "removeFromLibraryTitle": "Aus der Bibliothek entfernen?",
+    "removeFromLibraryBody": "Ihr Lernfortschritt für dieses Deck bleibt erhalten. Sie können es jederzeit über Entdecken erneut hinzufügen.",
+    "removeFromLibraryConfirm": "Deck entfernen",
+    "removedFromLibraryToast": "Deck aus Ihrer Bibliothek entfernt"
   },
   "deckDetail": {
     "title": "Deck — Kartex",
