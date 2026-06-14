@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { KartexLogo } from './KartexLogo'
 import {
   BookOpen,
   Compass,
@@ -53,12 +54,7 @@ export function AppShell() {
       <aside className="hidden md:flex w-60 bg-card border-r border-border flex-col h-full">
         {/* Brand area */}
         <div className="h-16 flex items-center gap-2 px-4">
-          <img
-            src="/logo.svg"
-            alt=""
-            className="h-8 w-8 shrink-0"
-            aria-hidden="true"
-          />
+          <KartexLogo className="h-8 w-8 shrink-0" />
           <span className="text-xl font-bold">Kartex</span>
         </div>
 
@@ -162,12 +158,7 @@ export function AppShell() {
       >
         {/* Drawer brand area */}
         <div className="h-16 flex items-center gap-2 px-4">
-          <img
-            src="/logo.svg"
-            alt=""
-            className="h-8 w-8 shrink-0"
-            aria-hidden="true"
-          />
+          <KartexLogo className="h-8 w-8 shrink-0" />
           <span className="text-xl font-bold">Kartex</span>
         </div>
 

@@ -153,22 +153,20 @@ describe('SHELL-03: App footer', () => {
   })
 })
 
-describe('BRAND-01: Logo image in brand areas', () => {
-  it('BRAND-01a: sidebar brand area renders <img src="/logo.svg"> with aria-hidden', () => {
+describe('BRAND-01: Logo SVG in brand areas', () => {
+  it('BRAND-01a: sidebar brand area renders inline SVG logo with aria-hidden', () => {
     renderAppShell()
     const aside = document.querySelector('aside')
     expect(aside).not.toBeNull()
-    const logoImg = aside!.querySelector('img[src="/logo.svg"]')
-    expect(logoImg).not.toBeNull()
-    expect(logoImg!.getAttribute('aria-hidden')).toBe('true')
+    const logoSvg = aside!.querySelector('svg[aria-hidden="true"]')
+    expect(logoSvg).not.toBeNull()
   })
 
-  it('BRAND-01b: mobile drawer brand area renders <img src="/logo.svg"> with aria-hidden', () => {
+  it('BRAND-01b: mobile drawer brand area renders inline SVG logo with aria-hidden', () => {
     renderAppShell()
     const drawer = document.getElementById('mobile-nav-drawer')
     expect(drawer).not.toBeNull()
-    const logoImg = drawer!.querySelector('img[src="/logo.svg"]')
-    expect(logoImg).not.toBeNull()
-    expect(logoImg!.getAttribute('aria-hidden')).toBe('true')
+    const logoSvg = drawer!.querySelector('svg[aria-hidden="true"]')
+    expect(logoSvg).not.toBeNull()
   })
 })

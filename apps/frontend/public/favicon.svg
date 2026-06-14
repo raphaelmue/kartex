@@ -3,9 +3,14 @@
 <svg width="100%" height="100%" viewBox="0 0 1000 1000" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M430.661,242.545L467.669,46.454C472.376,21.511 496.449,5.082 521.391,9.79L949.276,90.544C974.219,95.252 990.647,119.324 985.94,144.267L862.524,798.195C857.817,823.138 833.745,839.566 808.802,834.859L778.297,829.102L778.297,288.537C778.297,263.153 757.689,242.545 732.306,242.545L430.661,242.545Z" style="fill:rgb(57,50,161);"/>
     <path d="M250.876,903.951L154.641,916.971C129.487,920.375 106.302,902.716 102.899,877.562L13.675,218.098C10.272,192.944 27.931,169.759 53.085,166.356L484.592,107.974C509.746,104.571 532.93,122.23 536.334,147.384L549.209,242.545L296.867,242.545C271.484,242.545 250.876,263.153 250.876,288.537L250.876,903.951Z" style="fill:rgb(79,70,229);"/>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            .k-letter { fill: #ffffff; }
+        }
+    </style>
     <g transform="matrix(13.404397,0,0,13.404397,-646.126468,-10223.267687)">
         <g transform="matrix(50,0,0,50,97.929465,825.022665)">
         </g>
-        <text x="72.529px" y="825.023px" style="font-family:'Lato-Regular', 'Lato', sans-serif;font-size:50px;fill:rgb(52,52,52);">k</text>
+        <text x="72.529px" y="825.023px" class="k-letter" style="font-family:'Lato-Regular', 'Lato', sans-serif;font-size:50px;fill:rgb(52,52,52);">k</text>
     </g>
 </svg>
