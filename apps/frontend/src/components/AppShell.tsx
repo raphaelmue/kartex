@@ -155,6 +155,7 @@ export function AppShell() {
           drawerOpen ? 'translate-x-0' : '-translate-x-full',
         )}
         aria-hidden={!drawerOpen}
+        {...(!drawerOpen && { inert: '' })}
       >
         {/* Drawer brand area */}
         <div className="h-16 flex items-center gap-2 px-4">
