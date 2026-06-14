@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.3.2
 milestone_name: UX Polish & Changelog
 status: executing
-stopped_at: Completed 21-01-PLAN.md
-last_updated: "2026-06-14T19:56:00Z"
-last_activity: 2026-06-14 -- Phase 21 plan 01 complete (CHANGELOG.md written)
+stopped_at: Completed 22-01-PLAN.md
+last_updated: "2026-06-14T22:33:00.000Z"
+last_activity: 2026-06-14 -- Phase 22 Plan 1 complete (deck badge STUDY-04)
 progress:
   total_phases: 8
   completed_phases: 3
-  total_plans: 4
-  completed_plans: 3
-  percent: 37
+  total_plans: 5
+  completed_plans: 4
+  percent: 50
 ---
 
 # Project State
@@ -21,17 +21,17 @@ progress:
 See: .planning/PROJECT.md (updated 2026-06-13)
 
 **Core value:** A user can open their dashboard, see their due cards, and complete a spaced-repetition study session — that loop must always work.
-**Current focus:** Phase 22 — study session UX
+**Current focus:** Phase 22 — study-session-ux
 
 ## Current Position
 
-Phase: 22 (study-session-ux) — NEXT
-Plan: 21 of 1 complete, advancing to Phase 22
-Status: Phase 21 complete (1/1 plans done)
-Last activity: 2026-06-14 -- Phase 21 plan 01 complete (CHANGELOG.md written, CHNG-01 + CHNG-02 satisfied)
+Phase: 22 (study-session-ux) — EXECUTING
+Plan: 2 of 2
+Status: Executing Phase 22 (Plan 1 complete, Plan 2 pending)
+Last activity: 2026-06-14 -- Phase 22 Plan 1 complete (deck badge STUDY-04)
 
 ```
-v1.3.2 Progress: [======              ] 37% (3/4 phases done — phases 19, 20, 21 complete)
+v1.3.2 Progress: [========            ] 50% (4/5 plans done — phases 19, 20, 21, 22-P1 complete)
 ```
 
 ## Performance Metrics
@@ -73,6 +73,7 @@ v1.3.2 Progress: [======              ] 37% (3/4 phases done — phases 19, 20, 
 | Phase 18-library-deck-toggle P02 | 4 | 2 tasks | 3 files |
 | Phase 19-library-remove-action P01 | 7 | 3 tasks | 6 files |
 | Phase 20 P01 | 8 | 3 tasks | 11 files |
+| Phase 22-study-session-ux P01 | 2 | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -137,6 +138,7 @@ Recent decisions affecting current work:
 - 10-04: committedConfig initializer changed to always null — start screen must show before any auto-commit (Pitfall 2)
 - 10-04: deckIds filter is additive to server isActive filter — never a replacement; client cannot be trusted as sole enforcement
 - 10-04: mockParams.current vi.hoisted mutable holder in tests — default { id: 'deck-abc' }; global block sets {} in beforeEach
+- 22-01: STUDY-04 deck badge unconditional in SessionRunner progress row — not gated on studyMode; deckTitle rendered as JSX text child (D-07); study.deckBadgeAriaLabel key uses interpolation for aria-label only
 - 12-01: @vite-pwa/assets-generator minimal-2023 preset outputs apple-touch-icon-180x180.png (not apple-touch-icon.png) — must copy to apple-touch-icon.png for index.html link to resolve
 - 12-03: VitePWA placed last in plugins array (after react, wasm, topLevelAwait) — WASM compatibility (Pitfall 6)
 - 12-03: globPatterns: ['**/*.{js,css,html}'] — wasm explicitly excluded to prevent Typst WASM 28 MB precache failure

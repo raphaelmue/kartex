@@ -252,7 +252,7 @@ Plans:
 
 **Wave 1**
 
-- [ ] 22-01-PLAN.md — Deck badge in SessionRunner progress row + i18n keys (STUDY-04)
+- [x] 22-01-PLAN.md — Deck badge in SessionRunner progress row + i18n keys (STUDY-04)
 
 **Wave 2** *(blocked on Wave 1)*
 
@@ -285,4 +285,4 @@ Plans:
 | 19. Library Remove Action | v1.3.2 | 1/1 | Complete   | 2026-06-13 |
 | 20. Logo & PWA Icons | v1.3.2 | 1/1 | Complete   | 2026-06-14 |
 | 21. Changelog | v1.3.2 | 1/1 | Complete   | 2026-06-14 |
-| 22. Study Session UX | v1.3.2 | 0/2 | Planned | - |
+| 22. Study Session UX | v1.3.2 | 1/2 | Executing | - |
