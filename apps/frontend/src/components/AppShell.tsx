@@ -142,6 +142,7 @@ export function AppShell() {
       {/* Mobile backdrop — renders only when drawer is open */}
       {drawerOpen && (
         <div
+          data-testid="mobile-backdrop"
           className="fixed inset-0 bg-black/50 z-40"
           aria-hidden="true"
           onClick={() => setDrawerOpen(false)}

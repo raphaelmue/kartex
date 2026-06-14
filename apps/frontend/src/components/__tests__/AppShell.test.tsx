@@ -87,9 +87,8 @@ describe('SHELL-02: Mobile overlay drawer', () => {
     expect(drawer!.className).toContain('translate-x-0')
 
     // Click the backdrop
-    const backdrop = document.querySelector('[aria-hidden="true"].fixed.inset-0')
-    expect(backdrop).not.toBeNull()
-    fireEvent.click(backdrop!)
+    const backdrop = screen.getByTestId('mobile-backdrop')
+    fireEvent.click(backdrop)
 
     // Drawer should be closed
     expect(drawer!.className).toContain('-translate-x-full')
