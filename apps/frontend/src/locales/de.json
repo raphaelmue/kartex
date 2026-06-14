@@ -1,5 +1,6 @@
 {
   "nav": {
+    "home": "Kartex",
     "dashboard": "Dashboard",
     "decks": "Decks",
     "import": "Importieren",

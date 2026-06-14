@@ -33,10 +33,12 @@ export function AppShell() {
   const [drawerOpen, setDrawerOpen] = useState(false)
   const location = useLocation()
 
-  const currentLabel =
-    navItems.find(item => location.pathname.startsWith(item.to))
-      ? t(navItems.find(item => location.pathname.startsWith(item.to))!.labelKey)
-      : (location.pathname.startsWith('/admin') ? t('nav.admin') : 'Kartex')
+  const matchedItem = navItems.find(item => location.pathname.startsWith(item.to))
+  const currentLabel = matchedItem
+    ? t(matchedItem.labelKey)
+    : location.pathname.startsWith('/admin')
+      ? t('nav.admin')
+      : t('nav.home')
 
   const GITHUB_URL = 'https://github.com/raphaelmue/kartex'
   const DOCS_URL = 'https://github.com/raphaelmue/kartex/blob/main/docs/kartex-format.md'
