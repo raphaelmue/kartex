@@ -233,7 +233,8 @@ Plans:
 **Plans**: 1 plan
 
 Plans:
-- [ ] 21-01-PLAN.md — Write CHANGELOG.md at repo root with six milestone entries (v1.0–v1.3.2), each with user-facing bullets, requirement IDs, Breaking Changes, and Migration Notes
+
+- [x] 21-01-PLAN.md — Write CHANGELOG.md at repo root with six milestone entries (v1.0–v1.3.2), each with user-facing bullets, requirement IDs, Breaking Changes, and Migration Notes
 
 ### Phase 22: Study Session UX
 
@@ -274,5 +275,5 @@ Plans:
 | 18. Library Deck Toggle | v1.3.1 | 2/2 | Complete | 2026-06-12 |
 | 19. Library Remove Action | v1.3.2 | 1/1 | Complete   | 2026-06-13 |
 | 20. Logo & PWA Icons | v1.3.2 | 1/1 | Complete   | 2026-06-14 |
-| 21. Changelog | v1.3.2 | 1/1 | Complete | 2026-06-14 |
+| 21. Changelog | v1.3.2 | 1/1 | Complete   | 2026-06-14 |
 | 22. Study Session UX | v1.3.2 | 0/? | Not started | - |

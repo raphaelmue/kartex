@@ -1,8 +1,8 @@
 ---
 phase: 21-changelog
 verified: 2026-06-14T20:30:00Z
-status: human_needed
-score: 10/10 acceptance criteria verified; 2 content-accuracy defects require human decision
+status: verified
+score: 10/10 acceptance criteria verified; WR-01 fixed (migration note), WR-02 resolved (STUDY-04 removed from v1.1 history per user decision)
 overrides_applied: 0
 re_verification: false
 gaps: []
