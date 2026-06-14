@@ -72,7 +72,7 @@ Full details: [.planning/milestones/v1.3.1-ROADMAP.md](milestones/v1.3.1-ROADMAP
 ### v1.3.2 UX Polish & Changelog
 
 - [x] **Phase 19: Library Remove Action** - User can permanently remove a public/shared deck from their personal library (completed 2026-06-13)
-- [ ] **Phase 20: Logo & PWA Icons** - New "K" on learning-card motif SVG replaces the existing logo; PWA icons regenerated
+- [x] **Phase 20: Logo & PWA Icons** - New "K" on learning-card motif SVG replaces the existing logo; PWA icons regenerated (completed 2026-06-14)
 - [ ] **Phase 21: Changelog** - CHANGELOG.md backfilled for all past milestones with structured, user-facing entries
 - [ ] **Phase 22: Study Session UX** - Deck badge on study cards + verify/fix cross-deck shuffle
 
@@ -212,7 +212,10 @@ Plans:
   3. Installing the app as a PWA shows the new logo in the home screen icon (192×192) and splash screen icon (512×512 maskable); the apple-touch-icon (180×180) also uses the new design
   4. Running `@vite-pwa/assets-generator` with the new SVG source produces all required icon sizes without manual intervention
 
-**Plans**: TBD
+**Plans**: 1
+
+- [x] 20-01-PLAN.md — Replace logo.svg (K-on-card motif) + update AppShell brand areas + regenerate PWA icons
+
 **UI hint**: yes
 
 ### Phase 21: Changelog
@@ -267,6 +270,6 @@ Plans:
 | 17. Mobile UI Polish | v1.3.1 | 2/2 | Complete | 2026-06-11 |
 | 18. Library Deck Toggle | v1.3.1 | 2/2 | Complete | 2026-06-12 |
 | 19. Library Remove Action | v1.3.2 | 1/1 | Complete   | 2026-06-13 |
-| 20. Logo & PWA Icons | v1.3.2 | 0/? | Not started | - |
+| 20. Logo & PWA Icons | v1.3.2 | 1/1 | Complete   | 2026-06-14 |
 | 21. Changelog | v1.3.2 | 0/? | Not started | - |
 | 22. Study Session UX | v1.3.2 | 0/? | Not started | - |

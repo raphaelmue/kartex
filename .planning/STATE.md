@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.3.2
 milestone_name: UX Polish & Changelog
-status: idle
-stopped_at: Phase 19 verified — ready for Phase 20
-last_updated: "2026-06-13T13:35:45Z"
-last_activity: 2026-06-13 -- Phase 19 verified
+status: verifying
+stopped_at: Completed 20-01-PLAN.md
+last_updated: "2026-06-14T16:13:52.910Z"
+last_activity: 2026-06-13 -- Phase 19 verified (LIB-02 complete)
 progress:
   total_phases: 8
   completed_phases: 2
-  total_plans: 1
+  total_plans: 2
   completed_plans: 2
-  percent: 13
+  percent: 25
 ---
 
 # Project State
@@ -72,6 +72,7 @@ v1.3.2 Progress: [====                ] 25% (1/4 phases)
 | Phase 18-library-deck-toggle P01 | 5 | 3 tasks | 5 files |
 | Phase 18-library-deck-toggle P02 | 4 | 2 tasks | 3 files |
 | Phase 19-library-remove-action P01 | 7 | 3 tasks | 6 files |
+| Phase 20 P01 | 8 | 3 tasks | 11 files |
 
 ## Accumulated Context
 
@@ -174,6 +175,10 @@ Recent decisions affecting current work:
 - 18-02: Library Switch uses id=active-lib-{id} prefix to prevent DOM id collision with owned-deck Switch id=active-{id} (T-18-07)
 - 18-02: AuthContext mock user includes studyMode field — required to match User interface shape; DeckDetailPage tests confirmed this pattern
 - [Phase ?]: Radix DropdownMenu JSDOM testing: fireEvent.pointerDown before fireEvent.click required to open Radix UI DropdownMenu 2.x in JSDOM test environment
+- [Phase ?]: Logo SVG uses rect+polygon
+- [Phase ?]: AppShell img accessibility attributes
+- [Phase ?]: sharp version workaround for icon generation on Windows
+- [Phase ?]: apple-touch-icon.png copy step
 
 ### Pending Todos
 
@@ -221,6 +226,6 @@ Items acknowledged and deferred at milestone close on 2026-05-30:
 
 ## Session Continuity
 
-Last session: 2026-06-13T11:23:17.810Z
-Stopped at: Completed 19-01-PLAN.md
+Last session: 2026-06-14T16:13:52.902Z
+Stopped at: Completed 20-01-PLAN.md
 Resume with: `/gsd:plan-phase 20`

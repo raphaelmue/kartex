@@ -11,8 +11,8 @@
 
 ### Branding
 
-- [ ] **BRAND-01**: App logo SVG is replaced with a new design featuring a stylised "K" on a learning-card motif, visible in the AppShell header and browser tab favicon
-- [ ] **BRAND-02**: PWA icons (192×192, 512×512, apple-touch-icon 180×180) are regenerated from the new logo using the existing `@vite-pwa/assets-generator` pipeline
+- [x] **BRAND-01**: App logo SVG is replaced with a new design featuring a stylised "K" on a learning-card motif, visible in the AppShell header and browser tab favicon
+- [x] **BRAND-02**: PWA icons (192×192, 512×512, apple-touch-icon 180×180) are regenerated from the new logo using the existing `@vite-pwa/assets-generator` pipeline
 
 ### Changelog
 
@@ -57,8 +57,8 @@
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | LIB-02 | Phase 19 | Complete |
-| BRAND-01 | Phase 20 | Pending |
-| BRAND-02 | Phase 20 | Pending |
+| BRAND-01 | Phase 20 | Complete |
+| BRAND-02 | Phase 20 | Complete |
 | CHNG-01 | Phase 21 | Pending |
 | CHNG-02 | Phase 21 | Pending |
 | STUDY-04 | Phase 22 | Pending |
