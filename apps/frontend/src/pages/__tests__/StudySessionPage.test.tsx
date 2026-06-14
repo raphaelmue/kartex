@@ -631,3 +631,73 @@ describe('StudySessionPage mode indicator (SM2-04)', () => {
     })
   })
 })
+
+// ---------------------------------------------------------------------------
+// STUDY-04: Deck badge in SessionRunner progress row
+// ---------------------------------------------------------------------------
+
+describe('StudySessionPage deck badge (STUDY-04)', () => {
+  beforeEach(() => {
+    mockParams.current = { id: 'deck-abc' }
+    mockApiGet.mockReset()
+    setupPrefetchMocks()
+  })
+
+  afterEach(() => {
+    mockParams.current = { id: 'deck-abc' }
+  })
+
+  // STUDY-04a: deck badge shows deckTitle from currentCard
+  it('STUDY-04a: deck badge shows deckTitle from currentCard when session is running', async () => {
+    mockApiGet.mockResolvedValueOnce({
+      ok: true,
+      json: async () => [makeCard('c1', [])],
+    })
+
+    renderPage()
+
+    await waitFor(() => {
+      expect(screen.getByText(/filter by tag/i)).toBeTruthy()
+    })
+
+    // Start an SR session
+    fireEvent.click(screen.getByRole('button', { name: /spaced repetition/i }))
+
+    await waitFor(() => {
+      expect(screen.queryByText('Card 1 of 1')).toBeTruthy()
+    })
+
+    // Deck badge with deckTitle from makeCard factory ('Test Deck') must be visible
+    expect(screen.getByText('Test Deck')).toBeTruthy()
+  })
+
+  // STUDY-04b: deck badge remains visible after card flip (badge is in progress row, not inside CardFlip)
+  it('STUDY-04b: deck badge is still visible after flipping the card to the back face', async () => {
+    mockApiGet.mockResolvedValueOnce({
+      ok: true,
+      json: async () => [makeCard('c1', [])],
+    })
+
+    renderPage()
+
+    await waitFor(() => {
+      expect(screen.getByText(/filter by tag/i)).toBeTruthy()
+    })
+
+    // Start an SR session
+    fireEvent.click(screen.getByRole('button', { name: /spaced repetition/i }))
+
+    await waitFor(() => {
+      expect(screen.queryByText('Card 1 of 1')).toBeTruthy()
+    })
+
+    // Flip the card by clicking the card button
+    const cardButton = screen.getByRole('button', { name: /flashcard/i })
+    fireEvent.click(cardButton)
+
+    // Deck badge must still be visible — it lives in the progress row, not inside CardFlip
+    await waitFor(() => {
+      expect(screen.getByText('Test Deck')).toBeTruthy()
+    })
+  })
+})
