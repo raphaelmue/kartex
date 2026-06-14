@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.3.2
 milestone_name: UX Polish & Changelog
-status: verifying
-stopped_at: Completed 20-01-PLAN.md
-last_updated: "2026-06-14T16:13:52.910Z"
-last_activity: 2026-06-13 -- Phase 19 verified (LIB-02 complete)
+status: executing
+stopped_at: Completed 21-01-PLAN.md
+last_updated: "2026-06-14T19:56:00Z"
+last_activity: 2026-06-14 -- Phase 21 plan 01 complete (CHANGELOG.md written)
 progress:
   total_phases: 8
-  completed_phases: 2
-  total_plans: 2
-  completed_plans: 2
-  percent: 25
+  completed_phases: 3
+  total_plans: 4
+  completed_plans: 3
+  percent: 37
 ---
 
 # Project State
@@ -21,17 +21,17 @@ progress:
 See: .planning/PROJECT.md (updated 2026-06-13)
 
 **Core value:** A user can open their dashboard, see their due cards, and complete a spaced-repetition study session — that loop must always work.
-**Current focus:** Phase 20 — logo-pwa-icons
+**Current focus:** Phase 22 — study session UX
 
 ## Current Position
 
-Phase: 19 (library-remove-action) — COMPLETE
-Plan: 1 of 1
-Status: Verified — all 6 must-haves passed
-Last activity: 2026-06-13 -- Phase 19 verified (LIB-02 complete)
+Phase: 22 (study-session-ux) — NEXT
+Plan: 21 of 1 complete, advancing to Phase 22
+Status: Phase 21 complete (1/1 plans done)
+Last activity: 2026-06-14 -- Phase 21 plan 01 complete (CHANGELOG.md written, CHNG-01 + CHNG-02 satisfied)
 
 ```
-v1.3.2 Progress: [====                ] 25% (1/4 phases)
+v1.3.2 Progress: [======              ] 37% (3/4 phases done — phases 19, 20, 21 complete)
 ```
 
 ## Performance Metrics

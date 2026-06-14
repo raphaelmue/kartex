@@ -73,7 +73,7 @@ Full details: [.planning/milestones/v1.3.1-ROADMAP.md](milestones/v1.3.1-ROADMAP
 
 - [x] **Phase 19: Library Remove Action** - User can permanently remove a public/shared deck from their personal library (completed 2026-06-13)
 - [x] **Phase 20: Logo & PWA Icons** - New "K" on learning-card motif SVG replaces the existing logo; PWA icons regenerated (completed 2026-06-14)
-- [ ] **Phase 21: Changelog** - CHANGELOG.md backfilled for all past milestones with structured, user-facing entries
+- [x] **Phase 21: Changelog** - CHANGELOG.md backfilled for all past milestones with structured, user-facing entries (completed 2026-06-14)
 - [ ] **Phase 22: Study Session UX** - Deck badge on study cards + verify/fix cross-deck shuffle
 
 ---
@@ -274,5 +274,5 @@ Plans:
 | 18. Library Deck Toggle | v1.3.1 | 2/2 | Complete | 2026-06-12 |
 | 19. Library Remove Action | v1.3.2 | 1/1 | Complete   | 2026-06-13 |
 | 20. Logo & PWA Icons | v1.3.2 | 1/1 | Complete   | 2026-06-14 |
-| 21. Changelog | v1.3.2 | 0/? | Not started | - |
+| 21. Changelog | v1.3.2 | 1/1 | Complete | 2026-06-14 |
 | 22. Study Session UX | v1.3.2 | 0/? | Not started | - |

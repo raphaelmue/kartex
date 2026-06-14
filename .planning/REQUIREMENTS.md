@@ -16,8 +16,8 @@
 
 ### Changelog
 
-- [ ] **CHNG-01**: `CHANGELOG.md` exists at repo root and is backfilled with structured entries for all past milestone releases (v1.0, v1.1, v1.2, v1.3.0, v1.3.1, v1.3.2)
-- [ ] **CHNG-02**: Each CHANGELOG.md version entry contains: user-facing change summary bullets, requirement IDs (e.g. MOB-01), a "Breaking Changes" section (or "None"), and a "Migration Notes" section covering DB migrations and env var changes (or "None")
+- [x] **CHNG-01**: `CHANGELOG.md` exists at repo root and is backfilled with structured entries for all past milestone releases (v1.0, v1.1, v1.2, v1.3.0, v1.3.1, v1.3.2)
+- [x] **CHNG-02**: Each CHANGELOG.md version entry contains: user-facing change summary bullets, requirement IDs (e.g. MOB-01), a "Breaking Changes" section (or "None"), and a "Migration Notes" section covering DB migrations and env var changes (or "None")
 
 ### Study Session UX
 
@@ -59,8 +59,8 @@
 | LIB-02 | Phase 19 | Complete |
 | BRAND-01 | Phase 20 | Complete |
 | BRAND-02 | Phase 20 | Complete |
-| CHNG-01 | Phase 21 | Pending |
-| CHNG-02 | Phase 21 | Pending |
+| CHNG-01 | Phase 21 | Complete |
+| CHNG-02 | Phase 21 | Complete |
 | STUDY-04 | Phase 22 | Pending |
 | STUDY-05 | Phase 22 | Pending |
 
