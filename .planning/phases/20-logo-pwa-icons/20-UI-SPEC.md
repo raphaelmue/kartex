@@ -55,16 +55,18 @@ Source: Pre-populated from RESEARCH.md Pattern 1 (AppShell brand area code examp
 
 ## Typography
 
-No new typography is introduced in this phase. The brand text "Kartex" in the AppShell brand area remains unchanged.
+No new typography is introduced in this phase. The brand text "Kartex" in the AppShell brand area remains unchanged. The new `<img>` element added by this phase carries no text weight.
+
+Declared weights for this phase's design contract (2 weights maximum):
 
 | Role | Size | Weight | Line Height |
 |------|------|--------|-------------|
-| Body | 14px | 400 | 1.5 |
-| Label | 14px | 400 | 1.5 |
+| Body / Label | 14px | 400 (`font-normal`) | 1.5 |
 | Heading (brand) | 20px (`text-xl`) | 700 (`font-bold`) | 1.2 |
-| Page title | 16px (`text-base`) | 600 (`font-semibold`) | 1.2 |
 
-Source: Pre-populated from existing AppShell.tsx (`text-xl font-bold` on brand span, `text-base font-semibold` on header page title). No changes to typography in this phase.
+**Note:** The existing page title (`text-base font-semibold`, weight 600) is a pre-existing implementation detail in AppShell.tsx. This phase does not add, remove, or modify that element; therefore weight 600 is excluded from this phase's design contract scope.
+
+Source: Pre-populated from existing AppShell.tsx (`text-xl font-bold` on brand span). No typography changes in this phase.
 
 ---
 
