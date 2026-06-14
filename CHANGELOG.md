@@ -147,7 +147,7 @@ None — active/inactive toggles default to active, so all existing decks remain
 
 ### Requirement IDs
 
-STUDY-01, STUDY-02, STUDY-03, STUDY-04, SHELL-01, SHELL-02, SHELL-03, I18N-01, I18N-02, I18N-03
+STUDY-01, STUDY-02, STUDY-03, SHELL-01, SHELL-02, SHELL-03, I18N-01, I18N-02, I18N-03
 
 ### Breaking Changes
 
