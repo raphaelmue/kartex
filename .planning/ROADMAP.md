@@ -230,7 +230,10 @@ Plans:
   3. Each version entry lists the requirement IDs that were satisfied (e.g. LIB-01, MOB-01)
   4. Each version entry includes a "Breaking Changes" section (populated or explicitly "None") and a "Migration Notes" section covering DB migrations and env var changes (populated or explicitly "None")
 
-**Plans**: TBD
+**Plans**: 1 plan
+
+Plans:
+- [ ] 21-01-PLAN.md — Write CHANGELOG.md at repo root with six milestone entries (v1.0–v1.3.2), each with user-facing bullets, requirement IDs, Breaking Changes, and Migration Notes
 
 ### Phase 22: Study Session UX
 
