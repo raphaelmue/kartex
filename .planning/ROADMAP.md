@@ -248,7 +248,13 @@ Plans:
   3. The global /study session verifiably shuffles cards across all active decks; a session with cards from 3 decks will show a mixed sequence, not deck-grouped blocks
   4. If a shuffle bug is found (cards ordered per-deck), it is fixed; if the current implementation is correct, it is confirmed by runtime test and the requirement is closed
 
-**Plans**: TBD
+**Plans**: 2 plans
+
+**Wave 1** *(parallel)*
+
+- [ ] 22-01-PLAN.md — Deck badge in SessionRunner progress row + i18n keys (STUDY-04)
+- [ ] 22-02-PLAN.md — Extract shuffle to lib + unit tests confirming cross-deck interleaving (STUDY-05)
+
 **UI hint**: yes
 
 ## Progress
@@ -276,4 +282,4 @@ Plans:
 | 19. Library Remove Action | v1.3.2 | 1/1 | Complete   | 2026-06-13 |
 | 20. Logo & PWA Icons | v1.3.2 | 1/1 | Complete   | 2026-06-14 |
 | 21. Changelog | v1.3.2 | 1/1 | Complete   | 2026-06-14 |
-| 22. Study Session UX | v1.3.2 | 0/? | Not started | - |
+| 22. Study Session UX | v1.3.2 | 0/2 | Not started | - |
