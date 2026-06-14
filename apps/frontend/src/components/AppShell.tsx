@@ -50,7 +50,13 @@ export function AppShell() {
       {/* Desktop sidebar */}
       <aside className="hidden md:flex w-60 bg-card border-r border-border flex-col h-full">
         {/* Brand area */}
-        <div className="h-16 flex items-center px-4">
+        <div className="h-16 flex items-center gap-2 px-4">
+          <img
+            src="/logo.svg"
+            alt=""
+            className="h-8 w-8 shrink-0"
+            aria-hidden="true"
+          />
           <span className="text-xl font-bold">Kartex</span>
         </div>
 
@@ -151,7 +157,13 @@ export function AppShell() {
         aria-hidden={!drawerOpen}
       >
         {/* Drawer brand area */}
-        <div className="h-16 flex items-center px-4">
+        <div className="h-16 flex items-center gap-2 px-4">
+          <img
+            src="/logo.svg"
+            alt=""
+            className="h-8 w-8 shrink-0"
+            aria-hidden="true"
+          />
           <span className="text-xl font-bold">Kartex</span>
         </div>
 
