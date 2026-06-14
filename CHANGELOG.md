@@ -86,7 +86,7 @@ None
 
 ### Migration Notes
 
-**DB migrations:** Two new tables and one new column added — a `ReviewLog` table (recording each rating with user, card, deck, rating, and timestamp) and a `kartexId` column on the Card table (stable identifier per deck, nullable, unique per deck). Both are append-only additions; existing data is unaffected. Applied automatically on `docker compose up`.
+**DB migrations:** One new table and one new column added — a `ReviewLog` table (recording each rating with user, card, deck, rating, and timestamp) and a `kartexId` column on the Card table (stable identifier per deck, nullable, unique per deck). Both are append-only additions; existing data is unaffected. Applied automatically on `docker compose up`.
 **Env var changes:** None.
 
 ---
