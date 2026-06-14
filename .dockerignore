@@ -1,0 +1,14 @@
+node_modules
+apps/*/node_modules
+packages/*/node_modules
+apps/frontend/dist
+apps/backend/dist
+apps/backend/public
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.planning
+.claude
+*.md
+.git

@@ -1,5 +1,9 @@
-# ─── Stage 1: Frontend builder ───────────────────────────────────────────────
-FROM node:22-alpine AS frontend-builder
+# ─── Stage 0: Yarn base — download once, inherited by all build stages ─────────
+FROM node:22-alpine AS yarn-base
+RUN corepack enable && corepack prepare yarn@4.15.0 --activate
+
+# ─── Stage 1: Frontend builder ─────────────────────────────────────────────────
+FROM yarn-base AS frontend-builder
 
 WORKDIR /build
 
@@ -12,7 +16,6 @@ COPY packages/shared/package.json packages/shared/
 # Add a minimal backend package.json (needed for workspace resolution)
 COPY apps/backend/package.json apps/backend/
 
-RUN corepack enable && corepack prepare yarn@4.15.0 --activate
 RUN yarn install
 
 # Copy source
@@ -22,8 +25,8 @@ COPY packages/shared/ packages/shared/
 # Build frontend — outputs to apps/backend/public (per vite.config.ts outDir)
 RUN yarn workspace @kartex/frontend build
 
-# ─── Stage 2: Backend builder ─────────────────────────────────────────────────
-FROM node:22-alpine AS backend-builder
+# ─── Stage 2: Backend builder ──────────────────────────────────────────────────
+FROM yarn-base AS backend-builder
 
 WORKDIR /build
 
@@ -33,7 +36,6 @@ COPY yarn.lock ./
 COPY apps/backend/package.json apps/backend/
 COPY packages/shared/package.json packages/shared/
 
-RUN corepack enable && corepack prepare yarn@4.15.0 --activate
 RUN yarn install
 
 # Copy source
@@ -49,8 +51,8 @@ RUN yarn workspace @kartex/backend prisma generate
 # Compile TypeScript
 RUN yarn workspace @kartex/backend build
 
-# ─── Stage 3: Production image ────────────────────────────────────────────────
-FROM node:22-alpine AS production
+# ─── Stage 3: Production image ─────────────────────────────────────────────────
+FROM yarn-base AS production
 
 WORKDIR /app
 
@@ -65,8 +67,7 @@ COPY yarn.lock ./
 COPY apps/backend/package.json apps/backend/
 COPY packages/shared/package.json packages/shared/
 
-RUN corepack enable && corepack prepare yarn@4.15.0 --activate && \
-    yarn workspaces focus @kartex/backend --production
+RUN yarn workspaces focus @kartex/backend --production
 
 # Copy compiled shared package (backend imports it at runtime)
 COPY --from=backend-builder /build/packages/shared/dist/ ./packages/shared/dist/

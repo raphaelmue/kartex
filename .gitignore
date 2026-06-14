@@ -26,3 +26,6 @@ apps/backend/public/
 Thumbs.db
 
 .examples/
+
+# GSD planning cache
+.planning/research/.cache/
