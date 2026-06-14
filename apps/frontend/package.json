@@ -7,7 +7,8 @@
     "build": "tsc && vite build",
     "typecheck": "tsc --noEmit",
     "preview": "vite preview",
-    "test": "vitest"
+    "test": "vitest",
+    "generate-pwa-assets": "pwa-assets-generator --preset minimal-2023 public/logo.svg"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.4.0",
@@ -54,6 +55,7 @@
     "@testing-library/react": "^16.3.2",
     "@types/react": "^18.3.23",
     "@types/react-dom": "^18.3.7",
+    "@vite-pwa/assets-generator": "^1.0.2",
     "@vitejs/plugin-react": "^4.3.4",
     "@vitest/coverage-v8": "2.1.9",
     "autoprefixer": "^10.4.20",
