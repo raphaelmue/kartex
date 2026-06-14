@@ -149,9 +149,10 @@ function SessionRunner({
         </div>
       )}
 
-      {/* Progress: Card N of M + optional mode indicator badge (SM2-04) */}
+      {/* Progress: Card N of M + deck badge (STUDY-04) + optional mode indicator badge (SM2-04) */}
       <div className="flex items-center gap-2 mb-3 shrink-0">
         <SessionProgress current={progress.current} total={progress.total} />
+        <Badge variant="secondary" className="text-xs shrink-0" aria-label={t('study.deckBadgeAriaLabel', { deckTitle: currentCard.deckTitle })}>{currentCard.deckTitle}</Badge>
         {studyMode !== 'normal' && (
           <Badge variant="secondary" className="text-xs shrink-0">
             {t(`settings.modeNames.${studyMode}`)}

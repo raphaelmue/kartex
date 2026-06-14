@@ -224,7 +224,8 @@
     "startSession": "Sitzung starten",
     "backToDashboard": "Zurück zum Dashboard",
     "noActiveDecks": "Keine aktiven Decks",
-    "noActiveDecksHint": "Gehen Sie zu \"Meine Decks\" und aktivieren Sie mindestens ein Deck."
+    "noActiveDecksHint": "Gehen Sie zu \"Meine Decks\" und aktivieren Sie mindestens ein Deck.",
+    "deckBadgeAriaLabel": "Deck: {{deckTitle}}"
   },
   "rating": {
     "again": "Nochmal",

@@ -224,7 +224,8 @@
     "startSession": "Start session",
     "backToDashboard": "Back to Dashboard",
     "noActiveDecks": "No active decks",
-    "noActiveDecksHint": "Go to My Decks and toggle at least one deck active to study."
+    "noActiveDecksHint": "Go to My Decks and toggle at least one deck active to study.",
+    "deckBadgeAriaLabel": "Deck: {{deckTitle}}"
   },
   "rating": {
     "again": "Again",
