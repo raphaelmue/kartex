@@ -153,3 +153,23 @@ describe('SHELL-03: App footer', () => {
     expect(footer!.textContent).toMatch(/v\d+\.\d+\.\d+/)
   })
 })
+
+describe('BRAND-01: Logo image in brand areas', () => {
+  it('BRAND-01a: sidebar brand area renders <img src="/logo.svg"> with aria-hidden', () => {
+    renderAppShell()
+    const aside = document.querySelector('aside')
+    expect(aside).not.toBeNull()
+    const logoImg = aside!.querySelector('img[src="/logo.svg"]')
+    expect(logoImg).not.toBeNull()
+    expect(logoImg!.getAttribute('aria-hidden')).toBe('true')
+  })
+
+  it('BRAND-01b: mobile drawer brand area renders <img src="/logo.svg"> with aria-hidden', () => {
+    renderAppShell()
+    const drawer = document.getElementById('mobile-nav-drawer')
+    expect(drawer).not.toBeNull()
+    const logoImg = drawer!.querySelector('img[src="/logo.svg"]')
+    expect(logoImg).not.toBeNull()
+    expect(logoImg!.getAttribute('aria-hidden')).toBe('true')
+  })
+})
