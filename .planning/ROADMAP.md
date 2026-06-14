@@ -250,9 +250,12 @@ Plans:
 
 **Plans**: 2 plans
 
-**Wave 1** *(parallel)*
+**Wave 1**
 
 - [ ] 22-01-PLAN.md — Deck badge in SessionRunner progress row + i18n keys (STUDY-04)
+
+**Wave 2** *(blocked on Wave 1)*
+
 - [ ] 22-02-PLAN.md — Extract shuffle to lib + unit tests confirming cross-deck interleaving (STUDY-05)
 
 **UI hint**: yes
@@ -282,4 +285,4 @@ Plans:
 | 19. Library Remove Action | v1.3.2 | 1/1 | Complete   | 2026-06-13 |
 | 20. Logo & PWA Icons | v1.3.2 | 1/1 | Complete   | 2026-06-14 |
 | 21. Changelog | v1.3.2 | 1/1 | Complete   | 2026-06-14 |
-| 22. Study Session UX | v1.3.2 | 0/2 | Not started | - |
+| 22. Study Session UX | v1.3.2 | 0/2 | Planned | - |
