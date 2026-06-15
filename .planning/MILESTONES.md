@@ -120,3 +120,27 @@ Mobile viewport rendering fixed (375px no-overflow), deck card action buttons re
 
 - Roadmap: [.planning/milestones/v1.3.1-ROADMAP.md](milestones/v1.3.1-ROADMAP.md)
 - Requirements: [.planning/milestones/v1.3.1-REQUIREMENTS.md](milestones/v1.3.1-REQUIREMENTS.md)
+
+---
+
+## v1.3.2 UX Polish & Changelog — Shipped 2026-06-15
+
+**Phases:** 19–22 | **Plans:** 5 | **Timeline:** 3 days (2026-06-13 → 2026-06-15)
+**Requirements:** 7/7 satisfied — LIB-02, BRAND-01, BRAND-02, CHNG-01, CHNG-02, STUDY-04, STUDY-05
+
+### Delivered
+
+Library deck removal (users can permanently remove public/shared decks from their library), new K-on-card SVG logo with regenerated PWA icons, CHANGELOG.md backfilled for all past milestones (v1.0–v1.3.2) in Keep a Changelog format, deck badge in study sessions showing source deck on every card, and statistical verification of cross-deck shuffle correctness.
+
+### Key Accomplishments
+
+1. DELETE /api/decks/:id/library with IDOR guard + AlertDialog confirmation UI in DecksPage ⋮ menu — library deck permanently removable without affecting other users' library entries (LIB-02)
+2. K-on-card SVG logo (rect+polygon, no text element) replacing placeholder; both AppShell brand areas updated; 8 PWA icon files regenerated via sharp@0.35.1 (BRAND-01/02)
+3. CHANGELOG.md at repo root — 6 version entries (v1.0–v1.3.2) with user-facing bullets, Requirement IDs, Breaking Changes, and Migration Notes in Keep a Changelog v1.1.0 format (CHNG-01/02)
+4. Unconditional deck badge in SessionRunner progress row — renders currentCard.deckTitle on both card faces throughout any session type (STUDY-04)
+5. Fisher-Yates shuffle extracted to lib/shuffle.ts; 1000-run statistical test confirms >95% cross-deck mixing — STUDY-05 closed without a bug fix (STUDY-05)
+
+### Archive
+
+- Roadmap: [.planning/milestones/v1.3.2-ROADMAP.md](milestones/v1.3.2-ROADMAP.md)
+- Requirements: [.planning/milestones/v1.3.2-REQUIREMENTS.md](milestones/v1.3.2-REQUIREMENTS.md)

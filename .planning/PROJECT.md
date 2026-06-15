@@ -1,25 +1,18 @@
 # Kartex
 
-## Current State: v1.3.2 — IN PROGRESS
+## Current State: v1.3.2 — SHIPPED 2026-06-15
 
-**Current milestone:** v1.3.2 UX Polish & Changelog — IN PROGRESS
-**Phases shipped:** 1–18 (v1.0: 1–6, v1.1: 7–9, v1.2: 10–13, v1.3.0: 14–16, v1.3.1: 17–18)
-**Total plans shipped:** 56 (18 + 8 + 16 + 10 + 4)
-**TypeScript LOC:** ~11,000 (estimate; +1,317 insertions in v1.3.1)
+**Last milestone:** v1.3.2 UX Polish & Changelog — SHIPPED 2026-06-15
+**Phases shipped:** 1–22 (v1.0: 1–6, v1.1: 7–9, v1.2: 10–13, v1.3.0: 14–16, v1.3.1: 17–18, v1.3.2: 19–22)
+**Total plans shipped:** 61 (18 + 8 + 16 + 10 + 4 + 5)
+**TypeScript LOC:** ~11,500 (estimate; +~500 in v1.3.2)
 
-**v1.3.1 shipped:**
-- Mobile 375px viewport: no horizontal overflow on stats table or AppShell drawer (MOB-01)
-- Deck card action buttons: ⋮ DropdownMenu + shared AlertDialog — fully contained at all viewport sizes (DECK-05)
-- Library deck toggle: users can activate/deactivate public/shared decks from Explore page; study queue respects per-user state (LIB-01)
-
-## Current Milestone: v1.3.2 UX Polish & Changelog
-
-**Goal:** Round off two UX rough edges and add a proper CHANGELOG.md so every shipped release has a durable, human-readable record.
-
-**Target features:**
-- Remove deck from library — users can permanently remove a public/shared deck from their personal library
-- Logo redesign — new SVG logo with "K" on a learning-card motif, PWA icons regenerated
-- CHANGELOG.md — user-facing change summary + REQ-IDs + breaking changes + migration notes, backfilled for all past milestones
+**v1.3.2 shipped:**
+- Library deck removal: users can permanently remove public/shared decks from their library (LIB-02)
+- New K-on-card SVG logo; PWA icons regenerated (BRAND-01, BRAND-02)
+- CHANGELOG.md backfilled for all past milestones v1.0–v1.3.2 in Keep a Changelog format (CHNG-01, CHNG-02)
+- Deck badge on study cards showing source deck name on both card faces (STUDY-04)
+- Cross-deck shuffle statistically verified correct — Fisher-Yates confirmed (STUDY-05)
 
 ## What This Is
 
@@ -101,15 +94,21 @@ A user can open their dashboard, see their due cards, and complete a spaced-repe
 - ✓ Deck card action buttons (Edit/Delete) are fully contained via ⋮ DropdownMenu + shared AlertDialog at all viewport sizes — v1.3.1 Phase 17
 - ✓ User can toggle a library deck (public/shared deck added via Explore) active or inactive; state persists and filters the /study queue — v1.3.1 Phase 18
 
+### Validated in v1.3.2
+
+- ✓ User can permanently remove a public/shared deck from their personal library; deck disappears from library view and no longer affects study queue — v1.3.2 Phase 19
+- ✓ App logo replaced with new K-on-card motif SVG (rect+polygon, no text element); visible in AppShell header and browser tab favicon — v1.3.2 Phase 20
+- ✓ PWA icons (192×192, 512×512, apple-touch-icon 180×180) regenerated from new logo — v1.3.2 Phase 20
+- ✓ CHANGELOG.md at repo root, backfilled for all past milestone releases (v1.0–v1.3.2) in Keep a Changelog format — v1.3.2 Phase 21
+- ✓ Each CHANGELOG.md entry contains user-facing bullets, Requirement IDs, Breaking Changes section, and Migration Notes — v1.3.2 Phase 21
+- ✓ Study cards display a deck badge (source deck name) on both card faces; consistent design with study mode badge — v1.3.2 Phase 22
+- ✓ Global /study session cross-deck shuffle confirmed correct via statistical test (1000 runs, >95% cross-deck mixing) — v1.3.2 Phase 22
+
 ### Active
 
-*(v1.3.2 — defined 2026-06-13)*
+*(Next milestone — TBD)*
 
-- [ ] **LIB-02**: User can permanently remove a public/shared deck from their personal library
-- [ ] **BRAND-01**: App logo is replaced with a new SVG featuring a "K" on a learning-card motif
-- [ ] **BRAND-02**: PWA icons (192×192, 512×512, apple-touch-icon) are regenerated from the new logo
-- [ ] **CHNG-01**: CHANGELOG.md exists at repo root, backfilled for all past milestone releases (v1.0–v1.3.1)
-- [ ] **CHNG-02**: CHANGELOG.md entries include user-facing change summary, requirement IDs, breaking changes section, and migration notes per version
+*(No active requirements — start next milestone with `/gsd-new-milestone`)*
 
 ### Out of Scope
 
@@ -132,6 +131,7 @@ A user can open their dashboard, see their due cards, and complete a spaced-repe
 - Shipped v1.0 with 8,135 TypeScript LOC across 226 files in 5 days
 - Shipped v1.1 with ~9,531 TypeScript LOC (46 files changed, +2,854 / -486 lines) in 2 days
 - Shipped v1.3.1 with ~11,000 TypeScript LOC estimated (16 files changed, +1,317 / -23 lines in 1 day)
+- Shipped v1.3.2 with ~11,500 TypeScript LOC estimated (4 phases, 5 plans, 3 days, 2026-06-13 → 2026-06-15)
 - i18n: react-i18next v26, 254+ keys, `apps/frontend/src/locales/{en,de}.json` — de.json is placeholder-quality; needs native speaker review before shipping to German users
 - Uses yarn@4.15.0 workspaces (not pnpm despite original design doc — discovered in Phase 7)
 - Hand-written SQL migrations pattern established (Phases 10, 18) — `prisma migrate deploy` unavailable without `DATABASE_URL` in dev; migrations applied via Docker Compose entrypoint on deploy
@@ -187,4 +187,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-06-13 — v1.3.2 milestone started (UX Polish & Changelog). 5 active requirements: LIB-02, BRAND-01, BRAND-02, CHNG-01, CHNG-02.*
+*Last updated: 2026-06-15 — v1.3.2 milestone shipped (UX Polish & Changelog). All 7 requirements validated. No active requirements — next milestone TBD.*

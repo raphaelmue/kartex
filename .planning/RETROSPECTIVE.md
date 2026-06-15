@@ -128,6 +128,51 @@
 
 ---
 
+## Milestone: v1.3.2 — UX Polish & Changelog
+
+**Shipped:** 2026-06-15
+**Phases:** 4 (19–22) | **Plans:** 5 | **Timeline:** 3 days
+
+### What Was Built
+
+- DELETE /api/decks/:id/library with IDOR guard + DecksPage ⋮ menu AlertDialog — permanent library removal (LIB-02)
+- K-on-card SVG logo (rect+polygon, no text element); both AppShell brand areas updated; 8 PWA icon files regenerated (BRAND-01/02)
+- CHANGELOG.md backfilled for 6 milestones (v1.0–v1.3.2) in Keep a Changelog format with user-facing bullets, Requirement IDs, Breaking Changes, Migration Notes (CHNG-01/02)
+- Unconditional deck badge in SessionRunner progress row — persists on both card faces (STUDY-04)
+- Fisher-Yates extracted to lib/shuffle.ts; 1000-run statistical test confirms cross-deck mixing — no bug fix needed (STUDY-05)
+
+### What Worked
+
+- **Short plans with clear scope** — 4 of 5 plans were single-concern (one backend route, one SVG, one changelog, one badge). Fast to plan, fast to execute, easy to verify.
+- **Statistical test for STUDY-05** — Instead of visual inspection or a brittle deterministic test, a 1000-run mixing-rate assertion proved correctness conclusively. The right level of rigor for a shuffle verification.
+- **Phase 21 TODO placeholder** — Leaving a clearly-marked `<!-- TODO Phase 22 -->` comment in CHANGELOG.md was a clean handoff between phases; filled at milestone close without ambiguity.
+- **Radix DropdownMenu JSDOM pattern established** — `fireEvent.pointerDown + click` pattern documented as a new project decision; future test authors won't hit the same wall.
+
+### What Was Inefficient
+
+- **REQUIREMENTS.md checkboxes still not updated inline** — STUDY-04 and STUDY-05 remained unchecked in REQUIREMENTS.md after Phase 22 completed. This is the fourth consecutive milestone with this pattern. The fix is mechanical but keeps appearing in milestone close. Should be a checklist item in the plan completion flow.
+- **sharp@0.33.5 DLL failure on Windows** — The @vite-pwa/assets-generator CLI failed with ERR_DLOPEN_FAILED due to a nested sharp version incompatibility on Windows x64. Required a workaround script using the root sharp@0.35.1. This was a Windows-specific environment issue, not a design problem, but it added ~3 minutes of debugging.
+
+### Patterns Established
+
+- **Radix DropdownMenu 2.x JSDOM pattern** — `fireEvent.pointerDown(trigger)` + `fireEvent.click(trigger)` required to open the menu in JSDOM; `fireEvent.click` alone silently does nothing
+- **Statistical shuffle test** — 1000-run cross-deck mixing rate (>95% threshold) is the right pattern for verifying a Fisher-Yates shuffle produces genuine randomness
+- **SVG logo shapes only** — Use `<rect>/<polygon>` (not `<text>`) for logos rendered in Docker/CI environments; font dependency causes rendering failures
+
+### Key Lessons
+
+- **Checkbox discipline at plan completion** — Update REQUIREMENTS.md checkboxes in the same commit that closes the plan. Do not leave this for milestone close. This has been a recurring pain point across every milestone.
+- **Windows-specific package dependency issues** — When a tool uses a nested native module (`sharp`, `canvas`, etc.), verify it loads successfully on the target dev OS before committing to the tool. Have a fallback script ready.
+- **CHANGELOG.md is worth backfilling** — Even for a project with a clean git history, a human-readable CHANGELOG.md makes it easier to communicate what changed to non-developers. Worth the 5-minute investment per milestone.
+
+### Cost Observations
+
+- Sessions: 4 phases across 3 days
+- Model mix: Sonnet 4.6 throughout
+- Notable: Phase 22 was the fastest plan pair (2 min + 4 min) — tight scope, clear requirements, existing pattern to follow
+
+---
+
 ## Cross-Milestone Trends
 
 | Milestone | Phases | Plans | LOC | Days | Avg Plans/Day |
@@ -135,3 +180,4 @@
 | v1.0 MVP | 6 | 18 | 8,135 TS | 5 | 3.6 |
 | v1.1 Study & Polish | 3 | 8 | 9,531 TS | 2 | 4.0 |
 | v1.3.1 Bug Fixes | 2 | 4 | ~11,000 TS | 1 | 4.0 |
+| v1.3.2 UX Polish & Changelog | 4 | 5 | ~11,500 TS | 3 | 1.7 |

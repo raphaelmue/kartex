@@ -5,20 +5,24 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ---
 
-## [v1.3.2] — 2026-06-14
+## [v1.3.2] — 2026-06-15
 
 *Milestone: UX Polish & Changelog (Phases 19–22)*
 
 ### Added
 
-<!-- TODO Phase 22: add STUDY-04 and STUDY-05 bullets here -->
+- Study cards now show a badge indicating which deck the card belongs to — visible on both the front and back of each card throughout the session; consistent design with the existing study mode badge
 - New app logo: a stylised "K" on a learning-card motif SVG, visible in the sidebar header and browser tab favicon
 - PWA icons regenerated from the new logo: home screen icon (192×192), splash screen icon (512×512 maskable), and Apple touch icon (180×180)
 - User can permanently remove a public or shared deck from their personal library via the "⋮" menu on the Decks page; the deck disappears from the library view and no longer affects the study queue; removal does not affect other users
 
+### Verified
+
+- Global study session shuffle confirmed to interleave cards randomly across all active decks (not deck-grouped); Fisher-Yates implementation verified correct by statistical test (1000 runs, >95% cross-deck mixing)
+
 ### Requirement IDs
 
-LIB-02, BRAND-01, BRAND-02, CHNG-01, CHNG-02 (STUDY-04, STUDY-05 to be added after Phase 22 completes)
+LIB-02, BRAND-01, BRAND-02, CHNG-01, CHNG-02, STUDY-04, STUDY-05
 
 ### Breaking Changes
 

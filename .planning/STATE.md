@@ -2,13 +2,13 @@
 gsd_state_version: 1.0
 milestone: v1.3.2
 milestone_name: UX Polish & Changelog
-status: executing
-stopped_at: Completed 22-02-PLAN.md
-last_updated: "2026-06-15T09:27:00.000Z"
-last_activity: 2026-06-15 -- Phase 22 Plan 2 complete (shuffle extraction + STUDY-05 closed)
+status: complete
+stopped_at: Milestone close complete
+last_updated: "2026-06-15T00:00:00.000Z"
+last_activity: 2026-06-15 -- v1.3.2 milestone closed, archived, tagged
 progress:
-  total_phases: 8
-  completed_phases: 3
+  total_phases: 4
+  completed_phases: 4
   total_plans: 5
   completed_plans: 5
   percent: 100
@@ -18,17 +18,16 @@ progress:
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-06-13)
+See: .planning/PROJECT.md (updated 2026-06-15)
 
 **Core value:** A user can open their dashboard, see their due cards, and complete a spaced-repetition study session — that loop must always work.
-**Current focus:** Phase 22 — study-session-ux
+**Current focus:** Planning next milestone — run `/gsd-new-milestone` to begin
 
 ## Current Position
 
-Phase: 22 (study-session-ux) — COMPLETE
-Plan: 2 of 2
-Status: Phase 22 complete — all plans done (STUDY-04 deck badge, STUDY-05 shuffle verified)
-Last activity: 2026-06-15 -- Phase 22 Plan 2 complete (shuffle extraction + STUDY-05 closed)
+Milestone: v1.3.2 — SHIPPED 2026-06-15
+Status: All 4 phases, 5 plans complete — milestone archived, tagged v1.3.2
+Last activity: 2026-06-15 -- v1.3.2 milestone close complete
 
 ```
 v1.3.2 Progress: [====================] 100% (5/5 plans done — phases 19, 20, 21, 22-P1, 22-P2 complete)
