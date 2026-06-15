@@ -189,6 +189,8 @@ Recent decisions affecting current work:
 - [2026-06-13] Redesign Kartex logo with K motif on learning card (`2026-06-13-redesign-kartex-logo-with-k-motif-on-learning-card.md`) — maps to Phase 20
 - [2026-06-13] Verify and fix study session cross-deck shuffle (`2026-06-13-verify-and-fix-study-session-cross-deck-shuffle.md`) — maps to Phase 22
 - [2026-06-13] Show deck badge on study session cards (`2026-06-13-show-deck-badge-on-study-session-cards.md`) — maps to Phase 22
+- [2026-06-15] Support deck update via zip file upload (`2026-06-15-support-deck-update-via-zip-file.md`) — import-update zip gap
+- [2026-06-15] Add quick-edit / jump-to-card button in study mode (`2026-06-15-quick-edit-card-button-in-study-mode.md`) — 3-dot menu for owners/edit-auth users
 
 **Completed:**
 
