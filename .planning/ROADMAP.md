@@ -7,7 +7,7 @@
 - ✅ **v1.2 Study Control & PWA** — Phases 10–13 (shipped 2026-06-04) — [archive](milestones/v1.2-ROADMAP.md)
 - ✅ **v1.3.0 Stats & Import Update** — Phases 14–16 (shipped 2026-06-11) — [archive](milestones/v1.3.0-ROADMAP.md)
 - ✅ **v1.3.1 Bug Fixes & Mobile Polish** — Phases 17–18 (shipped 2026-06-12) — [archive](milestones/v1.3.1-ROADMAP.md)
-- 🔄 **v1.3.2 UX Polish & Changelog** — Phases 19–22 (in progress)
+- ✅ **v1.3.2 UX Polish & Changelog** — Phases 19–22 (shipped 2026-06-15)
 
 ## Phases
 
@@ -74,7 +74,7 @@ Full details: [.planning/milestones/v1.3.1-ROADMAP.md](milestones/v1.3.1-ROADMAP
 - [x] **Phase 19: Library Remove Action** - User can permanently remove a public/shared deck from their personal library (completed 2026-06-13)
 - [x] **Phase 20: Logo & PWA Icons** - New "K" on learning-card motif SVG replaces the existing logo; PWA icons regenerated (completed 2026-06-14)
 - [x] **Phase 21: Changelog** - CHANGELOG.md backfilled for all past milestones with structured, user-facing entries (completed 2026-06-14)
-- [ ] **Phase 22: Study Session UX** - Deck badge on study cards + verify/fix cross-deck shuffle
+- [x] **Phase 22: Study Session UX** - Deck badge on study cards + verify/fix cross-deck shuffle (completed 2026-06-15)
 
 ---
 
@@ -256,7 +256,7 @@ Plans:
 
 **Wave 2** *(blocked on Wave 1)*
 
-- [ ] 22-02-PLAN.md — Extract shuffle to lib + unit tests confirming cross-deck interleaving (STUDY-05)
+- [x] 22-02-PLAN.md — Extract shuffle to lib + unit tests confirming cross-deck interleaving (STUDY-05)
 
 **UI hint**: yes
 
@@ -285,4 +285,4 @@ Plans:
 | 19. Library Remove Action | v1.3.2 | 1/1 | Complete   | 2026-06-13 |
 | 20. Logo & PWA Icons | v1.3.2 | 1/1 | Complete   | 2026-06-14 |
 | 21. Changelog | v1.3.2 | 1/1 | Complete   | 2026-06-14 |
-| 22. Study Session UX | v1.3.2 | 1/2 | Executing | - |
+| 22. Study Session UX | v1.3.2 | 2/2 | Complete | 2026-06-15 |

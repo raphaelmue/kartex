@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.3.2
 milestone_name: UX Polish & Changelog
 status: executing
-stopped_at: Completed 22-01-PLAN.md
-last_updated: "2026-06-14T22:33:00.000Z"
-last_activity: 2026-06-14 -- Phase 22 Plan 1 complete (deck badge STUDY-04)
+stopped_at: Completed 22-02-PLAN.md
+last_updated: "2026-06-15T09:27:00.000Z"
+last_activity: 2026-06-15 -- Phase 22 Plan 2 complete (shuffle extraction + STUDY-05 closed)
 progress:
   total_phases: 8
   completed_phases: 3
   total_plans: 5
-  completed_plans: 4
-  percent: 50
+  completed_plans: 5
+  percent: 100
 ---
 
 # Project State
@@ -25,13 +25,13 @@ See: .planning/PROJECT.md (updated 2026-06-13)
 
 ## Current Position
 
-Phase: 22 (study-session-ux) — EXECUTING
+Phase: 22 (study-session-ux) — COMPLETE
 Plan: 2 of 2
-Status: Executing Phase 22 (Plan 1 complete, Plan 2 pending)
-Last activity: 2026-06-14 -- Phase 22 Plan 1 complete (deck badge STUDY-04)
+Status: Phase 22 complete — all plans done (STUDY-04 deck badge, STUDY-05 shuffle verified)
+Last activity: 2026-06-15 -- Phase 22 Plan 2 complete (shuffle extraction + STUDY-05 closed)
 
 ```
-v1.3.2 Progress: [========            ] 50% (4/5 plans done — phases 19, 20, 21, 22-P1 complete)
+v1.3.2 Progress: [====================] 100% (5/5 plans done — phases 19, 20, 21, 22-P1, 22-P2 complete)
 ```
 
 ## Performance Metrics
@@ -74,6 +74,7 @@ v1.3.2 Progress: [========            ] 50% (4/5 plans done — phases 19, 20, 2
 | Phase 19-library-remove-action P01 | 7 | 3 tasks | 6 files |
 | Phase 20 P01 | 8 | 3 tasks | 11 files |
 | Phase 22-study-session-ux P01 | 2 | 2 tasks | 4 files |
+| Phase 22-study-session-ux P02 | 4 | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -139,6 +140,8 @@ Recent decisions affecting current work:
 - 10-04: deckIds filter is additive to server isActive filter — never a replacement; client cannot be trusted as sole enforcement
 - 10-04: mockParams.current vi.hoisted mutable holder in tests — default { id: 'deck-abc' }; global block sets {} in beforeEach
 - 22-01: STUDY-04 deck badge unconditional in SessionRunner progress row — not gated on studyMode; deckTitle rendered as JSX text child (D-07); study.deckBadgeAriaLabel key uses interpolation for aria-label only
+- 22-02: STUDY-05 confirmed closed — Fisher-Yates does not produce deck-grouped output; 1000-run statistical test (>95% cross-deck mixing) proves correctness without a bug fix needed
+- 22-02: shuffle extracted to apps/frontend/src/lib/shuffle.ts as named export; StudySessionPage imports via @/lib/shuffle (pure refactor — no behavior change)
 - 12-01: @vite-pwa/assets-generator minimal-2023 preset outputs apple-touch-icon-180x180.png (not apple-touch-icon.png) — must copy to apple-touch-icon.png for index.html link to resolve
 - 12-03: VitePWA placed last in plugins array (after react, wasm, topLevelAwait) — WASM compatibility (Pitfall 6)
 - 12-03: globPatterns: ['**/*.{js,css,html}'] — wasm explicitly excluded to prevent Typst WASM 28 MB precache failure
@@ -230,6 +233,6 @@ Items acknowledged and deferred at milestone close on 2026-05-30:
 
 ## Session Continuity
 
-Last session: 2026-06-14T16:13:52.902Z
-Stopped at: Completed 20-01-PLAN.md
-Resume with: `/gsd:plan-phase 20`
+Last session: 2026-06-15T09:27:00.000Z
+Stopped at: Completed 22-02-PLAN.md
+Resume with: Phase 22 complete — v1.3.2 milestone done
