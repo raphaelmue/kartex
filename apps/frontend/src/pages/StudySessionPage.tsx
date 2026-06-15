@@ -27,12 +27,14 @@ function SessionRunner({
   examDurationSeconds,
   deckId,
   studyMode,
+  onRestart,
 }: {
   cards: DueCard[]
   mode: StudyMode
   examDurationSeconds: number | null
   deckId?: string
   studyMode: string
+  onRestart: () => void
 }) {
   const { t } = useTranslation()
   const navigate = useNavigate()
@@ -53,8 +55,7 @@ function SessionRunner({
   }
 
   const handleRestart = () => {
-    // Reload the page to restart session with fresh card list
-    window.location.reload()
+    onRestart()
   }
 
   if (cards.length === 0) {
@@ -444,10 +445,14 @@ export function StudySessionPage() {
       try {
         const { mode, tags, size, count } = committedConfig
         // WR-01: SR + deckId uses the deck-scoped endpoint; SR without deckId uses global due
+        if (mode !== 'sr' && !deckId) {
+          toast.error(t('study.couldNotLoad'))
+          return
+        }
         const endpoint =
           mode === 'sr' && !deckId
             ? '/api/study/due'
-            : `/api/study/deck/${deckId}`
+            : `/api/study/deck/${deckId!}`
 
         const res = await api.get(endpoint)
         if (res.ok) {
@@ -489,7 +494,7 @@ export function StudySessionPage() {
         setLoadingCards(false)
       }
     })()
-  }, [committedConfig, deckId])
+  }, [committedConfig, deckId, t])
 
   // Toggle a deck in/out of the session selection (DECK-03 — session-only, no API call)
   const toggleDeckSelection = (deckId: string) => {
@@ -499,6 +504,15 @@ export function StudySessionPage() {
       else next.add(deckId)
       return next
     })
+  }
+
+  // Restart session by resetting state back to the start screen
+  const handlePageRestart = () => {
+    setCommittedConfig(null)
+    setCards(null)
+    setSelectedTags(new Set())
+    setSessionSize('all')
+    if (!isGlobalSR) setSelectedMode(null)
   }
 
   // Commit the global SR start screen config and begin loading cards (DECK-03/DECK-04)
@@ -651,7 +665,10 @@ export function StudySessionPage() {
           </div>
           <p className="text-xs text-muted-foreground">{t('study.examDescription')}</p>
           <Select
-            onValueChange={(val) => setExamDurationSeconds(parseInt(val, 10))}
+            onValueChange={(val) => {
+              const n = parseInt(val, 10)
+              if (!isNaN(n)) setExamDurationSeconds(n)
+            }}
           >
             <SelectTrigger className="mt-3">
               <SelectValue placeholder={t('study.selectTimeLimit')} />
@@ -712,6 +729,7 @@ export function StudySessionPage() {
       examDurationSeconds={examDurationSeconds}
       deckId={deckId}
       studyMode={user?.studyMode ?? 'normal'}
+      onRestart={handlePageRestart}
     />
   )
 }
