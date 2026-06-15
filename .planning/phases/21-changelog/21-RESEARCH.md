@@ -393,17 +393,11 @@ No unit tests are needed (documentation file). Verification is manual inspection
 | A2 | Scrollable card text (260607-001, 2026-06-07) falls into the v1.3.0 window | Content Outline — v1.3.0 | 260607-001 shipped 2026-06-07, which is between v1.2 close (2026-06-04) and v1.3.0 close (2026-06-11). Attribution to v1.3.0 is correct unless the project treats quick tasks as belonging to the milestone active at the time of the task. |
 | A3 | v1.3.2 will close after Phase 22 completes | Content Outline — v1.3.2 | The milestone close date is unknown until Phase 22 finishes. The executor should update the v1.3.2 date accordingly. |
 
-## Open Questions
+## Open Questions (RESOLVED)
 
-1. **Dark mode attribution**
-   - What we know: quick task 260530-003 is dated 2026-05-28 (before v1.0 closed on 2026-05-30); STATE.md lists it under "Completed"
-   - What's unclear: Was dark mode considered part of v1.0 or a v1.1 improvement? It has no formal requirement ID.
-   - Recommendation: Attribute to v1.1 (it polished the app after MVP shipped); include as an unnumbered bullet in the v1.1 Added section.
+1. **Dark mode attribution** — RESOLVED: Attribute to v1.1 as a polish item. Shipped 2026-05-28 (between v1.0 and v1.1 close); included as unnumbered bullet in v1.1 Added section.
 
-2. **v1.3.2 entry completion**
-   - What we know: Phases 19 and 20 are complete; Phase 22 (STUDY-04, STUDY-05) is not yet done
-   - What's unclear: Should the executor write a partial v1.3.2 entry now and update it after Phase 22, or wait until Phase 22 is complete?
-   - Recommendation: Write the partial entry now with a clearly marked placeholder comment: `<!-- TODO Phase 22: add STUDY-04 and STUDY-05 bullets here -->`. After Phase 22 executes, the STUDY-04/05 executor or a follow-up commit completes it.
+2. **v1.3.2 entry completion** — RESOLVED: Write partial entry now with `<!-- TODO Phase 22: add STUDY-04 and STUDY-05 bullets here -->` placeholder. Executor for Phase 22 (or a follow-up commit) removes the placeholder and adds the remaining bullets when Phase 22 completes.
 
 ## Environment Availability
 
