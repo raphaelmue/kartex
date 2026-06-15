@@ -35,23 +35,26 @@ vi.mock('sonner', () => ({
 }))
 
 // 4. useAuth mock — StudySessionPage now imports useAuth for mode indicator (Phase 11, SM2-04)
-// Default studyMode: 'normal' so all existing tests pass (Badge not shown in Normal mode)
-const mockStudyMode = vi.hoisted(() => ({ current: 'normal' }))
-vi.mock('@/context/AuthContext', () => ({
-  useAuth: () => ({
+// Using vi.fn() + mockReturnValue so each test controls the return value explicitly
+// and there is no object-property timing issue between beforeEach and renderPage() (WR-01)
+const mockUseAuth = vi.hoisted(() => vi.fn())
+vi.mock('@/context/AuthContext', () => ({ useAuth: mockUseAuth }))
+
+function makeAuthValue(studyMode = 'normal') {
+  return {
     user: {
       id: '1',
       username: 'test',
       role: 'USER',
       isActive: true,
-      studyMode: mockStudyMode.current,
+      studyMode,
       createdAt: '2026-01-01',
     },
     loading: false,
     setUser: vi.fn(),
     logout: vi.fn(),
-  }),
-}))
+  }
+}
 
 // Helper card factory
 function makeCard(
@@ -125,6 +128,11 @@ function renderPage() {
     </MemoryRouter>,
   )
 }
+
+// Default auth value for all tests (WR-01: avoids stale-capture with shared object ref)
+beforeEach(() => {
+  mockUseAuth.mockReturnValue(makeAuthValue())
+})
 
 describe('StudySessionPage config section', () => {
   beforeEach(() => {
@@ -553,19 +561,19 @@ describe('StudySessionPage mode indicator (SM2-04)', () => {
   beforeEach(() => {
     // Use deck-specific path so we get the mode selector start screen
     mockParams.current = { id: 'deck-abc' }
-    mockStudyMode.current = 'normal'
+    mockUseAuth.mockReturnValue(makeAuthValue('normal'))
     mockApiGet.mockReset()
     setupPrefetchMocks()
   })
 
   afterEach(() => {
-    mockStudyMode.current = 'normal'
+    mockUseAuth.mockReturnValue(makeAuthValue('normal'))
     mockParams.current = { id: 'deck-abc' }
   })
 
   // SM2-04a: no indicator shown in Normal mode
   it('SM2-04a: no mode indicator Badge shown in Normal mode', async () => {
-    mockStudyMode.current = 'normal'
+    mockUseAuth.mockReturnValue(makeAuthValue('normal'))
     mockApiGet.mockResolvedValueOnce({
       ok: true,
       json: async () => [makeCard('c1', [])],
@@ -591,7 +599,7 @@ describe('StudySessionPage mode indicator (SM2-04)', () => {
 
   // SM2-04b: Intensive mode shows indicator Badge
   it('SM2-04b: Intensive mode shows mode indicator Badge with translated name', async () => {
-    mockStudyMode.current = 'intensive'
+    mockUseAuth.mockReturnValue(makeAuthValue('intensive'))
     mockApiGet.mockResolvedValueOnce({
       ok: true,
       json: async () => [makeCard('c1', [])],
@@ -612,7 +620,7 @@ describe('StudySessionPage mode indicator (SM2-04)', () => {
 
   // SM2-04c: Exam Prep mode shows indicator Badge
   it('SM2-04c: Exam Prep mode shows mode indicator Badge with translated name', async () => {
-    mockStudyMode.current = 'exam_prep'
+    mockUseAuth.mockReturnValue(makeAuthValue('exam_prep'))
     mockApiGet.mockResolvedValueOnce({
       ok: true,
       json: async () => [makeCard('c1', [])],
