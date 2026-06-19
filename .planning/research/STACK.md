@@ -1,247 +1,237 @@
-# Technology Stack — v1.3.0 Additions
+# Technology Stack — v1.4.0 Additions
 
-**Project:** Kartex v1.3.0 Stats & Import Update
-**Researched:** 2026-06-09
+**Project:** Kartex v1.4.0 Auth Overhaul & Study UX
+**Researched:** 2026-06-19
 **Mode:** Milestone supplement — existing stack is fixed; this covers NEW capabilities only.
 
 ---
 
 ## Scope
 
-Two feature areas. The existing stack (React 18 + Vite 5 + TypeScript + shadcn/ui + Hono +
-Prisma 7 + PostgreSQL 16 + react-i18next v26 + vite-plugin-pwa) is validated and not
-re-researched.
+Eight feature areas. The existing stack (React 18 + Vite 5 + TypeScript + shadcn/ui + Hono +
+Prisma 7 + PostgreSQL 16 + react-i18next v26 + unzipper + jose) is validated and not
+re-researched. This file covers only net-new packages.
 
 ---
 
-## Feature 1: Learning Statistics Dashboard
+## Feature Group 1: Email Delivery (SMTP)
 
-### Critical Schema Gap — ReviewLog Table Required
+### Recommended: nodemailer 9.0.1
 
-**The current schema cannot answer STATS-02 or STATS-03.**
+| Package | Version | Install In | Purpose | Why chosen |
+|---------|---------|------------|---------|------------|
+| `nodemailer` | `^9.0.1` | `@kartex/backend` | SMTP email delivery | De-facto standard, zero runtime dependencies, self-hosted SMTP compatible, MIT-0 license |
+| `@types/nodemailer` | `^8.0.1` | `@kartex/backend` (devDep) | TypeScript types | Nodemailer does not bundle types; DefinitelyTyped package is current and actively maintained |
 
-`CardProgress` stores SM-2 state only: `easeFactor`, `interval`, `repetitions`,
-`nextReview`, `lastReviewed`. The `rating` (1–4) submitted by the user is used to compute
-the SM-2 output and then discarded — it is never persisted. This means:
+**Key facts (verified):**
 
-- STATS-02 (retention rate = % ratings ≥ Good in last 30 days) — **no data**
-- STATS-03 (card difficulty breakdown = Easy/Good/Hard/Again counts) — **no data**
+- v9.0.1 released 2026-06-17 — actively maintained, bug fixes still flowing (9.0.0 on 2026-06-14).
+- License changed to **MIT-0** (no-attribution MIT variant) — permissive, no risk.
+- CJS package (`main: lib/nodemailer.js`, no `"type": "module"`). Node.js ESM hosts can default-import CJS packages. The backend already does this with `bcryptjs` and `unzipper` — confirmed pattern: `import bcrypt from 'bcryptjs'` in `apps/backend/src/lib/seed.ts`. Same pattern works for nodemailer.
+- Zero runtime dependencies — no transitive dep bloat.
+- Breaking change in v9: TLS certificate validation now enforced by default for remote content fetches. Self-hosted SMTP with a valid cert (Let's Encrypt) is unaffected. If users configure SMTP to a server with a self-signed cert, they must set `tls: { rejectUnauthorized: false }` in the transport config — expose this in the admin SMTP settings UI.
+- `@types/nodemailer` 8.0.1 is current (released 2026-06-10).
 
-STATS-01 (reviewed today count) and STATS-04 (per-deck due/mastered/in-learning) can be
-derived from existing `CardProgress` fields.
+**Why not alternatives:**
 
-**Recommended fix: add a `ReviewLog` model to capture every rating event.**
+| Alternative | Reason rejected |
+|-------------|-----------------|
+| `@sendgrid/mail` | Cloud-API dependency — Kartex is self-hosted; users configure their own SMTP server |
+| `resend` | Same issue — third-party API, not SMTP |
+| `emailjs` | Lighter but far less adoption and documentation; nodemailer has no meaningful overhead |
+
+### Email Templating: No library — inline template literals
+
+Kartex v1.4.0 sends exactly **3 email types**: invite link, self-service password reset, admin-triggered password reset. The content is simple transactional HTML: heading, one paragraph, one button/link.
+
+**Decision: write HTML as tagged template literals in a dedicated `src/lib/emailTemplates.ts` file on the backend.** No templating library needed.
+
+- `react-email` requires React installed on the backend — significant overhead (React is a frontend dependency). Overkill for 3 static templates. Not added.
+- `handlebars` / `ejs` add a dependency for what amounts to 3 string interpolations. No added value.
+- Inline template literals give full TypeScript type safety, zero dependencies, and are testable with a string assertion.
+
+**Pattern:** Each template function accepts `{ appUrl, token, username }` and returns `{ subject: string, html: string, text: string }`. The `text` fallback is a plain-text version of the same content.
+
+---
+
+## Feature Group 2: Password Reset & Invite Tokens
+
+### No new packages — use `node:crypto` (built-in)
+
+| Package | Version | Purpose |
+|---------|---------|---------|
+| *(none)* | — | Token generation uses `crypto.randomBytes(32).toString('hex')` from Node.js built-in |
+
+**Rationale:**
+
+- `crypto.randomBytes(32).toString('hex')` produces 64-character hex strings — 256 bits of entropy. Cryptographically strong (CSPRNG). No external dependency.
+- The existing backend already imports from `node:crypto` (`randomUUID` in `import.ts`). Pattern established.
+- `nanoid` would be a valid alternative (URL-safe alphabet, compact output) but adds a dependency for no functional gain. The token only appears in an email link, never displayed to users — hex is fine.
+- `uuid` is explicitly worse for security tokens (RFC 4122 v4 is only 122 bits; `randomBytes` gives 256 bits).
+
+**Schema additions needed (no new packages):**
+
+Two new Prisma models via hand-written SQL migrations (established pattern):
 
 ```prisma
-model ReviewLog {
-  id         String   @id @default(cuid())
-  userId     String
-  user       User     @relation(fields: [userId], references: [id])
-  cardId     String
-  card       Card     @relation(fields: [cardId], references: [id], onDelete: Cascade)
-  deckId     String
-  deck       Deck     @relation(fields: [deckId], references: [id], onDelete: Cascade)
-  rating     Int      // 1=Again 2=Hard 3=Good 4=Easy (raw user rating, not SM-2 quality)
-  reviewedAt DateTime @default(now())
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash String   @unique          // SHA-256 of raw token; raw token only in email
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime @default(now())
+}
 
-  @@index([userId, reviewedAt])
-  @@index([userId, deckId, reviewedAt])
+model InviteEmail {
+  id        String    @id @default(cuid())
+  email     String    @unique
+  tokenHash String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
 }
 ```
 
-Add back-relations to `User`, `Card`, `Deck`:
-```prisma
-model User  { reviewLogs ReviewLog[] }
-model Card  { reviewLogs ReviewLog[] }
-model Deck  { reviewLogs ReviewLog[] }
-```
+Token lifecycle:
+1. Generate: `crypto.randomBytes(32).toString('hex')` → raw token
+2. Hash for storage: `crypto.createHash('sha256').update(rawToken).digest('hex')` → `tokenHash`
+3. Email: link contains raw token (`?token=<raw>`)
+4. Verify: hash incoming token, compare to `tokenHash` in DB
+5. Invalidate: set `usedAt`, check `expiresAt` — single-use enforced at DB level
 
-**What changes at the route level:** `POST /api/study/rate` already has the `rating` value
-in scope (from `RateCardSchema`). Add a `reviewLog.create` call inside the existing
-`cardProgress.upsert` — batch both in a `$transaction` to keep the write atomic.
-
-**Migration safety:** New table with no NOT-NULL columns without defaults and no required
-foreign keys without defaults. Existing rows are unaffected. No backfill needed — stats
-show data from the point the migration runs forward.
-
-**Confidence:** HIGH — direct code read of `study.ts` confirms rating is discarded; Prisma
-`$transaction` pattern is already used in `import.ts`.
-
-### What Drives the Stat Chip Values
-
-Once `ReviewLog` exists, the four stats compute as:
-
-| Stat | Source | Query |
-|------|--------|-------|
-| STATS-01: total reviewed (all time + this week) | `ReviewLog` | COUNT with `reviewedAt >= weekStart` |
-| STATS-02: retention rate (30 days) | `ReviewLog` | COUNT(rating >= 3) / COUNT(*) where reviewedAt >= 30 days ago |
-| STATS-03: difficulty breakdown | `ReviewLog` | GROUP BY rating where reviewedAt >= 30 days ago (or all time) |
-| STATS-04: per-deck progress | `CardProgress` + `Card` | interval >= 21 → "mastered"; repetitions > 0 → "in-learning"; no row → "new/due" |
-
-These are straightforward aggregate queries in Prisma. No special analytics library is needed.
-
-### New API Endpoint
-
-Add `GET /api/stats/summary` (or extend `GET /api/dashboard/stats`). Returning from the
-existing dashboard endpoint is simpler (one fetch call) — extend `DashboardStats` in
-`packages/shared` rather than adding a new route.
-
-**No new libraries needed** for the backend statistics computation.
-
-### Frontend: No Charting Library
-
-The dashboard spec calls for **stat chips** — small numeric tiles showing a value and a
-label. The two existing chips (reviewed today, streak) are already implemented as plain
-`div` + Tailwind. The new chips (total reviewed, retention %, difficulty breakdown, per-deck
-progress) follow the same pattern.
-
-STATS-04 (per-deck progress showing due/mastered/in-learning counts) could optionally use a
-progress bar — the `Progress` component from `@radix-ui/react-progress` is **already
-installed** in the project (`apps/frontend/src/components/ui/progress.tsx`).
-
-**Decision: do not add a charting library.** Recharts, Nivo, and similar add 50-300 KB to
-the bundle. The spec says "stat chips on the existing dashboard page" — numeric tiles, not
-charts. The existing `Progress` bar component is sufficient for any proportional display.
-
-**If a bar chart is ever needed** (out of scope for v1.3): Recharts is the idiomatic choice
-for React (MIT, ~130 KB gzip, tree-shakeable, well-maintained). Install then, not now.
-
-**No new npm packages needed** for the stats dashboard UI.
-
-### Date Range Arithmetic
-
-Retention rate and difficulty breakdown require "last 30 days" filtering. This is a single
-`new Date(); date.setDate(date.getDate() - 30)` computation — no date library needed.
-The project already avoids date libraries (no `date-fns` or `dayjs` in either package.json).
-Keep that pattern.
-
-**Confidence:** HIGH — confirmed by reading both package.json files and the existing
-dashboard route implementation.
+`User` model also needs `email String? @unique` field (nullable for existing users during migration).
 
 ---
 
-## Feature 2: Deck Update via Import
+## Feature Group 3: ABC Music Notation (abcjs)
 
-### Critical Format Gap — Card `id:` Field Does Not Exist
+### Recommended: abcjs 6.6.3 (frontend only)
 
-**The current `.kartex` format has no `id:` field on card blocks.**
+| Package | Version | Install In | Purpose | Why chosen |
+|---------|---------|------------|---------|------------|
+| `abcjs` | `^6.6.3` | `@kartex/frontend` | Render `#abc` fenced blocks as SVG sheet music | Only mature, actively-maintained ABC notation renderer for the browser; MIT license; includes TypeScript types |
 
-The parser (`kartex-parser.ts`) recognises only `front:`, `back:`, and `tags:`. The
-`ParsedCard` Zod schema has no `id` field. The import route (`import.ts`) calls
-`card.createMany` and does not pass any application-level ID.
+**Key facts (verified):**
 
-For merge-by-ID to work (IMP-02/03/04), cards in the `.kartex` file must carry a stable
-identity that survives re-export and re-import. The only correct solution is to add an
-optional `id:` field to the format.
+- v6.6.3 released 2026-04-24. Active maintenance: v6.6.0 (Jan 2026), v6.6.1 (Feb), v6.6.2 (Feb), v6.6.3 (Apr). v6.5.x released mid-2025.
+- **TypeScript types included**: `types: "types/index.d.ts"` in package.json. No `@types/abcjs` needed.
+- **CJS package** (`module.exports = abcjs`). Vite automatically handles CJS→ESM conversion at build time — this is the standard pattern (same as how the project uses other CJS packages on the frontend).
+- **DOM-required, client-side only.** `abcjs.renderAbc()` writes SVG into a provided DOM element. It cannot run server-side (no SSR/Node rendering support). This is correct — Kartex is a pure SPA with no SSR.
+- **Package size**: 5.9 MB unpacked. The dist folder contains `abcjs-basic-min.js` (the UMD bundle) and `abcjs-basic.js`. Vite tree-shakes from the module exports, so the actual bundle contribution is the rendering core only — audio synthesis (WebAudio/MIDI) is only included if imported explicitly.
+- No CDN approach needed — npm + Vite is the correct integration path for this project.
 
-**Recommended additions:**
-
-1. **`.kartex` format (docs/kartex-format.md):** Add `id:` as an optional card field. When
-   exporting a deck, the backend serialises the Prisma `card.id` (CUID) as the `id:` field.
-   When importing for update, the parser extracts `id:` and the route uses it as the merge
-   key. Cards without `id:` are treated as new (assigned a new DB id on insert).
-
-2. **`ParsedCard` Zod schema** (`packages/shared/src/schemas/import.ts`):
-   ```typescript
-   export const ParsedCardSchema = z.object({
-     id: z.string().optional(),   // NEW — present only in re-exported decks
-     front: z.string().min(1),
-     back: z.string().min(1),
-     tags: z.array(z.string()).default([]),
-   })
-   ```
-
-3. **`kartex-parser.ts`:** Add `id:` to `FIELD_PATTERN` and `parseFields`. One-line regex
-   change: `const FIELD_PATTERN = /^(front|back|tags|id):\s*(.*)/`
-   Collect `id` as a string if present, pass through to `ParsedCard`.
-
-4. **Deck export endpoint (new):** `GET /api/decks/:id/export` — serialises the deck to
-   `.kartex` text, writing each card's DB `id` into the `id:` field. This is the mechanism
-   by which users get a `.kartex` file that carries IDs. Without export, the update feature
-   only works if the user manually added `id:` fields (unlikely) — so export is a
-   prerequisite.
-
-**No new libraries needed** for format extension or merge logic.
-
-### Merge Logic — Pure Set Operations, No Library
-
-The merge (IMP-02/03/04) is a three-way diff on card IDs:
-
-```
-fileIds   = Set of id values from parsed file (non-null only)
-dbIds     = Set of card.id values currently in the deck
-
-toUpdate  = intersection(fileIds, dbIds)   → update content, preserve CardProgress
-toAdd     = fileIds - dbIds                → card.createMany
-toRemove  = dbIds - fileIds                → card.deleteMany (cascades CardProgress)
-noIdCards = cards from file with no id    → card.createMany (always new)
-```
-
-This is four JavaScript `Set` operations. No diffing library needed. The `diff` npm package
-or similar are for text line diffing, which is irrelevant here.
-
-**Confidence:** HIGH — pure algorithmic logic, no external dependency required.
-
-### Confirmation Preview — New Shared Schema
-
-IMP-05 requires a preview showing added/updated/removed counts before the user commits.
-This is a two-phase API:
-
-- **Phase 1:** `POST /api/decks/:id/import/preview` — parse the file, compute diff counts,
-  return the summary. Nothing written to DB.
-- **Phase 2:** `POST /api/decks/:id/import/commit` — re-parse (or accept a preview token)
-  and apply the merge.
-
-Add a new Zod schema in `packages/shared/src/schemas/import.ts`:
+**React integration pattern (verified via docs.abcjs.net):**
 
 ```typescript
-export const DeckUpdatePreviewSchema = z.object({
-  toAdd:    z.number().int().nonnegative(),
-  toUpdate: z.number().int().nonnegative(),
-  toRemove: z.number().int().nonnegative(),
-  warnings: z.array(ParseWarningSchema),
-})
-export type DeckUpdatePreview = z.infer<typeof DeckUpdatePreviewSchema>
+// AbcRenderer.tsx — imperative, DOM-ref-based
+import { useEffect, useRef } from 'react'
+import abcjs from 'abcjs'
+
+interface Props { notation: string }
+
+export function AbcRenderer({ notation }: Props) {
+  const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (ref.current) {
+      abcjs.renderAbc(ref.current, notation, { responsive: 'resize' })
+    }
+  }, [notation])
+
+  return <div ref={ref} />
+}
 ```
 
-No new libraries needed.
+This is the canonical pattern confirmed by abcjs GitHub issues and docs. `useEffect` (not `useLayoutEffect`) is correct because the SVG render is not layout-critical and this avoids SSR-warning noise.
 
-### File Upload UI — Reuse `useImport` Hook Pattern
+**`renderAbc` signature:**
+```typescript
+abcjs.renderAbc(element: HTMLElement | string, abcString: string, options?: AbcVisualParams): TuneObject[]
+```
 
-The existing `ImportPage.tsx` and `useImport` hook handle file upload, parse preview, and
-confirmation already. The deck-update upload on `DeckDetailPage` should reuse the same
-pattern: a hidden `<input type="file">` + `FormData` POST, progress state managed locally.
+First argument accepts an `HTMLElement` directly (the `ref.current`) or a DOM ID string.
 
-The confirmation preview dialog can use the existing `Dialog` component from
-`@radix-ui/react-dialog` (already installed).
+**Where it plugs in:**
 
-**No new UI libraries needed.**
+The existing `CardRenderer` component processes fenced code blocks via `react-markdown` + `rehype-highlight`. A `#abc` block is a fenced block with language `abc`. The existing pattern for `#typst` blocks (detected in `rehype` pipeline, rendered via `TypstRenderer`) is the model to follow: detect `language === 'abc'`, render via `AbcRenderer` component instead of `highlight.js`.
 
-### ZIP Bundle Handling for Deck Update
+**Why not react-abcjs or @abc-editor/react:**
 
-The existing import route handles both `.kartex` and `.kartex.zip`. The deck-update route
-must handle both as well. All ZIP logic (`unzipper`, `file-type`, `ALLOWED_MIMES`, media
-UUID rewrite) already exists in `import.ts`. Extract the shared logic into a helper
-function and call it from both routes.
+Both wrapper packages are effectively dead. `react-abcjs` last published 6 years ago. `@abc-editor/react` last published 2 years ago. Direct use of `abcjs` with a `useRef`/`useEffect` component is 10 lines of code and avoids a stale wrapper.
 
-**No new libraries needed** — `unzipper` and `file-type` are already installed.
+---
+
+## Feature Group 4: ZIP Deck Update Extension
+
+### No new packages — extend existing unzipper usage
+
+The milestone requirement is: "extend the update/apply path to accept `.kartex.zip` bundles with a `media/` folder." The `.kartex.zip` import path already exists in `apps/backend/src/routes/import.ts` using `unzipper` (already installed). The deck update route (`deckUpdate.ts`) currently only handles `.kartex` text files.
+
+**Change needed:** Extract the ZIP extraction logic from `import.ts` into a shared helper (`src/lib/kartexZip.ts`), then call it from both `import.ts` and `deckUpdate.ts`.
+
+No new npm packages.
+
+---
+
+## Feature Group 5: Quick-Edit 3-Dot Menu in Study Mode
+
+### No new packages — existing shadcn/ui DropdownMenu
+
+The quick-edit menu is a 3-dot (`MoreVertical`) icon button with a `DropdownMenu` (edit card / jump to deck). The `@radix-ui/react-dropdown-menu` component is already installed (used on the deck list page in v1.3.1). The `MoreVertical` icon is from `lucide-react` (already installed).
+
+No new npm packages.
+
+---
+
+## Feature Group 6: Admin User Deletion
+
+### No new packages — Prisma cascade deletes
+
+User deletion cascades to `Deck`, `DeckShare`, `CardProgress`, `ReviewLog` via Prisma `onDelete: Cascade`. The cascade is already set on `ReviewLog` and `CardProgress`. Confirm `Deck` has cascade to `Card` (yes — in current schema). Admin route addition only.
+
+No new npm packages.
 
 ---
 
 ## Summary of New Dependencies
 
-**Zero new npm packages are required for v1.3.0.**
+| Package | Version | Workspace | Type | Feature |
+|---------|---------|-----------|------|---------|
+| `nodemailer` | `^9.0.1` | `@kartex/backend` | dependency | Email delivery (invite, password reset) |
+| `@types/nodemailer` | `^8.0.1` | `@kartex/backend` | devDependency | TypeScript types for nodemailer |
+| `abcjs` | `^6.6.3` | `@kartex/frontend` | dependency | ABC music notation rendering |
 
-| Feature | Change | Libraries |
-|---------|--------|-----------|
-| ReviewLog schema | New Prisma model + migration | None — Prisma already installed |
-| Stats API | Extend dashboard route, aggregate queries | None |
-| Stats UI chips | Extend existing chip layout | None — shadcn/ui Progress already installed |
-| `.kartex` `id:` field | Parser + schema update | None — `yaml` already installed |
-| Merge logic | Set operations in `import.ts` | None |
-| Preview schema | New Zod object in `packages/shared` | None — Zod already installed |
-| Deck export | New `GET /api/decks/:id/export` route | None |
-| Update UI | File input + Dialog on DeckDetailPage | None — Dialog already installed |
+**Total net-new packages: 3** (2 backend, 1 frontend)
+
+Everything else (token generation, email templating, zip handling, UI components, admin ops) is covered by existing packages or Node.js built-ins.
+
+---
+
+## Schema Changes Required (no new packages)
+
+All schema changes use the established hand-written SQL migration pattern.
+
+| Change | Type | Notes |
+|--------|------|-------|
+| `User.email String? @unique` | Field addition | Nullable to preserve existing users; migration sets NULL for all current rows |
+| `PasswordResetToken` model | New table | `tokenHash @unique`, `expiresAt`, `usedAt?` — single-use enforced |
+| `InviteEmail` model | New table (replaces invite code flow) | `email @unique`, `tokenHash @unique`, `expiresAt` |
+| `InviteCode` model | Keep or deprecate | Keep for backward compat; new flow uses `InviteEmail` |
+
+---
+
+## Installation
+
+```bash
+# Backend
+yarn workspace @kartex/backend add nodemailer
+yarn workspace @kartex/backend add -D @types/nodemailer
+
+# Frontend
+yarn workspace @kartex/frontend add abcjs
+```
 
 ---
 
@@ -249,18 +239,24 @@ function and call it from both routes.
 
 | Category | Recommended | Alternative | Why Not |
 |----------|-------------|-------------|---------|
-| Stats visualization | No charting library — numeric chips | Recharts | Spec says chips, not charts; adds 130 KB+ bundle weight for no stated requirement |
-| Date range | Inline `new Date()` arithmetic | date-fns / dayjs | No date library in project; 30-day window is a single subtraction |
-| Card merge key | `id:` field in `.kartex` format | Content hash of front+back | Content hash breaks on any edit; stable DB id is the only reliable key |
-| Diff computation | In-memory Set operations | npm `diff` package | `diff` is for text line diffing; structural card set operations need no library |
-| Preview/commit two-phase | Stateless re-parse on commit | Server-side session token | Stateless is simpler; re-parsing a small file is negligible cost |
+| SMTP library | `nodemailer@9` | `@sendgrid/mail`, `resend` | Cloud API services, not SMTP; incompatible with self-hosted deployment model |
+| SMTP library | `nodemailer@8` | `nodemailer@9` | v9 is current, actively maintained, no migration cost |
+| Email templating | Inline template literals | `react-email`, `mjml`, `handlebars` | 3 simple transactional emails; any framework is overkill; react-email would require React on backend |
+| Secure token generation | `node:crypto randomBytes` | `nanoid`, `uuid` | Built-in, zero dependencies, 256-bit entropy, established pattern in this codebase |
+| ABC notation | `abcjs@6.6.3` (direct) | `react-abcjs` (wrapper) | Wrapper dead (6 years); 10-line React component replaces it |
+| ABC notation | npm install | CDN `<script>` tag | CDN requires global variable access, conflicts with TypeScript imports, CSP issues |
 
 ---
 
 ## Sources
 
-- Direct code read: `apps/backend/src/routes/study.ts` — confirms rating is discarded after SM-2 computation (HIGH confidence)
-- Direct code read: `apps/backend/prisma/schema.prisma` — confirms no `ReviewLog` or `lastRating` field exists (HIGH confidence)
-- Direct code read: `packages/shared/src/lib/kartex-parser.ts` — confirms no `id:` field parsed (HIGH confidence)
-- Direct code read: `packages/shared/src/schemas/import.ts` — confirms `ParsedCard` has no `id` field (HIGH confidence)
-- Direct code read: `apps/frontend/package.json` — confirms no charting library installed, `@radix-ui/react-progress` and `@radix-ui/react-dialog` already present (HIGH confidence)
+- `apps/backend/package.json` — confirmed existing deps (bcryptjs, unzipper, jose, file-type) and ESM CJS interop pattern (HIGH confidence)
+- `apps/frontend/package.json` — confirmed existing deps (@radix-ui/react-dropdown-menu, lucide-react, react-markdown) (HIGH confidence)
+- `apps/backend/prisma/schema.prisma` — confirmed existing models; identified fields to add (HIGH confidence)
+- `npm show nodemailer --json` — version 9.0.1, license MIT-0, CJS, zero deps (HIGH confidence)
+- `npm show @types/nodemailer version` — 8.0.1 current (HIGH confidence)
+- GitHub: nodemailer/nodemailer — TypeScript types via `@types/nodemailer`; v9 TLS validation change (HIGH confidence)
+- `npm show abcjs --json` — version 6.6.3, MIT, types bundled at `types/index.d.ts`, CJS (HIGH confidence)
+- abcjs release history (npm) — 6.6.3 April 2026; actively maintained with 4 releases since Jan 2026 (HIGH confidence)
+- https://docs.abcjs.net/overview/getting-started — npm install path, `import abcjs from 'abcjs'`, React useRef/useEffect pattern confirmed (HIGH confidence)
+- https://docs.abcjs.net/visual/overview — `renderAbc(element, abcString, options)` signature; element accepts HTMLElement directly (HIGH confidence)
