@@ -1,6 +1,20 @@
 # Kartex
 
-## Current State: v1.3.2 — SHIPPED 2026-06-15
+## Current Milestone: v1.4.0 — Auth Overhaul & Study UX
+
+**Goal:** Replace invite codes with email-based invitations, add self-service and admin-triggered password reset, improve admin user management, extend zip import-update, add a quick-edit shortcut in study mode, and add ABC music notation rendering in card content.
+
+**Target features:**
+- Email invitations — admin enters email → SMTP invite link → user clicks, sets username + password
+- User email field — required for invite delivery and password reset
+- Self-service password reset — forgot-password flow via email link
+- Admin: trigger password reset — sends reset email to any user from the admin panel
+- Admin: delete user — permanent account deletion with confirmation (cascades decks + progress)
+- Deck update via `.kartex.zip` — extend import-update path to accept zip bundles with media/ folder
+- Quick-edit in study mode — 3-dot menu on study cards for owners/edit-access to edit card or jump to deck
+- ABC notation rendering — `#abc` fenced blocks in card content render as sheet music via abcjs
+
+## Previous: v1.3.2 — SHIPPED 2026-06-15
 
 **Last milestone:** v1.3.2 UX Polish & Changelog — SHIPPED 2026-06-15
 **Phases shipped:** 1–22 (v1.0: 1–6, v1.1: 7–9, v1.2: 10–13, v1.3.0: 14–16, v1.3.1: 17–18, v1.3.2: 19–22)
@@ -106,9 +120,7 @@ A user can open their dashboard, see their due cards, and complete a spaced-repe
 
 ### Active
 
-*(Next milestone — TBD)*
-
-*(No active requirements — start next milestone with `/gsd-new-milestone`)*
+*(v1.4.0 — requirements defined in REQUIREMENTS.md)*
 
 ### Out of Scope
 
@@ -187,4 +199,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-06-15 — v1.3.2 milestone shipped (UX Polish & Changelog). All 7 requirements validated. No active requirements — next milestone TBD.*
+*Last updated: 2026-06-19 — v1.4.0 milestone started (Auth Overhaul & Study UX). Requirements in REQUIREMENTS.md.*
