@@ -188,11 +188,8 @@ Recent decisions affecting current work:
 
 **Captured todos:**
 
-- [2026-06-13] Redesign Kartex logo with K motif on learning card (`2026-06-13-redesign-kartex-logo-with-k-motif-on-learning-card.md`) — maps to Phase 20
-- [2026-06-13] Verify and fix study session cross-deck shuffle (`2026-06-13-verify-and-fix-study-session-cross-deck-shuffle.md`) — maps to Phase 22
-- [2026-06-13] Show deck badge on study session cards (`2026-06-13-show-deck-badge-on-study-session-cards.md`) — maps to Phase 22
-- [2026-06-15] Support deck update via zip file upload (`2026-06-15-support-deck-update-via-zip-file.md`) — import-update zip gap
-- [2026-06-15] Add quick-edit / jump-to-card button in study mode (`2026-06-15-quick-edit-card-button-in-study-mode.md`) — 3-dot menu for owners/edit-auth users
+- [2026-06-15] Support deck update via zip file upload (`2026-06-15-support-deck-update-via-zip-file.md`) — `deckUpdate.ts` explicitly rejects `.kartex.zip`; update path needs extending
+- [2026-06-15] Add quick-edit / jump-to-card button in study mode (`2026-06-15-quick-edit-card-button-in-study-mode.md`) — 3-dot overflow menu for owners/edit-auth users in StudySessionPage
 - [2026-06-19] Improve user management and email-based auth flows (`2026-06-19-improve-user-management-and-email-based-auth-flows.md`) — admin reset/delete users; email registration, verification, password reset, email invitations
 
 **Completed:**
@@ -202,6 +199,9 @@ Recent decisions affecting current work:
 - [2026-05-28] Add dark mode — done as quick task 260530-003
 - [2026-05-28] Add GitHub Actions CI pipeline — done via Phase 6 (06-03) + quick task 260530-005
 - [2026-06-13] Remove public deck from personal library (LIB-02) — done in Phase 19
+- [2026-06-13] Redesign Kartex logo with K motif on learning card — done in Phase 20 (`KartexLogo.tsx`)
+- [2026-06-13] Show deck badge on study session cards (STUDY-04) — done in Phase 22 (StudySessionPage line 147)
+- [2026-06-13] Verify and fix study session cross-deck shuffle (STUDY-05) — done in Phase 22; Fisher-Yates confirmed correct
 - [2026-06-13] Add tag-based topic filter, card limit, footer, i18n, collapsible sidebar, deck rotation, README, PWA, SM-2 scaling, .kartex import update, learning statistics, library activate/deactivate, deck card button overflow — all resolved
 
 ### Blockers/Concerns
