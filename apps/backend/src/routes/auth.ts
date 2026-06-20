@@ -138,7 +138,7 @@ auth.post('/logout', async (c) => {
     })
     for (const token of tokens) {
       if (await bcrypt.compare(rawRefreshToken, token.tokenHash)) {
-        await prisma.refreshToken.delete({ where: { id: token.id } })
+        await prisma.refreshToken.deleteMany({ where: { id: token.id } })
         break
       }
     }
@@ -184,7 +184,7 @@ auth.post('/refresh', async (c) => {
   }
 
   // T-02-04: Refresh token rotation — delete old, issue new
-  await prisma.refreshToken.delete({ where: { id: matchedToken.id } })
+  await prisma.refreshToken.deleteMany({ where: { id: matchedToken.id } })
 
   const accessToken = await signToken({ sub: user.id, role: user.role }, '15m')
   const newRawRefreshToken = crypto.randomUUID()

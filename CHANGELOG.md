@@ -5,6 +5,25 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ---
 
+## [v1.3.3] — 2026-06-20
+
+*Hotfix: concurrent logout/refresh token race condition*
+
+### Fixed
+
+- Logout and refresh token rotation no longer crash with a Prisma P2025 error when a concurrent request has already deleted the same refresh token; both operations are now idempotent — a missing token is silently ignored instead of throwing a 500
+
+### Breaking Changes
+
+None
+
+### Migration Notes
+
+**DB migrations:** None.
+**Env var changes:** None.
+
+---
+
 ## [v1.3.2] — 2026-06-15
 
 *Milestone: UX Polish & Changelog (Phases 19–22)*
