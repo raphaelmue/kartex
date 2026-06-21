@@ -2,16 +2,18 @@
 gsd_state_version: 1.0
 milestone: v1.4.0
 milestone_name: Auth Overhaul & Study UX
-status: planning
-stopped_at: Phase 23 UI-SPEC approved
-last_updated: "2026-06-21T18:35:53.289Z"
+current_phase: 23
+current_phase_name: auth-foundation
+status: executing
+stopped_at: Completed 23-01 data model foundation
+last_updated: "2026-06-21T19:23:26.633Z"
 last_activity: 2026-06-21
-last_activity_desc: v1.4.0 roadmap created (Phases 23–28, 28 requirements)
+last_activity_desc: Phase 23 execution started
 progress:
   total_phases: 6
   completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
+  total_plans: 4
+  completed_plans: 1
   percent: 0
 ---
 
@@ -22,14 +24,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-06-19)
 
 **Core value:** A user can open their dashboard, see their due cards, and complete a spaced-repetition study session — that loop must always work.
-**Current focus:** v1.4.0 roadmap created — begin with Phase 23 (Auth Foundation)
+**Current focus:** Phase 23 — auth-foundation
 
 ## Current Position
 
-Phase: Not started
-Plan: —
-Status: Roadmap defined — ready to plan Phase 23
-Last activity: 2026-06-21 — v1.4.0 roadmap created (Phases 23–28, 28 requirements)
+Phase: 23 (auth-foundation) — EXECUTING
+Plan: 2 of 4
+Status: Ready to execute
+Last activity: 2026-06-21 — Phase 23 execution started
 
 ## Performance Metrics
 
@@ -72,6 +74,7 @@ Last activity: 2026-06-21 — v1.4.0 roadmap created (Phases 23–28, 28 require
 | Phase 20 P01 | 8 | 3 tasks | 11 files |
 | Phase 22-study-session-ux P01 | 2 | 2 tasks | 4 files |
 | Phase 22-study-session-ux P02 | 4 | 2 tasks | 3 files |
+| Phase 23-auth-foundation P01 | 2 | 3 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -190,6 +193,8 @@ Recent decisions affecting current work:
 - v1.4-research: importMedia.ts shared helper to be extracted from import.ts for reuse in zip deck update
 - v1.4-research: canEdit field added to DueCardSchema (computed in study.ts from deck permissions)
 - v1.4-research: e.stopPropagation() on StudyCardMenu DropdownMenuTrigger to prevent card flip on 3-dot click
+- [Phase ?]: 23-01: email field nullable — existing users valid with NULL; UNIQUE permits multiple NULLs in Postgres
+- [Phase ?]: 23-01: ReviewLog.userId has onDelete:Cascade — no explicit delete needed in cascade transaction (D-05)
 
 ### Pending Todos
 
@@ -240,8 +245,8 @@ Items acknowledged and deferred at milestone close on 2026-05-30:
 
 ## Session Continuity
 
-**Resume file:** .planning/phases/23-auth-foundation/23-UI-SPEC.md
+**Resume file:** None
 
-Last session: 2026-06-21T18:35:53.279Z
-Stopped at: Phase 23 UI-SPEC approved
+Last session: 2026-06-21T19:23:26.620Z
+Stopped at: Completed 23-01 data model foundation
 Resume with: `/gsd-plan-phase 23` — Auth Foundation

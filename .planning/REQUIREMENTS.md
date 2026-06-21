@@ -10,7 +10,7 @@
 
 ### EMAIL — Email Infrastructure & Invitations
 
-- [ ] **EMAIL-01**: User.email field exists on User model, nullable for existing users, unique per user
+- [x] **EMAIL-01**: User.email field exists on User model, nullable for existing users, unique per user
 - [ ] **EMAIL-02**: SMTP configured via env vars (SMTP_HOST, SMTP_PORT, SMTP_SECURE, SMTP_USER, SMTP_PASS, SMTP_FROM, APP_URL)
 - [ ] **EMAIL-03**: Admin can send an email invitation to a specific address from the admin panel
 - [ ] **EMAIL-04**: Invitation email contains a one-time link (valid 7 days) navigating to the registration page
@@ -87,7 +87,7 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| EMAIL-01 | Phase 23 | Pending |
+| EMAIL-01 | Phase 23 | Complete |
 | EMAIL-02 | Phase 23 | Pending |
 | ADMIN-01 | Phase 23 | Pending |
 | ADMIN-02 | Phase 23 | Pending |
