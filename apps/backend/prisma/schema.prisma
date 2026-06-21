@@ -39,6 +39,7 @@ model User {
   role          Role           @default(USER)
   isActive      Boolean        @default(true)
   studyMode     String         @default("normal")
+  email         String?        @unique
   createdAt     DateTime       @default(now())
 
   refreshTokens  RefreshToken[]
