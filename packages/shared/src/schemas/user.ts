@@ -13,6 +13,7 @@ export const UserSchema = z.object({
   isActive: z.boolean(),
   studyMode: StudyModeSchema.default('normal'),
   createdAt: z.coerce.date(),
+  email: z.string().email().nullable().optional(),
 })
 
 export type User = z.infer<typeof UserSchema>
