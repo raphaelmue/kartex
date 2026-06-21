@@ -108,7 +108,7 @@ Full details: [.planning/milestones/v1.3.2-ROADMAP.md](milestones/v1.3.2-ROADMAP
   4. Admin cannot delete their own account or the last admin account — both cases show a clear error
   5. The app can send SMTP email (mailer singleton responds to configuration; verified by a test send or log)
 
-**Plans**: 2/4 plans executed
+**Plans**: 3/4 plans executed
 **Wave 1**
 
 - [x] 23-01-PLAN.md — User.email schema migration + shared UserSchema + Wave 0 test scaffolds (EMAIL-01)
@@ -119,7 +119,7 @@ Full details: [.planning/milestones/v1.3.2-ROADMAP.md](milestones/v1.3.2-ROADMAP
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
-- [ ] 23-03-PLAN.md — DELETE /users/:id with self-delete/last-admin guards + ordered cascade + media cleanup (ADMIN-01, ADMIN-04)
+- [x] 23-03-PLAN.md — DELETE /users/:id with self-delete/last-admin guards + ordered cascade + media cleanup (ADMIN-01, ADMIN-04)
 
 **Wave 4** *(blocked on Wave 3 completion)*
 
@@ -230,7 +230,7 @@ Full details: [.planning/milestones/v1.3.2-ROADMAP.md](milestones/v1.3.2-ROADMAP
 | 20. Logo & PWA Icons | v1.3.2 | 1/1 | Complete   | 2026-06-14 |
 | 21. Changelog | v1.3.2 | 1/1 | Complete   | 2026-06-14 |
 | 22. Study Session UX | v1.3.2 | 2/2 | Complete | 2026-06-15 |
-| 23. Auth Foundation | v1.4.0 | 2/4 | In Progress|  |
+| 23. Auth Foundation | v1.4.0 | 3/4 | In Progress|  |
 | 24. Email Invitations | v1.4.0 | 0/? | Not started | - |
 | 25. Password Reset | v1.4.0 | 0/? | Not started | - |
 | 26. ABC Notation | v1.4.0 | 0/? | Not started | - |

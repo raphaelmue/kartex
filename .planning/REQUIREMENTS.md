@@ -32,10 +32,10 @@
 
 ### ADMIN — Admin User Management
 
-- [ ] **ADMIN-01**: Admin can permanently delete a user account from the admin panel
+- [x] **ADMIN-01**: Admin can permanently delete a user account from the admin panel
 - [ ] **ADMIN-02**: Delete requires two-step confirmation (modal + type username to confirm)
 - [ ] **ADMIN-03**: Confirmation dialog explicitly lists what will be deleted (decks, cards, progress, review logs)
-- [ ] **ADMIN-04**: Admin cannot delete their own account or the last admin account
+- [x] **ADMIN-04**: Admin cannot delete their own account or the last admin account
 - [x] **ADMIN-05**: Admin can see each user's email address in the user list
 
 ### ABC — ABC Notation Rendering
@@ -89,10 +89,10 @@
 |-------------|-------|--------|
 | EMAIL-01 | Phase 23 | Complete |
 | EMAIL-02 | Phase 23 | Complete |
-| ADMIN-01 | Phase 23 | Pending |
+| ADMIN-01 | Phase 23 | Complete |
 | ADMIN-02 | Phase 23 | Pending |
 | ADMIN-03 | Phase 23 | Pending |
-| ADMIN-04 | Phase 23 | Pending |
+| ADMIN-04 | Phase 23 | Complete |
 | ADMIN-05 | Phase 23 | Complete |
 | EMAIL-03 | Phase 24 | Pending |
 | EMAIL-04 | Phase 24 | Pending |

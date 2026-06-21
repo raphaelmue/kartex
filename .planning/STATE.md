@@ -6,14 +6,14 @@ current_phase: 23
 current_phase_name: auth-foundation
 status: executing
 stopped_at: Completed 23-02 SMTP mailer foundation
-last_updated: "2026-06-21T19:32:47.409Z"
+last_updated: "2026-06-21T19:37:35.372Z"
 last_activity: 2026-06-21
 last_activity_desc: Phase 23 execution started
 progress:
   total_phases: 6
   completed_phases: 0
   total_plans: 4
-  completed_plans: 2
+  completed_plans: 3
   percent: 0
 ---
 
@@ -29,7 +29,7 @@ See: .planning/PROJECT.md (updated 2026-06-19)
 ## Current Position
 
 Phase: 23 (auth-foundation) — EXECUTING
-Plan: 3 of 4
+Plan: 4 of 4
 Status: Ready to execute
 Last activity: 2026-06-21 — Phase 23 execution started
 
@@ -76,6 +76,7 @@ Last activity: 2026-06-21 — Phase 23 execution started
 | Phase 22-study-session-ux P02 | 4 | 2 tasks | 3 files |
 | Phase 23-auth-foundation P01 | 2 | 3 tasks | 5 files |
 | Phase 23 P02 | 8 | 3 tasks | 4 files |
+| Phase 23 P03 | 2 | 3 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -200,6 +201,9 @@ Recent decisions affecting current work:
 - [Phase ?]: 23-02: verifyConnection() reserved for test endpoint only — never called at module init (prevents startup delay)
 - [Phase ?]: 23-02: POST /mailer/test hard-targets admin's own email via userId lookup — no arbitrary send (T-23-03)
 - [Phase ?]: 23-02: NO_EMAIL error code returned (not message string) so frontend maps to localised toast (D-12)
+- [Phase ?]: 23-03: Media unlink uses m.storagePath (full path stored in DB)
+- [Phase ?]: 23-03: deckIds pre-computed before prisma.$transaction array (Pitfall 2)
+- [Phase ?]: 23-03: InviteCode.deleteMany required — usedById FK has no onDelete
 
 ### Pending Todos
 
@@ -252,6 +256,6 @@ Items acknowledged and deferred at milestone close on 2026-05-30:
 
 **Resume file:** None
 
-Last session: 2026-06-21T19:32:47.399Z
+Last session: 2026-06-21T19:37:27.592Z
 Stopped at: Completed 23-02 SMTP mailer foundation
 Resume with: `/gsd-plan-phase 23` — Auth Foundation
