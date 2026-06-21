@@ -16,6 +16,7 @@ import { importRouter } from './routes/import.js'
 import { exploreRouter } from './routes/explore.js'
 import { deckUpdateRouter } from './routes/deckUpdate.js'
 import { seedAdminIfNeeded } from './lib/seed.js'
+import { isConfigured } from './lib/mailer.js'
 
 const app = new Hono()
 
@@ -125,6 +126,8 @@ try {
 } catch (err) {
   console.warn('[server] Admin seed skipped — database not reachable at startup:', (err as Error).message)
 }
+
+console.log(`[server] Mailer ${isConfigured() ? 'configured' : 'disabled (SMTP env vars missing)'}`)
 
 serve({ fetch: app.fetch, port }, (info) => {
   console.log(`[server] Listening on http://localhost:${info.port}`)
