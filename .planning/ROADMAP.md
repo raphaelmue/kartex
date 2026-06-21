@@ -105,7 +105,11 @@ Full details: [.planning/milestones/v1.3.2-ROADMAP.md](milestones/v1.3.2-ROADMAP
   3. Admin can permanently delete a user by typing their username in a confirmation dialog that lists decks, cards, progress, and review logs to be deleted
   4. Admin cannot delete their own account or the last admin account — both cases show a clear error
   5. The app can send SMTP email (mailer singleton responds to configuration; verified by a test send or log)
-**Plans**: TBD
+**Plans**: 4 plans
+- [ ] 23-01-PLAN.md — User.email schema migration + shared UserSchema + Wave 0 test scaffolds (EMAIL-01)
+- [ ] 23-02-PLAN.md — nodemailer singleton + mailer test endpoint + GET /users email + docker-compose env (EMAIL-02, ADMIN-05)
+- [ ] 23-03-PLAN.md — DELETE /users/:id with self-delete/last-admin guards + ordered cascade + media cleanup (ADMIN-01, ADMIN-04)
+- [ ] 23-04-PLAN.md — AdminPage email column, two-step delete dialog, MailerSection button, i18n (ADMIN-01/02/03/04/05, EMAIL-02)
 **UI hint**: yes
 
 ### Phase 24: Email Invitations
@@ -196,7 +200,7 @@ Full details: [.planning/milestones/v1.3.2-ROADMAP.md](milestones/v1.3.2-ROADMAP
 | 20. Logo & PWA Icons | v1.3.2 | 1/1 | Complete   | 2026-06-14 |
 | 21. Changelog | v1.3.2 | 1/1 | Complete   | 2026-06-14 |
 | 22. Study Session UX | v1.3.2 | 2/2 | Complete | 2026-06-15 |
-| 23. Auth Foundation | v1.4.0 | 0/? | Not started | - |
+| 23. Auth Foundation | v1.4.0 | 0/4 | Not started | - |
 | 24. Email Invitations | v1.4.0 | 0/? | Not started | - |
 | 25. Password Reset | v1.4.0 | 0/? | Not started | - |
 | 26. ABC Notation | v1.4.0 | 0/? | Not started | - |
