@@ -1,3 +1,4 @@
+import { unlink } from 'node:fs/promises'
 import { Hono } from 'hono'
 import { prisma } from '../lib/prisma.js'
 import { sendMail, isConfigured, verifyConnection } from '../lib/mailer.js'
@@ -73,6 +74,65 @@ admin.patch('/users/:id', async (c) => {
   })
 
   return c.json(updated, 200)
+})
+
+// ─── DELETE /users/:id ────────────────────────────────────────────────────────
+// ADMIN-01: Hard-delete a user and all their owned/linked data in FK-safe order.
+// ADMIN-04: Guards prevent self-delete and last-active-admin deletion.
+
+admin.delete('/users/:id', async (c) => {
+  const { id } = c.req.param()
+  const authenticatedUserId = c.get('userId')
+
+  // D-08: Self-delete guard — admin cannot delete their own account
+  if (id === authenticatedUserId) {
+    return c.json({ error: 'SELF_DELETE' }, 400)
+  }
+
+  // Load target user
+  const target = await prisma.user.findUnique({ where: { id } })
+  if (!target) {
+    return c.json({ error: 'User not found.' }, 404)
+  }
+
+  // D-08: Last-admin guard — prevent losing the last active admin account
+  const adminCount = await prisma.user.count({ where: { role: 'ADMIN', isActive: true } })
+  if (adminCount <= 1 && target.role === 'ADMIN') {
+    return c.json({ error: 'LAST_ADMIN' }, 400)
+  }
+
+  // D-06/D-07: Media file cleanup — best-effort before the transaction.
+  // Failures are logged and do not abort the deletion (D-07).
+  const mediaRecords = await prisma.media.findMany({ where: { ownerId: id } })
+  for (const m of mediaRecords) {
+    try {
+      await unlink(m.storagePath)
+    } catch (err) {
+      // D-07: best-effort — log and continue; do not roll back
+      console.warn(`[admin] Could not delete media file ${m.storagePath}:`, (err as Error).message)
+    }
+  }
+
+  // D-05: Ordered cascade delete via prisma.$transaction (atomic).
+  // Pitfall 2: deckIds pre-computed BEFORE the $transaction array (no await inside array).
+  // Note: ReviewLog rows auto-delete via existing onDelete: Cascade on userId FK (no explicit step needed).
+  // Note: DeckShare rows where user is deck owner auto-delete via existing onDelete: Cascade on Deck (deckId FK).
+  const deckIds = (await prisma.deck.findMany({ where: { ownerId: id }, select: { id: true } })).map(
+    (d) => d.id,
+  )
+
+  await prisma.$transaction([
+    prisma.refreshToken.deleteMany({ where: { userId: id } }),
+    prisma.deckShare.deleteMany({ where: { sharedWithUserId: id } }),
+    prisma.cardProgress.deleteMany({ where: { userId: id } }),
+    prisma.card.deleteMany({ where: { deckId: { in: deckIds } } }),
+    prisma.deck.deleteMany({ where: { ownerId: id } }),
+    prisma.inviteCode.deleteMany({ where: { usedById: id } }),
+    prisma.media.deleteMany({ where: { ownerId: id } }),
+    prisma.user.delete({ where: { id } }),
+  ])
+
+  return c.json({ message: 'User deleted.' }, 200)
 })
 
 // ─── GET /invite-codes ────────────────────────────────────────────────────────
