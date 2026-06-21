@@ -3,10 +3,10 @@ gsd_state_version: 1.0
 milestone: v1.4.0
 milestone_name: Auth Overhaul & Study UX
 status: planning
-last_updated: "2026-06-19T21:19:27.039Z"
-last_activity: 2026-06-19
+last_updated: "2026-06-21T00:00:00.000Z"
+last_activity: 2026-06-21
 progress:
-  total_phases: 0
+  total_phases: 6
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -17,17 +17,17 @@ progress:
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-06-15)
+See: .planning/PROJECT.md (updated 2026-06-19)
 
 **Core value:** A user can open their dashboard, see their due cards, and complete a spaced-repetition study session — that loop must always work.
-**Current focus:** Planning next milestone — run `/gsd-new-milestone` to begin
+**Current focus:** v1.4.0 roadmap created — begin with Phase 23 (Auth Foundation)
 
 ## Current Position
 
-Phase: Not started (defining requirements)
+Phase: Not started
 Plan: —
-Status: Defining requirements
-Last activity: 2026-06-19 — Milestone v1.4.0 started
+Status: Roadmap defined — ready to plan Phase 23
+Last activity: 2026-06-21 — v1.4.0 roadmap created (Phases 23–28, 28 requirements)
 
 ## Performance Metrics
 
@@ -179,14 +179,23 @@ Recent decisions affecting current work:
 - [Phase ?]: AppShell img accessibility attributes
 - [Phase ?]: sharp version workaround for icon generation on Windows
 - [Phase ?]: apple-touch-icon.png copy step
+- v1.4-research: User.email nullable for existing users; required for new invite-based registration
+- v1.4-research: 4 hand-written SQL migrations needed: add_user_email, add_invite_token, add_password_reset_token, add_user_cascade_deletes
+- v1.4-research: nodemailer@^9.0.1 + @types/nodemailer@^8.0.1 (backend); abcjs@^6.6.3 (frontend)
+- v1.4-research: Reset token stored as SHA-256 hash only; raw token only in email link (OWASP pattern)
+- v1.4-research: Atomic updateMany WHERE usedAt IS NULL + count check for TOCTOU-safe single-use token consumption
+- v1.4-research: abcjs DOM-mutation pattern: useRef + useEffect([source]) — same as TypstBlock; lazy import('abcjs') inside useEffect
+- v1.4-research: importMedia.ts shared helper to be extracted from import.ts for reuse in zip deck update
+- v1.4-research: canEdit field added to DueCardSchema (computed in study.ts from deck permissions)
+- v1.4-research: e.stopPropagation() on StudyCardMenu DropdownMenuTrigger to prevent card flip on 3-dot click
 
 ### Pending Todos
 
 **Captured todos:**
 
-- [2026-06-15] Support deck update via zip file upload (`2026-06-15-support-deck-update-via-zip-file.md`) — `deckUpdate.ts` explicitly rejects `.kartex.zip`; update path needs extending
-- [2026-06-15] Add quick-edit / jump-to-card button in study mode (`2026-06-15-quick-edit-card-button-in-study-mode.md`) — 3-dot overflow menu for owners/edit-auth users in StudySessionPage
-- [2026-06-19] Improve user management and email-based auth flows (`2026-06-19-improve-user-management-and-email-based-auth-flows.md`) — admin reset/delete users; email registration, verification, password reset, email invitations
+- [2026-06-15] Support deck update via zip file upload (`2026-06-15-support-deck-update-via-zip-file.md`) — maps to Phase 27
+- [2026-06-15] Add quick-edit / jump-to-card button in study mode (`2026-06-15-quick-edit-card-button-in-study-mode.md`) — maps to Phase 28
+- [2026-06-19] Improve user management and email-based auth flows (`2026-06-19-improve-user-management-and-email-based-auth-flows.md`) — maps to Phases 23–25
 
 **Completed:**
 
@@ -229,6 +238,6 @@ Items acknowledged and deferred at milestone close on 2026-05-30:
 
 ## Session Continuity
 
-Last session: 2026-06-15T09:27:00.000Z
-Stopped at: Completed 22-02-PLAN.md
-Resume with: Phase 22 complete — v1.3.2 milestone done
+Last session: 2026-06-21T00:00:00.000Z
+Stopped at: v1.4.0 roadmap created (Phases 23–28)
+Resume with: `/gsd-plan-phase 23` — Auth Foundation

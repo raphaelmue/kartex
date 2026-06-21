@@ -85,13 +85,39 @@
 
 ## Traceability
 
-| Requirement | Phase | Plans |
-|-------------|-------|-------|
-| EMAIL-01, EMAIL-02, ADMIN-01–05 | Phase 23 | — |
-| EMAIL-03–08 | Phase 24 | — |
-| RESET-01–08 | Phase 25 | — |
-| ABC-01–03 | Phase 26 | — |
-| DECKU-01–04 | Phase 27 | — |
-| SEDIT-01–04 | Phase 28 | — |
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| EMAIL-01 | Phase 23 | Pending |
+| EMAIL-02 | Phase 23 | Pending |
+| ADMIN-01 | Phase 23 | Pending |
+| ADMIN-02 | Phase 23 | Pending |
+| ADMIN-03 | Phase 23 | Pending |
+| ADMIN-04 | Phase 23 | Pending |
+| ADMIN-05 | Phase 23 | Pending |
+| EMAIL-03 | Phase 24 | Pending |
+| EMAIL-04 | Phase 24 | Pending |
+| EMAIL-05 | Phase 24 | Pending |
+| EMAIL-06 | Phase 24 | Pending |
+| EMAIL-07 | Phase 24 | Pending |
+| EMAIL-08 | Phase 24 | Pending |
+| RESET-01 | Phase 25 | Pending |
+| RESET-02 | Phase 25 | Pending |
+| RESET-03 | Phase 25 | Pending |
+| RESET-04 | Phase 25 | Pending |
+| RESET-05 | Phase 25 | Pending |
+| RESET-06 | Phase 25 | Pending |
+| RESET-07 | Phase 25 | Pending |
+| RESET-08 | Phase 25 | Pending |
+| ABC-01 | Phase 26 | Pending |
+| ABC-02 | Phase 26 | Pending |
+| ABC-03 | Phase 26 | Pending |
+| DECKU-01 | Phase 27 | Pending |
+| DECKU-02 | Phase 27 | Pending |
+| DECKU-03 | Phase 27 | Pending |
+| DECKU-04 | Phase 27 | Pending |
+| SEDIT-01 | Phase 28 | Pending |
+| SEDIT-02 | Phase 28 | Pending |
+| SEDIT-03 | Phase 28 | Pending |
+| SEDIT-04 | Phase 28 | Pending |
 
-*Traceability updated after roadmap creation.*
+*Traceability updated 2026-06-21 after roadmap creation. 28/28 requirements mapped.*
