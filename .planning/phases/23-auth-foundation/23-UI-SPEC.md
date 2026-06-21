@@ -52,10 +52,11 @@ Source: Standard 8-point scale — default for this project across all phases.
 
 | Role | Size | Weight | Line Height |
 |------|------|--------|-------------|
-| Body | 14px | 400 (regular) | 1.5 |
-| Label | 14px | 500 (medium) | 1.4 |
+| Body / Label | 14px | 400 (regular) | 1.5 |
 | Heading (section) | 20px | 700 (bold) | 1.2 |
 | Display (page) | 24px | 700 (bold) | 1.2 |
+
+Weights declared: **400 (regular)** and **700 (bold)** only. Body and Label share weight 400 — the visual distinction between them is achieved through context (block vs. inline) not weight variation. No 500 (medium) weight used in this phase.
 
 Source: Detected from `AdminPage.tsx` line 455 (`text-2xl font-bold` for page heading); table cell `text-sm` (14px) for data rows. Consistent with existing admin page patterns.
 
