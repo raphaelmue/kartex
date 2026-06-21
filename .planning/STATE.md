@@ -5,15 +5,15 @@ milestone_name: Auth Overhaul & Study UX
 current_phase: 23
 current_phase_name: auth-foundation
 status: executing
-stopped_at: Completed 23-01 data model foundation
-last_updated: "2026-06-21T19:23:26.633Z"
+stopped_at: Completed 23-02 SMTP mailer foundation
+last_updated: "2026-06-21T19:32:47.409Z"
 last_activity: 2026-06-21
 last_activity_desc: Phase 23 execution started
 progress:
   total_phases: 6
   completed_phases: 0
   total_plans: 4
-  completed_plans: 1
+  completed_plans: 2
   percent: 0
 ---
 
@@ -29,7 +29,7 @@ See: .planning/PROJECT.md (updated 2026-06-19)
 ## Current Position
 
 Phase: 23 (auth-foundation) — EXECUTING
-Plan: 2 of 4
+Plan: 3 of 4
 Status: Ready to execute
 Last activity: 2026-06-21 — Phase 23 execution started
 
@@ -75,6 +75,7 @@ Last activity: 2026-06-21 — Phase 23 execution started
 | Phase 22-study-session-ux P01 | 2 | 2 tasks | 4 files |
 | Phase 22-study-session-ux P02 | 4 | 2 tasks | 3 files |
 | Phase 23-auth-foundation P01 | 2 | 3 tasks | 5 files |
+| Phase 23 P02 | 8 | 3 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -195,6 +196,10 @@ Recent decisions affecting current work:
 - v1.4-research: e.stopPropagation() on StudyCardMenu DropdownMenuTrigger to prevent card flip on 3-dot click
 - [Phase ?]: 23-01: email field nullable — existing users valid with NULL; UNIQUE permits multiple NULLs in Postgres
 - [Phase ?]: 23-01: ReviewLog.userId has onDelete:Cascade — no explicit delete needed in cascade transaction (D-05)
+- [Phase ?]: nodemailer singleton soft-fails on missing SMTP env vars — server starts normally (D-10)
+- [Phase ?]: 23-02: verifyConnection() reserved for test endpoint only — never called at module init (prevents startup delay)
+- [Phase ?]: 23-02: POST /mailer/test hard-targets admin's own email via userId lookup — no arbitrary send (T-23-03)
+- [Phase ?]: 23-02: NO_EMAIL error code returned (not message string) so frontend maps to localised toast (D-12)
 
 ### Pending Todos
 
@@ -247,6 +252,6 @@ Items acknowledged and deferred at milestone close on 2026-05-30:
 
 **Resume file:** None
 
-Last session: 2026-06-21T19:23:26.620Z
-Stopped at: Completed 23-01 data model foundation
+Last session: 2026-06-21T19:32:47.399Z
+Stopped at: Completed 23-02 SMTP mailer foundation
 Resume with: `/gsd-plan-phase 23` — Auth Foundation

@@ -11,7 +11,7 @@
 ### EMAIL — Email Infrastructure & Invitations
 
 - [x] **EMAIL-01**: User.email field exists on User model, nullable for existing users, unique per user
-- [ ] **EMAIL-02**: SMTP configured via env vars (SMTP_HOST, SMTP_PORT, SMTP_SECURE, SMTP_USER, SMTP_PASS, SMTP_FROM, APP_URL)
+- [x] **EMAIL-02**: SMTP configured via env vars (SMTP_HOST, SMTP_PORT, SMTP_SECURE, SMTP_USER, SMTP_PASS, SMTP_FROM, APP_URL)
 - [ ] **EMAIL-03**: Admin can send an email invitation to a specific address from the admin panel
 - [ ] **EMAIL-04**: Invitation email contains a one-time link (valid 7 days) navigating to the registration page
 - [ ] **EMAIL-05**: User registers via invite link — email pre-filled (read-only), user sets username and password
@@ -36,7 +36,7 @@
 - [ ] **ADMIN-02**: Delete requires two-step confirmation (modal + type username to confirm)
 - [ ] **ADMIN-03**: Confirmation dialog explicitly lists what will be deleted (decks, cards, progress, review logs)
 - [ ] **ADMIN-04**: Admin cannot delete their own account or the last admin account
-- [ ] **ADMIN-05**: Admin can see each user's email address in the user list
+- [x] **ADMIN-05**: Admin can see each user's email address in the user list
 
 ### ABC — ABC Notation Rendering
 
@@ -88,12 +88,12 @@
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | EMAIL-01 | Phase 23 | Complete |
-| EMAIL-02 | Phase 23 | Pending |
+| EMAIL-02 | Phase 23 | Complete |
 | ADMIN-01 | Phase 23 | Pending |
 | ADMIN-02 | Phase 23 | Pending |
 | ADMIN-03 | Phase 23 | Pending |
 | ADMIN-04 | Phase 23 | Pending |
-| ADMIN-05 | Phase 23 | Pending |
+| ADMIN-05 | Phase 23 | Complete |
 | EMAIL-03 | Phase 24 | Pending |
 | EMAIL-04 | Phase 24 | Pending |
 | EMAIL-05 | Phase 24 | Pending |
