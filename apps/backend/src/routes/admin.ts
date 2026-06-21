@@ -1,5 +1,6 @@
 import { Hono } from 'hono'
 import { prisma } from '../lib/prisma.js'
+import { sendMail, isConfigured, verifyConnection } from '../lib/mailer.js'
 
 const admin = new Hono()
 
@@ -13,6 +14,7 @@ admin.get('/users', async (c) => {
       role: true,
       isActive: true,
       createdAt: true,
+      email: true,
     },
     orderBy: { createdAt: 'asc' },
   })
@@ -136,6 +138,43 @@ admin.delete('/invite-codes/:id', async (c) => {
   await prisma.inviteCode.delete({ where: { id } })
 
   return c.json({ message: 'Invite code deleted.' }, 200)
+})
+
+// ─── POST /mailer/test ────────────────────────────────────────────────────────
+// EMAIL-02 / D-11: Send a test email to the logged-in admin's own address.
+// D-12: Returns 400 with NO_EMAIL if the admin has no email address set.
+// D-10: Returns 400 if SMTP is not configured (soft-fail surfaced at call time).
+
+admin.post('/mailer/test', async (c) => {
+  const authenticatedUserId = c.get('userId')
+
+  const user = await prisma.user.findUnique({
+    where: { id: authenticatedUserId },
+    select: { email: true },
+  })
+
+  // D-12: Admin has no email set — frontend maps NO_EMAIL to "Set your email address first" toast
+  if (!user?.email) {
+    return c.json({ error: 'NO_EMAIL' }, 400)
+  }
+
+  // D-10: SMTP not configured — soft-fail surfaced at call time
+  if (!isConfigured()) {
+    return c.json({ error: 'SMTP not configured.' }, 400)
+  }
+
+  try {
+    await verifyConnection()
+    await sendMail({
+      to: user.email,
+      subject: 'Kartex — SMTP test email',
+      text: 'This is a test email from your Kartex instance.',
+      html: '<p>This is a test email from your Kartex instance.</p>',
+    })
+    return c.json({ message: 'Test email sent.' }, 200)
+  } catch (err) {
+    return c.json({ error: (err as Error).message }, 500)
+  }
 })
 
 export { admin as adminRouter }
