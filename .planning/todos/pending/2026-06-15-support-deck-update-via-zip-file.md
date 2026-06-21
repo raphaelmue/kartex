@@ -5,6 +5,7 @@ area: ui
 files:
   - apps/frontend/src/pages/ImportPage.tsx
   - apps/backend/src/routes/import.ts
+resolves_phase: 27
 ---
 
 ## Problem

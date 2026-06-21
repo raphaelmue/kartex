@@ -3,6 +3,7 @@ created: 2026-06-19T19:51:39.229Z
 title: Improve user management and email-based auth flows
 area: auth
 files: []
+resolves_phase: 23
 ---
 
 ## Problem

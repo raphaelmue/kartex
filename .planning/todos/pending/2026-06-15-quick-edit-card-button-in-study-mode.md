@@ -4,6 +4,7 @@ title: Add quick-edit / jump-to-card button in study mode
 area: ui
 files:
   - apps/frontend/src/pages/StudySessionPage.tsx
+resolves_phase: 28
 ---
 
 ## Problem
