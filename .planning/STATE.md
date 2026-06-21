@@ -3,8 +3,10 @@ gsd_state_version: 1.0
 milestone: v1.4.0
 milestone_name: Auth Overhaul & Study UX
 status: planning
-last_updated: "2026-06-21T00:00:00.000Z"
+stopped_at: Phase 23 context gathered
+last_updated: "2026-06-21T18:25:39.549Z"
 last_activity: 2026-06-21
+last_activity_desc: v1.4.0 roadmap created (Phases 23–28, 28 requirements)
 progress:
   total_phases: 6
   completed_phases: 0
@@ -238,6 +240,8 @@ Items acknowledged and deferred at milestone close on 2026-05-30:
 
 ## Session Continuity
 
-Last session: 2026-06-21T00:00:00.000Z
-Stopped at: v1.4.0 roadmap created (Phases 23–28)
+**Resume file:** .planning/phases/23-auth-foundation/23-CONTEXT.md
+
+Last session: 2026-06-21T18:25:39.538Z
+Stopped at: Phase 23 context gathered
 Resume with: `/gsd-plan-phase 23` — Auth Foundation
