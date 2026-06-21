@@ -137,7 +137,7 @@ Source: `apps/frontend/src/components/ui/` — all listed components confirmed p
 | AlertDialog description | "This will permanently delete their decks, cards, study progress, and review logs. This action cannot be undone." |
 | AlertDialog username prompt label | "Type the username to confirm:" |
 | AlertDialog username input placeholder | "{username}" (dynamic) |
-| Cancel button | "Cancel" |
+| Cancel button | "Keep user" |
 | Empty email display | "—" (em dash — consistent with existing "Used by" column null display) |
 | Email column heading | "Email" |
 | Toast — delete success | "User deleted" |
@@ -160,6 +160,7 @@ i18n keys required (add to both `en.json` and `de.json` atomically):
 - `admin.testEmailBtn`
 - `admin.testEmailSuccess`
 - `admin.testEmailNoEmail`
+- `admin.deleteUserCancel`
 - `admin.mailerTitle`
 - `admin.mailerDesc`
 
@@ -197,6 +198,7 @@ No new shadcn installs required. No third-party registries used.
 4. **MailerSection ordering** — rendered first in `AdminPage` body (above `InviteCodesSection`), consistent with infrastructure-first ordering.
 5. **Dark mode** — inherited automatically via existing CSS variable system; no dark-mode-specific overrides needed.
 6. **`e.stopPropagation()`** on the DropdownMenuTrigger inside the table row — prevents any parent row click handlers from firing (established pattern from v1.4-research decision).
+7. **Focal point declaration** — The users table (UsersSection card) is the primary visual focal point of AdminPage. The MailerSection card is a secondary infrastructure utility; it is placed above UsersSection for discoverability but is visually subordinate (smaller footprint — single-button card vs. full data table).
 
 ---
 
