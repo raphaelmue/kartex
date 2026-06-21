@@ -2407,11 +2407,13 @@ __metadata:
     "@prisma/client": "npm:^7.0.0"
     "@types/bcryptjs": "npm:^2.4.6"
     "@types/node": "npm:^20.17.57"
+    "@types/nodemailer": "npm:^8.0.1"
     "@types/unzipper": "npm:^0.10.11"
     bcryptjs: "npm:^2.4.3"
     file-type: "npm:^22.0.1"
     hono: "npm:^4.7.9"
     jose: "npm:^5.9.6"
+    nodemailer: "npm:^9.0.1"
     prisma: "npm:^7.0.0"
     tsx: "npm:^4.19.2"
     typescript: "npm:^5.4.5"
@@ -4888,6 +4890,15 @@ __metadata:
   dependencies:
     undici-types: "npm:~6.21.0"
   checksum: 10c0/aa2a07317bbd700bea68d5784b403a738dbcebadbe2d8ef05649f7953065120d5d37f7edfdd7881df3a3bd15328c8a4dc46fdd69732ab540d552c505378c585b
+  languageName: node
+  linkType: hard
+
+"@types/nodemailer@npm:^8.0.1":
+  version: 8.0.1
+  resolution: "@types/nodemailer@npm:8.0.1"
+  dependencies:
+    "@types/node": "npm:*"
+  checksum: 10c0/4370ac478a6811faaa64fcf769556515c72b78c66961cde22be75bb975ce8a964cfbe5e7c0988a99250f3250faa34357c73958b019b3c63dd138ea3784442032
   languageName: node
   linkType: hard
 
@@ -9146,6 +9157,13 @@ __metadata:
   version: 2.0.46
   resolution: "node-releases@npm:2.0.46"
   checksum: 10c0/04632591f97f15848adfb12b21fa013a6c19809afcf5db65fe88c95a36271c3f423e21110fd319ad5a9c5029ffe65eb81f3e4857e6af19622bc888d92a04ad22
+  languageName: node
+  linkType: hard
+
+"nodemailer@npm:^9.0.1":
+  version: 9.0.1
+  resolution: "nodemailer@npm:9.0.1"
+  checksum: 10c0/4213f01aa211127c1ce33243c5e45e7f831601a933d03fa864cd827b1bd5ea2782cb4b43722bee7028cbc193733d9802dad1120fe67181448eb0b7de52218a37
   languageName: node
   linkType: hard
 
