@@ -71,6 +71,49 @@ function formatDate(dateStr: string): string {
   return new Date(dateStr).toISOString().slice(0, 10)
 }
 
+// ---- Mailer Section ----
+
+function MailerSection() {
+  const { t } = useTranslation()
+  const [sending, setSending] = useState(false)
+
+  const handleTestEmail = async () => {
+    setSending(true)
+    try {
+      const res = await api.post('/api/admin/mailer/test', {})
+      if (res.ok) {
+        toast.success(t('admin.testEmailSuccess'))
+      } else {
+        const body = await res.json().catch(() => ({}))
+        const errorCode = (body as { error?: string }).error
+        if (errorCode === 'NO_EMAIL') {
+          toast.error(t('admin.testEmailNoEmail'))
+        } else {
+          toast.error(t('common.somethingWrong'))
+        }
+      }
+    } catch {
+      toast.error(t('common.somethingWrong'))
+    } finally {
+      setSending(false)
+    }
+  }
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>{t('admin.mailerTitle')}</CardTitle>
+        <CardDescription>{t('admin.mailerDesc')}</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Button variant="outline" disabled={sending} onClick={() => void handleTestEmail()}>
+          {sending ? t('common.loading') : t('admin.testEmailBtn')}
+        </Button>
+      </CardContent>
+    </Card>
+  )
+}
+
 // ---- Invite Codes Section ----
 
 function InviteCodesSection() {
@@ -576,6 +619,7 @@ export function AdminPage() {
   return (
     <div className="space-y-8">
       <h2 className="text-2xl font-bold">{t('admin.pageHeading')}</h2>
+      <MailerSection />
       <InviteCodesSection />
       <UsersSection />
     </div>
