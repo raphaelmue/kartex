@@ -84,7 +84,7 @@ Full details: [.planning/milestones/v1.3.2-ROADMAP.md](milestones/v1.3.2-ROADMAP
 
 ### v1.4.0 Auth Overhaul & Study UX (Phases 23–28)
 
-- [ ] **Phase 23: Auth Foundation** - User.email column, cascade FK migrations, SMTP mailer, admin user delete
+- [x] **Phase 23: Auth Foundation** - User.email column, cascade FK migrations, SMTP mailer, admin user delete (completed 2026-06-23)
 - [ ] **Phase 24: Email Invitations** - InviteToken model, admin invite UI, token-based registration page
 - [ ] **Phase 25: Password Reset** - PasswordResetToken model, forgot/reset pages, admin-triggered reset
 - [ ] **Phase 26: ABC Notation** - abcjs integration, AbcBlock renderer component, responsive SVG in cards
@@ -108,7 +108,7 @@ Full details: [.planning/milestones/v1.3.2-ROADMAP.md](milestones/v1.3.2-ROADMAP
   4. Admin cannot delete their own account or the last admin account — both cases show a clear error
   5. The app can send SMTP email (mailer singleton responds to configuration; verified by a test send or log)
 
-**Plans**: 3/4 plans executed
+**Plans**: 4/4 plans complete
 **Wave 1**
 
 - [x] 23-01-PLAN.md — User.email schema migration + shared UserSchema + Wave 0 test scaffolds (EMAIL-01)
@@ -123,7 +123,7 @@ Full details: [.planning/milestones/v1.3.2-ROADMAP.md](milestones/v1.3.2-ROADMAP
 
 **Wave 4** *(blocked on Wave 3 completion)*
 
-- [ ] 23-04-PLAN.md — AdminPage email column, two-step delete dialog, MailerSection button, i18n (ADMIN-01/02/03/04/05, EMAIL-02)
+- [x] 23-04-PLAN.md — AdminPage email column, two-step delete dialog, MailerSection button, i18n (ADMIN-01/02/03/04/05, EMAIL-02)
 
 **UI hint**: yes
 
@@ -230,7 +230,7 @@ Full details: [.planning/milestones/v1.3.2-ROADMAP.md](milestones/v1.3.2-ROADMAP
 | 20. Logo & PWA Icons | v1.3.2 | 1/1 | Complete   | 2026-06-14 |
 | 21. Changelog | v1.3.2 | 1/1 | Complete   | 2026-06-14 |
 | 22. Study Session UX | v1.3.2 | 2/2 | Complete | 2026-06-15 |
-| 23. Auth Foundation | v1.4.0 | 3/4 | In Progress|  |
+| 23. Auth Foundation | v1.4.0 | 4/4 | Complete   | 2026-06-23 |
 | 24. Email Invitations | v1.4.0 | 0/? | Not started | - |
 | 25. Password Reset | v1.4.0 | 0/? | Not started | - |
 | 26. ABC Notation | v1.4.0 | 0/? | Not started | - |
