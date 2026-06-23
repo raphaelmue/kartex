@@ -2,6 +2,15 @@ import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -10,6 +19,12 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
 import {
   Table,
@@ -21,6 +36,7 @@ import {
 } from '@/components/ui/table'
 import { useAuth } from '@/context/AuthContext'
 import { api } from '@/lib/api'
+import { MoreVertical } from 'lucide-react'
 
 // ---- Types ----
 
@@ -37,6 +53,7 @@ interface InviteCode {
 interface UserRecord {
   id: string
   username: string
+  email?: string | null
   role: 'ADMIN' | 'USER'
   isActive: boolean
   createdAt: string
@@ -234,6 +251,8 @@ function UsersSection() {
   const { user: authUser } = useAuth()
   const [users, setUsers] = useState<UserRecord[]>([])
   const [confirmDeactivateId, setConfirmDeactivateId] = useState<string | null>(null)
+  const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null)
+  const [usernameInput, setUsernameInput] = useState('')
 
   const fetchUsers = async () => {
     try {
@@ -280,11 +299,37 @@ function UsersSection() {
     }
   }
 
+  const handleDeleteUser = async (id: string) => {
+    try {
+      const res = await api.delete(`/api/admin/users/${id}`)
+      if (res.ok) {
+        toast.success(t('admin.deleteUserSuccess'))
+        await fetchUsers()
+        setDeleteTargetId(null)
+        setUsernameInput('')
+      } else {
+        const body = await res.json().catch(() => ({}))
+        const errorCode = (body as { error?: string }).error
+        if (errorCode === 'SELF_DELETE') {
+          toast.error(t('admin.deleteUserSelf'))
+        } else if (errorCode === 'LAST_ADMIN') {
+          toast.error(t('admin.deleteUserLastAdmin'))
+        } else {
+          toast.error(t('common.somethingWrong'))
+        }
+      }
+    } catch {
+      toast.error(t('common.somethingWrong'))
+    }
+  }
+
   const handleConfirmKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Escape') {
       setConfirmDeactivateId(null)
     }
   }
+
+  const deleteTarget = users.find((u) => u.id === deleteTargetId)
 
   return (
     <Card>
@@ -300,13 +345,14 @@ function UsersSection() {
               <TableHead>{t('table.roleColumn')}</TableHead>
               <TableHead>{t('table.statusColumn')}</TableHead>
               <TableHead>{t('table.joinedColumn')}</TableHead>
+              <TableHead>{t('admin.emailColumn')}</TableHead>
               <TableHead>{t('table.actionsColumn')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {users.length === 0 && (
               <TableRow>
-                <TableCell colSpan={5} className="text-center text-muted-foreground">
+                <TableCell colSpan={6} className="text-center text-muted-foreground">
                   {t('admin.noUsers')}
                 </TableCell>
               </TableRow>
@@ -322,6 +368,13 @@ function UsersSection() {
                   <StatusBadge isActive={u.isActive} />
                 </TableCell>
                 <TableCell>{formatDate(u.createdAt)}</TableCell>
+                <TableCell>
+                  {u.email != null ? (
+                    u.email
+                  ) : (
+                    <span className="text-muted-foreground">—</span>
+                  )}
+                </TableCell>
                 <TableCell>
                   <div className="flex items-center gap-2 flex-wrap">
                     {/* Role change */}
@@ -373,12 +426,82 @@ function UsersSection() {
                         )}
                       </>
                     )}
+
+                    {/* 3-dot menu with delete action */}
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          aria-label={t('admin.userActionsLabel', { username: u.username })}
+                          onPointerDown={(e) => e.stopPropagation()}
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <MoreVertical className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem
+                          className="text-destructive focus:text-destructive"
+                          onClick={() => setDeleteTargetId(u.id)}
+                        >
+                          {t('admin.deleteUser')}
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </div>
                 </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
+
+        {/* Single AlertDialog outside the map loop — controlled by deleteTargetId */}
+        <AlertDialog
+          open={deleteTargetId !== null}
+          onOpenChange={(open) => {
+            if (!open) {
+              setDeleteTargetId(null)
+              setUsernameInput('')
+            }
+          }}
+        >
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>{t('admin.deleteUserConfirmTitle')}</AlertDialogTitle>
+              <AlertDialogDescription>
+                {t('admin.deleteUserConfirmDesc')}
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <div className="py-2">
+              <label
+                htmlFor="delete-username-input"
+                className="text-sm font-medium leading-none block mb-2"
+              >
+                {t('admin.deleteUserTypePlaceholder')}
+              </label>
+              <Input
+                id="delete-username-input"
+                value={usernameInput}
+                onChange={(e) => setUsernameInput(e.target.value)}
+                aria-label={t('admin.deleteUserTypePlaceholder')}
+                placeholder={deleteTarget?.username ?? ''}
+              />
+            </div>
+            <AlertDialogFooter>
+              <AlertDialogCancel>{t('admin.deleteUserCancel')}</AlertDialogCancel>
+              <Button
+                variant="destructive"
+                disabled={usernameInput !== (deleteTarget?.username ?? '')}
+                onClick={() => {
+                  if (deleteTargetId) void handleDeleteUser(deleteTargetId)
+                }}
+              >
+                {t('admin.deleteUserConfirmBtn')}
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </CardContent>
     </Card>
   )
