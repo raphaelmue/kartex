@@ -4,9 +4,9 @@ milestone: v1.4.0
 milestone_name: Auth Overhaul & Study UX
 current_phase: 23
 current_phase_name: auth-foundation
-status: verifying
-stopped_at: Completed 23-02 SMTP mailer foundation
-last_updated: "2026-06-23T22:00:11.201Z"
+status: planning
+stopped_at: Phase 24 context gathered
+last_updated: "2026-06-25T18:21:14.524Z"
 last_activity: 2026-06-21
 last_activity_desc: Phase 23 execution started
 progress:
@@ -254,8 +254,8 @@ Items acknowledged and deferred at milestone close on 2026-05-30:
 
 ## Session Continuity
 
-**Resume file:** None
+**Resume file:** .planning/phases/24-email-invitations/24-CONTEXT.md
 
-Last session: 2026-06-23T22:00:11.191Z
-Stopped at: Completed 23-02 SMTP mailer foundation
+Last session: 2026-06-25T18:21:14.514Z
+Stopped at: Phase 24 context gathered
 Resume with: `/gsd-plan-phase 23` — Auth Foundation
