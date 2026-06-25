@@ -43,21 +43,10 @@ model User {
   createdAt     DateTime       @default(now())
 
   refreshTokens  RefreshToken[]
-  inviteCodeUsed InviteCode?
   decks          Deck[]
   sharedDecks    DeckShare[]
   progress       CardProgress[]
   reviewLogs     ReviewLog[]
-}
-
-model InviteCode {
-  id        String    @id @default(cuid())
-  code      String    @unique
-  expiresAt DateTime
-  usedAt    DateTime?
-  usedById  String?   @unique
-  usedBy    User?     @relation(fields: [usedById], references: [id])
-  createdAt DateTime  @default(now())
 }
 
 model RefreshToken {
@@ -67,6 +56,15 @@ model RefreshToken {
   tokenHash String
   expiresAt DateTime
   createdAt DateTime @default(now())
+}
+
+model InviteToken {
+  id        String    @id @default(cuid())
+  email     String
+  token     String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
 }
 
 model Deck {
