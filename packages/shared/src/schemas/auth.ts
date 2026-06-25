@@ -17,7 +17,7 @@ export const RegisterSchema = z.object({
       'Username can only contain letters, numbers, and underscores.',
     ),
   password: z.string().min(8, 'Password must be at least 8 characters.'),
-  inviteCode: z.string().min(1, 'Invite code is required.'),
+  token: z.string().min(1, 'Invite token is required.'),
 })
 
 export type RegisterInput = z.infer<typeof RegisterSchema>
