@@ -348,7 +348,19 @@
     "testEmailNoEmail": "Set your email address first",
     "mailerTitle": "Email / SMTP",
     "mailerDesc": "Test the SMTP connection by sending a test email to your own address.",
-    "userActionsLabel": "User actions for {{username}}"
+    "userActionsLabel": "User actions for {{username}}",
+    "inviteTokensTitle": "Email Invitations",
+    "inviteTokensDesc": "Send one-time invitation links to new users.",
+    "inviteEmailPlaceholder": "Email address",
+    "sendInviteButton": "Send Invite",
+    "inviteColEmail": "Email",
+    "inviteColSent": "Sent",
+    "inviteColExpires": "Expires",
+    "revokeInviteAriaLabel": "Revoke invitation for {{email}}",
+    "pendingInvitesEmpty": "No pending invitations.",
+    "inviteSentSuccess": "Invitation sent to {{email}}.",
+    "inviteSMTPMissing": "Email is not configured. Contact the server administrator.",
+    "inviteRevokeSuccess": "Invitation revoked."
   },
   "media": {
     "imageUploaded": "Image uploaded",

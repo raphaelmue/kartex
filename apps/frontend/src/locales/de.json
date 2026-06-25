@@ -348,7 +348,19 @@
     "testEmailNoEmail": "Bitte zuerst eine E-Mail-Adresse festlegen",
     "mailerTitle": "E-Mail / SMTP",
     "mailerDesc": "Testen Sie die SMTP-Verbindung, indem Sie eine Test-E-Mail an Ihre eigene Adresse senden.",
-    "userActionsLabel": "Benutzeraktionen für {{username}}"
+    "userActionsLabel": "Benutzeraktionen für {{username}}",
+    "inviteTokensTitle": "E-Mail-Einladungen",
+    "inviteTokensDesc": "Einmalige Einladungslinks für neue Benutzer versenden.",
+    "inviteEmailPlaceholder": "E-Mail-Adresse",
+    "sendInviteButton": "Einladung senden",
+    "inviteColEmail": "E-Mail",
+    "inviteColSent": "Gesendet",
+    "inviteColExpires": "Läuft ab",
+    "revokeInviteAriaLabel": "Einladung für {{email}} widerrufen",
+    "pendingInvitesEmpty": "Keine ausstehenden Einladungen.",
+    "inviteSentSuccess": "Einladung an {{email}} gesendet.",
+    "inviteSMTPMissing": "E-Mail ist nicht konfiguriert. Kontaktieren Sie den Server-Administrator.",
+    "inviteRevokeSuccess": "Einladung widerrufen."
   },
   "media": {
     "imageUploaded": "Bild hochgeladen",
