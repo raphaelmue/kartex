@@ -4,9 +4,9 @@ milestone: v1.4.0
 milestone_name: Auth Overhaul & Study UX
 current_phase: 23
 current_phase_name: auth-foundation
-status: planning
-stopped_at: Phase 24 context gathered
-last_updated: "2026-06-25T18:21:14.524Z"
+status: executing
+stopped_at: Phase 24 UI-SPEC approved
+last_updated: "2026-06-25T20:47:04.889Z"
 last_activity: 2026-06-21
 last_activity_desc: Phase 23 execution started
 progress:
@@ -30,7 +30,7 @@ See: .planning/PROJECT.md (updated 2026-06-19)
 
 Phase: 23 (auth-foundation) — EXECUTING
 Plan: 4 of 4
-Status: Phase complete — ready for verification
+Status: Ready to execute
 Last activity: 2026-06-21 — Phase 23 execution started
 
 ## Performance Metrics
@@ -254,8 +254,8 @@ Items acknowledged and deferred at milestone close on 2026-05-30:
 
 ## Session Continuity
 
-**Resume file:** .planning/phases/24-email-invitations/24-CONTEXT.md
+**Resume file:** .planning/phases/24-email-invitations/24-UI-SPEC.md
 
-Last session: 2026-06-25T18:21:14.514Z
-Stopped at: Phase 24 context gathered
+Last session: 2026-06-25T19:35:49.953Z
+Stopped at: Phase 24 UI-SPEC approved
 Resume with: `/gsd-plan-phase 23` — Auth Foundation

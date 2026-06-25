@@ -141,11 +141,17 @@ Full details: [.planning/milestones/v1.3.2-ROADMAP.md](milestones/v1.3.2-ROADMAP
   5. Admin can revoke a pending invitation; revoked tokens are immediately invalid
 
 **Plans**: 5 plans
+**Wave 1**
+
 - [ ] 24-01-PLAN.md — Schema + migration + shared contract (InviteToken model, drop InviteCode, RegisterSchema token field) [Wave 1]
 - [ ] 24-02-PLAN.md — i18n keys for invite/admin copy in en.json + de.json [Wave 1]
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
 - [ ] 24-03-PLAN.md — Backend routes (public validate, admin create/list/revoke, TOCTOU-safe register) [Wave 2]
 - [ ] 24-04-PLAN.md — InviteRegisterPage public page + /invite/:token route, remove /register [Wave 2]
 - [ ] 24-05-PLAN.md — Admin InviteTokensSection (send/list/revoke UI) [Wave 2]
+
 **UI hint**: yes
 
 ### Phase 25: Password Reset
