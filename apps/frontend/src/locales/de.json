@@ -38,7 +38,18 @@
     "alreadyHaveAccount": "Bereits ein Konto?",
     "invalidInvite": "Ungültiger oder abgelaufener Einladungscode.",
     "usernameTaken": "Benutzername ist bereits vergeben.",
-    "accountCreated": "Konto erstellt. Bitte melden Sie sich an."
+    "accountCreated": "Konto erstellt. Bitte melden Sie sich an.",
+    "invitePageTitle": "Konto erstellen — Kartex",
+    "createYourAccount": "Konto erstellen",
+    "inviteWelcome": "Sie wurden zu Kartex eingeladen. Geben Sie Ihre Daten ein.",
+    "email": "E-Mail",
+    "confirmPassword": "Passwort bestätigen",
+    "inviteErrorTitle": "Registrierung nicht möglich",
+    "inviteAlreadyUsed": "Diese Einladung wurde bereits verwendet.",
+    "inviteExpired": "Dieser Einladungslink ist abgelaufen. Kontaktieren Sie einen Administrator für eine neue Einladung.",
+    "inviteInvalid": "Dieser Einladungslink ist ungültig.",
+    "passwordMismatch": "Passwörter stimmen nicht überein.",
+    "backToSignIn": "Zurück zur Anmeldung"
   },
   "common": {
     "cancel": "Abbrechen",

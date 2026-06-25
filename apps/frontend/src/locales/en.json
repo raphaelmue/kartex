@@ -38,7 +38,18 @@
     "alreadyHaveAccount": "Already have an account?",
     "invalidInvite": "Invalid or expired invite code.",
     "usernameTaken": "Username is already taken.",
-    "accountCreated": "Account created. Please sign in."
+    "accountCreated": "Account created. Please sign in.",
+    "invitePageTitle": "Create Account — Kartex",
+    "createYourAccount": "Create your account",
+    "inviteWelcome": "You've been invited to Kartex. Enter your details below.",
+    "email": "Email",
+    "confirmPassword": "Confirm password",
+    "inviteErrorTitle": "Unable to register",
+    "inviteAlreadyUsed": "This invite has already been used.",
+    "inviteExpired": "This invite link has expired. Contact an admin for a new invitation.",
+    "inviteInvalid": "This invite link is not valid.",
+    "passwordMismatch": "Passwords do not match.",
+    "backToSignIn": "Back to sign in"
   },
   "common": {
     "cancel": "Cancel",
