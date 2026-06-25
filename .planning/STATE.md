@@ -2,18 +2,18 @@
 gsd_state_version: 1.0
 milestone: v1.4.0
 milestone_name: Auth Overhaul & Study UX
-current_phase: 23
-current_phase_name: auth-foundation
+current_phase: 24
+current_phase_name: email-invitations
 status: executing
-stopped_at: Phase 24 UI-SPEC approved
-last_updated: "2026-06-25T20:47:04.889Z"
-last_activity: 2026-06-21
-last_activity_desc: Phase 23 execution started
+stopped_at: Completed 24-01-PLAN.md
+last_updated: "2026-06-25T20:58:13.124Z"
+last_activity: 2026-06-25
+last_activity_desc: Phase 24 execution started
 progress:
   total_phases: 6
   completed_phases: 1
-  total_plans: 4
-  completed_plans: 4
+  total_plans: 9
+  completed_plans: 5
   percent: 17
 ---
 
@@ -24,14 +24,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-06-19)
 
 **Core value:** A user can open their dashboard, see their due cards, and complete a spaced-repetition study session — that loop must always work.
-**Current focus:** Phase 23 — auth-foundation
+**Current focus:** Phase 24 — email-invitations
 
 ## Current Position
 
-Phase: 23 (auth-foundation) — EXECUTING
-Plan: 4 of 4
+Phase: 24 (email-invitations) — EXECUTING
+Plan: 2 of 5
 Status: Ready to execute
-Last activity: 2026-06-21 — Phase 23 execution started
+Last activity: 2026-06-25 — Phase 24 execution started
 
 ## Performance Metrics
 
@@ -77,6 +77,7 @@ Last activity: 2026-06-21 — Phase 23 execution started
 | Phase 23-auth-foundation P01 | 2 | 3 tasks | 5 files |
 | Phase 23 P02 | 8 | 3 tasks | 4 files |
 | Phase 23 P03 | 2 | 3 tasks | 2 files |
+| Phase 24 P01 | 3 | 3 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -204,6 +205,9 @@ Recent decisions affecting current work:
 - [Phase ?]: 23-03: Media unlink uses m.storagePath (full path stored in DB)
 - [Phase ?]: 23-03: deckIds pre-computed before prisma.$transaction array (Pitfall 2)
 - [Phase ?]: 23-03: InviteCode.deleteMany required — usedById FK has no onDelete
+- [Phase ?]: 24-01: Migration staged for Docker Compose entrypoint — prisma migrate deploy fails without DATABASE_URL in dev shell
+- [Phase ?]: 24-01: InviteToken has no FK to User — email-only link keeps cascade deletes simple (D-01/D-02)
+- [Phase ?]: 24-01: confirmPassword excluded from RegisterSchema — frontend-only concern, RegisterInput shape is { username, password, token }
 
 ### Pending Todos
 
@@ -254,8 +258,8 @@ Items acknowledged and deferred at milestone close on 2026-05-30:
 
 ## Session Continuity
 
-**Resume file:** .planning/phases/24-email-invitations/24-UI-SPEC.md
+**Resume file:** None
 
-Last session: 2026-06-25T19:35:49.953Z
-Stopped at: Phase 24 UI-SPEC approved
+Last session: 2026-06-25T20:58:13.109Z
+Stopped at: Completed 24-01-PLAN.md
 Resume with: `/gsd-plan-phase 23` — Auth Foundation
