@@ -12,12 +12,12 @@
 
 - [x] **EMAIL-01**: User.email field exists on User model, nullable for existing users, unique per user
 - [x] **EMAIL-02**: SMTP configured via env vars (SMTP_HOST, SMTP_PORT, SMTP_SECURE, SMTP_USER, SMTP_PASS, SMTP_FROM, APP_URL)
-- [ ] **EMAIL-03**: Admin can send an email invitation to a specific address from the admin panel
+- [x] **EMAIL-03**: Admin can send an email invitation to a specific address from the admin panel
 - [x] **EMAIL-04**: Invitation email contains a one-time link (valid 7 days) navigating to the registration page
-- [ ] **EMAIL-05**: User registers via invite link — email pre-filled (read-only), user sets username and password
+- [x] **EMAIL-05**: User registers via invite link — email pre-filled (read-only), user sets username and password
 - [x] **EMAIL-06**: Invitation link is single-use; subsequent clicks show a clear "already used" error page
-- [ ] **EMAIL-07**: Admin can see pending (unused, non-expired) invitations in the admin panel
-- [ ] **EMAIL-08**: Admin can revoke a pending invitation
+- [x] **EMAIL-07**: Admin can see pending (unused, non-expired) invitations in the admin panel
+- [x] **EMAIL-08**: Admin can revoke a pending invitation
 
 ### RESET — Password Reset
 
@@ -94,12 +94,12 @@
 | ADMIN-03 | Phase 23 | Complete |
 | ADMIN-04 | Phase 23 | Complete |
 | ADMIN-05 | Phase 23 | Complete |
-| EMAIL-03 | Phase 24 | Pending |
+| EMAIL-03 | Phase 24 | Complete |
 | EMAIL-04 | Phase 24 | Complete |
-| EMAIL-05 | Phase 24 | Pending |
+| EMAIL-05 | Phase 24 | Complete |
 | EMAIL-06 | Phase 24 | Complete |
-| EMAIL-07 | Phase 24 | Pending |
-| EMAIL-08 | Phase 24 | Pending |
+| EMAIL-07 | Phase 24 | Complete |
+| EMAIL-08 | Phase 24 | Complete |
 | RESET-01 | Phase 25 | Pending |
 | RESET-02 | Phase 25 | Pending |
 | RESET-03 | Phase 25 | Pending |
