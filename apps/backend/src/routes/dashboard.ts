@@ -21,12 +21,26 @@ dashboard.get('/stats', async (c) => {
     },
   })
 
+  // Include decks shared with (added to library by) this user
+  const sharedRows = await prisma.deckShare.findMany({
+    where: { sharedWithUserId: userId, isActive: true },
+    select: { deckId: true },
+  })
+  const activeSharedDeckIds = sharedRows.map((r: { deckId: string }) => r.deckId)
+
+  const deckFilter = {
+    OR: [
+      { ownerId: userId, isActive: true },
+      { id: { in: activeSharedDeckIds } },
+    ],
+  }
+
   // Due cards grouped by deck (cards WITH progress due today)
   const dueProgress = await prisma.cardProgress.findMany({
     where: {
       userId,
       nextReview: { lte: endOfToday },
-      card: { deck: { ownerId: userId, isActive: true } },
+      card: { deck: deckFilter },
     },
     select: {
       card: { select: { deck: { select: { id: true, title: true } } } },
@@ -36,7 +50,7 @@ dashboard.get('/stats', async (c) => {
   // Never-seen cards (no CardProgress row) — also due
   const neverSeen = await prisma.card.findMany({
     where: {
-      deck: { ownerId: userId, isActive: true },
+      deck: deckFilter,
       progress: { none: { userId } },
     },
     include: { deck: { select: { id: true, title: true } } },
