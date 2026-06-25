@@ -60,10 +60,11 @@ Exactly 3 sizes, 2 weights — matches established AdminPage/RegisterPage patter
 |------|------|--------|-------------|----------------|
 | Heading | 24px | 700 (bold) | 1.2 | `text-2xl font-bold` |
 | Body / Label | 14px | 400 (regular) | 1.5 | `text-sm` |
-| Label (emphasis) | 14px | 500 (medium) | 1.0 | `text-sm font-medium leading-none` |
-| Badge / Status pill | 12px | 500 (medium) | 1.0 | `text-xs font-medium` |
+| Badge / Status pill | 12px | 700 (bold) | 1.0 | `text-xs font-bold` |
 
-Source: AdminPage.tsx pattern (`h2.text-2xl.font-bold`, `TableCell.text-sm`, `FormLabel.text-sm.font-medium.leading-none`).
+Note: shadcn's built-in `FormLabel` renders `font-medium` via its own component styles — this is a library default, not a declared design-contract weight. The contract uses only 400 and 700.
+
+Source: AdminPage.tsx pattern (`h2.text-2xl.font-bold`, `TableCell.text-sm`).
 
 ---
 
@@ -135,6 +136,8 @@ Replaces `InviteCodesSection` (removed per D-01). Placed in the same vertical po
 Route: `/invite/:token` — outside `ProtectedRoute` wrapper.
 
 **Layout:** Centered full-screen, same as RegisterPage: `min-h-screen flex items-center justify-center bg-background`.
+
+**Visual hierarchy:** The `CardTitle` "Create your account" (`text-2xl font-bold`) is the primary focal point. The pre-filled, read-only email field is the secondary anchor — it orients the user by confirming which address the invitation was sent to before they complete the form.
 
 **Card:** `w-[400px] max-w-[calc(100vw-32px)]` — direct inheritance from RegisterPage.
 
