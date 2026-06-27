@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, waitFor, fireEvent, act } from '@testing-library/react'
+import { act, render, screen, waitFor, fireEvent } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { InviteRegisterPage } from '@/pages/InviteRegisterPage'
 
@@ -112,10 +112,11 @@ describe('InviteRegisterPage', () => {
       const confirmInput = screen.getByLabelText(/Confirm password/i)
       fireEvent.change(confirmInput, { target: { value: 'secret123' } })
 
-      // Submit the form
+      // Submit the form via requestSubmit (W3C API, fires submit event like real user click)
       const submitBtn = screen.getByRole('button', { name: /Create Account/i })
+      const formEl = submitBtn.closest('form')!
       await act(async () => {
-        fireEvent.click(submitBtn)
+        formEl.requestSubmit(submitBtn as HTMLButtonElement)
       })
 
       await waitFor(() => {
@@ -146,8 +147,10 @@ describe('InviteRegisterPage', () => {
       fireEvent.change(screen.getByLabelText(/^Password$/i), { target: { value: 'secret123' } })
       fireEvent.change(screen.getByLabelText(/Confirm password/i), { target: { value: 'secret123' } })
 
+      const btn = screen.getByRole('button', { name: /Create Account/i })
+      const form2 = btn.closest('form')!
       await act(async () => {
-        fireEvent.click(screen.getByRole('button', { name: /Create Account/i }))
+        form2.requestSubmit(btn as HTMLButtonElement)
       })
 
       await waitFor(() => {

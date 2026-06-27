@@ -11,7 +11,7 @@ import { DashboardPage } from '@/pages/DashboardPage'
 import { DeckDetailPage } from '@/pages/DeckDetailPage'
 import { DecksPage } from '@/pages/DecksPage'
 import { LoginPage } from '@/pages/LoginPage'
-import { RegisterPage } from '@/pages/RegisterPage'
+import { InviteRegisterPage } from '@/pages/InviteRegisterPage'
 import { ImportPage } from '@/pages/ImportPage'
 import { StudySessionPage } from '@/pages/StudySessionPage'
 import { ExplorePage } from '@/pages/ExplorePage'
@@ -55,7 +55,7 @@ function App() {
       <AuthProvider>
       <Routes>
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/invite/:token" element={<InviteRegisterPage />} />
 
         <Route element={<ProtectedRoute />}>
           <Route element={<AppShell />}>
