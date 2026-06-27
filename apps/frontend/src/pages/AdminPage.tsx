@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 
@@ -36,17 +36,14 @@ import {
 } from '@/components/ui/table'
 import { useAuth } from '@/context/AuthContext'
 import { api } from '@/lib/api'
-import { MoreVertical } from 'lucide-react'
+import { Loader2, MoreVertical, Trash2 } from 'lucide-react'
 
 // ---- Types ----
 
-interface InviteCode {
+interface InviteToken {
   id: string
-  code: string
+  email: string
   expiresAt: string
-  usedAt: string | null
-  usedById: string | null
-  usedByUsername?: string | null
   createdAt: string
 }
 
@@ -59,16 +56,8 @@ interface UserRecord {
   createdAt: string
 }
 
-type InviteCodeStatus = 'active' | 'used' | 'expired'
-
-function getInviteCodeStatus(code: InviteCode): InviteCodeStatus {
-  if (code.usedAt) return 'used'
-  if (new Date(code.expiresAt) < new Date()) return 'expired'
-  return 'active'
-}
-
 function formatDate(dateStr: string): string {
-  return new Date(dateStr).toISOString().slice(0, 10)
+  return new Date(dateStr).toLocaleDateString()
 }
 
 // ---- Mailer Section ----
@@ -114,22 +103,20 @@ function MailerSection() {
   )
 }
 
-// ---- Invite Codes Section ----
+// ---- Invite Tokens Section ----
 
-function InviteCodesSection() {
+function InviteTokensSection() {
   const { t } = useTranslation()
-  const [codes, setCodes] = useState<InviteCode[]>([])
-  const [expiryDays, setExpiryDays] = useState(7)
-  const [generating, setGenerating] = useState(false)
-  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null)
-  const confirmRef = useRef<HTMLSpanElement | null>(null)
+  const [tokens, setTokens] = useState<InviteToken[]>([])
+  const [email, setEmail] = useState('')
+  const [sending, setSending] = useState(false)
 
-  const fetchCodes = async () => {
+  const fetchTokens = async () => {
     try {
-      const res = await api.get('/api/admin/invite-codes')
+      const res = await api.get('/api/admin/invites')
       if (res.ok) {
         const data = await res.json()
-        setCodes(data)
+        setTokens(data)
       }
     } catch {
       // silently ignore fetch errors on load
@@ -137,149 +124,115 @@ function InviteCodesSection() {
   }
 
   useEffect(() => {
-    void fetchCodes()
+    void fetchTokens()
   }, [])
 
-  const handleGenerate = async () => {
-    setGenerating(true)
+  const handleSendInvite = async () => {
+    if (!email.trim()) return
+    setSending(true)
     try {
-      const res = await api.post('/api/admin/invite-codes', { expiryDays })
+      const res = await api.post('/api/admin/invites', { email })
       if (res.ok) {
-        toast.success(t('admin.inviteGenerated'))
-        await fetchCodes()
+        toast.success(t('admin.inviteSentSuccess', { email }))
+        setEmail('')
+        await fetchTokens()
       } else {
-        toast.error(t('common.somethingWrong'))
+        const body = await res.json().catch(() => ({}))
+        const errCode = (body as { error?: string }).error
+        if (errCode === 'SMTP not configured.') {
+          toast.error(t('admin.inviteSMTPMissing'))
+        } else {
+          toast.error(t('common.somethingWrong'))
+        }
       }
     } catch {
       toast.error(t('common.somethingWrong'))
     } finally {
-      setGenerating(false)
+      setSending(false)
     }
   }
 
-  const handleDelete = async (id: string) => {
+  const handleRevoke = async (id: string) => {
     try {
-      const res = await api.delete(`/api/admin/invite-codes/${id}`)
+      const res = await api.delete(`/api/admin/invites/${id}`)
       if (res.ok) {
-        toast.success(t('admin.inviteDeleted'))
-        setCodes((prev) => prev.filter((c) => c.id !== id))
-        setConfirmDeleteId(null)
+        toast.success(t('admin.inviteRevokeSuccess'))
+        setTokens((prev) => prev.filter((tok) => tok.id !== id))
       } else {
         toast.error(t('common.somethingWrong'))
       }
     } catch {
       toast.error(t('common.somethingWrong'))
-    }
-  }
-
-  const handleConfirmKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Escape') {
-      setConfirmDeleteId(null)
     }
   }
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{t('admin.inviteCodesTitle')}</CardTitle>
-        <CardDescription>
-          {t('admin.inviteCodesDesc')}
-        </CardDescription>
+        <CardTitle>{t('admin.inviteTokensTitle')}</CardTitle>
+        <CardDescription>{t('admin.inviteTokensDesc')}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        {/* Generate form */}
-        <div className="flex items-end gap-3">
-          <div className="flex flex-col gap-1">
-            <label
-              htmlFor="expiry-days"
-              className="text-sm font-medium leading-none"
-            >
-              {t('admin.expiryDaysLabel')}
-            </label>
-            <Input
-              id="expiry-days"
-              type="number"
-              min={1}
-              max={365}
-              value={expiryDays}
-              onChange={(e) => setExpiryDays(Number(e.target.value))}
-              placeholder="7"
-              className="w-24"
-            />
-          </div>
-          <Button onClick={handleGenerate} disabled={generating}>
-            {generating ? t('admin.generating') : t('admin.generate')}
+        {/* Send invite form */}
+        <div className="flex gap-2">
+          <Input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder={t('admin.inviteEmailPlaceholder')}
+            className="flex-1"
+          />
+          <Button
+            onClick={() => void handleSendInvite()}
+            disabled={sending || !email.trim()}
+          >
+            {sending ? <Loader2 className="h-4 w-4 animate-spin" /> : t('admin.sendInviteButton')}
           </Button>
         </div>
 
-        {/* Table */}
-        <Table aria-label={t('admin.inviteCodesTitle')}>
+        {/* Pending invites table */}
+        <Table aria-label={t('admin.inviteTokensTitle')}>
           <TableHeader>
             <TableRow>
-              <TableHead>{t('table.codeColumn')}</TableHead>
-              <TableHead>{t('table.statusColumn')}</TableHead>
-              <TableHead>{t('table.usedByColumn')}</TableHead>
-              <TableHead>{t('table.expiresColumn')}</TableHead>
-              <TableHead>{t('table.actionsColumn')}</TableHead>
+              <TableHead>{t('admin.inviteColEmail')}</TableHead>
+              <TableHead>{t('admin.inviteColSent')}</TableHead>
+              <TableHead>{t('admin.inviteColExpires')}</TableHead>
+              <TableHead />
             </TableRow>
           </TableHeader>
           <TableBody>
-            {codes.length === 0 && (
+            {tokens.length === 0 && (
               <TableRow>
-                <TableCell colSpan={5} className="text-center text-muted-foreground">
-                  {t('admin.noInviteCodes')}
+                <TableCell
+                  colSpan={4}
+                  className="text-center text-sm text-muted-foreground"
+                >
+                  {t('admin.pendingInvitesEmpty')}
                 </TableCell>
               </TableRow>
             )}
-            {codes.map((code) => {
-              const status = getInviteCodeStatus(code)
-              return (
-                <TableRow key={code.id}>
-                  <TableCell className="font-mono text-sm">{code.code}</TableCell>
-                  <TableCell>
-                    <InviteStatusBadge status={status} />
-                  </TableCell>
-                  <TableCell>{code.usedByUsername ?? '—'}</TableCell>
-                  <TableCell>{formatDate(code.expiresAt)}</TableCell>
-                  <TableCell>
-                    {status === 'active' && confirmDeleteId !== code.id && (
-                      <Button
-                        variant="destructive"
-                        size="sm"
-                        onClick={() => setConfirmDeleteId(code.id)}
-                      >
-                        {t('common.delete')}
-                      </Button>
-                    )}
-                    {status === 'active' && confirmDeleteId === code.id && (
-                      <span
-                        ref={confirmRef}
-                        role="alert"
-                        className="flex items-center gap-2 flex-wrap"
-                        onKeyDown={handleConfirmKeyDown}
-                        tabIndex={-1}
-                      >
-                        <span className="text-sm">{t('common.confirm')}</span>
-                        <Button
-                          size="sm"
-                          variant="destructive"
-                          onClick={() => handleDelete(code.id)}
-                        >
-                          {t('common.yesDelete')}
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => setConfirmDeleteId(null)}
-                        >
-                          {t('common.cancel')}
-                        </Button>
-                      </span>
-                    )}
-                  </TableCell>
-                </TableRow>
-              )
-            })}
+            {tokens.map((tok) => (
+              <TableRow key={tok.id}>
+                <TableCell className="text-sm">{tok.email}</TableCell>
+                <TableCell className="text-sm text-muted-foreground">
+                  {formatDate(tok.createdAt)}
+                </TableCell>
+                <TableCell className="text-sm text-muted-foreground">
+                  {formatDate(tok.expiresAt)}
+                </TableCell>
+                <TableCell>
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    className="text-destructive hover:text-destructive"
+                    aria-label={t('admin.revokeInviteAriaLabel', { email: tok.email })}
+                    onClick={() => void handleRevoke(tok.id)}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
           </TableBody>
         </Table>
       </CardContent>
@@ -552,29 +505,6 @@ function UsersSection() {
 
 // ---- Badge helpers ----
 
-function InviteStatusBadge({ status }: { status: InviteCodeStatus }) {
-  const { t } = useTranslation()
-  if (status === 'active') {
-    return (
-      <span className="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium bg-green-100 text-green-800">
-        {t('admin.statusActive')}
-      </span>
-    )
-  }
-  if (status === 'used') {
-    return (
-      <span className="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium bg-muted text-muted-foreground">
-        {t('admin.statusUsed')}
-      </span>
-    )
-  }
-  return (
-    <span className="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium bg-destructive/10 text-destructive">
-      {t('admin.statusExpired')}
-    </span>
-  )
-}
-
 function RoleBadge({ role }: { role: 'ADMIN' | 'USER' }) {
   const { t } = useTranslation()
   if (role === 'ADMIN') {
@@ -620,7 +550,7 @@ export function AdminPage() {
     <div className="space-y-8">
       <h2 className="text-2xl font-bold">{t('admin.pageHeading')}</h2>
       <MailerSection />
-      <InviteCodesSection />
+      <InviteTokensSection />
       <UsersSection />
     </div>
   )
