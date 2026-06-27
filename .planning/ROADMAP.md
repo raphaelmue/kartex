@@ -140,7 +140,7 @@ Full details: [.planning/milestones/v1.3.2-ROADMAP.md](milestones/v1.3.2-ROADMAP
   4. Admin can view all pending (unused, non-expired) invitations in the admin panel
   5. Admin can revoke a pending invitation; revoked tokens are immediately invalid
 
-**Plans**: 2/5 plans executed
+**Plans**: 3/5 plans executed
 **Wave 1**
 
 - [x] 24-01-PLAN.md — Schema + migration + shared contract (InviteToken model, drop InviteCode, RegisterSchema token field) [Wave 1]
@@ -148,7 +148,7 @@ Full details: [.planning/milestones/v1.3.2-ROADMAP.md](milestones/v1.3.2-ROADMAP
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] 24-03-PLAN.md — Backend routes (public validate, admin create/list/revoke, TOCTOU-safe register) [Wave 2]
+- [x] 24-03-PLAN.md — Backend routes (public validate, admin create/list/revoke, TOCTOU-safe register) [Wave 2]
 - [ ] 24-04-PLAN.md — InviteRegisterPage public page + /invite/:token route, remove /register [Wave 2]
 - [ ] 24-05-PLAN.md — Admin InviteTokensSection (send/list/revoke UI) [Wave 2]
 
@@ -242,7 +242,7 @@ Full details: [.planning/milestones/v1.3.2-ROADMAP.md](milestones/v1.3.2-ROADMAP
 | 21. Changelog | v1.3.2 | 1/1 | Complete   | 2026-06-14 |
 | 22. Study Session UX | v1.3.2 | 2/2 | Complete | 2026-06-15 |
 | 23. Auth Foundation | v1.4.0 | 4/4 | Complete   | 2026-06-23 |
-| 24. Email Invitations | v1.4.0 | 2/5 | In Progress|  |
+| 24. Email Invitations | v1.4.0 | 3/5 | In Progress|  |
 | 25. Password Reset | v1.4.0 | 0/? | Not started | - |
 | 26. ABC Notation | v1.4.0 | 0/? | Not started | - |
 | 27. Zip Deck Update | v1.4.0 | 0/? | Not started | - |
