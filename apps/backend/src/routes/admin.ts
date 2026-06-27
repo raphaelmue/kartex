@@ -1,4 +1,6 @@
+import { randomBytes } from 'node:crypto'
 import { unlink } from 'node:fs/promises'
+import { z } from 'zod'
 import { Hono } from 'hono'
 import { prisma } from '../lib/prisma.js'
 import { sendMail, isConfigured, verifyConnection } from '../lib/mailer.js'
@@ -127,7 +129,6 @@ admin.delete('/users/:id', async (c) => {
     prisma.cardProgress.deleteMany({ where: { userId: id } }),
     prisma.card.deleteMany({ where: { deckId: { in: deckIds } } }),
     prisma.deck.deleteMany({ where: { ownerId: id } }),
-    prisma.inviteCode.deleteMany({ where: { usedById: id } }),
     prisma.media.deleteMany({ where: { ownerId: id } }),
     prisma.user.delete({ where: { id } }),
   ])
@@ -135,69 +136,92 @@ admin.delete('/users/:id', async (c) => {
   return c.json({ message: 'User deleted.' }, 200)
 })
 
-// ─── GET /invite-codes ────────────────────────────────────────────────────────
+// ─── GET /invites ─────────────────────────────────────────────────────────────
+// EMAIL-07: Returns active-only (unused, non-expired) pending invites.
+// Token value is never included in the response (T-24-13).
 
-admin.get('/invite-codes', async (c) => {
-  const codes = await prisma.inviteCode.findMany({
-    include: {
-      usedBy: {
-        select: { username: true },
-      },
-    },
+admin.get('/invites', async (c) => {
+  const invites = await prisma.inviteToken.findMany({
+    where: { usedAt: null, expiresAt: { gt: new Date() } },
     orderBy: { createdAt: 'desc' },
+    select: { id: true, email: true, expiresAt: true, createdAt: true },
   })
 
-  return c.json(codes, 200)
+  return c.json(invites, 200)
 })
 
-// ─── POST /invite-codes ───────────────────────────────────────────────────────
+// ─── POST /invites ────────────────────────────────────────────────────────────
+// EMAIL-03, EMAIL-04: Generate a 256-bit CSPRNG token, store it, and send an
+// invite email. If sendMail throws, delete the created row (rollback).
+// Guard: returns 400 if SMTP is not configured (D-10 soft-fail pattern).
 
-admin.post('/invite-codes', async (c) => {
-  let body: { expiryDays?: unknown } = {}
+admin.post('/invites', async (c) => {
+  let body: unknown = {}
   try {
     body = await c.req.json()
   } catch {
-    // Empty body is fine — use defaults
+    return c.json({ error: 'Invalid request body.' }, 400)
   }
 
-  // D-09: Configurable expiry, default 7 days
-  const expiryDays = body.expiryDays !== undefined ? Number(body.expiryDays) : 7
-  if (!Number.isInteger(expiryDays) || expiryDays < 1 || expiryDays > 365) {
-    return c.json({ error: 'expiryDays must be an integer between 1 and 365.' }, 400)
+  // Validate email address (T-24-11: Zod .email() prevents header injection)
+  const parsed = z.object({ email: z.string().email() }).safeParse(body)
+  if (!parsed.success) {
+    return c.json({ error: 'Valid email address required.' }, 400)
+  }
+  const { email } = parsed.data
+
+  // D-10: SMTP not configured — surface at call time, not startup
+  if (!isConfigured()) {
+    return c.json({ error: 'SMTP not configured.' }, 400)
   }
 
-  const code = crypto
-    .randomUUID()
-    .replace(/-/g, '')
-    .slice(0, 12)
-    .toUpperCase()
-  const expiresAt = new Date(Date.now() + expiryDays * 24 * 60 * 60 * 1000)
+  // T-24-05: 256-bit CSPRNG token — never cuid or truncated UUID
+  const token = randomBytes(32).toString('hex')
+  const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
 
-  const inviteCode = await prisma.inviteCode.create({
-    data: { code, expiresAt },
-    select: { id: true, code: true, expiresAt: true, createdAt: true },
+  const invite = await prisma.inviteToken.create({
+    data: { email, token, expiresAt },
+    select: { id: true, email: true, expiresAt: true, createdAt: true },
   })
 
-  return c.json(inviteCode, 200)
+  const appUrl = process.env.APP_URL ?? 'http://localhost:3000'
+  const inviteLink = `${appUrl}/invite/${token}`
+
+  try {
+    await sendMail({
+      to: email,
+      subject: "You've been invited to Kartex",
+      text: `You've been invited to Kartex. Complete your registration within 7 days:\n${inviteLink}`,
+      html: `<p>You've been invited to Kartex.</p><p><a href="${inviteLink}">Complete your registration</a></p><p>This link expires in 7 days.</p>`,
+    })
+  } catch (err) {
+    // Roll back the created invite token if email delivery fails
+    await prisma.inviteToken.delete({ where: { id: invite.id } })
+    return c.json({ error: (err as Error).message }, 500)
+  }
+
+  return c.json(invite, 200)
 })
 
-// ─── DELETE /invite-codes/:id ─────────────────────────────────────────────────
+// ─── DELETE /invites/:id ──────────────────────────────────────────────────────
+// EMAIL-08: Revoke a pending invite. Returns 400 if already used — cannot
+// un-ring that bell.
 
-admin.delete('/invite-codes/:id', async (c) => {
+admin.delete('/invites/:id', async (c) => {
   const { id } = c.req.param()
 
-  const inviteCode = await prisma.inviteCode.findUnique({ where: { id } })
-  if (!inviteCode) {
-    return c.json({ error: 'Invite code not found.' }, 404)
+  const invite = await prisma.inviteToken.findUnique({ where: { id } })
+  if (!invite) {
+    return c.json({ error: 'Invite not found.' }, 404)
   }
 
-  if (inviteCode.usedAt !== null) {
-    return c.json({ error: 'Cannot delete a used invite code.' }, 400)
+  if (invite.usedAt !== null) {
+    return c.json({ error: 'Cannot revoke a used invite.' }, 400)
   }
 
-  await prisma.inviteCode.delete({ where: { id } })
+  await prisma.inviteToken.delete({ where: { id } })
 
-  return c.json({ message: 'Invite code deleted.' }, 200)
+  return c.json({ message: 'Invite revoked.' }, 200)
 })
 
 // ─── POST /mailer/test ────────────────────────────────────────────────────────
