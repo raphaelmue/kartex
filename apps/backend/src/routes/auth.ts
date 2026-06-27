@@ -52,31 +52,48 @@ auth.post('/register', async (c) => {
     return c.json({ error: 'Validation failed.', details: body.error.flatten() }, 400)
   }
 
-  const { username, password, inviteCode } = body.data
+  const { username, password, token } = body.data
 
-  // Validate invite code (D-08: single-use, D-09: configurable expiry)
-  const invite = await prisma.inviteCode.findUnique({ where: { code: inviteCode } })
-  if (!invite || invite.usedAt !== null || invite.expiresAt < new Date()) {
-    return c.json({ error: 'Invalid or expired invite code.' }, 400)
+  // Pre-check for informational error messages (not TOCTOU-safe — purely for UX)
+  const invite = await prisma.inviteToken.findUnique({ where: { token } })
+  if (!invite) {
+    return c.json({ error: 'NOT_FOUND' }, 400)
+  }
+  if (invite.usedAt !== null) {
+    return c.json({ error: 'ALREADY_USED' }, 400)
+  }
+  if (invite.expiresAt < new Date()) {
+    return c.json({ error: 'EXPIRED' }, 400)
   }
 
-  // Check username uniqueness
-  const existingUser = await prisma.user.findUnique({ where: { username } })
-  if (existingUser) {
-    return c.json({ error: 'Username is already taken.' }, 409)
+  // TOCTOU-safe atomic consumption inside an interactive $transaction.
+  // updateMany WHERE usedAt IS NULL is the atomic single-use guard (EMAIL-06,
+  // T-24-06, T-24-07). Inside the callback throw aborts the transaction (Pitfall 7).
+  try {
+    await prisma.$transaction(async (tx) => {
+      // Atomically mark token used — wins the concurrent-registration race
+      const result = await tx.inviteToken.updateMany({
+        where: { token, usedAt: null },
+        data: { usedAt: new Date() },
+      })
+      if (result.count === 0) throw new Error('TOKEN_CONSUMED')
+
+      // Username uniqueness check inside the transaction
+      const existing = await tx.user.findUnique({ where: { username } })
+      if (existing) throw new Error('USERNAME_TAKEN')
+
+      // Create user — role is hard-coded 'USER', email from invite row (T-24-09, T-24-12)
+      const passwordHash = await bcrypt.hash(password, 12)
+      await tx.user.create({
+        data: { username, passwordHash, role: 'USER', email: invite.email },
+      })
+    })
+  } catch (err) {
+    const msg = (err as Error).message
+    if (msg === 'TOKEN_CONSUMED') return c.json({ error: 'ALREADY_USED' }, 400)
+    if (msg === 'USERNAME_TAKEN') return c.json({ error: 'USERNAME_TAKEN' }, 409)
+    throw err
   }
-
-  // Create user
-  const passwordHash = await bcrypt.hash(password, 12)
-  const user = await prisma.user.create({
-    data: { username, passwordHash, role: 'USER' },
-  })
-
-  // Invalidate invite code (D-08)
-  await prisma.inviteCode.update({
-    where: { id: invite.id },
-    data: { usedAt: new Date(), usedById: user.id },
-  })
 
   return c.json({ message: 'Account created.' }, 200)
 })
