@@ -5,7 +5,8 @@ import { prisma } from './prisma.js'
  * Idempotent admin seed — called once at server startup.
  *
  * D-01: Creates admin from ADMIN_USERNAME + ADMIN_PASSWORD env vars.
- * D-02: Generates and prints the first invite code to stdout (one-time only).
+ * D-02: Phase 24 — invite tokens are email-linked; the admin creates invites
+ *       from the admin panel (POST /api/admin/invites). No seed token generated.
  * D-03: Skips if an admin user already exists.
  */
 export async function seedAdminIfNeeded(): Promise<void> {
@@ -33,21 +34,6 @@ export async function seedAdminIfNeeded(): Promise<void> {
     },
   })
 
-  // D-02: Generate first invite code and print once to stdout
-  const code = crypto
-    .randomUUID()
-    .replace(/-/g, '')
-    .slice(0, 12)
-    .toUpperCase()
-  const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
-
-  await prisma.inviteCode.create({
-    data: {
-      code,
-      expiresAt,
-    },
-  })
-
   console.log(`[seed] Admin '${admin.username}' created.`)
-  console.log(`[seed] First invite code: ${code} (expires ${expiresAt.toISOString()})`)
+  console.log('[seed] Send email invites via the admin panel: POST /api/admin/invites')
 }

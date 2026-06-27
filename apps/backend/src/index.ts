@@ -9,6 +9,7 @@ import { authRouter } from './routes/auth.js'
 import { adminRouter } from './routes/admin.js'
 import { decksRouter } from './routes/decks.js'
 import { mediaRouter, mediaPublicRouter } from './routes/media.js'
+import { invitesPublicRouter } from './routes/invites.js'
 import { studyRouter } from './routes/study.js'
 import { dashboardRouter } from './routes/dashboard.js'
 import { statsRouter } from './routes/stats.js'
@@ -52,6 +53,11 @@ app.route('/api/auth', authRouter)
 //         Must be registered BEFORE authMiddleware so browsers can load media
 //         files via <img src> and <audio src> without a cookie (T-03-MEDIA-AUTH).
 app.route('/api/media', mediaPublicRouter)
+
+// ─── 3c. Public invite validation route (no auth required) ────────────────────
+//         Must be registered BEFORE authMiddleware so unauthenticated invitees
+//         can validate their token without getting a 401 (Pitfall 1).
+app.route('/api/invites', invitesPublicRouter)
 
 // ─── 4. JWT auth middleware on all remaining /api/* routes (INFR-03) ──────────
 app.use('/api/*', authMiddleware)
