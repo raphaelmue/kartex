@@ -85,7 +85,7 @@ Full details: [.planning/milestones/v1.3.2-ROADMAP.md](milestones/v1.3.2-ROADMAP
 ### v1.4.0 Auth Overhaul & Study UX (Phases 23–28)
 
 - [x] **Phase 23: Auth Foundation** - User.email column, cascade FK migrations, SMTP mailer, admin user delete (completed 2026-06-23)
-- [ ] **Phase 24: Email Invitations** - InviteToken model, admin invite UI, token-based registration page
+- [x] **Phase 24: Email Invitations** - InviteToken model, admin invite UI, token-based registration page (completed 2026-06-27)
 - [ ] **Phase 25: Password Reset** - PasswordResetToken model, forgot/reset pages, admin-triggered reset
 - [ ] **Phase 26: ABC Notation** - abcjs integration, AbcBlock renderer component, responsive SVG in cards
 - [ ] **Phase 27: Zip Deck Update** - Shared importMedia helper, deck update path accepts .kartex.zip
@@ -140,7 +140,7 @@ Full details: [.planning/milestones/v1.3.2-ROADMAP.md](milestones/v1.3.2-ROADMAP
   4. Admin can view all pending (unused, non-expired) invitations in the admin panel
   5. Admin can revoke a pending invitation; revoked tokens are immediately invalid
 
-**Plans**: 4/5 plans executed
+**Plans**: 5/5 plans complete
 **Wave 1**
 
 - [x] 24-01-PLAN.md — Schema + migration + shared contract (InviteToken model, drop InviteCode, RegisterSchema token field) [Wave 1]
@@ -150,7 +150,7 @@ Full details: [.planning/milestones/v1.3.2-ROADMAP.md](milestones/v1.3.2-ROADMAP
 
 - [x] 24-03-PLAN.md — Backend routes (public validate, admin create/list/revoke, TOCTOU-safe register) [Wave 2]
 - [x] 24-04-PLAN.md — InviteRegisterPage public page + /invite/:token route, remove /register [Wave 2]
-- [ ] 24-05-PLAN.md — Admin InviteTokensSection (send/list/revoke UI) [Wave 2]
+- [x] 24-05-PLAN.md — Admin InviteTokensSection (send/list/revoke UI) [Wave 2]
 
 **UI hint**: yes
 
@@ -242,7 +242,7 @@ Full details: [.planning/milestones/v1.3.2-ROADMAP.md](milestones/v1.3.2-ROADMAP
 | 21. Changelog | v1.3.2 | 1/1 | Complete   | 2026-06-14 |
 | 22. Study Session UX | v1.3.2 | 2/2 | Complete | 2026-06-15 |
 | 23. Auth Foundation | v1.4.0 | 4/4 | Complete   | 2026-06-23 |
-| 24. Email Invitations | v1.4.0 | 4/5 | In Progress|  |
+| 24. Email Invitations | v1.4.0 | 5/5 | Complete   | 2026-06-27 |
 | 25. Password Reset | v1.4.0 | 0/? | Not started | - |
 | 26. ABC Notation | v1.4.0 | 0/? | Not started | - |
 | 27. Zip Deck Update | v1.4.0 | 0/? | Not started | - |
