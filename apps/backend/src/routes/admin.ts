@@ -204,8 +204,13 @@ admin.post('/invites', async (c) => {
       html: `<p>You've been invited to Kartex.</p><p><a href="${inviteLink}">Complete your registration</a></p><p>This link expires in 7 days.</p>`,
     })
   } catch (err) {
-    // Roll back the created invite token if email delivery fails
-    await prisma.inviteToken.delete({ where: { id: invite.id } })
+    // Roll back the created invite token if email delivery fails.
+    // Wrapped in its own try/catch so a DB error during cleanup doesn't mask the original failure.
+    try {
+      await prisma.inviteToken.delete({ where: { id: invite.id } })
+    } catch (cleanupErr) {
+      console.error('[admin] Failed to rollback orphaned invite token:', (cleanupErr as Error).message)
+    }
     console.error('[admin] Invite email delivery failed:', (err as Error).message)
     return c.json({ error: 'SMTP_ERROR' }, 500)
   }
