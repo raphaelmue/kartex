@@ -6,15 +6,15 @@ current_phase: 24
 current_phase_name: email-invitations
 status: executing
 stopped_at: Completed 24-01-PLAN.md
-last_updated: "2026-06-28T14:27:51.528Z"
+last_updated: "2026-06-28T14:35:21.919Z"
 last_activity: 2026-06-28
 last_activity_desc: Phase 24 execution started
 progress:
   total_phases: 6
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 11
-  completed_plans: 10
-  percent: 17
+  completed_plans: 11
+  percent: 33
 ---
 
 # Project State
@@ -29,7 +29,7 @@ See: .planning/PROJECT.md (updated 2026-06-19)
 ## Current Position
 
 Phase: 24 (email-invitations) — EXECUTING
-Plan: 2 of 7
+Plan: 3 of 7
 Status: Ready to execute
 Last activity: 2026-06-28 — Phase 24 execution started
 
@@ -82,6 +82,7 @@ Last activity: 2026-06-28 — Phase 24 execution started
 | Phase 24 P04 | 2 sessions | 2 tasks | 4 files |
 | Phase 24 P05 | 10m | 2 tasks | 2 files |
 | Phase 24 P06 | 8 | 2 tasks | 2 files |
+| Phase 24 P07 | 305 | 3 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -214,6 +215,8 @@ Recent decisions affecting current work:
 - [Phase ?]: 24-01: confirmPassword excluded from RegisterSchema — frontend-only concern, RegisterInput shape is { username, password, token }
 - [Phase ?]: PUBLIC_API_PREFIXES bypass is order-independent fix for UAT Gap 1 / EMAIL-06
 - [Phase ?]: 24-06: bypass prefix is '/api/invites/' (trailing slash) — /api/admin/invites stays protected; no /api/media/ bypass
+- [Phase ?]: 24-07: SMTP_ERROR opaque code replaces raw error leak; T-24-23 mitigated
+- [Phase ?]: 24-07: InviteCode schema deleted; InviteToken is sole invite model
 
 ### Pending Todos
 
@@ -266,6 +269,6 @@ Items acknowledged and deferred at milestone close on 2026-05-30:
 
 **Resume file:** None
 
-Last session: 2026-06-28T14:27:41.570Z
+Last session: 2026-06-28T14:35:15.680Z
 Stopped at: Completed 24-01-PLAN.md
 Resume with: `/gsd-plan-phase 23` — Auth Foundation

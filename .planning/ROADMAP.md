@@ -140,10 +140,10 @@ Full details: [.planning/milestones/v1.3.2-ROADMAP.md](milestones/v1.3.2-ROADMAP
   4. Admin can view all pending (unused, non-expired) invitations in the admin panel
   5. Admin can revoke a pending invitation; revoked tokens are immediately invalid
 
-**Plans**: 6/7 plans executed
+**Plans**: 7/7 plans complete
 
 - [x] 24-06-PLAN.md
-- [ ] 24-07-PLAN.md
+- [x] 24-07-PLAN.md
 
 **Wave 1**
 
@@ -246,7 +246,7 @@ Full details: [.planning/milestones/v1.3.2-ROADMAP.md](milestones/v1.3.2-ROADMAP
 | 21. Changelog | v1.3.2 | 1/1 | Complete   | 2026-06-14 |
 | 22. Study Session UX | v1.3.2 | 2/2 | Complete | 2026-06-15 |
 | 23. Auth Foundation | v1.4.0 | 4/4 | Complete   | 2026-06-23 |
-| 24. Email Invitations | v1.4.0 | 6/7 | In Progress|  |
+| 24. Email Invitations | v1.4.0 | 7/7 | Complete   | 2026-06-28 |
 | 25. Password Reset | v1.4.0 | 0/? | Not started | - |
 | 26. ABC Notation | v1.4.0 | 0/? | Not started | - |
 | 27. Zip Deck Update | v1.4.0 | 0/? | Not started | - |
