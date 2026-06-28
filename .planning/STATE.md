@@ -3,18 +3,18 @@ gsd_state_version: 1.0
 milestone: v1.4.0
 milestone_name: Auth Overhaul & Study UX
 current_phase: 24
+current_phase_name: email-invitations
 status: executing
 stopped_at: Completed 24-01-PLAN.md
-last_updated: "2026-06-28T14:21:30.998Z"
-last_activity: 2026-06-27
-last_activity_desc: Phase 24 marked complete
+last_updated: "2026-06-28T14:27:51.528Z"
+last_activity: 2026-06-28
+last_activity_desc: Phase 24 execution started
 progress:
   total_phases: 6
-  completed_phases: 2
-  total_plans: 9
-  completed_plans: 9
-  percent: 33
-current_phase_name: email-invitations
+  completed_phases: 1
+  total_plans: 11
+  completed_plans: 10
+  percent: 17
 ---
 
 # Project State
@@ -28,10 +28,10 @@ See: .planning/PROJECT.md (updated 2026-06-19)
 
 ## Current Position
 
-Phase: 24 — COMPLETE
-Plan: 5 of 5
+Phase: 24 (email-invitations) — EXECUTING
+Plan: 2 of 7
 Status: Ready to execute
-Last activity: 2026-06-27 — Phase 24 marked complete
+Last activity: 2026-06-28 — Phase 24 execution started
 
 ## Performance Metrics
 
@@ -81,6 +81,7 @@ Last activity: 2026-06-27 — Phase 24 marked complete
 | Phase 24 P02 | 98 | 2 tasks | 2 files |
 | Phase 24 P04 | 2 sessions | 2 tasks | 4 files |
 | Phase 24 P05 | 10m | 2 tasks | 2 files |
+| Phase 24 P06 | 8 | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -211,6 +212,8 @@ Recent decisions affecting current work:
 - [Phase ?]: 24-01: Migration staged for Docker Compose entrypoint — prisma migrate deploy fails without DATABASE_URL in dev shell
 - [Phase ?]: 24-01: InviteToken has no FK to User — email-only link keeps cascade deletes simple (D-01/D-02)
 - [Phase ?]: 24-01: confirmPassword excluded from RegisterSchema — frontend-only concern, RegisterInput shape is { username, password, token }
+- [Phase ?]: PUBLIC_API_PREFIXES bypass is order-independent fix for UAT Gap 1 / EMAIL-06
+- [Phase ?]: 24-06: bypass prefix is '/api/invites/' (trailing slash) — /api/admin/invites stays protected; no /api/media/ bypass
 
 ### Pending Todos
 
@@ -263,6 +266,6 @@ Items acknowledged and deferred at milestone close on 2026-05-30:
 
 **Resume file:** None
 
-Last session: 2026-06-27T16:45:57.429Z
+Last session: 2026-06-28T14:27:41.570Z
 Stopped at: Completed 24-01-PLAN.md
 Resume with: `/gsd-plan-phase 23` — Auth Foundation
