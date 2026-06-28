@@ -1,50 +1,83 @@
 ---
 phase: 24-email-invitations
-reviewed: 2026-06-28T12:00:00Z
+reviewed: 2026-06-28T14:00:00Z
 depth: standard
-files_reviewed: 9
+files_reviewed: 20
 files_reviewed_list:
-  - apps/backend/src/middleware/__tests__/auth-public-paths.test.ts
-  - apps/backend/src/middleware/auth.ts
-  - apps/backend/src/routes/__tests__/admin-delete.test.ts
-  - apps/backend/src/routes/admin.ts
-  - apps/frontend/src/locales/de.json
-  - apps/frontend/src/locales/en.json
-  - apps/frontend/src/pages/__tests__/AdminPage.test.tsx
-  - apps/frontend/src/pages/AdminPage.tsx
+  - apps/backend/prisma/schema.prisma
+  - packages/shared/src/schemas/auth.ts
   - packages/shared/src/index.ts
+  - apps/backend/src/routes/invites.ts
+  - apps/backend/src/routes/auth.ts
+  - apps/backend/src/routes/admin.ts
+  - apps/backend/src/index.ts
+  - apps/backend/src/lib/mailer.ts
+  - apps/backend/src/lib/seed.ts
+  - apps/backend/src/middleware/auth.ts
+  - apps/frontend/src/pages/InviteRegisterPage.tsx
+  - apps/frontend/src/pages/AdminPage.tsx
+  - apps/frontend/src/App.tsx
+  - apps/frontend/src/locales/en.json
+  - apps/frontend/src/locales/de.json
+  - apps/backend/src/routes/__tests__/admin-delete.test.ts
+  - apps/backend/src/routes/__tests__/admin-mailer.test.ts
+  - apps/backend/src/middleware/__tests__/auth-public-paths.test.ts
+  - apps/frontend/src/pages/__tests__/AdminPage.test.tsx
+  - apps/frontend/src/pages/__tests__/InviteRegisterPage.test.tsx
 findings:
-  critical: 1
-  warning: 5
-  info: 4
-  total: 10
+  critical: 2
+  warning: 10
+  info: 7
+  total: 19
 status: issues_found
 ---
 
 # Phase 24: Code Review Report
 
-**Reviewed:** 2026-06-28T12:00:00Z
+**Reviewed:** 2026-06-28T14:00:00Z
 **Depth:** standard
-**Files Reviewed:** 9
+**Files Reviewed:** 20
 **Status:** issues_found
 
 ## Summary
 
-Review covers the gap-closure additions for phase 24: the auth middleware public-path bypass (EMAIL-06 / UAT Gap 1), the `InviteTokensSection` admin UI (EMAIL-03, EMAIL-07, EMAIL-08), the hard-delete user handler (ADMIN-01, ADMIN-04), and locale changes for both languages.
+Phase 24 implements invite-token-based user registration across the full stack: an `InviteToken` Prisma model replacing `InviteCode`, a TOCTOU-safe atomic registration handler, a public token validation route, admin invite management endpoints with SMTP delivery, and matching frontend pages with i18n. The overall architecture is sound — the 256-bit CSPRNG token generation is correct, the Zod email validation prevents header injection, and the registration transaction correctly guards concurrent dual-use via `usedAt: null`.
 
-The public-path bypass in `auth.ts` is correctly scoped: the trailing slash in `/api/invites/` prevents `/api/admin/invites` from being inadvertently exempted, and Nginx path normalisation closes the directory-traversal vector. The 256-bit CSPRNG token and Zod email validation are appropriate. The invite link template uses only hex-token and server-controlled `APP_URL`, so HTML injection is not possible.
-
-One blocker exists: the last-admin guard in `DELETE /users/:id` reads the admin count outside the delete transaction, making it susceptible to a TOCTOU race that can result in zero active admins. Five warnings cover a fragile string-based error-code comparison, unvalidated JWT claim types, a missing shared type definition, tautological structural tests, and a dead keyboard handler. Four informational items address silent error swallowing, media/DB ordering, a misleading validation error message, and the `APP_URL` localhost fallback.
+Two blockers are present: the Prisma datasource block is missing the required `url` field (breaks any fresh deployment or CI run), and the last-admin guard in `DELETE /users/:id` is susceptible to a TOCTOU race that can leave the instance with zero active admins. Among the warnings, the most security-relevant are unchecked JWT payload claims in `authMiddleware` and the non-atomic refresh token rotation that can permanently invalidate a user session. Several quality issues include a human-readable error string used as a machine-readable discriminator, a missing expiry check in the TOCTOU-safe transaction, and an always-enabled delete confirmation button when the target user cannot be found in local state.
 
 ---
 
+## Structural Findings (fallow)
+
+No structural pre-pass findings were provided for this phase.
+
+---
+
+## Narrative Findings (AI reviewer)
+
 ## Critical Issues
 
-### CR-01: TOCTOU race in last-admin guard — concurrent deletes can leave zero admins
+### CR-01: Missing `url` in Prisma datasource block — breaks fresh deployment and migrations
 
-**File:** `apps/backend/src/routes/admin.ts:101-103`
+**File:** `apps/backend/prisma/schema.prisma:5-7`
 
-**Issue:** `adminCount` is fetched with a standalone `prisma.user.count()` outside the delete transaction. If two concurrent DELETE requests each target one of the last two active admins, both reads see `adminCount = 2`, both guards pass, both deletions proceed atomically, and the instance is left with no admin account. Recovery requires direct database access.
+**Issue:** The datasource block specifies only `provider` and has no `url` field. Prisma requires `url` in the datasource block; without it `prisma generate`, `prisma migrate dev`, and `prisma db push` all fail with a validation error. Any fresh checkout, Docker build, or CI pipeline that runs Prisma CLI commands will fail at schema validation. Existing locally-generated artefacts mask this.
+
+**Fix:**
+```prisma
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+```
+
+---
+
+### CR-02: TOCTOU race in last-admin guard — concurrent deletes can leave zero active admins
+
+**File:** `apps/backend/src/routes/admin.ts:101-134`
+
+**Issue:** `adminCount` is read with a standalone `prisma.user.count()` outside the delete transaction. If two concurrent DELETE requests each target one of the last two active admins, both reads see `adminCount = 2`, both guards pass, both deletions proceed, and the instance is left with no admin account. Recovery requires direct database access.
 
 ```typescript
 // CURRENT — count and delete are not atomic:
@@ -52,11 +85,10 @@ const adminCount = await prisma.user.count({ where: { role: 'ADMIN', isActive: t
 if (adminCount <= 1 && target.role === 'ADMIN') {
   return c.json({ error: 'LAST_ADMIN' }, 400)
 }
-// ... then prisma.$transaction([...])   ← race window lives here
+// ... then prisma.$transaction([...])  ← race window lives here
 ```
 
-**Fix:** Move the guard inside a Prisma interactive transaction so the read and the delete are serialized:
-
+**Fix:** Move the guard inside an interactive `$transaction`:
 ```typescript
 try {
   await prisma.$transaction(async (tx) => {
@@ -82,54 +114,24 @@ try {
 }
 ```
 
-The interactive transaction form (`$transaction(async (tx) => {...})`) is available in Prisma 4+. With PostgreSQL's default `READ COMMITTED` isolation the window is very narrow but still real; for a fully serializable guarantee, add `{ isolationLevel: 'Serializable' }`.
-
 ---
 
 ## Warnings
 
-### WR-01: SMTP not-configured error uses a human-readable string, not a machine code
-
-**File:** `apps/backend/src/routes/admin.ts:175` / `apps/frontend/src/pages/AdminPage.tsx:142`
-
-**Issue:** The backend returns `{ error: 'SMTP not configured.' }` (a sentence), while the frontend discriminates it by exact string match:
-
-```typescript
-// AdminPage.tsx:142
-if (errCode === 'SMTP not configured.') {
-  toast.error(t('admin.inviteSMTPMissing'))
-}
-```
-
-Every other discriminated error in the codebase uses a short machine code (`'SMTP_ERROR'`, `'NO_EMAIL'`, `'SELF_DELETE'`, `'LAST_ADMIN'`). If the backend message is ever rephrased, the frontend silently falls through to `inviteSendError` ("Could not send the invitation email. Check SMTP settings.") — giving the admin no actionable guidance about the real cause.
-
-**Fix:** Normalise to a code in `admin.ts` and update the frontend:
-
-```typescript
-// admin.ts:175 (POST /invites) and admin.ts:249 (POST /mailer/test):
-return c.json({ error: 'SMTP_NOT_CONFIGURED' }, 400)
-
-// AdminPage.tsx:142:
-if (errCode === 'SMTP_NOT_CONFIGURED') {
-  toast.error(t('admin.inviteSMTPMissing'))
-}
-```
-
-### WR-02: JWT payload claims cast `as string` without runtime validation
+### WR-01: JWT payload claims cast `as string` without runtime validation — silent undefined propagation
 
 **File:** `apps/backend/src/middleware/auth.ts:44-45`
 
-**Issue:** `verifyToken` returns `JWTPayload` from the jose library. `sub` is typed `string | undefined`; `role` is an ad-hoc claim accessible as `unknown`. The middleware casts both without any runtime check:
+**Issue:** `verifyToken` returns `JWTPayload` from the jose library. `sub` is typed `string | undefined`; `role` is an ad-hoc claim typed as `unknown`. The middleware casts both without runtime checks:
 
 ```typescript
 c.set('userId', payload.sub as string)   // sub is string | undefined
 c.set('role', payload.role as string)    // role is unknown
 ```
 
-If a validly-signed JWT — for example, a token created by an older code path that omitted either field — is presented, `c.get('userId')` in downstream handlers returns `undefined` typed as `string`. In `admin.ts` this causes the self-delete guard (`id === authenticatedUserId`) to silently produce `false` when both are compared against `undefined`, bypassing the intended protection. The `requireAdmin` middleware would still block the request (undefined !== 'ADMIN'), but the failure mode is a 403 instead of the correct 401.
+If a validly-signed JWT omits `sub` or `role` (e.g., a token created by an older code path), `c.get('userId')` in downstream handlers returns `undefined` typed as `string`. In `admin.ts`, the self-delete guard (`id === authenticatedUserId`) silently evaluates `false` when comparing a real id against `undefined`, bypassing the guard. The `requireAdmin` middleware still blocks with a 403 (not 401), but the failure surface is broader than intended.
 
-**Fix:** Validate before setting and return 401 on missing claims:
-
+**Fix:**
 ```typescript
 const sub = payload.sub
 const role = payload.role
@@ -140,14 +142,154 @@ c.set('userId', sub)
 c.set('role', role)
 ```
 
-### WR-03: `InviteToken` response type is not in `packages/shared` — drift risk
+---
+
+### WR-02: TOCTOU-safe transaction does not check `expiresAt` — expired token can be consumed
+
+**File:** `apps/backend/src/routes/auth.ts:75-79`
+
+**Issue:** The registration transaction's atomic WHERE clause is:
+```typescript
+where: { token, usedAt: null }
+```
+It guards against concurrent dual-registration but does not include `expiresAt: { gt: new Date() }`. The pre-check at lines 65-67 does check expiry, but the comment at line 57 explicitly acknowledges the pre-check is "not TOCTOU-safe — purely for UX." A token that passes the pre-check and then expires in the microseconds before the transaction executes will still be marked used and a user account will be created for an expired invite.
+
+**Fix:** Add the expiry guard to the transaction WHERE clause:
+```typescript
+const result = await tx.inviteToken.updateMany({
+  where: { token, usedAt: null, expiresAt: { gt: new Date() } },
+  data: { usedAt: new Date() },
+})
+if (result.count === 0) throw new Error('TOKEN_CONSUMED')
+```
+If the transaction should distinguish `ALREADY_USED` from `EXPIRED`, use a separate `findUnique` inside the transaction before the `updateMany`.
+
+---
+
+### WR-03: Non-atomic refresh token rotation — if `create` fails after `delete`, session is permanently lost
+
+**File:** `apps/backend/src/routes/auth.ts:203-218`
+
+**Issue:** Token rotation deletes the old record first (line 204), then creates the new one (lines 210-216). If `create` fails — transient DB error, constraint violation, etc. — the old token is already gone, `setAuthCookies` is never reached, and the cookie in the browser holds a token with no matching DB row. The user's session is silently invalidated; they must re-authenticate with username and password.
+
+**Fix:** Wrap the delete and create in a `$transaction`:
+```typescript
+const newTokenHash = await bcrypt.hash(newRawRefreshToken, 10)
+await prisma.$transaction([
+  prisma.refreshToken.deleteMany({ where: { id: matchedToken.id } }),
+  prisma.refreshToken.create({
+    data: {
+      userId: user.id,
+      tokenHash: newTokenHash,
+      expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+    },
+  }),
+])
+setAuthCookies(c, accessToken, newRawRefreshToken)
+```
+
+---
+
+### WR-04: SMTP not-configured error uses a human-readable sentence, not a machine code
+
+**File:** `apps/backend/src/routes/admin.ts:175` / `apps/frontend/src/pages/AdminPage.tsx:142`
+
+**Issue:** The backend returns `{ error: 'SMTP not configured.' }` — a natural-language sentence — while the frontend discriminates it by exact string match:
+```typescript
+// AdminPage.tsx:142
+if (errCode === 'SMTP not configured.') {
+  toast.error(t('admin.inviteSMTPMissing'))
+}
+```
+Every other discriminated error in the codebase uses a short machine code (`SMTP_ERROR`, `NO_EMAIL`, `SELF_DELETE`, `LAST_ADMIN`). If the backend message is rephrased, the frontend silently falls through to `inviteSendError` — giving the admin incorrect guidance ("Check the SMTP settings") rather than the correct guidance ("SMTP is not configured — contact the server administrator").
+
+**Fix:** Replace the sentence with a code in both the POST /invites (line 175) and POST /mailer/test (line 249) handlers, and update the frontend:
+```typescript
+// admin.ts:
+return c.json({ error: 'SMTP_NOT_CONFIGURED' }, 400)
+
+// AdminPage.tsx:
+if (errCode === 'SMTP_NOT_CONFIGURED') {
+  toast.error(t('admin.inviteSMTPMissing'))
+}
+```
+
+---
+
+### WR-05: Raw exception message from nodemailer leaked to client in POST `/api/admin/mailer/test`
+
+**File:** `apps/backend/src/routes/admin.ts:261`
+
+**Issue:**
+```typescript
+return c.json({ error: (err as Error).message }, 500)
+```
+Nodemailer error messages include internal network details: SMTP server hostname and port, `connect ECONNREFUSED 10.0.0.5:587`, TLS negotiation errors, authentication failure strings. Even though this endpoint is admin-only, surfacing raw exception text exposes internal network topology and potentially SMTP credentials in browser devtools and client logs, and contradicts the structured error-code pattern used everywhere else.
+
+**Fix:**
+```typescript
+} catch (err) {
+  console.error('[admin] Mailer test failed:', (err as Error).message)
+  return c.json({ error: 'SMTP_ERROR' }, 500)
+}
+```
+Update the frontend `MailerSection` to handle `SMTP_ERROR` from the test endpoint (currently it maps only `NO_EMAIL`).
+
+---
+
+### WR-06: `sendMail` rollback can orphan an invite token if the cleanup `delete` also throws
+
+**File:** `apps/backend/src/routes/admin.ts:197-202`
+
+**Issue:**
+```typescript
+} catch (err) {
+  await prisma.inviteToken.delete({ where: { id: invite.id } })  // can throw
+  console.error(...)
+  return c.json({ error: 'SMTP_ERROR' }, 500)
+}
+```
+If `sendMail` throws and then `prisma.inviteToken.delete` also throws (DB connectivity blip, record already deleted), the inner exception propagates unhandled. The invite row survives in the database — valid and unused — but no email was ever sent. An admin would see a pending invite that was never delivered with no indication of the failure.
+
+**Fix:** Wrap the rollback delete in its own try/catch:
+```typescript
+} catch (err) {
+  try {
+    await prisma.inviteToken.delete({ where: { id: invite.id } })
+  } catch (cleanupErr) {
+    console.error('[admin] Failed to rollback orphaned invite token:', (cleanupErr as Error).message)
+  }
+  console.error('[admin] Invite email delivery failed:', (err as Error).message)
+  return c.json({ error: 'SMTP_ERROR' }, 500)
+}
+```
+
+---
+
+### WR-07: Delete confirmation button is enabled with empty input when `deleteTarget` is `undefined`
+
+**File:** `apps/frontend/src/pages/AdminPage.tsx:493`
+
+**Issue:**
+```tsx
+disabled={usernameInput !== (deleteTarget?.username ?? '')}
+```
+`deleteTarget = users.find(u => u.id === deleteTargetId)`. If `deleteTargetId` is set but the user is not found in local state (stale list, pre-load race), `deleteTarget` is `undefined`. The expression becomes `disabled={usernameInput !== ''}`. With the initial `usernameInput === ''`, `disabled` evaluates to `false` — the "Delete permanently" button is immediately clickable with an empty input field, bypassing the typing confirmation for any unresolvable target.
+
+**Fix:**
+```tsx
+disabled={!deleteTarget || usernameInput !== deleteTarget.username}
+```
+
+---
+
+### WR-08: `InviteToken` response type is defined locally in `AdminPage.tsx` — drift risk at API boundary
 
 **File:** `apps/frontend/src/pages/AdminPage.tsx:43-48`
 
-**Issue:** `InviteToken` is a local interface defined only in `AdminPage.tsx`. The backend inline-selects `{ id, email, expiresAt, createdAt }` (admin.ts:183-184) without a shared schema. `packages/shared/src/index.ts` exports nothing for invite token responses. If the backend renames or adds a field, TypeScript cannot catch the mismatch at the API boundary because the types live in different files with no shared import.
+**Issue:** `InviteToken` is a local interface defined only in `AdminPage.tsx`. The backend selects `{ id, email, expiresAt, createdAt }` inline (admin.ts:183-184) without a shared schema. `packages/shared/src/index.ts` exports nothing for invite token responses. If the backend renames or adds a field, TypeScript cannot catch the mismatch at the API boundary.
 
-**Fix:** Add an authoritative schema to `packages/shared`:
-
+**Fix:** Add an authoritative schema to the shared package:
 ```typescript
 // packages/shared/src/schemas/inviteToken.ts
 import { z } from 'zod'
@@ -159,148 +301,53 @@ export const InviteTokenResponseSchema = z.object({
 })
 export type InviteTokenResponse = z.infer<typeof InviteTokenResponseSchema>
 ```
-
-Export from `packages/shared/src/index.ts` and import in `AdminPage.tsx` (replacing the local interface) and in `admin.ts` for type-checking the `select` shape.
-
-### WR-04: Structural assertion tests are tautologies that always pass
-
-**File:** `apps/backend/src/routes/__tests__/admin-delete.test.ts:26-59`
-
-**Issue:** Four tests in the file assert only trivially-true statements:
-
-```typescript
-it('ReviewLog schema has onDelete: Cascade on userId...', () => {
-  expect(true).toBe(true)   // always passes — schema change would not break this
-})
-
-it('DELETE handler uses SELF_DELETE error code...', () => {
-  const selfDeleteCode = 'SELF_DELETE'
-  expect(selfDeleteCode).toBe('SELF_DELETE')  // tautology — string equals itself
-})
-```
-
-These tests produce green CI results even if the cascade is removed from `schema.prisma` or the handler is completely deleted. They do not verify the properties their names claim. The numerous `it.todo` stubs are correctly labelled; the issue is specifically with the four passing tests that assert constant values.
-
-**Fix:** Either convert them to genuine todos (removing the false assurance of a passing assertion) or replace each with a real check:
-
-```typescript
-// For error-code tests: import the handler and call it with a mock Prisma
-// For schema tests: read and parse schema.prisma to assert the onDelete directive
-
-// Minimum: convert to todos to avoid misleading pass status
-it.todo('DELETE handler uses SELF_DELETE error code (verify via handler integration test)')
-it.todo('ReviewLog schema has onDelete: Cascade (verify via prisma introspection or schema text)')
-```
-
-### WR-05: Escape-key handler on unfocused `<span>` is dead code
-
-**File:** `apps/frontend/src/pages/AdminPage.tsx:324-328, 405`
-
-**Issue:** `handleConfirmKeyDown` is intended to dismiss the inline deactivation confirmation banner when the user presses Escape. It is attached to a `<span role="alert" tabIndex={-1}>`:
-
-```tsx
-<span
-  role="alert"
-  onKeyDown={handleConfirmKeyDown}   // never fires
-  tabIndex={-1}
->
-```
-
-A `tabIndex={-1}` element is not included in the sequential focus order and is never auto-focused when it appears. `onKeyDown` only fires on elements that currently hold focus, so this handler is unreachable during normal interaction — the Escape key dismissal never works.
-
-**Fix:** Remove the handler (the Cancel button already handles dismiss via `setConfirmDeactivateId(null)`) or, if Escape dismissal is desired, move the `onKeyDown` to a wrapping element that is focused or use the browser's built-in escape handling via a `<dialog>` element.
+Export from `packages/shared/src/index.ts` and import in `AdminPage.tsx` (replacing the local interface) and in `admin.ts` to type-check the `select` shape.
 
 ---
 
-## Info
+### WR-09: Submit error handler in `InviteRegisterPage` does not handle `EXPIRED` — falls to generic toast
 
-### IN-01: `fetchUsers` and `fetchTokens` swallow all errors silently
+**File:** `apps/frontend/src/pages/InviteRegisterPage.tsx:97-108`
 
-**File:** `apps/frontend/src/pages/AdminPage.tsx:120-124, 262-265`
-
-**Issue:** Both loading functions catch all errors and discard them:
-
+**Issue:**
 ```typescript
-} catch {
-  // silently ignore fetch errors on load
+if (err === 'ALREADY_USED') {
+  toast.error(t('auth.inviteAlreadyUsed'))
+} else {
+  toast.error(t('common.somethingWrong'))  // EXPIRED falls here
 }
 ```
+A realistic scenario: the user opens the invite page (token is valid), fills out the form over several minutes, and submits after the 7-day token expires. The backend pre-check returns `EXPIRED` (400), but the frontend shows "Something went wrong. Please try again." — an unhelpful message for a foreseeable and actionable error.
 
-A network failure or a 500 from the server leaves the admin staring at an empty table that is visually identical to "no records exist." The admin has no way to distinguish a successful empty result from a failed fetch.
-
-**Fix:** Show a toast on failure:
-
+**Fix:**
 ```typescript
-} catch {
+if (err === 'ALREADY_USED') {
+  toast.error(t('auth.inviteAlreadyUsed'))
+} else if (err === 'EXPIRED') {
+  toast.error(t('auth.inviteExpired'))
+} else {
   toast.error(t('common.somethingWrong'))
 }
 ```
 
-### IN-02: Media files are unlinked from disk before the database transaction
+---
 
-**File:** `apps/backend/src/routes/admin.ts:108-116`
+### WR-10: `APP_URL` fallback silently sends broken invite links in production
 
-**Issue:** `unlink()` is called for each media file before `prisma.$transaction(...)` begins. If the transaction subsequently fails (edge-case FK violation, connection loss), the files have already been deleted from disk but the `Media` rows survive in the database — creating orphaned records that point to non-existent paths. The design comment references D-07 ("best-effort, do not roll back"), but that intent applies to individual unlink failures within the loop, not to the overall ordering relative to the transaction.
-
-**Fix:** Execute the database transaction first. After it commits successfully, attempt file cleanup; individual unlink failures remain non-fatal:
-
-```typescript
-// 1. Delete from DB first (atomic)
-await prisma.$transaction([...])
-
-// 2. Then clean up files (best-effort)
-for (const m of mediaRecords) {
-  try { await unlink(m.storagePath) } catch (err) { console.warn(...) }
-}
-```
-
-### IN-03: Invalid email submission shows a misleading SMTP error toast
-
-**File:** `apps/frontend/src/pages/AdminPage.tsx:140-148`
-
-**Issue:** If an invalid email address bypasses the browser's `type="email"` validation (e.g., a programmatic `fetch`, a browser without native validation, or a paste that bypasses blur validation), the backend returns `{ error: 'Valid email address required.' }` with HTTP 400. The frontend's error-code switch has no branch for this value and falls through to `inviteSendError`:
-
-```
-"Could not send the invitation email. Check the SMTP settings and try again."
-```
-
-This message is factually wrong for a validation error; it directs the admin to check SMTP settings when the actual problem is the email input.
-
-**Fix:** Add an explicit branch or validate the email format client-side before submission:
-
-```typescript
-// Option A: catch the backend validation error
-if (errCode === 'Valid email address required.') {
-  toast.error(t('auth.invalidCredentials'))  // or add a specific i18n key
-} else if (errCode === 'SMTP_NOT_CONFIGURED') { ... }
-
-// Option B: validate before POST (preferred)
-const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-if (!emailRegex.test(email)) {
-  toast.error(t('auth.invalidInvite'))
-  return
-}
-```
-
-### IN-04: `APP_URL` fallback to `localhost` silently sends broken invite links in production
-
-**File:** `apps/backend/src/routes/admin.ts:187`
+**File:** `apps/backend/src/routes/admin.ts:187-188`
 
 **Issue:**
-
 ```typescript
 const appUrl = process.env.APP_URL ?? 'http://localhost:3000'
 const inviteLink = `${appUrl}/invite/${token}`
 ```
+If `APP_URL` is not configured in a production deployment, every invite email contains a `http://localhost:3000/invite/<token>` link. The admin sees a 200 success response; the invitee receives a dead link. No error is surfaced anywhere in the delivery path.
 
-If `APP_URL` is not set in a production deployment, every invite email contains a link pointing to `http://localhost:3000/invite/<token>`. The admin receives a success response and the invitee receives a link that is unreachable from any external browser. The bug is silent: no log error, no HTTP error, no indication to either party that the link is wrong.
-
-**Fix:** Fail at call time if `APP_URL` is absent:
-
+**Fix:** Fail explicitly when `APP_URL` is absent rather than silently producing a broken link:
 ```typescript
 const appUrl = process.env.APP_URL
 if (!appUrl) {
-  console.error('[admin] APP_URL is not set — cannot generate invite link')
+  console.error('[admin] APP_URL env var is not set — cannot generate invite link')
   return c.json({ error: 'SERVER_MISCONFIGURED' }, 500)
 }
 const inviteLink = `${appUrl}/invite/${token}`
@@ -308,6 +355,133 @@ const inviteLink = `${appUrl}/invite/${token}`
 
 ---
 
-_Reviewed: 2026-06-28T12:00:00Z_
+## Info
+
+### IN-01: Stale legacy i18n keys from the old `InviteCode` implementation remain in both locale files
+
+**File:** `apps/frontend/src/locales/en.json` and `apps/frontend/src/locales/de.json`
+
+**Issue:** The following keys are no longer referenced by any component after `InviteCodesSection` was removed in plan 07, but survive in both locale files: `admin.inviteCodesTitle`, `admin.inviteCodesDesc`, `admin.expiryDaysLabel`, `admin.generating`, `admin.generate`, `admin.noInviteCodes`, `admin.inviteGenerated`, `admin.inviteDeleted`, `table.codeColumn`, `table.usedByColumn`. They add noise and risk confusion with the new `admin.inviteTokensTitle` and `admin.inviteColExpires` keys that replaced them.
+
+**Fix:** Remove the listed keys from both locale files.
+
+---
+
+### IN-02: Dead code branch in `handleSendInvite` — `SMTP_ERROR` and `else` branches are identical
+
+**File:** `apps/frontend/src/pages/AdminPage.tsx:144-148`
+
+**Issue:**
+```typescript
+} else if (errCode === 'SMTP_ERROR') {
+  toast.error(t('admin.inviteSendError'))   // same as else
+} else {
+  toast.error(t('admin.inviteSendError'))   // identical
+}
+```
+The explicit `SMTP_ERROR` branch and the catch-all `else` branch show the same toast. The only distinctly handled case is `'SMTP not configured.'`. The `SMTP_ERROR` branch is functionally unreachable — it does nothing the `else` does not already do. Either give `SMTP_ERROR` a distinct message or collapse both into the `else`.
+
+---
+
+### IN-03: Structural assertion tests are tautologies that always pass
+
+**File:** `apps/backend/src/routes/__tests__/admin-delete.test.ts:25-59`
+
+**Issue:** Four tests in the file use `expect(true).toBe(true)` or compare a string constant to itself:
+```typescript
+it('ReviewLog schema has onDelete: Cascade on userId...', () => {
+  expect(true).toBe(true)   // always passes
+})
+it('DELETE handler uses SELF_DELETE error code...', () => {
+  const selfDeleteCode = 'SELF_DELETE'
+  expect(selfDeleteCode).toBe('SELF_DELETE')  // tautology
+})
+```
+These pass unconditionally. A schema change removing `onDelete: Cascade` or a handler change modifying the error code would not be detected. The numerous `it.todo` stubs are correctly labelled; the issue is these four tests produce misleading green CI signals.
+
+**Fix:** Convert them to `it.todo` to remove the false assurance, or replace with real assertions against the schema DMMF or handler integration tests.
+
+---
+
+### IN-04: `fetchTokens` and `fetchUsers` swallow all errors silently — empty list is indistinguishable from fetch failure
+
+**File:** `apps/frontend/src/pages/AdminPage.tsx:120-124` and `262-265`
+
+**Issue:**
+```typescript
+} catch {
+  // silently ignore fetch errors on load
+}
+```
+A network failure or a 500 from the server leaves the admin with an empty table that looks identical to "no records exist." The admin cannot distinguish between a successful empty result and a broken request, which is particularly misleading in the user management context.
+
+**Fix:**
+```typescript
+} catch {
+  toast.error(t('common.somethingWrong'))
+}
+```
+
+---
+
+### IN-05: Media files are unlinked from disk before the database transaction commits
+
+**File:** `apps/backend/src/routes/admin.ts:108-134`
+
+**Issue:** `unlink()` is called for each media file before `prisma.$transaction([...])` begins at line 126. If the transaction subsequently fails (edge-case FK violation, connection drop), the files have been deleted from disk but the `Media` rows survive in the database — orphaned records pointing to non-existent paths. The D-07 "best-effort" comment applies to individual `unlink` failures within the loop, not to the overall ordering relative to the transaction commit.
+
+**Fix:** Execute the database transaction first; clean up files only after it commits successfully:
+```typescript
+// 1. Atomic DB deletion first
+await prisma.$transaction([...])
+
+// 2. Best-effort file cleanup after commit
+for (const m of mediaRecords) {
+  try { await unlink(m.storagePath) } catch (err) {
+    console.warn(`[admin] Could not delete media file ${m.storagePath}:`, (err as Error).message)
+  }
+}
+```
+
+---
+
+### IN-06: Escape-key handler on unfocused `<span>` is dead code
+
+**File:** `apps/frontend/src/pages/AdminPage.tsx:404-408`
+
+**Issue:**
+```tsx
+<span
+  role="alert"
+  onKeyDown={handleConfirmKeyDown}   // only fires if span is focused
+  tabIndex={-1}
+>
+```
+`tabIndex={-1}` means the span cannot receive focus via keyboard navigation and is never auto-focused when it appears. `onKeyDown` only fires on the currently focused element. In practice, the Escape key handler never fires during normal interaction — Escape dismissal of the deactivation confirmation does not work.
+
+**Fix:** Remove the handler (the Cancel button covers dismiss). If Escape dismissal is desired, either programmatically focus the span when it appears (`useEffect(() => spanRef.current?.focus(), [confirmDeactivateId])`) or use a `<dialog>` element which provides built-in Escape handling.
+
+---
+
+### IN-07: `Media` model has no `@relation` to `User` — missing database-level FK constraint on `ownerId`
+
+**File:** `apps/backend/prisma/schema.prisma:142-150`
+
+**Issue:** `Media.ownerId` is a plain `String` with no Prisma relation definition. Prisma does not emit a foreign key constraint for it. The explicit cascade delete in `admin.ts` compensates at the application layer, but any code path that deletes a user outside of `admin.ts` (direct SQL, a future endpoint) would leave orphaned Media rows.
+
+**Fix:** Add a formal relation to enforce the FK at the database level:
+```prisma
+model Media {
+  id          String   @id @default(cuid())
+  ownerId     String
+  owner       User     @relation(fields: [ownerId], references: [id])
+  ...
+}
+```
+Add `media Media[]` to the `User` model. Alternatively, add `onDelete: Cascade` to remove media automatically when the user is deleted (simplifying the admin delete handler).
+
+---
+
+_Reviewed: 2026-06-28T14:00:00Z_
 _Reviewer: Claude (gsd-code-reviewer)_
 _Depth: standard_
