@@ -1,6 +1,5 @@
 export * from './schemas/user'
 export * from './schemas/auth'
-export * from './schemas/inviteCode'
 export * from './schemas/deck'
 export * from './schemas/card'
 export * from './schemas/media'

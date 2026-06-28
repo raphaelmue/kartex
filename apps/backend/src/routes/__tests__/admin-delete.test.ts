@@ -7,7 +7,7 @@ import { describe, it, expect } from 'vitest'
 
 describe('DELETE /api/admin/users/:id — user account deletion (ADMIN-01)', () => {
   it.todo('returns 200 and user no longer exists after successful deletion')
-  it.todo('executes ordered cascade: RefreshToken → DeckShare(sharedWithUserId) → CardProgress → Cards-in-user-decks → Decks → InviteCode(usedById) → User')
+  it.todo('executes ordered cascade: RefreshToken → DeckShare(sharedWithUserId) → CardProgress → Cards-in-user-decks → Decks → User')
   it.todo('deletes media files from disk (best-effort) before removing Media rows from DB (D-06, D-07)')
   it.todo('continues deletion if a media file unlink fails — logs error, does not roll back transaction (D-07)')
   it.todo('returns 401 when called without authentication')
@@ -37,17 +37,6 @@ describe('DeckShare owner-side cascade — structural assertion (ADMIN-01)', () 
     // Postgres cascades to DeckShare rows where the deleted user is the owner.
     // Only recipient-side DeckShare rows (sharedWithUserId: id) need explicit deletion.
     // Confirmed by schema.prisma: deck Deck @relation(fields: [deckId], references: [id], onDelete: Cascade)
-    expect(true).toBe(true)
-  })
-})
-
-describe('InviteCode FK — structural assertion (ADMIN-01)', () => {
-  it('InviteCode.usedById has no onDelete — must be explicitly deleted before user.delete (D-05)', () => {
-    // Structural guarantee: InviteCode.usedById is a nullable FK with NO onDelete action in schema.prisma.
-    // This means Postgres will NOT auto-delete or null-out the InviteCode row when the User is deleted.
-    // The explicit inviteCode.deleteMany({ where: { usedById: id } }) step in the $transaction is required
-    // to clear this reference before prisma.user.delete executes (prevents FK violation).
-    // Confirmed by schema.prisma: usedBy User? @relation(fields: [usedById], references: [id])  — no onDelete
     expect(true).toBe(true)
   })
 })
