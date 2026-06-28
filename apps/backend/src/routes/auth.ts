@@ -71,9 +71,10 @@ auth.post('/register', async (c) => {
   // T-24-06, T-24-07). Inside the callback throw aborts the transaction (Pitfall 7).
   try {
     await prisma.$transaction(async (tx) => {
-      // Atomically mark token used — wins the concurrent-registration race
+      // Atomically mark token used — wins the concurrent-registration race.
+      // expiresAt guard closes the window between the pre-check and transaction execution.
       const result = await tx.inviteToken.updateMany({
-        where: { token, usedAt: null },
+        where: { token, usedAt: null, expiresAt: { gt: new Date() } },
         data: { usedAt: new Date() },
       })
       if (result.count === 0) throw new Error('TOKEN_CONSUMED')
