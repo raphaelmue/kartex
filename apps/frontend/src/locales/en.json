@@ -360,6 +360,7 @@
     "pendingInvitesEmpty": "No pending invitations.",
     "inviteSentSuccess": "Invitation sent to {{email}}.",
     "inviteSMTPMissing": "Email is not configured. Contact the server administrator.",
+    "inviteSendError": "Could not send the invitation email. Check the SMTP settings and try again.",
     "inviteRevokeSuccess": "Invitation revoked."
   },
   "media": {

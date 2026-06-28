@@ -360,6 +360,7 @@
     "pendingInvitesEmpty": "Keine ausstehenden Einladungen.",
     "inviteSentSuccess": "Einladung an {{email}} gesendet.",
     "inviteSMTPMissing": "E-Mail ist nicht konfiguriert. Kontaktieren Sie den Server-Administrator.",
+    "inviteSendError": "Die Einladungs-E-Mail konnte nicht gesendet werden. Bitte überprüfen Sie die SMTP-Einstellungen und versuchen Sie es erneut.",
     "inviteRevokeSuccess": "Einladung widerrufen."
   },
   "media": {
