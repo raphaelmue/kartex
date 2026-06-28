@@ -197,7 +197,8 @@ admin.post('/invites', async (c) => {
   } catch (err) {
     // Roll back the created invite token if email delivery fails
     await prisma.inviteToken.delete({ where: { id: invite.id } })
-    return c.json({ error: (err as Error).message }, 500)
+    console.error('[admin] Invite email delivery failed:', (err as Error).message)
+    return c.json({ error: 'SMTP_ERROR' }, 500)
   }
 
   return c.json(invite, 200)
