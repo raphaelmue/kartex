@@ -193,7 +193,11 @@ admin.post('/invites', async (c) => {
     select: { id: true, email: true, expiresAt: true, createdAt: true },
   })
 
-  const appUrl = process.env.APP_URL ?? 'http://localhost:3000'
+  const appUrl = process.env.APP_URL
+  if (!appUrl) {
+    console.error('[admin] APP_URL env var is not set — cannot generate invite link')
+    return c.json({ error: 'SERVER_MISCONFIGURED' }, 500)
+  }
   const inviteLink = `${appUrl}/invite/${token}`
 
   try {
