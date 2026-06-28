@@ -167,6 +167,31 @@ describe('InviteTokensSection — send invite (EMAIL-03)', () => {
       )
     })
   })
+
+  it('shows inviteSendError toast when POST /api/admin/invites returns 500 SMTP_ERROR', async () => {
+    mockApiPost.mockResolvedValueOnce({
+      ok: false,
+      status: 500,
+      json: async () => ({ error: 'SMTP_ERROR' }),
+    })
+
+    render(<AdminPage />)
+
+    await waitFor(() => {
+      expect(screen.getByText('Email Invitations')).toBeTruthy()
+    })
+
+    const emailInput = screen.getByPlaceholderText('Email address')
+    fireEvent.change(emailInput, { target: { value: 'fail@example.com' } })
+
+    fireEvent.click(screen.getByRole('button', { name: 'Send Invite' }))
+
+    await waitFor(() => {
+      expect(mockToastError).toHaveBeenCalledWith(
+        'Could not send the invitation email. Check the SMTP settings and try again.',
+      )
+    })
+  })
 })
 
 // ─────────────────────────────────────────────────────────────────────────
