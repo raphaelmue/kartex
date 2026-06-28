@@ -494,7 +494,7 @@ function UsersSection() {
               <AlertDialogCancel>{t('admin.deleteUserCancel')}</AlertDialogCancel>
               <Button
                 variant="destructive"
-                disabled={usernameInput !== (deleteTarget?.username ?? '')}
+                disabled={!deleteTarget || usernameInput !== deleteTarget.username}
                 onClick={() => {
                   if (deleteTargetId) void handleDeleteUser(deleteTargetId)
                 }}
