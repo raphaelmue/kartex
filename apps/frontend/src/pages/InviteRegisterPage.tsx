@@ -99,6 +99,8 @@ export function InviteRegisterPage() {
         const err = (body as { error?: string }).error
         if (err === 'ALREADY_USED') {
           toast.error(t('auth.inviteAlreadyUsed'))
+        } else if (err === 'EXPIRED') {
+          toast.error(t('auth.inviteExpired'))
         } else {
           toast.error(t('common.somethingWrong'))
         }
