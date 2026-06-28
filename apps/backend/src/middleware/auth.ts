@@ -41,8 +41,13 @@ export const authMiddleware = createMiddleware(async (c, next) => {
   }
   try {
     const payload = await verifyToken(token)
-    c.set('userId', payload.sub as string)
-    c.set('role', payload.role as string)
+    const sub = payload.sub
+    const role = payload.role
+    if (typeof sub !== 'string' || typeof role !== 'string') {
+      return c.json({ error: 'Unauthorized.' }, 401)
+    }
+    c.set('userId', sub)
+    c.set('role', role)
   } catch {
     return c.json({ error: 'Unauthorized.' }, 401)
   }
