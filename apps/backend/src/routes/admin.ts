@@ -181,7 +181,7 @@ admin.post('/invites', async (c) => {
 
   // D-10: SMTP not configured — surface at call time, not startup
   if (!isConfigured()) {
-    return c.json({ error: 'SMTP not configured.' }, 400)
+    return c.json({ error: 'SMTP_NOT_CONFIGURED' }, 400)
   }
 
   // T-24-05: 256-bit CSPRNG token — never cuid or truncated UUID
@@ -254,7 +254,7 @@ admin.post('/mailer/test', async (c) => {
 
   // D-10: SMTP not configured — soft-fail surfaced at call time
   if (!isConfigured()) {
-    return c.json({ error: 'SMTP not configured.' }, 400)
+    return c.json({ error: 'SMTP_NOT_CONFIGURED' }, 400)
   }
 
   try {

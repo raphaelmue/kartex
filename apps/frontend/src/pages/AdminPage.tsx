@@ -139,7 +139,7 @@ function InviteTokensSection() {
       } else {
         const body = await res.json().catch(() => ({}))
         const errCode = (body as { error?: string }).error
-        if (errCode === 'SMTP not configured.') {
+        if (errCode === 'SMTP_NOT_CONFIGURED') {
           toast.error(t('admin.inviteSMTPMissing'))
         } else if (errCode === 'SMTP_ERROR') {
           toast.error(t('admin.inviteSendError'))
