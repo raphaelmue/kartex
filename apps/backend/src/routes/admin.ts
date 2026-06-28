@@ -97,12 +97,6 @@ admin.delete('/users/:id', async (c) => {
     return c.json({ error: 'User not found.' }, 404)
   }
 
-  // D-08: Last-admin guard — prevent losing the last active admin account
-  const adminCount = await prisma.user.count({ where: { role: 'ADMIN', isActive: true } })
-  if (adminCount <= 1 && target.role === 'ADMIN') {
-    return c.json({ error: 'LAST_ADMIN' }, 400)
-  }
-
   // D-06/D-07: Media file cleanup — best-effort before the transaction.
   // Failures are logged and do not abort the deletion (D-07).
   const mediaRecords = await prisma.media.findMany({ where: { ownerId: id } })
@@ -115,23 +109,38 @@ admin.delete('/users/:id', async (c) => {
     }
   }
 
-  // D-05: Ordered cascade delete via prisma.$transaction (atomic).
-  // Pitfall 2: deckIds pre-computed BEFORE the $transaction array (no await inside array).
-  // Note: ReviewLog rows auto-delete via existing onDelete: Cascade on userId FK (no explicit step needed).
-  // Note: DeckShare rows where user is deck owner auto-delete via existing onDelete: Cascade on Deck (deckId FK).
+  // D-05: Ordered cascade delete via interactive $transaction (atomic).
+  // D-08: Last-admin guard is inside the transaction to close the TOCTOU race window
+  // (concurrent DELETE requests each seeing adminCount=2 then both deleting).
+  // Note: ReviewLog rows auto-delete via existing onDelete: Cascade on userId FK.
+  // Note: DeckShare rows where user is deck owner auto-delete via Cascade on Deck (deckId FK).
   const deckIds = (await prisma.deck.findMany({ where: { ownerId: id }, select: { id: true } })).map(
     (d) => d.id,
   )
 
-  await prisma.$transaction([
-    prisma.refreshToken.deleteMany({ where: { userId: id } }),
-    prisma.deckShare.deleteMany({ where: { sharedWithUserId: id } }),
-    prisma.cardProgress.deleteMany({ where: { userId: id } }),
-    prisma.card.deleteMany({ where: { deckId: { in: deckIds } } }),
-    prisma.deck.deleteMany({ where: { ownerId: id } }),
-    prisma.media.deleteMany({ where: { ownerId: id } }),
-    prisma.user.delete({ where: { id } }),
-  ])
+  try {
+    await prisma.$transaction(async (tx) => {
+      // D-08: Last-admin guard inside the transaction — atomic check-and-delete
+      if (target.role === 'ADMIN') {
+        const adminCount = await tx.user.count({ where: { role: 'ADMIN', isActive: true } })
+        if (adminCount <= 1) {
+          throw Object.assign(new Error('LAST_ADMIN'), { code: 'LAST_ADMIN' })
+        }
+      }
+      await tx.refreshToken.deleteMany({ where: { userId: id } })
+      await tx.deckShare.deleteMany({ where: { sharedWithUserId: id } })
+      await tx.cardProgress.deleteMany({ where: { userId: id } })
+      await tx.card.deleteMany({ where: { deckId: { in: deckIds } } })
+      await tx.deck.deleteMany({ where: { ownerId: id } })
+      await tx.media.deleteMany({ where: { ownerId: id } })
+      await tx.user.delete({ where: { id } })
+    })
+  } catch (err) {
+    if ((err as { code?: string }).code === 'LAST_ADMIN') {
+      return c.json({ error: 'LAST_ADMIN' }, 400)
+    }
+    throw err
+  }
 
   return c.json({ message: 'User deleted.' }, 200)
 })
