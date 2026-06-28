@@ -1,3 +1,4 @@
+export * from './schemas/inviteToken'
 export * from './schemas/user'
 export * from './schemas/auth'
 export * from './schemas/deck'

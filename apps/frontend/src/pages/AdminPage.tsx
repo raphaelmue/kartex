@@ -36,16 +36,10 @@ import {
 } from '@/components/ui/table'
 import { useAuth } from '@/context/AuthContext'
 import { api } from '@/lib/api'
+import { InviteTokenResponse } from '@kartex/shared'
 import { Loader2, MoreVertical, Trash2 } from 'lucide-react'
 
 // ---- Types ----
-
-interface InviteToken {
-  id: string
-  email: string
-  expiresAt: string
-  createdAt: string
-}
 
 interface UserRecord {
   id: string
@@ -111,7 +105,7 @@ function MailerSection() {
 
 function InviteTokensSection() {
   const { t } = useTranslation()
-  const [tokens, setTokens] = useState<InviteToken[]>([])
+  const [tokens, setTokens] = useState<InviteTokenResponse[]>([])
   const [email, setEmail] = useState('')
   const [sending, setSending] = useState(false)
 
