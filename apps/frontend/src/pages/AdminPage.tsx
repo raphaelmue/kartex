@@ -77,6 +77,10 @@ function MailerSection() {
         const errorCode = (body as { error?: string }).error
         if (errorCode === 'NO_EMAIL') {
           toast.error(t('admin.testEmailNoEmail'))
+        } else if (errorCode === 'SMTP_NOT_CONFIGURED') {
+          toast.error(t('admin.inviteSMTPMissing'))
+        } else if (errorCode === 'SMTP_ERROR') {
+          toast.error(t('admin.inviteSendError'))
         } else {
           toast.error(t('common.somethingWrong'))
         }

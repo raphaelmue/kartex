@@ -267,7 +267,8 @@ admin.post('/mailer/test', async (c) => {
     })
     return c.json({ message: 'Test email sent.' }, 200)
   } catch (err) {
-    return c.json({ error: (err as Error).message }, 500)
+    console.error('[admin] Mailer test failed:', (err as Error).message)
+    return c.json({ error: 'SMTP_ERROR' }, 500)
   }
 })
 
