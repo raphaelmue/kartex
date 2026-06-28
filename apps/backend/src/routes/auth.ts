@@ -201,20 +201,23 @@ auth.post('/refresh', async (c) => {
     return c.json({ error: 'Unauthorized.' }, 401)
   }
 
-  // T-02-04: Refresh token rotation — delete old, issue new
-  await prisma.refreshToken.deleteMany({ where: { id: matchedToken.id } })
-
+  // T-02-04: Refresh token rotation — delete old and create new atomically.
+  // Wrapped in $transaction so a create failure does not permanently invalidate the session
+  // (if create failed after delete, the browser's cookie would have no matching DB row).
   const accessToken = await signToken({ sub: user.id, role: user.role }, '15m')
   const newRawRefreshToken = crypto.randomUUID()
   const newTokenHash = await bcrypt.hash(newRawRefreshToken, 10)
 
-  await prisma.refreshToken.create({
-    data: {
-      userId: user.id,
-      tokenHash: newTokenHash,
-      expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-    },
-  })
+  await prisma.$transaction([
+    prisma.refreshToken.deleteMany({ where: { id: matchedToken.id } }),
+    prisma.refreshToken.create({
+      data: {
+        userId: user.id,
+        tokenHash: newTokenHash,
+        expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+      },
+    }),
+  ])
 
   setAuthCookies(c, accessToken, newRawRefreshToken)
 
