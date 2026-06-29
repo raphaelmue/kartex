@@ -49,7 +49,25 @@
     "inviteExpired": "This invite link has expired. Contact an admin for a new invitation.",
     "inviteInvalid": "This invite link is not valid.",
     "passwordMismatch": "Passwords do not match.",
-    "backToSignIn": "Back to sign in"
+    "backToSignIn": "Back to sign in",
+    "forgotPassword": "Forgot password?",
+    "forgotPasswordTitle": "Forgot your password?",
+    "forgotPasswordDesc": "Enter your email address to receive a reset link.",
+    "sendResetLink": "Send reset link",
+    "sendingResetLink": "Sending...",
+    "resetEmailSentTitle": "Check your email",
+    "resetEmailSentDesc": "If that email is registered, a password reset link is on its way. It expires in 1 hour.",
+    "resetPasswordTitle": "Reset your password",
+    "resetPasswordDesc": "Enter a new password for your account.",
+    "newPassword": "New password",
+    "resettingPassword": "Resetting...",
+    "resetErrorTitle": "Unable to reset password",
+    "resetLinkUsed": "This reset link has already been used.",
+    "resetLinkExpired": "This reset link has expired. Request a new one from the login page.",
+    "resetLinkInvalid": "This reset link is not valid.",
+    "resetSuccess": "Password reset successfully. Please log in.",
+    "resetPageTitle": "Reset Password — Kartex",
+    "forgotPageTitle": "Forgot Password — Kartex"
   },
   "common": {
     "cancel": "Cancel",
@@ -361,7 +379,10 @@
     "inviteSentSuccess": "Invitation sent to {{email}}.",
     "inviteSMTPMissing": "Email is not configured. Contact the server administrator.",
     "inviteSendError": "Could not send the invitation email. Check the SMTP settings and try again.",
-    "inviteRevokeSuccess": "Invitation revoked."
+    "inviteRevokeSuccess": "Invitation revoked.",
+    "sendPasswordReset": "Send password reset email",
+    "resetNoEmail": "This user has no email address set",
+    "resetSentSuccess": "Password reset email sent"
   },
   "media": {
     "imageUploaded": "Image uploaded",

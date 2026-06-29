@@ -49,7 +49,25 @@
     "inviteExpired": "Dieser Einladungslink ist abgelaufen. Kontaktieren Sie einen Administrator für eine neue Einladung.",
     "inviteInvalid": "Dieser Einladungslink ist ungültig.",
     "passwordMismatch": "Passwörter stimmen nicht überein.",
-    "backToSignIn": "Zurück zur Anmeldung"
+    "backToSignIn": "Zurück zur Anmeldung",
+    "forgotPassword": "Passwort vergessen?",
+    "forgotPasswordTitle": "Passwort vergessen?",
+    "forgotPasswordDesc": "Geben Sie Ihre E-Mail-Adresse ein, um einen Zurücksetzungslink zu erhalten.",
+    "sendResetLink": "Zurücksetzungslink senden",
+    "sendingResetLink": "Wird gesendet...",
+    "resetEmailSentTitle": "E-Mail überprüfen",
+    "resetEmailSentDesc": "Wenn diese E-Mail-Adresse registriert ist, ist ein Passwort-Zurücksetzungslink unterwegs. Er läuft in 1 Stunde ab.",
+    "resetPasswordTitle": "Passwort zurücksetzen",
+    "resetPasswordDesc": "Geben Sie ein neues Passwort für Ihr Konto ein.",
+    "newPassword": "Neues Passwort",
+    "resettingPassword": "Wird zurückgesetzt...",
+    "resetErrorTitle": "Passwort zurücksetzen nicht möglich",
+    "resetLinkUsed": "Dieser Zurücksetzungslink wurde bereits verwendet.",
+    "resetLinkExpired": "Dieser Zurücksetzungslink ist abgelaufen. Fordern Sie einen neuen über die Anmeldeseite an.",
+    "resetLinkInvalid": "Dieser Zurücksetzungslink ist ungültig.",
+    "resetSuccess": "Passwort erfolgreich zurückgesetzt. Bitte melden Sie sich an.",
+    "resetPageTitle": "Passwort zurücksetzen — Kartex",
+    "forgotPageTitle": "Passwort vergessen — Kartex"
   },
   "common": {
     "cancel": "Abbrechen",
@@ -361,7 +379,10 @@
     "inviteSentSuccess": "Einladung an {{email}} gesendet.",
     "inviteSMTPMissing": "E-Mail ist nicht konfiguriert. Kontaktieren Sie den Server-Administrator.",
     "inviteSendError": "Die Einladungs-E-Mail konnte nicht gesendet werden. Bitte überprüfen Sie die SMTP-Einstellungen und versuchen Sie es erneut.",
-    "inviteRevokeSuccess": "Einladung widerrufen."
+    "inviteRevokeSuccess": "Einladung widerrufen.",
+    "sendPasswordReset": "Passwort-Zurücksetzungs-E-Mail senden",
+    "resetNoEmail": "Für diesen Benutzer ist keine E-Mail-Adresse hinterlegt",
+    "resetSentSuccess": "Passwort-Zurücksetzungs-E-Mail gesendet"
   },
   "media": {
     "imageUploaded": "Bild hochgeladen",
