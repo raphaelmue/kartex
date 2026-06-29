@@ -12,6 +12,8 @@ import { DeckDetailPage } from '@/pages/DeckDetailPage'
 import { DecksPage } from '@/pages/DecksPage'
 import { LoginPage } from '@/pages/LoginPage'
 import { InviteRegisterPage } from '@/pages/InviteRegisterPage'
+import { ForgotPasswordPage } from '@/pages/ForgotPasswordPage'
+import { ResetPasswordPage } from '@/pages/ResetPasswordPage'
 import { ImportPage } from '@/pages/ImportPage'
 import { StudySessionPage } from '@/pages/StudySessionPage'
 import { ExplorePage } from '@/pages/ExplorePage'
@@ -56,6 +58,8 @@ function App() {
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/invite/:token" element={<InviteRegisterPage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
 
         <Route element={<ProtectedRoute />}>
           <Route element={<AppShell />}>
