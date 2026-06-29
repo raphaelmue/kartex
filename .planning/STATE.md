@@ -4,17 +4,17 @@ milestone: v1.4.0
 milestone_name: Auth Overhaul & Study UX
 current_phase: 25
 current_phase_name: password-reset
-status: executing
+status: verifying
 stopped_at: Completed 25-04-PLAN.md
-last_updated: "2026-06-29T11:33:48.641Z"
+last_updated: "2026-06-29T11:37:48.310Z"
 last_activity: 2026-06-29
 last_activity_desc: Phase 25 Plan 01 complete
 progress:
   total_phases: 6
-  completed_phases: 2
+  completed_phases: 3
   total_plans: 16
-  completed_plans: 15
-  percent: 33
+  completed_plans: 16
+  percent: 50
 ---
 
 # Project State
@@ -30,7 +30,7 @@ See: .planning/PROJECT.md (updated 2026-06-19)
 
 Phase: 25 (password-reset) — EXECUTING
 Plan: 5 of 5
-Status: Ready to execute
+Status: Phase complete — ready for verification
 Last activity: 2026-06-29 — Phase 25 Plan 01 complete
 
 ## Performance Metrics
@@ -87,6 +87,7 @@ Last activity: 2026-06-29 — Phase 25 Plan 01 complete
 | Phase 25 P02 | 5 | 2 tasks | 2 files |
 | Phase 25 P03 | 3 | 2 tasks | 2 files |
 | Phase 25 P04 | 2 | 3 tasks | 3 files |
+| Phase 25 P05 | 8 | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -281,6 +282,6 @@ Items acknowledged and deferred at milestone close on 2026-05-30:
 
 **Resume file:** None
 
-Last session: 2026-06-29T11:33:48.622Z
+Last session: 2026-06-29T11:37:48.293Z
 Stopped at: Completed 25-04-PLAN.md
 Resume with: `/gsd-plan-phase 23` — Auth Foundation

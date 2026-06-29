@@ -86,7 +86,7 @@ Full details: [.planning/milestones/v1.3.2-ROADMAP.md](milestones/v1.3.2-ROADMAP
 
 - [x] **Phase 23: Auth Foundation** - User.email column, cascade FK migrations, SMTP mailer, admin user delete (completed 2026-06-23)
 - [x] **Phase 24: Email Invitations** - InviteToken model, admin invite UI, token-based registration page (completed 2026-06-27)
-- [ ] **Phase 25: Password Reset** - PasswordResetToken model, forgot/reset pages, admin-triggered reset
+- [x] **Phase 25: Password Reset** - PasswordResetToken model, forgot/reset pages, admin-triggered reset (completed 2026-06-29)
 - [ ] **Phase 26: ABC Notation** - abcjs integration, AbcBlock renderer component, responsive SVG in cards
 - [ ] **Phase 27: Zip Deck Update** - Shared importMedia helper, deck update path accepts .kartex.zip
 - [ ] **Phase 28: Quick-Edit in Study** - 3-dot study card menu for owners/editors, inline card edit, jump-to-deck
@@ -171,7 +171,7 @@ Full details: [.planning/milestones/v1.3.2-ROADMAP.md](milestones/v1.3.2-ROADMAP
   4. Expired or already-used reset links show a human-readable error page (not a crash or blank page)
   5. Admin can send a password reset email to any user from the admin panel; the action shows a clear error if the target user has no email address
 
-**Plans**: 4/5 plans executed
+**Plans**: 5/5 plans complete
 
 Plans:
 
@@ -179,7 +179,7 @@ Plans:
 - [x] 25-02-PLAN.md — i18n keys: 18 auth.* + 3 admin.* keys in en.json and de.json (atomic commit)
 - [x] 25-03-PLAN.md — Backend routes: POST /forgot-password, GET/POST /reset-password/:token in auth.ts; POST /admin/users/:id/reset-password in admin.ts
 - [x] 25-04-PLAN.md — Frontend pages: ForgotPasswordPage (two-state) + ResetPasswordPage (status machine) + App.tsx public route registration
-- [ ] 25-05-PLAN.md — Integration touches: LoginPage "Forgot password?" link + passwordReset toast; AdminPage per-user DropdownMenu reset action
+- [x] 25-05-PLAN.md — Integration touches: LoginPage "Forgot password?" link + passwordReset toast; AdminPage per-user DropdownMenu reset action
 
 **UI hint**: yes
 
@@ -256,7 +256,7 @@ Plans:
 | 22. Study Session UX | v1.3.2 | 2/2 | Complete | 2026-06-15 |
 | 23. Auth Foundation | v1.4.0 | 4/4 | Complete   | 2026-06-23 |
 | 24. Email Invitations | v1.4.0 | 7/7 | Complete   | 2026-06-28 |
-| 25. Password Reset | v1.4.0 | 4/5 | In Progress|  |
+| 25. Password Reset | v1.4.0 | 5/5 | Complete   | 2026-06-29 |
 | 26. ABC Notation | v1.4.0 | 0/? | Not started | - |
 | 27. Zip Deck Update | v1.4.0 | 0/? | Not started | - |
 | 28. Quick-Edit in Study | v1.4.0 | 0/? | Not started | - |
