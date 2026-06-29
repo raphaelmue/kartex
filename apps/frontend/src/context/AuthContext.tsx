@@ -36,23 +36,37 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       toast.error('Your session has expired. Please sign in again.')
     })
 
-    // Hydrate session from server
-    api
-      .get('/api/auth/me')
-      .then(async (res) => {
+    // Hydrate session using plain fetch — NOT the api wrapper.
+    // The api wrapper calls onAuthFailure() when /api/auth/me returns 401 + refresh fails,
+    // which redirects unauthenticated users away from public routes (e.g. /invite/:token).
+    // A 401 on initial load means "not logged in", not "session expired".
+    const hydrateSession = async () => {
+      try {
+        let res = await fetch('/api/auth/me', { credentials: 'include' })
+        if (res.status === 401) {
+          // Silently try to refresh — access token may be expired but refresh token valid
+          const refreshRes = await fetch('/api/auth/refresh', {
+            method: 'POST',
+            credentials: 'include',
+          })
+          if (refreshRes.ok) {
+            res = await fetch('/api/auth/me', { credentials: 'include' })
+          }
+        }
         if (res.ok) {
           const data = await res.json()
           setUser(data)
         } else {
           setUser(null)
         }
-      })
-      .catch(() => {
+      } catch {
         setUser(null)
-      })
-      .finally(() => {
+      } finally {
         setLoading(false)
-      })
+      }
+    }
+
+    void hydrateSession()
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
