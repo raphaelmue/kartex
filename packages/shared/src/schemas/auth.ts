@@ -21,3 +21,15 @@ export const RegisterSchema = z.object({
 })
 
 export type RegisterInput = z.infer<typeof RegisterSchema>
+
+export const PasswordResetRequestSchema = z.object({
+  email: z.string().email('Valid email address required.'),
+})
+
+export type PasswordResetRequestInput = z.infer<typeof PasswordResetRequestSchema>
+
+export const PasswordResetSchema = z.object({
+  newPassword: z.string().min(8, 'Password must be at least 8 characters.'),
+})
+
+export type PasswordResetInput = z.infer<typeof PasswordResetSchema>
