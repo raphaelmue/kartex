@@ -1,4 +1,4 @@
-import { randomBytes } from 'node:crypto'
+import { randomBytes, createHash } from 'node:crypto'
 import { unlink } from 'node:fs/promises'
 import { z } from 'zod'
 import { Hono } from 'hono'
@@ -143,6 +143,71 @@ admin.delete('/users/:id', async (c) => {
   }
 
   return c.json({ message: 'User deleted.' }, 200)
+})
+
+// ─── POST /users/:id/reset-password ──────────────────────────────────────────
+// RESET-08: Admin-triggered password reset — sends a reset link to the target user.
+// Returns NO_EMAIL (400) when the target user has no email address.
+// Route is automatically protected by requireAdmin middleware in index.ts.
+
+admin.post('/users/:id/reset-password', async (c) => {
+  const { id } = c.req.param()
+
+  const user = await prisma.user.findUnique({
+    where: { id },
+    select: { id: true, email: true },
+  })
+
+  if (!user) {
+    return c.json({ error: 'User not found.' }, 404)
+  }
+
+  // RESET-08: User has no email — frontend maps NO_EMAIL to localised toast (D-03)
+  if (!user.email) {
+    return c.json({ error: 'NO_EMAIL' }, 400)
+  }
+
+  // D-10: SMTP not configured — admin must know to configure SMTP (unlike user-facing route)
+  if (!isConfigured()) {
+    return c.json({ error: 'SMTP_NOT_CONFIGURED' }, 400)
+  }
+
+  // Guard APP_URL — admin must know the server is misconfigured
+  if (!process.env.APP_URL) {
+    console.error('[admin] APP_URL env var is not set — cannot generate password reset link')
+    return c.json({ error: 'SERVER_MISCONFIGURED' }, 500)
+  }
+
+  // D-07: Generate raw token; store only SHA-256 hash
+  const rawToken = randomBytes(32).toString('hex')
+  const tokenHash = createHash('sha256').update(rawToken).digest('hex')
+  const expiresAt = new Date(Date.now() + 60 * 60 * 1000) // RESET-02: 1 hour
+
+  const resetTokenRow = await prisma.passwordResetToken.create({
+    data: { userId: id, tokenHash, expiresAt },
+  })
+
+  const resetLink = `${process.env.APP_URL}/reset-password/${rawToken}`
+
+  try {
+    await sendMail({
+      to: user.email,
+      subject: 'Kartex — Password Reset',
+      text: `An admin has requested a password reset for your Kartex account. Click the link below to set a new password. This link expires in 1 hour:\n${resetLink}`,
+      html: `<p>An admin has requested a password reset for your Kartex account.</p><p><a href="${resetLink}">Reset Password</a></p><p>This link expires in 1 hour.</p>`,
+    })
+  } catch (err) {
+    // Roll back the created token if email delivery fails (same pattern as POST /invites)
+    try {
+      await prisma.passwordResetToken.delete({ where: { id: resetTokenRow.id } })
+    } catch (cleanupErr) {
+      console.error('[admin] Failed to rollback orphaned reset token:', (cleanupErr as Error).message)
+    }
+    console.error('[admin] Admin password reset email delivery failed:', (err as Error).message)
+    return c.json({ error: 'SMTP_ERROR' }, 500)
+  }
+
+  return c.json({ message: 'Password reset email sent.' }, 200)
 })
 
 // ─── GET /invites ─────────────────────────────────────────────────────────────
