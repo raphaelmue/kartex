@@ -5,15 +5,15 @@ milestone_name: Auth Overhaul & Study UX
 current_phase: 25
 current_phase_name: password-reset
 status: executing
-stopped_at: Completed 25-01-PLAN.md
-last_updated: "2026-06-29T11:05:58.906Z"
+stopped_at: Completed 25-04-PLAN.md
+last_updated: "2026-06-29T11:33:48.641Z"
 last_activity: 2026-06-29
 last_activity_desc: Phase 25 Plan 01 complete
 progress:
   total_phases: 6
   completed_phases: 2
   total_plans: 16
-  completed_plans: 14
+  completed_plans: 15
   percent: 33
 ---
 
@@ -29,7 +29,7 @@ See: .planning/PROJECT.md (updated 2026-06-19)
 ## Current Position
 
 Phase: 25 (password-reset) — EXECUTING
-Plan: 4 of 5
+Plan: 5 of 5
 Status: Ready to execute
 Last activity: 2026-06-29 — Phase 25 Plan 01 complete
 
@@ -86,6 +86,7 @@ Last activity: 2026-06-29 — Phase 25 Plan 01 complete
 | Phase 25-password-reset P01 | 2 | 3 tasks | 3 files |
 | Phase 25 P02 | 5 | 2 tasks | 2 files |
 | Phase 25 P03 | 3 | 2 tasks | 2 files |
+| Phase 25 P04 | 2 | 3 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -225,6 +226,9 @@ Recent decisions affecting current work:
 - 25-01: usedAt nullable (single-use gate, null = unused, non-null = consumed)
 - 25-01: Neither PasswordResetRequestSchema nor PasswordResetSchema includes confirmPassword — frontend-only concern
 - 25-01: newPassword min(8) matches password constraint in RegisterSchema for consistency
+- [Phase ?]: 25-04: ForgotPasswordPage calls setSubmitted(true) unconditionally — no-enumeration (D-04, RESET-03)
+- [Phase ?]: 25-04: ResetPasswordPage mirrors InviteRegisterPage status state machine; confirmPassword only in useRef, never in POST body
+- [Phase ?]: 25-04: navigate('/login', { state: { passwordReset: true } }) on reset success — D-01 navigation state triggers LoginPage toast
 
 ### Pending Todos
 
@@ -275,8 +279,8 @@ Items acknowledged and deferred at milestone close on 2026-05-30:
 
 ## Session Continuity
 
-**Resume file:** .planning/phases/25-password-reset/25-CONTEXT.md
+**Resume file:** None
 
-Last session: 2026-06-29T11:05:51.979Z
-Stopped at: Phase 25 context gathered
+Last session: 2026-06-29T11:33:48.622Z
+Stopped at: Completed 25-04-PLAN.md
 Resume with: `/gsd-plan-phase 23` — Auth Foundation
