@@ -22,13 +22,13 @@
 ### RESET — Password Reset
 
 - [x] **RESET-01**: Login page has a "Forgot password?" link
-- [ ] **RESET-02**: User enters their email and receives a reset link (valid 1 hour)
-- [ ] **RESET-03**: Reset request always returns success regardless of whether email exists (no enumeration)
-- [ ] **RESET-04**: Reset link navigates to a page where user enters a new password
-- [ ] **RESET-05**: Successful password reset invalidates all existing sessions (deletes all refresh tokens for the user)
+- [x] **RESET-02**: User enters their email and receives a reset link (valid 1 hour)
+- [x] **RESET-03**: Reset request always returns success regardless of whether email exists (no enumeration)
+- [x] **RESET-04**: Reset link navigates to a page where user enters a new password
+- [x] **RESET-05**: Successful password reset invalidates all existing sessions (deletes all refresh tokens for the user)
 - [x] **RESET-06**: Expired or already-used reset links show a clear human-readable error page
-- [ ] **RESET-07**: Admin can trigger a password reset email for any user from the admin panel
-- [ ] **RESET-08**: Admin reset action shows a clear error when the target user has no email address
+- [x] **RESET-07**: Admin can trigger a password reset email for any user from the admin panel
+- [x] **RESET-08**: Admin reset action shows a clear error when the target user has no email address
 
 ### ADMIN — Admin User Management
 
@@ -101,13 +101,13 @@
 | EMAIL-07 | Phase 24 | Complete |
 | EMAIL-08 | Phase 24 | Complete |
 | RESET-01 | Phase 25 | Complete |
-| RESET-02 | Phase 25 | Pending |
-| RESET-03 | Phase 25 | Pending |
-| RESET-04 | Phase 25 | Pending |
-| RESET-05 | Phase 25 | Pending |
+| RESET-02 | Phase 25 | Complete |
+| RESET-03 | Phase 25 | Complete |
+| RESET-04 | Phase 25 | Complete |
+| RESET-05 | Phase 25 | Complete |
 | RESET-06 | Phase 25 | Complete |
-| RESET-07 | Phase 25 | Pending |
-| RESET-08 | Phase 25 | Pending |
+| RESET-07 | Phase 25 | Complete |
+| RESET-08 | Phase 25 | Complete |
 | ABC-01 | Phase 26 | Pending |
 | ABC-02 | Phase 26 | Pending |
 | ABC-03 | Phase 26 | Pending |
