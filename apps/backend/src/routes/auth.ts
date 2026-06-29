@@ -2,11 +2,13 @@ import type { Context } from 'hono'
 import { Hono } from 'hono'
 import { getCookie, setCookie, deleteCookie } from 'hono/cookie'
 import bcrypt from 'bcryptjs'
-import { LoginSchema, RegisterSchema, UpdateStudyModeSchema } from '@kartex/shared'
+import { randomBytes, createHash } from 'node:crypto'
+import { LoginSchema, RegisterSchema, UpdateStudyModeSchema, PasswordResetRequestSchema, PasswordResetSchema } from '@kartex/shared'
 import { prisma } from '../lib/prisma.js'
 import { signToken } from '../lib/jwt.js'
 import { authMiddleware } from '../middleware/auth.js'
 import { rateLimitMiddleware } from '../middleware/rateLimit.js'
+import { sendMail, isConfigured } from '../lib/mailer.js'
 
 const auth = new Hono()
 
@@ -262,6 +264,153 @@ auth.patch('/me', authMiddleware, async (c) => {
   })
 
   return c.json(updated, 200)
+})
+
+// ─── POST /forgot-password ────────────────────────────────────────────────────
+// RESET-03: Always returns 200 — no email enumeration regardless of outcome.
+// D-07: Raw token never stored — only SHA-256 hash persisted.
+
+auth.post('/forgot-password', async (c) => {
+  const raw = await c.req.json().catch(() => ({}))
+  const body = PasswordResetRequestSchema.safeParse(raw)
+  if (!body.success) {
+    // Validation failures must not reveal enumeration information
+    return c.json({ message: 'If that email is registered, a reset link is on its way.' }, 200)
+  }
+
+  const user = await prisma.user.findUnique({
+    where: { email: body.data.email },
+    select: { id: true, email: true },
+  })
+
+  // RESET-03: No user found — return identical success-shaped response (no enumeration)
+  if (!user || !user.email) {
+    return c.json({ message: 'If that email is registered, a reset link is on its way.' }, 200)
+  }
+
+  // Guard APP_URL — do not leak server config state to caller
+  if (!process.env.APP_URL) {
+    console.error('[auth] APP_URL env var is not set — cannot generate password reset link')
+    return c.json({ message: 'If that email is registered, a reset link is on its way.' }, 200)
+  }
+
+  // Guard SMTP — do not leak server config state to caller (RESET-03)
+  if (!isConfigured()) {
+    console.error('[auth] SMTP not configured — cannot send password reset email')
+    return c.json({ message: 'If that email is registered, a reset link is on its way.' }, 200)
+  }
+
+  // D-07: Generate raw token; store only SHA-256 hash
+  const rawToken = randomBytes(32).toString('hex')
+  const tokenHash = createHash('sha256').update(rawToken).digest('hex')
+  const expiresAt = new Date(Date.now() + 60 * 60 * 1000) // RESET-02: 1 hour
+
+  const resetTokenRow = await prisma.passwordResetToken.create({
+    data: { userId: user.id, tokenHash, expiresAt },
+  })
+
+  const resetLink = `${process.env.APP_URL}/reset-password/${rawToken}`
+
+  try {
+    await sendMail({
+      to: user.email,
+      subject: 'Kartex — Password Reset',
+      text: `Reset your Kartex password by clicking the link below. This link expires in 1 hour:\n${resetLink}`,
+      html: `<p>Reset your Kartex password by clicking the link below.</p><p><a href="${resetLink}">Reset Password</a></p><p>This link expires in 1 hour.</p>`,
+    })
+  } catch (err) {
+    // Roll back the created token if email delivery fails (same pattern as admin.ts invite rollback)
+    try {
+      await prisma.passwordResetToken.delete({ where: { id: resetTokenRow.id } })
+    } catch (cleanupErr) {
+      console.error('[auth] Failed to rollback orphaned reset token:', (cleanupErr as Error).message)
+    }
+    console.error('[auth] Password reset email delivery failed:', (err as Error).message)
+    // RESET-03: Still return 200 — do not reveal delivery failure to caller
+    return c.json({ message: 'If that email is registered, a reset link is on its way.' }, 200)
+  }
+
+  return c.json({ message: 'If that email is registered, a reset link is on its way.' }, 200)
+})
+
+// ─── GET /reset-password/:token ───────────────────────────────────────────────
+// RESET-06: Read-only validation; returns distinct error codes per invalid state.
+// Frontend uses this to decide whether to mount the reset form.
+
+auth.get('/reset-password/:token', async (c) => {
+  const { token } = c.req.param()
+  const tokenHash = createHash('sha256').update(token).digest('hex')
+
+  const record = await prisma.passwordResetToken.findUnique({ where: { tokenHash } })
+
+  if (!record) {
+    return c.json({ error: 'NOT_FOUND' }, 400)
+  }
+  if (record.usedAt !== null) {
+    return c.json({ error: 'ALREADY_USED' }, 400)
+  }
+  if (record.expiresAt < new Date()) {
+    return c.json({ error: 'EXPIRED' }, 400)
+  }
+
+  return c.json({ ok: true }, 200)
+})
+
+// ─── POST /reset-password/:token ──────────────────────────────────────────────
+// TOCTOU-safe: atomic updateMany WHERE usedAt IS NULL inside $transaction.
+// RESET-05: Deletes all RefreshToken rows for the user on success (full session invalidation).
+// D-01: No JWT issued — frontend navigates to /login for re-authentication.
+
+auth.post('/reset-password/:token', async (c) => {
+  const { token } = c.req.param()
+  const tokenHash = createHash('sha256').update(token).digest('hex')
+
+  // UX pre-check — not TOCTOU-safe; purely for informational error messages (Pitfall 2)
+  const record = await prisma.passwordResetToken.findUnique({ where: { tokenHash } })
+  if (!record) {
+    return c.json({ error: 'NOT_FOUND' }, 400)
+  }
+  if (record.usedAt !== null) {
+    return c.json({ error: 'ALREADY_USED' }, 400)
+  }
+  if (record.expiresAt < new Date()) {
+    return c.json({ error: 'EXPIRED' }, 400)
+  }
+
+  const body = PasswordResetSchema.safeParse(await c.req.json().catch(() => ({})))
+  if (!body.success) {
+    return c.json({ error: 'Validation failed.', details: body.error.flatten() }, 400)
+  }
+
+  try {
+    await prisma.$transaction(async (tx) => {
+      // Atomic single-use gate — wins the concurrent-request race (TOCTOU-safe)
+      const result = await tx.passwordResetToken.updateMany({
+        where: { tokenHash, usedAt: null, expiresAt: { gt: new Date() } },
+        data: { usedAt: new Date() },
+      })
+      if (result.count === 0) throw new Error('TOKEN_CONSUMED')
+
+      const passwordHash = await bcrypt.hash(body.data.newPassword, 12)
+
+      // Use record.userId from pre-check — avoids nested query inside transaction (Pitfall 3)
+      await tx.user.update({
+        where: { id: record.userId },
+        data: { passwordHash },
+      })
+
+      // RESET-05: Invalidate all active sessions
+      await tx.refreshToken.deleteMany({ where: { userId: record.userId } })
+    })
+  } catch (err) {
+    if ((err as Error).message === 'TOKEN_CONSUMED') {
+      return c.json({ error: 'ALREADY_USED' }, 400)
+    }
+    throw err
+  }
+
+  // D-01: Plain success message — no JWT, no cookies
+  return c.json({ message: 'Password reset successfully.' }, 200)
 })
 
 export { auth as authRouter }
