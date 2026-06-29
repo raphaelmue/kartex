@@ -60,6 +60,7 @@
     "resetPasswordTitle": "Reset your password",
     "resetPasswordDesc": "Enter a new password for your account.",
     "newPassword": "New password",
+    "resetPassword": "Reset password",
     "resettingPassword": "Resetting...",
     "resetErrorTitle": "Unable to reset password",
     "resetLinkUsed": "This reset link has already been used.",

@@ -60,6 +60,7 @@
     "resetPasswordTitle": "Passwort zurücksetzen",
     "resetPasswordDesc": "Geben Sie ein neues Passwort für Ihr Konto ein.",
     "newPassword": "Neues Passwort",
+    "resetPassword": "Passwort zurücksetzen",
     "resettingPassword": "Wird zurückgesetzt...",
     "resetErrorTitle": "Passwort zurücksetzen nicht möglich",
     "resetLinkUsed": "Dieser Zurücksetzungslink wurde bereits verwendet.",
