@@ -5,8 +5,8 @@ milestone_name: Auth Overhaul & Study UX
 current_phase: 24
 current_phase_name: email-invitations
 status: executing
-stopped_at: Completed 24-01-PLAN.md
-last_updated: "2026-06-28T14:35:21.919Z"
+stopped_at: Phase 25 context gathered
+last_updated: "2026-06-29T09:54:35.311Z"
 last_activity: 2026-06-28
 last_activity_desc: Phase 24 execution started
 progress:
@@ -267,8 +267,8 @@ Items acknowledged and deferred at milestone close on 2026-05-30:
 
 ## Session Continuity
 
-**Resume file:** None
+**Resume file:** .planning/phases/25-password-reset/25-CONTEXT.md
 
-Last session: 2026-06-28T14:35:15.680Z
-Stopped at: Completed 24-01-PLAN.md
+Last session: 2026-06-29T09:54:35.292Z
+Stopped at: Phase 25 context gathered
 Resume with: `/gsd-plan-phase 23` — Auth Foundation
