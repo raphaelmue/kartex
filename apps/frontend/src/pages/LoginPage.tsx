@@ -39,11 +39,16 @@ export function LoginPage() {
     document.title = t('auth.signInTitle') + ' — Kartex'
   }, [t, i18n.language])
 
-  // Show success toast if redirected from register
+  // Show success toast if redirected from register or password reset
   useEffect(() => {
-    const state = location.state as { registered?: boolean } | null
+    const state = location.state as { registered?: boolean; passwordReset?: boolean } | null
     if (state?.registered) {
       toast.success(t('auth.accountCreated'))
+      // Clear the state so toast doesn't re-show on back navigation
+      navigate('/login', { replace: true, state: {} })
+    }
+    if (state?.passwordReset) {
+      toast.success(t('auth.resetSuccess'))
       // Clear the state so toast doesn't re-show on back navigation
       navigate('/login', { replace: true, state: {} })
     }
@@ -147,10 +152,9 @@ export function LoginPage() {
           </Form>
         </CardContent>
 
-        <CardFooter className="text-sm text-muted-foreground">
-          {t('auth.noAccount')}{' '}
-          <Link to="/register" className="ml-1 underline hover:text-foreground">
-            {t('auth.register')}
+        <CardFooter className="flex flex-col items-start gap-2 text-sm text-muted-foreground">
+          <Link to="/forgot-password" className="underline hover:text-foreground">
+            {t('auth.forgotPassword')}
           </Link>
         </CardFooter>
       </Card>
