@@ -2,19 +2,19 @@
 gsd_state_version: 1.0
 milestone: v1.4.0
 milestone_name: Auth Overhaul & Study UX
-current_phase: 24
-current_phase_name: email-invitations
+current_phase: 25
+current_phase_name: password-reset
 status: executing
-stopped_at: Phase 25 context gathered
-last_updated: "2026-06-29T09:54:35.311Z"
-last_activity: 2026-06-28
-last_activity_desc: Phase 24 execution started
+stopped_at: Completed 25-01-PLAN.md
+last_updated: "2026-06-29T11:14:00.000Z"
+last_activity: 2026-06-29
+last_activity_desc: Phase 25 Plan 01 complete — PasswordResetToken schema + migration + shared Zod schemas
 progress:
   total_phases: 6
   completed_phases: 2
-  total_plans: 11
-  completed_plans: 11
-  percent: 33
+  total_plans: 16
+  completed_plans: 12
+  percent: 38
 ---
 
 # Project State
@@ -24,14 +24,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-06-19)
 
 **Core value:** A user can open their dashboard, see their due cards, and complete a spaced-repetition study session — that loop must always work.
-**Current focus:** Phase 24 — email-invitations
+**Current focus:** Phase 25 — password-reset
 
 ## Current Position
 
-Phase: 24 (email-invitations) — EXECUTING
-Plan: 3 of 7
-Status: Ready to execute
-Last activity: 2026-06-28 — Phase 24 execution started
+Phase: 25 (password-reset) — EXECUTING
+Plan: 2 of 5
+Status: Executing Phase 25 (Plan 01 complete)
+Last activity: 2026-06-29 — Phase 25 Plan 01 complete
 
 ## Performance Metrics
 
@@ -83,6 +83,7 @@ Last activity: 2026-06-28 — Phase 24 execution started
 | Phase 24 P05 | 10m | 2 tasks | 2 files |
 | Phase 24 P06 | 8 | 2 tasks | 2 files |
 | Phase 24 P07 | 305 | 3 tasks | 8 files |
+| Phase 25-password-reset P01 | 2 | 3 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -217,6 +218,11 @@ Recent decisions affecting current work:
 - [Phase ?]: 24-06: bypass prefix is '/api/invites/' (trailing slash) — /api/admin/invites stays protected; no /api/media/ bypass
 - [Phase ?]: 24-07: SMTP_ERROR opaque code replaces raw error leak; T-24-23 mitigated
 - [Phase ?]: 24-07: InviteCode schema deleted; InviteToken is sole invite model
+- 25-01: PasswordResetToken stores tokenHash only — no raw token column (D-07 / OWASP)
+- 25-01: onDelete Cascade FK to User — tokens auto-delete when user deleted, no manual cleanup needed
+- 25-01: usedAt nullable (single-use gate, null = unused, non-null = consumed)
+- 25-01: Neither PasswordResetRequestSchema nor PasswordResetSchema includes confirmPassword — frontend-only concern
+- 25-01: newPassword min(8) matches password constraint in RegisterSchema for consistency
 
 ### Pending Todos
 

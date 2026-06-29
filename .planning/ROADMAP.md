@@ -174,7 +174,7 @@ Full details: [.planning/milestones/v1.3.2-ROADMAP.md](milestones/v1.3.2-ROADMAP
 **Plans**: 5 plans
 
 Plans:
-- [ ] 25-01-PLAN.md — PasswordResetToken Prisma model + hand-written SQL migration + PasswordResetRequestSchema + PasswordResetSchema in shared package
+- [x] 25-01-PLAN.md — PasswordResetToken Prisma model + hand-written SQL migration + PasswordResetRequestSchema + PasswordResetSchema in shared package
 - [ ] 25-02-PLAN.md — i18n keys: 18 auth.* + 3 admin.* keys in en.json and de.json (atomic commit)
 - [ ] 25-03-PLAN.md — Backend routes: POST /forgot-password, GET/POST /reset-password/:token in auth.ts; POST /admin/users/:id/reset-password in admin.ts
 - [ ] 25-04-PLAN.md — Frontend pages: ForgotPasswordPage (two-state) + ResetPasswordPage (status machine) + App.tsx public route registration
@@ -255,7 +255,7 @@ Plans:
 | 22. Study Session UX | v1.3.2 | 2/2 | Complete | 2026-06-15 |
 | 23. Auth Foundation | v1.4.0 | 4/4 | Complete   | 2026-06-23 |
 | 24. Email Invitations | v1.4.0 | 7/7 | Complete   | 2026-06-28 |
-| 25. Password Reset | v1.4.0 | 0/? | Not started | - |
+| 25. Password Reset | v1.4.0 | 1/5 | Executing | - |
 | 26. ABC Notation | v1.4.0 | 0/? | Not started | - |
 | 27. Zip Deck Update | v1.4.0 | 0/? | Not started | - |
 | 28. Quick-Edit in Study | v1.4.0 | 0/? | Not started | - |
