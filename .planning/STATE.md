@@ -4,17 +4,17 @@ milestone: v1.4.0
 milestone_name: Auth Overhaul & Study UX
 current_phase: 25
 current_phase_name: password-reset
-status: verifying
+status: complete
 stopped_at: Completed 25-04-PLAN.md
-last_updated: "2026-06-29T11:37:48.310Z"
+last_updated: "2026-06-29T12:00:00.000Z"
 last_activity: 2026-06-29
-last_activity_desc: Phase 25 Plan 01 complete
+last_activity_desc: Phase 25 verification passed — all 5 success criteria met
 progress:
-  total_phases: 6
+  total_phases: 8
   completed_phases: 3
   total_plans: 16
   completed_plans: 16
-  percent: 50
+  percent: 37
 ---
 
 # Project State

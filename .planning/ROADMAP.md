@@ -8,7 +8,7 @@
 - ✅ **v1.3.0 Stats & Import Update** — Phases 14–16 (shipped 2026-06-11) — [archive](milestones/v1.3.0-ROADMAP.md)
 - ✅ **v1.3.1 Bug Fixes & Mobile Polish** — Phases 17–18 (shipped 2026-06-12) — [archive](milestones/v1.3.1-ROADMAP.md)
 - ✅ **v1.3.2 UX Polish & Changelog** — Phases 19–22 (shipped 2026-06-15) — [archive](milestones/v1.3.2-ROADMAP.md)
-- 🔄 **v1.4.0 Auth Overhaul & Study UX** — Phases 23–28 (in progress)
+- 🔄 **v1.4.0 Auth Overhaul & Study UX** — Phases 23–30 (in progress)
 
 ## Phases
 
@@ -82,7 +82,7 @@ Full details: [.planning/milestones/v1.3.2-ROADMAP.md](milestones/v1.3.2-ROADMAP
 
 </details>
 
-### v1.4.0 Auth Overhaul & Study UX (Phases 23–28)
+### v1.4.0 Auth Overhaul & Study UX (Phases 23–30)
 
 - [x] **Phase 23: Auth Foundation** - User.email column, cascade FK migrations, SMTP mailer, admin user delete (completed 2026-06-23)
 - [x] **Phase 24: Email Invitations** - InviteToken model, admin invite UI, token-based registration page (completed 2026-06-27)
@@ -90,6 +90,9 @@ Full details: [.planning/milestones/v1.3.2-ROADMAP.md](milestones/v1.3.2-ROADMAP
 - [ ] **Phase 26: ABC Notation** - abcjs integration, AbcBlock renderer component, responsive SVG in cards
 - [ ] **Phase 27: Zip Deck Update** - Shared importMedia helper, deck update path accepts .kartex.zip
 - [ ] **Phase 28: Quick-Edit in Study** - 3-dot study card menu for owners/editors, inline card edit, jump-to-deck
+
+- [ ] **Phase 29: User Email Self-Service** - Email field in Settings page, no-email warning, admin email edit
+- [ ] **Phase 30: Study Timers & Stats** - Card flip timer, session duration timer, both surfaced in statistics
 
 ---
 
@@ -226,6 +229,37 @@ Plans:
 **Plans**: TBD
 **UI hint**: yes
 
+### Phase 29: User Email Self-Service
+
+**Goal**: Users can add or update their email address from Settings, and see a warning when no email is set (since password reset requires one)
+**Depends on**: Phase 23 (User.email column already exists — no migration needed)
+**Requirements**: EMAIL-09, EMAIL-10, EMAIL-11
+**Success Criteria** (what must be TRUE):
+
+  1. `GET /auth/me` returns the `email` field (null for users who have none)
+  2. Settings page shows an Email section with an input and save button
+  3. Submitting a duplicate email shows a clear conflict error; an invalid format is rejected at the schema level
+  4. Settings page shows a prominent warning when email is null, explaining that password reset requires an email address
+  5. Admin can set or update any user's email from the admin panel user dropdown
+
+**Plans**: TBD
+**UI hint**: yes
+
+### Phase 30: Study Timers & Stats
+
+**Goal**: The app records how long each card takes to flip and how long each session lasts; both appear in statistics
+**Depends on**: Phase 15 (stats feature), Phase 22 (study session UX)
+**Requirements**: TIMER-01, TIMER-02, TIMER-03, TIMER-04
+**Success Criteria** (what must be TRUE):
+
+  1. A running session timer is visible in the study header during all study modes (not just exam)
+  2. The time from card front display to card flip is measured per review and stored in `ReviewLog.thinkingTimeMs`
+  3. Total session duration is stored in a `StudySession` record when a session completes
+  4. Stats page shows average card flip time and a list of recent sessions with duration and card count
+
+**Plans**: TBD
+**UI hint**: yes
+
 ---
 
 ## Progress
@@ -260,3 +294,5 @@ Plans:
 | 26. ABC Notation | v1.4.0 | 0/? | Not started | - |
 | 27. Zip Deck Update | v1.4.0 | 0/? | Not started | - |
 | 28. Quick-Edit in Study | v1.4.0 | 0/? | Not started | - |
+| 29. User Email Self-Service | v1.4.0 | 0/? | Not started | - |
+| 30. Study Timers & Stats | v1.4.0 | 0/? | Not started | - |
