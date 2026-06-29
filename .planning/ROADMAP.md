@@ -171,7 +171,15 @@ Full details: [.planning/milestones/v1.3.2-ROADMAP.md](milestones/v1.3.2-ROADMAP
   4. Expired or already-used reset links show a human-readable error page (not a crash or blank page)
   5. Admin can send a password reset email to any user from the admin panel; the action shows a clear error if the target user has no email address
 
-**Plans**: TBD
+**Plans**: 5 plans
+
+Plans:
+- [ ] 25-01-PLAN.md — PasswordResetToken Prisma model + hand-written SQL migration + PasswordResetRequestSchema + PasswordResetSchema in shared package
+- [ ] 25-02-PLAN.md — i18n keys: 18 auth.* + 3 admin.* keys in en.json and de.json (atomic commit)
+- [ ] 25-03-PLAN.md — Backend routes: POST /forgot-password, GET/POST /reset-password/:token in auth.ts; POST /admin/users/:id/reset-password in admin.ts
+- [ ] 25-04-PLAN.md — Frontend pages: ForgotPasswordPage (two-state) + ResetPasswordPage (status machine) + App.tsx public route registration
+- [ ] 25-05-PLAN.md — Integration touches: LoginPage "Forgot password?" link + passwordReset toast; AdminPage per-user DropdownMenu reset action
+
 **UI hint**: yes
 
 ### Phase 26: ABC Notation
