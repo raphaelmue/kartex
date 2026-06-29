@@ -230,7 +230,7 @@ admin.get('/invites', async (c) => {
 // Guard: returns 400 if SMTP is not configured (D-10 soft-fail pattern).
 
 admin.post('/invites', async (c) => {
-  let body: unknown = {}
+  let body: unknown
   try {
     body = await c.req.json()
   } catch {

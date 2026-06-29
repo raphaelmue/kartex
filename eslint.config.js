@@ -23,6 +23,9 @@ export default tseslint.config(
       // Downgrade exhaustive-deps from error to warning — fetch functions defined inside
       // components trigger this; they should be fixed incrementally, not block CI
       'react-hooks/exhaustive-deps': 'warn',
+      // Downgrade refs from error to warning — react-hook-form's handleSubmit(onSubmit)
+      // pattern is flagged as a false positive: the ref is read only on submission, not during render
+      'react-hooks/refs': 'warn',
     },
   },
 
