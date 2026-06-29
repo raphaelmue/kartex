@@ -43,6 +43,7 @@ model User {
   createdAt     DateTime       @default(now())
 
   refreshTokens  RefreshToken[]
+  resetTokens    PasswordResetToken[]
   decks          Deck[]
   sharedDecks    DeckShare[]
   progress       CardProgress[]
@@ -62,6 +63,16 @@ model InviteToken {
   id        String    @id @default(cuid())
   email     String
   token     String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+}
+
+model PasswordResetToken {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash String    @unique
   expiresAt DateTime
   usedAt    DateTime?
   createdAt DateTime  @default(now())
