@@ -23,6 +23,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
@@ -319,6 +320,29 @@ function UsersSection() {
     }
   }
 
+  const handleSendPasswordReset = async (id: string) => {
+    try {
+      const res = await api.post('/api/admin/users/' + id + '/reset-password', {})
+      if (res.ok) {
+        toast.success(t('admin.resetSentSuccess'))
+      } else {
+        const body = await res.json().catch(() => ({}))
+        const error = (body as { error?: string }).error
+        if (error === 'NO_EMAIL') {
+          toast.error(t('admin.resetNoEmail'))
+        } else if (error === 'SMTP_NOT_CONFIGURED') {
+          toast.error(t('admin.inviteSMTPMissing'))
+        } else if (error === 'SMTP_ERROR') {
+          toast.error(t('admin.inviteSendError'))
+        } else {
+          toast.error(t('common.somethingWrong'))
+        }
+      }
+    } catch {
+      toast.error(t('common.somethingWrong'))
+    }
+  }
+
   const handleConfirmKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Escape') {
       setConfirmDeactivateId(null)
@@ -437,6 +461,12 @@ function UsersSection() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
+                        <DropdownMenuItem
+                          onClick={() => void handleSendPasswordReset(u.id)}
+                        >
+                          {t('admin.sendPasswordReset')}
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
                         <DropdownMenuItem
                           className="text-destructive focus:text-destructive"
                           onClick={() => setDeleteTargetId(u.id)}
