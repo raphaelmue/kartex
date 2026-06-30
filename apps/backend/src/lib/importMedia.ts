@@ -96,6 +96,14 @@ export async function collectAndValidateMedia(
   return { ok: true, entryBuffers }
 }
 
+type MediaCreateData = {
+  ownerId: string
+  filename: string
+  mimeType: string
+  storagePath: string
+  sizeBytes: number
+}
+
 // storeMediaBuffers — STORAGE PHASE extracted from import.ts (T-5-02, T-5-07)
 // Writes all media files to disk and creates DB records.
 // T-5-07 (accepted): if caller's transaction fails after this call, orphaned files remain on disk.
@@ -103,7 +111,7 @@ export async function storeMediaBuffers(
   entryBuffers: Map<string, Buffer>,
   storagePath: string,
   userId: string,
-  prismaClient: { media: { create: (args: { data: Record<string, unknown> }) => Promise<unknown> } },
+  prismaClient: { media: { create: (args: { data: MediaCreateData }) => Promise<unknown> } },
 ): Promise<Map<string, string>> {
   const storedFilenames = new Map<string, string>() // originalName → storedFilename
 

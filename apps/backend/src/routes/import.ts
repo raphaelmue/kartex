@@ -1,36 +1,13 @@
 import { Hono } from 'hono'
 import { bodyLimit } from 'hono/body-limit'
-import { mkdir, writeFile } from 'node:fs/promises'
-import { basename, join } from 'node:path'
-import { randomUUID } from 'node:crypto'
+import { mkdir } from 'node:fs/promises'
 import unzipper from 'unzipper'
-import { fileTypeFromBuffer } from 'file-type'
 import { Prisma } from '@prisma/client'
 import { parseKartex } from '@kartex/shared'
 import { prisma } from '../lib/prisma.js'
+import { rewriteMediaRefs, collectAndValidateMedia, storeMediaBuffers } from '../lib/importMedia.js'
 
 const MAX_BYTES = parseInt(process.env.MAX_UPLOAD_BYTES ?? '10485760', 10)
-
-// MDIA-01, MDIA-02: allowed image and audio MIME types (validated via magic bytes — D-08, T-5-03)
-const ALLOWED_MIMES = new Set([
-  'image/png',
-  'image/jpeg',
-  'image/webp',
-  'image/gif',
-  'audio/mpeg',
-  'audio/ogg',
-  'audio/wav',
-])
-
-// Rewrites media://originalName refs to media://storedUuidName after ZIP extraction.
-// Card content is stored verbatim from the .kartex source; without this rewrite,
-// media:// refs point to the original filenames which are never served (UUID names are).
-function rewriteMediaRefs(text: string, storedFilenames: Map<string, string>): string {
-  return text.replace(/media:\/\/([^\s)'"]+)/g, (_match, refName: string) => {
-    const stored = storedFilenames.get(refName)
-    return stored ? `media://${stored}` : `media://${refName}`
-  })
-}
 
 const importRouter = new Hono<{ Variables: { userId: string } }>()
 
@@ -171,76 +148,17 @@ importRouter.post(
 
     // VALIDATION PHASE — collect ALL errors before writing anything (D-08, T-5-01, T-5-03, T-5-04)
     // Rule: if any media file fails validation, abort entire import — nothing written to DB or disk.
-    const MAX_MEDIA_ENTRIES = 100
-    const MAX_TOTAL_BYTES = MAX_BYTES * 10 // 100 MB uncompressed ceiling
-    if (mediaEntries.length > MAX_MEDIA_ENTRIES) {
-      return c.json(
-        { error: `Too many media files in zip (${mediaEntries.length}). Maximum is ${MAX_MEDIA_ENTRIES}.` },
-        422,
-      )
-    }
-
-    const validationErrors: { name: string; reason: string }[] = []
-    const entryBuffers = new Map<string, Buffer>() // cache to avoid re-reading in storage phase
-    let totalUncompressedBytes = 0
-
-    for (const entry of mediaEntries) {
-      const entryName = basename(entry.path.replace(/\\/g, '/'))
-      const bytes = await entry.buffer()
-      totalUncompressedBytes += bytes.length
-      if (totalUncompressedBytes > MAX_TOTAL_BYTES) {
-        return c.json(
-          { error: `Total uncompressed media size exceeds limit (max ${MAX_TOTAL_BYTES} bytes).` },
-          422,
-        )
+    const collected = await collectAndValidateMedia(mediaEntries, MAX_BYTES)
+    if (collected.ok === false) {
+      if (collected.files) {
+        return c.json({ error: 'Validation failed', files: collected.files }, 422)
       }
-      entryBuffers.set(entryName, bytes)
-
-      // T-5-04: check individual extracted file size (not just the zip total)
-      if (bytes.length > MAX_BYTES) {
-        validationErrors.push({
-          name: entryName,
-          reason: `Exceeds size limit (${bytes.length} bytes, max ${MAX_BYTES} bytes)`,
-        })
-        continue
-      }
-
-      // T-5-03: magic bytes validation — never trust client-declared MIME type
-      const detected = await fileTypeFromBuffer(bytes)
-      if (!detected || !ALLOWED_MIMES.has(detected.mime)) {
-        validationErrors.push({
-          name: entryName,
-          reason: `File type not allowed: ${detected?.mime ?? 'unknown'}`,
-        })
-      }
-    }
-
-    // D-08: if any validation failure, abort — return 422 with all offending files
-    if (validationErrors.length > 0) {
-      return c.json({ error: 'Validation failed', files: validationErrors }, 422)
+      return c.json({ error: collected.error }, 422)
     }
 
     // STORAGE PHASE — validation passed; write all media files (media.ts pattern)
-    const storedFilenames = new Map<string, string>() // originalName → storedFilename
-
-    for (const [entryName, bytes] of entryBuffers) {
-      // Re-detect (guaranteed non-null here — passed validation above)
-      const detected = await fileTypeFromBuffer(bytes)
-      // T-5-02: UUID-based filename — raw ZIP entry path never touches the filesystem
-      const filename = randomUUID() + '.' + detected!.ext
-      const fullPath = join(storagePath, filename)
-      await writeFile(fullPath, bytes)
-      await prisma.media.create({
-        data: {
-          ownerId: userId,
-          filename,
-          mimeType: detected!.mime,
-          storagePath: fullPath,
-          sizeBytes: bytes.length,
-        },
-      })
-      storedFilenames.set(entryName, filename)
-    }
+    // T-5-07 (accepted): if transaction fails after media writes, orphaned files remain on disk
+    const storedFilenames = await storeMediaBuffers(collected.entryBuffers, storagePath, userId, prisma)
 
     // D-09: warn about media:// references in cards that have no corresponding file in zip
     // These are warnings only — deck and cards are still created (not a fatal error).
