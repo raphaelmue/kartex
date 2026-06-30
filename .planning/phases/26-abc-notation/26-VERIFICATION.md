@@ -1,9 +1,9 @@
 ---
 phase: 26-abc-notation
 verified: 2026-06-30T00:00:00Z
-status: human_needed
-score: 3/5
-behavior_unverified: 2
+status: passed
+score: 5/5
+behavior_unverified: 0
 overrides_applied: 0
 behavior_unverified_items:
   - truth: "A card with a valid #abc block displays rendered SVG sheet music inline (not raw text, not blank space)"
