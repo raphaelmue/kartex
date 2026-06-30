@@ -567,7 +567,7 @@ export function DeckDetailPage() {
       <input
         ref={updateFileInputRef}
         type="file"
-        accept=".kartex"
+        accept=".kartex,.kartex.zip"
         className="sr-only"
         aria-hidden="true"
         onChange={(e) => {
