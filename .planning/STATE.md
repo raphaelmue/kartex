@@ -2,19 +2,19 @@
 gsd_state_version: 1.0
 milestone: v1.4.0
 milestone_name: Auth Overhaul & Study UX
-current_phase: 25
-current_phase_name: password-reset
-status: complete
+current_phase: 26
+current_phase_name: abc-notation
+status: executing
 stopped_at: Completed 25-04-PLAN.md
-last_updated: "2026-06-29T12:00:00.000Z"
-last_activity: 2026-06-29
-last_activity_desc: Phase 25 verification passed — all 5 success criteria met
+last_updated: "2026-06-30T08:27:07.037Z"
+last_activity: 2026-06-30
+last_activity_desc: Phase 26 execution started
 progress:
   total_phases: 8
-  completed_phases: 3
-  total_plans: 16
-  completed_plans: 16
-  percent: 37
+  completed_phases: 4
+  total_plans: 17
+  completed_plans: 17
+  percent: 50
 ---
 
 # Project State
@@ -24,14 +24,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-06-19)
 
 **Core value:** A user can open their dashboard, see their due cards, and complete a spaced-repetition study session — that loop must always work.
-**Current focus:** Phase 25 — password-reset
+**Current focus:** Phase 26 — abc-notation
 
 ## Current Position
 
-Phase: 25 (password-reset) — EXECUTING
-Plan: 5 of 5
-Status: Phase complete — ready for verification
-Last activity: 2026-06-29 — Phase 25 Plan 01 complete
+Phase: 26 (abc-notation) — EXECUTING
+Plan: 1 of 1
+Status: Executing Phase 26
+Last activity: 2026-06-30 — Phase 26 execution started
 
 ## Performance Metrics
 

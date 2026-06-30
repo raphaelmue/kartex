@@ -87,7 +87,7 @@ Full details: [.planning/milestones/v1.3.2-ROADMAP.md](milestones/v1.3.2-ROADMAP
 - [x] **Phase 23: Auth Foundation** - User.email column, cascade FK migrations, SMTP mailer, admin user delete (completed 2026-06-23)
 - [x] **Phase 24: Email Invitations** - InviteToken model, admin invite UI, token-based registration page (completed 2026-06-27)
 - [x] **Phase 25: Password Reset** - PasswordResetToken model, forgot/reset pages, admin-triggered reset (completed 2026-06-29)
-- [ ] **Phase 26: ABC Notation** - abcjs integration, AbcBlock renderer component, responsive SVG in cards
+- [x] **Phase 26: ABC Notation** - abcjs integration, AbcBlock renderer component, responsive SVG in cards (completed 2026-06-30)
 - [ ] **Phase 27: Zip Deck Update** - Shared importMedia helper, deck update path accepts .kartex.zip
 - [ ] **Phase 28: Quick-Edit in Study** - 3-dot study card menu for owners/editors, inline card edit, jump-to-deck
 
@@ -197,10 +197,11 @@ Plans:
   2. A card with invalid ABC notation shows an error fallback message instead of a blank space or crash
   3. The rendered SVG scales to the card's width on both mobile and desktop viewports
 
-**Plans**: 1 plan
+**Plans**: 1/1 plans complete
 
 Plans:
-- [ ] 26-01-PLAN.md — Install abcjs + implement AbcBlock renderer, preprocessAbcBlocks, and kartexComponents.code language-abc extension in KartexRenderer.tsx
+
+- [x] 26-01-PLAN.md — Install abcjs + implement AbcBlock renderer, preprocessAbcBlocks, and kartexComponents.code language-abc extension in KartexRenderer.tsx
 
 **UI hint**: yes
 
@@ -295,7 +296,7 @@ Plans:
 | 23. Auth Foundation | v1.4.0 | 4/4 | Complete   | 2026-06-23 |
 | 24. Email Invitations | v1.4.0 | 7/7 | Complete   | 2026-06-28 |
 | 25. Password Reset | v1.4.0 | 5/5 | Complete   | 2026-06-29 |
-| 26. ABC Notation | v1.4.0 | 0/? | Not started | - |
+| 26. ABC Notation | v1.4.0 | 1/1 | Complete   | 2026-06-30 |
 | 27. Zip Deck Update | v1.4.0 | 0/? | Not started | - |
 | 28. Quick-Edit in Study | v1.4.0 | 0/? | Not started | - |
 | 29. User Email Self-Service | v1.4.0 | 0/? | Not started | - |
