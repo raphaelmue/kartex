@@ -217,7 +217,15 @@ Plans:
   3. Card content in the updated deck references the newly stored media UUIDs (not the original filenames from the zip)
   4. SM-2 progress for cards matched by kartexId is completely untouched after a zip update
 
-**Plans**: TBD
+**Plans**: 2 plans
+
+**Wave 1**
+
+- [ ] 27-01-PLAN.md — Extract importMedia.ts shared helper from import.ts + add .kartex.zip branch to deckUpdate.ts preview/apply + backend tests (DECKU-01/02/03/04)
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
+- [ ] 27-02-PLAN.md — Frontend file picker accept=".kartex,.kartex.zip" + parseError i18n parity (DECKU-01)
 
 ### Phase 28: Quick-Edit in Study
 
@@ -297,7 +305,7 @@ Plans:
 | 24. Email Invitations | v1.4.0 | 7/7 | Complete   | 2026-06-28 |
 | 25. Password Reset | v1.4.0 | 5/5 | Complete   | 2026-06-29 |
 | 26. ABC Notation | v1.4.0 | 1/1 | Complete   | 2026-06-30 |
-| 27. Zip Deck Update | v1.4.0 | 0/? | Not started | - |
+| 27. Zip Deck Update | v1.4.0 | 0/2 | Not started | - |
 | 28. Quick-Edit in Study | v1.4.0 | 0/? | Not started | - |
 | 29. User Email Self-Service | v1.4.0 | 0/? | Not started | - |
 | 30. Study Timers & Stats | v1.4.0 | 0/? | Not started | - |
