@@ -1,5 +1,5 @@
 import { Loader2 } from 'lucide-react'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import rehypeHighlight from 'rehype-highlight'
 import rehypeKatex from 'rehype-katex'
 import ReactMarkdown from 'react-markdown'
@@ -87,6 +87,74 @@ function TypstBlock({ source }: TypstBlockProps) {
   return <div dangerouslySetInnerHTML={{ __html: svg ?? '' }} />
 }
 
+// AbcBlock — renders a #abc source block as SVG sheet music via abcjs.
+//
+// Lifecycle:
+//   1. Mount: loading=true, containerRef div always in DOM (display:none), lazy import('abcjs')
+//   2. Success: abcjs mutates containerRef.current directly, setLoading(false)
+//   3. Error: warnings[0] captured, setError, setLoading(false)
+//
+// The ref div is always mounted (never conditionally rendered) so containerRef.current
+// is non-null when the lazy import Promise resolves. display:none hides it during
+// loading/error states. D-01 through D-05 compliance.
+interface AbcBlockProps {
+  source: string
+}
+
+function AbcBlock({ source }: AbcBlockProps) {
+  const containerRef = useRef<HTMLDivElement>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    let cancelled = false
+    import('abcjs')
+      .then((mod) => {
+        if (cancelled || containerRef.current === null) return
+        // abcjs v6 ships named exports; fall back to CJS interop if renderAbc is undefined
+        const abcjs = (mod as any).default ?? mod
+        const result = abcjs.renderAbc(containerRef.current, source, { responsive: 'resize' })
+        const warnings: string[] = result?.[0]?.warnings ?? []
+        if (warnings.length > 0) {
+          setError(warnings[0])
+        }
+        setLoading(false)
+      })
+      .catch((err: unknown) => {
+        if (!cancelled) {
+          setError(err instanceof Error ? err.message : String(err))
+          setLoading(false)
+        }
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [source])
+
+  return (
+    <>
+      {loading && (
+        <span className="text-muted-foreground text-sm">
+          <Loader2 className="h-4 w-4 animate-spin inline mr-1" />
+          Rendering...
+        </span>
+      )}
+      {!loading && error !== null && (
+        <RenderErrorBlock
+          heading="ABC render error"
+          errorMessage={error}
+          rawSource={source}
+        />
+      )}
+      <div
+        ref={containerRef}
+        className="w-full dark:invert"
+        style={loading || error !== null ? { display: 'none' } : undefined}
+      />
+    </>
+  )
+}
+
 // Extract the Typst source from a #typst block string.
 // The raw content starts with "#typst\n" — strip that prefix to get the source.
 function extractTypstSource(raw: string): string {
@@ -127,6 +195,52 @@ function preprocessTypstBlocks(content: string): string {
         i++
       }
       result.push('```typst', ...sourceLines, '```')
+    } else {
+      result.push(lines[i])
+      i++
+    }
+  }
+  return result.join('\n')
+}
+
+/**
+ * Preprocess card content before passing to ReactMarkdown.
+ *
+ * Converts #abc blocks to fenced ```abc code blocks so that:
+ * 1. Detection works regardless of whether there is a blank line before the notation
+ * 2. The code component handler intercepts them via className="language-abc"
+ *
+ * Input:
+ *   #abc
+ *   X:1
+ *   T:Scale
+ *   K:C
+ *   CDEFGAB c|
+ *
+ * Output:
+ *   ```abc
+ *   X:1
+ *   T:Scale
+ *   K:C
+ *   CDEFGAB c|
+ *   ```
+ *
+ * A #abc block ends at the first blank line or end of content.
+ */
+function preprocessAbcBlocks(content: string): string {
+  const lines = content.split('\n')
+  const result: string[] = []
+  let i = 0
+  while (i < lines.length) {
+    if (lines[i].trim() === '#abc') {
+      // Collect source lines until blank line or end of content
+      const sourceLines: string[] = []
+      i++
+      while (i < lines.length && lines[i] !== '') {
+        sourceLines.push(lines[i])
+        i++
+      }
+      result.push('```abc', ...sourceLines, '```')
     } else {
       result.push(lines[i])
       i++
@@ -202,6 +316,10 @@ const kartexComponents = {
   // extractTextFromChildren recovers the raw source even after rehype-highlight
   // wraps it in <span> elements.
   code({ className, children }: { className?: string; children?: React.ReactNode }) {
+    if (className?.includes('language-abc')) {
+      const source = extractTextFromChildren(children).replace(/\n$/, '')
+      return <AbcBlock source={source} />
+    }
     if (className?.includes('language-typst')) {
       const source = extractTextFromChildren(children).replace(/\n$/, '')
       return <TypstBlock source={source} />
@@ -309,7 +427,7 @@ export function KartexRenderer({ content }: KartexRendererProps) {
         urlTransform={kartexUrlTransform}
         components={kartexComponents}
       >
-        {preprocessTypstBlocks(content)}
+        {preprocessAbcBlocks(preprocessTypstBlocks(content))}
       </ReactMarkdown>
     </div>
   )
