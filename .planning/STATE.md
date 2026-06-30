@@ -2,19 +2,19 @@
 gsd_state_version: 1.0
 milestone: v1.4.0
 milestone_name: Auth Overhaul & Study UX
-current_phase: 26
+current_phase: 27
+current_phase_name: zip-deck-update
 status: executing
-stopped_at: Completed 25-04-PLAN.md
-last_updated: "2026-06-30T12:21:47.916Z"
+stopped_at: Completed 27-01-PLAN.md
+last_updated: "2026-06-30T12:42:41.820Z"
 last_activity: 2026-06-30
-last_activity_desc: Phase 26 marked complete
+last_activity_desc: Phase 27 execution started
 progress:
   total_phases: 8
   completed_phases: 4
-  total_plans: 17
-  completed_plans: 17
+  total_plans: 19
+  completed_plans: 18
   percent: 50
-current_phase_name: abc-notation
 ---
 
 # Project State
@@ -24,14 +24,14 @@ current_phase_name: abc-notation
 See: .planning/PROJECT.md (updated 2026-06-19)
 
 **Core value:** A user can open their dashboard, see their due cards, and complete a spaced-repetition study session — that loop must always work.
-**Current focus:** Phase 26 — abc-notation
+**Current focus:** Phase 27 — zip-deck-update
 
 ## Current Position
 
-Phase: 26 — COMPLETE
-Plan: 1 of 1
+Phase: 27 (zip-deck-update) — EXECUTING
+Plan: 2 of 2
 Status: Ready to execute
-Last activity: 2026-06-30 — Phase 26 marked complete
+Last activity: 2026-06-30 — Phase 27 execution started
 
 ## Performance Metrics
 
@@ -88,6 +88,7 @@ Last activity: 2026-06-30 — Phase 26 marked complete
 | Phase 25 P03 | 3 | 2 tasks | 2 files |
 | Phase 25 P04 | 2 | 3 tasks | 3 files |
 | Phase 25 P05 | 8 | 2 tasks | 2 files |
+| Phase 27 P01 | 8 minutes | 3 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -230,6 +231,9 @@ Recent decisions affecting current work:
 - [Phase ?]: 25-04: ForgotPasswordPage calls setSubmitted(true) unconditionally — no-enumeration (D-04, RESET-03)
 - [Phase ?]: 25-04: ResetPasswordPage mirrors InviteRegisterPage status state machine; confirmPassword only in useRef, never in POST body
 - [Phase ?]: 25-04: navigate('/login', { state: { passwordReset: true } }) on reset success — D-01 navigation state triggers LoginPage toast
+- [Phase ?]: 27-01: storeMediaBuffers prismaClient parameter uses concrete MediaCreateData struct — avoids Prisma generic type incompatibility
+- [Phase ?]: 27-01: deckUpdate zip preview is stateless — no media extraction in preview, only deck.kartex parsed and diff computed (Pitfall 1 prevention)
+- [Phase ?]: 27-01: collectAndValidateMedia returns CollectResult discriminated union (ok:true/false) — callers use result.ok check without separate error array
 
 ### Pending Todos
 
@@ -282,6 +286,6 @@ Items acknowledged and deferred at milestone close on 2026-05-30:
 
 **Resume file:** None
 
-Last session: 2026-06-29T11:37:48.293Z
-Stopped at: Completed 25-04-PLAN.md
+Last session: 2026-06-30T12:42:41.800Z
+Stopped at: Completed 27-01-PLAN.md
 Resume with: `/gsd-plan-phase 23` — Auth Foundation
