@@ -14,6 +14,9 @@ vi.mock('../../lib/prisma.js', () => ({
       update: vi.fn(),
       deleteMany: vi.fn(),
     },
+    media: {
+      create: vi.fn(),
+    },
     $transaction: vi.fn(),
   },
 }))
@@ -23,8 +26,31 @@ vi.mock('@kartex/shared', () => ({
   parseKartex: vi.fn(),
 }))
 
+// ─── unzipper mock ───────────────────────────────────────────────────────────
+vi.mock('unzipper', () => ({
+  default: {
+    Open: {
+      buffer: vi.fn(),
+    },
+  },
+}))
+
+// ─── file-type mock ───────────────────────────────────────────────────────────
+vi.mock('file-type', () => ({
+  fileTypeFromBuffer: vi.fn(),
+}))
+
+// ─── node:fs/promises mock ───────────────────────────────────────────────────
+vi.mock('node:fs/promises', () => ({
+  mkdir: vi.fn(),
+  writeFile: vi.fn(),
+}))
+
 import { prisma } from '../../lib/prisma.js'
 import { parseKartex } from '@kartex/shared'
+import unzipper from 'unzipper'
+import { fileTypeFromBuffer } from 'file-type'
+import { mkdir, writeFile } from 'node:fs/promises'
 import { deckUpdateRouter } from '../deckUpdate.js'
 
 // ─── Test app factory ─────────────────────────────────────────────────────────
@@ -50,6 +76,13 @@ function makeFormData(fileContent: string, filename = 'test.kartex', extras?: Re
   return fd
 }
 
+function makeZipFormData(filename = 'deck.kartex.zip') {
+  const file = new File([Buffer.from('FAKE_ZIP_CONTENT')], filename, { type: 'application/zip' })
+  const fd = new FormData()
+  fd.append('file', file)
+  return fd
+}
+
 const mockDeck = {
   id: 'deck-abc',
   ownerId: 'user-123',
@@ -68,6 +101,21 @@ const validParseResult = {
     { id: 'k3', front: 'New Front', back: 'New Back', tags: [] },
   ],
   warnings: [],
+}
+
+// ─── Fake unzipper directory builder ────────────────────────────────────────
+// kartexText: the deck.kartex file content
+// mediaFiles: array of { path, buffer } for media entries
+function makeFakeDirectory(kartexText: string, mediaFiles: { path: string; buffer: Buffer }[] = []) {
+  const kartexEntry = {
+    path: 'deck.kartex',
+    buffer: () => Promise.resolve(Buffer.from(kartexText, 'utf-8')),
+  }
+  const mediaEntries = mediaFiles.map((m) => ({
+    path: m.path,
+    buffer: () => Promise.resolve(m.buffer),
+  }))
+  return { files: [kartexEntry, ...mediaEntries] }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -106,16 +154,24 @@ describe('POST /api/decks/:id/update/preview — deck update preview (T-16-01..T
     expect(res.status).toBe(404)
   })
 
-  it('T-16-03: 422 when file is not a .kartex file', async () => {
-    const app = makeApp()
+  it('T-16-03: .kartex.zip is now ACCEPTED on the preview path (not rejected)', async () => {
+    // DECKU-01: zip must be accepted (the old 400 rejection guard is gone)
+    const kartexText = 'KARTEX_TEXT'
+    ;(unzipper.Open.buffer as ReturnType<typeof vi.fn>).mockResolvedValue(
+      makeFakeDirectory(kartexText),
+    )
+    ;(parseKartex as ReturnType<typeof vi.fn>).mockReturnValue(validParseResult)
 
+    const app = makeApp()
     const res = await app.request('/decks/deck-abc/update/preview', {
       method: 'POST',
-      body: makeFormData('dummy', 'deck.kartex.zip'),
+      body: makeZipFormData('deck.kartex.zip'),
     })
 
-    // .kartex.zip is rejected (plan spec: endsWith .kartex.zip → 400)
-    expect([400, 422]).toContain(res.status)
+    // Must return 200 (accepted), not 400/422
+    expect(res.status).toBe(200)
+    const json = await res.json() as { added: number; updated: number; unchanged: number; removed: number }
+    expect(typeof json.added).toBe('number')
   })
 
   it('T-16-04: returns correct added/updated/unchanged/removed counts', async () => {
@@ -428,5 +484,135 @@ describe('POST /api/decks/:id/update/apply — deck update apply (T-16-06..T-16-
     expect(res.status).toBe(200)
     // Ensure deck was looked up with the deck ID, not modified for wrong user
     expect(prisma.deck.findUnique).toHaveBeenCalledWith({ where: { id: 'deck-abc' } })
+  })
+})
+
+// ─── ZIP path tests (DECKU-01..DECKU-04) ─────────────────────────────────────
+
+describe('POST /api/decks/:id/update/apply — zip path (DECKU-01..DECKU-04)', () => {
+  const kartexText = 'KARTEX_TEXT'
+  const fakePngBuffer = Buffer.from([0x89, 0x50, 0x4e, 0x47]) // PNG magic bytes
+
+  beforeEach(() => {
+    vi.resetAllMocks()
+    ;(prisma.deck.findUnique as ReturnType<typeof vi.fn>).mockResolvedValue(mockDeck)
+    ;(prisma.card.findMany as ReturnType<typeof vi.fn>).mockResolvedValue(mockDeckCards)
+    ;(prisma.media.create as ReturnType<typeof vi.fn>).mockResolvedValue({})
+    ;(parseKartex as ReturnType<typeof vi.fn>).mockReturnValue({
+      deck: { deck: 'Test', author: undefined, tags: [] },
+      cards: [
+        { id: 'k1', front: 'Front with media://img.png ref', back: 'Back', tags: [] },
+      ],
+      warnings: [],
+    })
+    ;(mkdir as ReturnType<typeof vi.fn>).mockResolvedValue(undefined)
+    ;(writeFile as ReturnType<typeof vi.fn>).mockResolvedValue(undefined)
+    ;(fileTypeFromBuffer as ReturnType<typeof vi.fn>).mockResolvedValue({ mime: 'image/png', ext: 'png' })
+    ;(unzipper.Open.buffer as ReturnType<typeof vi.fn>).mockResolvedValue(
+      makeFakeDirectory(kartexText, [{ path: 'media/img.png', buffer: fakePngBuffer }]),
+    )
+    ;(prisma.$transaction as ReturnType<typeof vi.fn>).mockImplementation(
+      async (fn: (tx: unknown) => Promise<unknown>) => {
+        const tx = {
+          card: {
+            createMany: vi.fn().mockResolvedValue({ count: 0 }),
+            update: vi.fn().mockResolvedValue({}),
+            deleteMany: vi.fn().mockResolvedValue({ count: 0 }),
+          },
+        }
+        return fn(tx)
+      },
+    )
+  })
+
+  it('DECKU-01: apply with .kartex.zip filename returns 200 (not rejected with 400)', async () => {
+    const app = makeApp()
+    const res = await app.request('/decks/deck-abc/update/apply', {
+      method: 'POST',
+      body: makeZipFormData('deck.kartex.zip'),
+    })
+
+    expect(res.status).toBe(200)
+    const json = await res.json() as { deckId: string }
+    expect(json.deckId).toBe('deck-abc')
+  })
+
+  it('DECKU-02: disallowed MIME in zip media entry → 422, $transaction not called', async () => {
+    // Override file-type to return a disallowed MIME
+    ;(fileTypeFromBuffer as ReturnType<typeof vi.fn>).mockResolvedValue({ mime: 'application/javascript', ext: 'js' })
+
+    const app = makeApp()
+    const res = await app.request('/decks/deck-abc/update/apply', {
+      method: 'POST',
+      body: makeZipFormData('deck.kartex.zip'),
+    })
+
+    expect(res.status).toBe(422)
+    expect(prisma.$transaction).not.toHaveBeenCalled()
+    const json = await res.json() as { error: string }
+    expect(json.error).toBeTruthy()
+  })
+
+  it('DECKU-03: zip apply tx.card.update frontContent contains rewritten UUID media ref', async () => {
+    // card k1 in mockDeckCards has frontContent 'Front 1' (differs from 'Front with media://img.png ref')
+    // → it will land in updatedCards bucket
+    let capturedTx: Record<string, Record<string, ReturnType<typeof vi.fn>>> | undefined
+    ;(prisma.$transaction as ReturnType<typeof vi.fn>).mockImplementation(
+      async (fn: (tx: unknown) => Promise<unknown>) => {
+        const tx = {
+          card: {
+            createMany: vi.fn().mockResolvedValue({ count: 0 }),
+            update: vi.fn().mockResolvedValue({}),
+            deleteMany: vi.fn().mockResolvedValue({ count: 0 }),
+          },
+        }
+        capturedTx = tx as Record<string, Record<string, ReturnType<typeof vi.fn>>>
+        return fn(tx)
+      },
+    )
+
+    const app = makeApp()
+    const res = await app.request('/decks/deck-abc/update/apply', {
+      method: 'POST',
+      body: makeZipFormData('deck.kartex.zip'),
+    })
+
+    expect(res.status).toBe(200)
+    expect(capturedTx!.card.update).toHaveBeenCalled()
+    const updateCall = capturedTx!.card.update.mock.calls[0][0] as { data: { frontContent: string } }
+    // frontContent must reference a UUID-based filename, not the original 'img.png'
+    expect(updateCall.data.frontContent).toMatch(/media:\/\/[0-9a-f-]{36}\.png/)
+  })
+
+  it('DECKU-04: zip apply tx.card.update data has no kartexId, easeFactor, interval, repetitions, nextReviewAt', async () => {
+    let capturedTx: Record<string, Record<string, ReturnType<typeof vi.fn>>> | undefined
+    ;(prisma.$transaction as ReturnType<typeof vi.fn>).mockImplementation(
+      async (fn: (tx: unknown) => Promise<unknown>) => {
+        const tx = {
+          card: {
+            createMany: vi.fn().mockResolvedValue({ count: 0 }),
+            update: vi.fn().mockResolvedValue({}),
+            deleteMany: vi.fn().mockResolvedValue({ count: 0 }),
+          },
+        }
+        capturedTx = tx as Record<string, Record<string, ReturnType<typeof vi.fn>>>
+        return fn(tx)
+      },
+    )
+
+    const app = makeApp()
+    const res = await app.request('/decks/deck-abc/update/apply', {
+      method: 'POST',
+      body: makeZipFormData('deck.kartex.zip'),
+    })
+
+    expect(res.status).toBe(200)
+    expect(capturedTx!.card.update).toHaveBeenCalled()
+    const updateCall = capturedTx!.card.update.mock.calls[0][0] as { data: Record<string, unknown> }
+    expect(updateCall.data).not.toHaveProperty('kartexId')
+    expect(updateCall.data).not.toHaveProperty('easeFactor')
+    expect(updateCall.data).not.toHaveProperty('interval')
+    expect(updateCall.data).not.toHaveProperty('repetitions')
+    expect(updateCall.data).not.toHaveProperty('nextReviewAt')
   })
 })

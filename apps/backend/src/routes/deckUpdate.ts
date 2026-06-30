@@ -1,10 +1,13 @@
 import { Hono } from 'hono'
 import { bodyLimit } from 'hono/body-limit'
+import { mkdir } from 'node:fs/promises'
 import { Prisma } from '@prisma/client'
+import unzipper from 'unzipper'
 import { parseKartex } from '@kartex/shared'
 import { prisma } from '../lib/prisma.js'
+import { rewriteMediaRefs, collectAndValidateMedia, storeMediaBuffers } from '../lib/importMedia.js'
 
-const MAX_BYTES = 5 * 1024 * 1024 // 5 MB — same as import.ts
+const MAX_BYTES = parseInt(process.env.MAX_UPLOAD_BYTES ?? '10485760', 10)
 
 const deckUpdateRouter = new Hono<{ Variables: { userId: string } }>()
 
@@ -131,14 +134,41 @@ deckUpdateRouter.post(
     if (!(file instanceof File)) return c.json({ error: 'File is required.' }, 400)
 
     const normalizedName = file.name.replace(/\\/g, '/')
-    if (normalizedName.endsWith('.kartex.zip')) {
-      return c.json({ error: 'File must be a .kartex file (not .kartex.zip).' }, 400)
-    }
-    if (!normalizedName.endsWith('.kartex')) {
-      return c.json({ error: 'File must be a .kartex file.' }, 400)
+    const isZip = normalizedName.endsWith('.kartex.zip')
+    const isKartex = normalizedName.endsWith('.kartex') && !isZip
+    if (!isKartex && !isZip) {
+      return c.json({ error: 'File must be a .kartex or .kartex.zip.' }, 400)
     }
 
-    // Parse kartex file
+    // ── .kartex.zip branch (preview — stateless, NO media extraction) ─────────
+    if (isZip) {
+      const buffer = Buffer.from(await file.arrayBuffer())
+      let directory: Awaited<ReturnType<typeof unzipper.Open.buffer>>
+      try {
+        directory = await unzipper.Open.buffer(buffer)
+      } catch {
+        return c.json({ error: 'Could not open zip file.' }, 422)
+      }
+      const kartexEntry = directory.files.find(
+        (f) => f.path === 'deck.kartex' || f.path.replace(/\\/g, '/').endsWith('/deck.kartex'),
+      )
+      if (!kartexEntry) return c.json({ error: 'No deck.kartex found in zip.' }, 422)
+      const kartexText = (await kartexEntry.buffer()).toString('utf-8')
+      const parseResult = parseKartex(kartexText)
+      if ('fatal' in parseResult) return c.json({ error: parseResult.message }, 422)
+      if (hasDuplicateKartexIds(parseResult.cards)) return c.json({ error: 'Duplicate id values in file.' }, 422)
+      const deckCards = await prisma.card.findMany({
+        where: { deckId },
+        select: { id: true, kartexId: true, frontContent: true, backContent: true, tags: true },
+      })
+      const diff = computeDiff(parseResult.cards, deckCards)
+      return c.json(
+        { added: diff.added, updated: diff.updated, unchanged: diff.unchanged, removed: diff.removed },
+        200,
+      )
+    }
+
+    // ── Plain .kartex branch (preview) ────────────────────────────────────────
     const text = Buffer.from(await file.arrayBuffer()).toString('utf-8')
     const parseResult = parseKartex(text)
     if ('fatal' in parseResult) {
@@ -192,14 +222,113 @@ deckUpdateRouter.post(
     if (!(file instanceof File)) return c.json({ error: 'File is required.' }, 400)
 
     const normalizedName = file.name.replace(/\\/g, '/')
-    if (normalizedName.endsWith('.kartex.zip')) {
-      return c.json({ error: 'File must be a .kartex file (not .kartex.zip).' }, 400)
-    }
-    if (!normalizedName.endsWith('.kartex')) {
-      return c.json({ error: 'File must be a .kartex file.' }, 400)
+    const isZip = normalizedName.endsWith('.kartex.zip')
+    const isKartex = normalizedName.endsWith('.kartex') && !isZip
+    if (!isKartex && !isZip) {
+      return c.json({ error: 'File must be a .kartex or .kartex.zip.' }, 400)
     }
 
-    // Parse kartex file
+    // ── .kartex.zip branch (apply — full media validate + store + rewrite) ────
+    if (isZip) {
+      const buffer = Buffer.from(await file.arrayBuffer())
+      let directory: Awaited<ReturnType<typeof unzipper.Open.buffer>>
+      try {
+        directory = await unzipper.Open.buffer(buffer)
+      } catch {
+        return c.json({ error: 'Could not open zip file.' }, 422)
+      }
+      const kartexEntry = directory.files.find(
+        (f) => f.path === 'deck.kartex' || f.path.replace(/\\/g, '/').endsWith('/deck.kartex'),
+      )
+      if (!kartexEntry) return c.json({ error: 'No deck.kartex found in zip.' }, 422)
+      const kartexText = (await kartexEntry.buffer()).toString('utf-8')
+      const parseResult = parseKartex(kartexText)
+      if ('fatal' in parseResult) return c.json({ error: parseResult.message }, 422)
+      if (hasDuplicateKartexIds(parseResult.cards)) return c.json({ error: 'Duplicate id values in file.' }, 422)
+
+      // keepRemoved: string "false" → delete absent cards; anything else → keep (default true)
+      const rawKeepRemoved = body['keepRemoved']
+      const keepRemoved = typeof rawKeepRemoved === 'string' ? rawKeepRemoved !== 'false' : true
+
+      // Find media entries — skip macOS metadata and directory entries (Pitfall 8, T-5-02)
+      const mediaEntries = directory.files.filter((f) => {
+        const normalized = f.path.replace(/\\/g, '/')
+        return (
+          normalized.startsWith('media/') &&
+          !normalized.startsWith('__MACOSX/') &&
+          !normalized.endsWith('/')
+        )
+      })
+
+      const storagePath = process.env.STORAGE_PATH ?? '/app/media'
+      await mkdir(storagePath, { recursive: true })
+
+      // Validate all media files BEFORE writing anything (D-08, T-27-02)
+      const collected = await collectAndValidateMedia(mediaEntries, MAX_BYTES)
+      if (collected.ok === false) {
+        return c.json(
+          { error: collected.error, ...(collected.files ? { files: collected.files } : {}) },
+          422,
+        )
+      }
+
+      const deckCards = await prisma.card.findMany({
+        where: { deckId },
+        select: { id: true, kartexId: true, frontContent: true, backContent: true, tags: true },
+      })
+      const diff = computeDiff(parseResult.cards, deckCards)
+
+      // T-5-07 (accepted): if $transaction fails after media writes, orphaned files remain on disk
+      const storedFilenames = await storeMediaBuffers(collected.entryBuffers, storagePath, userId, prisma)
+
+      // Execute atomic Prisma interactive transaction
+      await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+        // Add new cards (with rewritten media refs)
+        if (diff.addedCards.length > 0) {
+          await tx.card.createMany({
+            data: diff.addedCards.map((fc) => ({
+              deckId,
+              frontContent: rewriteMediaRefs(fc.front, storedFilenames),
+              backContent: rewriteMediaRefs(fc.back, storedFilenames),
+              tags: fc.tags,
+              kartexId: fc.id ?? null,
+            })),
+          })
+        }
+
+        // Update matched cards — only frontContent, backContent, tags (DECKU-04: never kartexId, never CardProgress)
+        for (const { fileCard, deckCard } of diff.updatedCards) {
+          await tx.card.update({
+            where: { id: deckCard.id },
+            data: {
+              frontContent: rewriteMediaRefs(fileCard.front, storedFilenames),
+              backContent: rewriteMediaRefs(fileCard.back, storedFilenames),
+              tags: fileCard.tags,
+            },
+          })
+        }
+
+        // Delete removed cards only when keepRemoved=false
+        if (!keepRemoved && diff.removedIds.length > 0) {
+          await tx.card.deleteMany({
+            where: { id: { in: diff.removedIds } },
+          })
+        }
+      })
+
+      return c.json(
+        {
+          added: diff.added,
+          updated: diff.updated,
+          unchanged: diff.unchanged,
+          removed: diff.removed,
+          deckId,
+        },
+        200,
+      )
+    }
+
+    // ── Plain .kartex branch (apply) — NO rewriteMediaRefs (no media refs in plain .kartex) ──
     const text = Buffer.from(await file.arrayBuffer()).toString('utf-8')
     const parseResult = parseKartex(text)
     if ('fatal' in parseResult) {
