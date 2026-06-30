@@ -88,7 +88,7 @@ Full details: [.planning/milestones/v1.3.2-ROADMAP.md](milestones/v1.3.2-ROADMAP
 - [x] **Phase 24: Email Invitations** - InviteToken model, admin invite UI, token-based registration page (completed 2026-06-27)
 - [x] **Phase 25: Password Reset** - PasswordResetToken model, forgot/reset pages, admin-triggered reset (completed 2026-06-29)
 - [x] **Phase 26: ABC Notation** - abcjs integration, AbcBlock renderer component, responsive SVG in cards (completed 2026-06-30)
-- [ ] **Phase 27: Zip Deck Update** - Shared importMedia helper, deck update path accepts .kartex.zip
+- [x] **Phase 27: Zip Deck Update** - Shared importMedia helper, deck update path accepts .kartex.zip (completed 2026-06-30)
 - [ ] **Phase 28: Quick-Edit in Study** - 3-dot study card menu for owners/editors, inline card edit, jump-to-deck
 
 - [ ] **Phase 29: User Email Self-Service** - Email field in Settings page, no-email warning, admin email edit
@@ -217,7 +217,7 @@ Plans:
   3. Card content in the updated deck references the newly stored media UUIDs (not the original filenames from the zip)
   4. SM-2 progress for cards matched by kartexId is completely untouched after a zip update
 
-**Plans**: 1/2 plans executed
+**Plans**: 2/2 plans complete
 
 **Wave 1**
 
@@ -225,7 +225,7 @@ Plans:
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] 27-02-PLAN.md — Frontend file picker accept=".kartex,.kartex.zip" + parseError i18n parity (DECKU-01)
+- [x] 27-02-PLAN.md — Frontend file picker accept=".kartex,.kartex.zip" + parseError i18n parity (DECKU-01)
 
 ### Phase 28: Quick-Edit in Study
 
@@ -305,7 +305,7 @@ Plans:
 | 24. Email Invitations | v1.4.0 | 7/7 | Complete   | 2026-06-28 |
 | 25. Password Reset | v1.4.0 | 5/5 | Complete   | 2026-06-29 |
 | 26. ABC Notation | v1.4.0 | 1/1 | Complete   | 2026-06-30 |
-| 27. Zip Deck Update | v1.4.0 | 1/2 | In Progress|  |
+| 27. Zip Deck Update | v1.4.0 | 2/2 | Complete   | 2026-06-30 |
 | 28. Quick-Edit in Study | v1.4.0 | 0/? | Not started | - |
 | 29. User Email Self-Service | v1.4.0 | 0/? | Not started | - |
 | 30. Study Timers & Stats | v1.4.0 | 0/? | Not started | - |
