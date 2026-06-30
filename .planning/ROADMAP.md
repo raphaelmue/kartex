@@ -197,7 +197,11 @@ Plans:
   2. A card with invalid ABC notation shows an error fallback message instead of a blank space or crash
   3. The rendered SVG scales to the card's width on both mobile and desktop viewports
 
-**Plans**: TBD
+**Plans**: 1 plan
+
+Plans:
+- [ ] 26-01-PLAN.md — Install abcjs + implement AbcBlock renderer, preprocessAbcBlocks, and kartexComponents.code language-abc extension in KartexRenderer.tsx
+
 **UI hint**: yes
 
 ### Phase 27: Zip Deck Update
