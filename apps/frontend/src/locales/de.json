@@ -432,7 +432,7 @@
     "applying": "Wird übernommen...",
     "successToast": "Deck erfolgreich aktualisiert",
     "errorTitle": "Aktualisierung fehlgeschlagen",
-    "parseError": "Datei konnte nicht verarbeitet werden. Bitte prüfen Sie, ob es eine gültige .kartex-Datei ist.",
+    "parseError": "Datei konnte nicht verarbeitet werden. Bitte prüfen Sie, ob es eine gültige .kartex- oder .kartex.zip-Datei ist.",
     "fileTooLarge": "Datei ist zu groß."
   }
 }

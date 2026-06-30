@@ -432,7 +432,7 @@
     "applying": "Applying...",
     "successToast": "Deck updated successfully",
     "errorTitle": "Update failed",
-    "parseError": "Could not parse the file. Check it is a valid .kartex file.",
+    "parseError": "Could not parse the file. Check it is a valid .kartex or .kartex.zip file.",
     "fileTooLarge": "File is too large."
   }
 }
