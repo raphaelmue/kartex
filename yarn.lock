@@ -2452,6 +2452,7 @@ __metadata:
     "@vite-pwa/assets-generator": "npm:^1.0.2"
     "@vitejs/plugin-react": "npm:^4.3.4"
     "@vitest/coverage-v8": "npm:2.1.9"
+    abcjs: "npm:^6.6.3"
     autoprefixer: "npm:^10.4.20"
     class-variance-authority: "npm:^0.7.1"
     clsx: "npm:^2.1.1"
@@ -5261,6 +5262,13 @@ __metadata:
   version: 4.0.0
   resolution: "abbrev@npm:4.0.0"
   checksum: 10c0/b4cc16935235e80702fc90192e349e32f8ef0ed151ef506aa78c81a7c455ec18375c4125414b99f84b2e055199d66383e787675f0bcd87da7a4dbd59f9eac1d5
+  languageName: node
+  linkType: hard
+
+"abcjs@npm:^6.6.3":
+  version: 6.6.3
+  resolution: "abcjs@npm:6.6.3"
+  checksum: 10c0/20d70742d130788508694b5df90a7152c881e54c9c55514558cc692ae545fa2a2a60e358c5005e0c156f630b009c61b5b0a220367d649e838f17bc673d189795
   languageName: node
   linkType: hard
 
