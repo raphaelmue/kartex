@@ -38,6 +38,7 @@ export const DueCardSchema = z.object({
   interval: z.number().default(1),
   repetitions: z.number().default(0),
   nextReview: z.string().optional(),
+  canEdit: z.boolean(),
 })
 export type DueCard = z.infer<typeof DueCardSchema>
 
