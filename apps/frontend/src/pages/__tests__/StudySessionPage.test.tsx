@@ -7,25 +7,30 @@ import { StudySessionPage } from '@/pages/StudySessionPage'
 // set `{}` (no id param) without breaking the deck-specific suite (STATE.md 08-02, 03-02)
 const mockParams = vi.hoisted(() => ({ current: { id: 'deck-abc' } as { id?: string } }))
 
+// Shared navigate spy — hoisted so "Jump to deck" navigation is assertable (SEDIT-03)
+const mockNavigate = vi.hoisted(() => vi.fn())
+
 // 1. Mock react-router-dom — preserve real module, override useParams and useNavigate
 vi.mock('react-router-dom', async () => {
   const actual = await vi.importActual<typeof import('react-router-dom')>('react-router-dom')
   return {
     ...actual,
     useParams: () => mockParams.current,
-    useNavigate: () => vi.fn(),
+    useNavigate: () => mockNavigate,
   }
 })
 
 // 2. Mock api module — vi.hoisted ensures mockApiGet is available inside factory
-const { mockApiGet } = vi.hoisted(() => {
+const { mockApiGet, mockApiPatch } = vi.hoisted(() => {
   const mockApiGet = vi.fn()
-  return { mockApiGet }
+  const mockApiPatch = vi.fn()
+  return { mockApiGet, mockApiPatch }
 })
 vi.mock('@/lib/api', () => ({
   api: {
     get: mockApiGet,
     post: vi.fn(),
+    patch: mockApiPatch,
   },
 }))
 
@@ -60,6 +65,7 @@ function makeAuthValue(studyMode = 'normal') {
 function makeCard(
   id: string,
   tags: string[],
+  canEdit = true,
 ): {
   id: string
   frontContent: string
@@ -71,6 +77,7 @@ function makeCard(
   interval: number
   easeFactor: number
   repetitions: number
+  canEdit: boolean
 } {
   return {
     id,
@@ -83,6 +90,7 @@ function makeCard(
     interval: 1,
     easeFactor: 2.5,
     repetitions: 0,
+    canEdit,
   }
 }
 
@@ -707,5 +715,106 @@ describe('StudySessionPage deck badge (STUDY-04)', () => {
     await waitFor(() => {
       expect(screen.getByText('Test Deck')).toBeTruthy()
     })
+  })
+})
+
+// ---------------------------------------------------------------------------
+// SEDIT-01/02/03/04: Quick-edit menu in study session progress row
+// ---------------------------------------------------------------------------
+
+describe('StudyCardMenu quick-edit (SEDIT-01/02/03/04)', () => {
+  beforeEach(() => {
+    mockParams.current = { id: 'deck-abc' }
+    mockApiGet.mockReset()
+    mockApiPatch.mockReset()
+    mockNavigate.mockReset()
+    setupPrefetchMocks()
+  })
+
+  afterEach(() => {
+    mockParams.current = { id: 'deck-abc' }
+  })
+
+  async function startSessionWithCard(canEdit: boolean) {
+    mockApiGet.mockResolvedValueOnce({
+      ok: true,
+      json: async () => [makeCard('c1', [], canEdit)],
+    })
+
+    renderPage()
+
+    await waitFor(() => {
+      expect(screen.getByText(/filter by tag/i)).toBeTruthy()
+    })
+
+    fireEvent.click(screen.getByRole('button', { name: /spaced repetition/i }))
+
+    await waitFor(() => {
+      expect(screen.queryByText('Card 1 of 1')).toBeTruthy()
+    })
+  }
+
+  it('SEDIT-01: menu trigger is present when currentCard.canEdit is true', async () => {
+    await startSessionWithCard(true)
+    expect(screen.getByRole('button', { name: /more actions/i })).toBeTruthy()
+  })
+
+  it('SEDIT-04: menu trigger is absent from the DOM when currentCard.canEdit is false', async () => {
+    await startSessionWithCard(false)
+    expect(screen.queryByRole('button', { name: /more actions/i })).toBeNull()
+  })
+
+  it('SEDIT-03: "Jump to deck" navigates to /decks/:currentCard.deckId with no confirmation', async () => {
+    await startSessionWithCard(true)
+
+    const trigger = screen.getByRole('button', { name: /more actions/i })
+    fireEvent.pointerDown(trigger)
+    fireEvent.click(trigger)
+
+    const jumpItem = await screen.findByText(/jump to deck/i)
+    fireEvent.click(jumpItem)
+
+    expect(mockNavigate).toHaveBeenCalledWith('/decks/deck-abc')
+  })
+
+  it('SEDIT-02: inline edit spread-merges the PATCH response by id, preserving deckTitle', async () => {
+    await startSessionWithCard(true)
+
+    const trigger = screen.getByRole('button', { name: /more actions/i })
+    fireEvent.pointerDown(trigger)
+    fireEvent.click(trigger)
+
+    const editItem = await screen.findByText(/edit this card/i)
+    fireEvent.click(editItem)
+
+    // CardEditorModal is now open
+    await waitFor(() => {
+      expect(screen.getByText(/^edit card$/i)).toBeTruthy()
+    })
+
+    mockApiPatch.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({
+        id: 'c1',
+        deckId: 'deck-abc',
+        frontContent: 'Updated front',
+        backContent: 'Back c1',
+        tags: [],
+      }),
+    })
+
+    fireEvent.click(screen.getByRole('button', { name: /save card/i }))
+
+    // Modal closes after successful save
+    await waitFor(() => {
+      expect(screen.queryByText(/^edit card$/i)).toBeNull()
+    })
+
+    // Content updated in place (spread-merge applied the PATCH response)
+    expect(document.body.textContent).toContain('Updated front')
+    // Session stays at the same index
+    expect(document.body.textContent).toContain('Card 1 of 1')
+    // DueCard-only fields survive the merge — deckTitle badge still renders (Pitfall 1)
+    expect(screen.getByText('Test Deck')).toBeTruthy()
   })
 })
