@@ -4,9 +4,9 @@ milestone: v1.4.0
 milestone_name: Auth Overhaul & Study UX
 current_phase: 28
 current_phase_name: Quick-Edit in Study
-status: verifying
-stopped_at: Phase 28 context gathered
-last_updated: "2026-07-01T09:05:11.961Z"
+status: executing
+stopped_at: Phase 28 UI-SPEC approved
+last_updated: "2026-07-01T09:50:04.035Z"
 last_activity: 2026-07-01
 last_activity_desc: Phase 27 complete, transitioned to Phase 28
 progress:
@@ -30,7 +30,7 @@ See: .planning/PROJECT.md (updated 2026-06-19)
 
 Phase: 28 — Quick-Edit in Study
 Plan: Not started
-Status: Phase complete — ready for verification
+Status: Ready to execute
 Last activity: 2026-07-01 — Phase 27 complete, transitioned to Phase 28
 
 ## Performance Metrics
@@ -288,8 +288,8 @@ Items acknowledged and deferred at milestone close on 2026-05-30:
 
 ## Session Continuity
 
-**Resume file:** .planning/phases/28-quick-edit-in-study/28-CONTEXT.md
+**Resume file:** .planning/phases/28-quick-edit-in-study/28-UI-SPEC.md
 
-Last session: 2026-07-01T09:05:11.951Z
-Stopped at: Phase 28 context gathered
+Last session: 2026-07-01T09:30:33.756Z
+Stopped at: Phase 28 UI-SPEC approved
 Resume with: `/gsd-plan-phase 23` — Auth Foundation
