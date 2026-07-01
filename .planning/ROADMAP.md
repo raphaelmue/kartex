@@ -239,10 +239,10 @@ Plans:
   3. Selecting "Jump to deck" navigates to the deck detail page
   4. The menu is completely absent (not just disabled) for users without edit permission
 
-**Plans**: 2 plans
+**Plans**: 1/2 plans executed
 **Wave 1**
 
-- [ ] 28-01-PLAN.md — Backend: compute server-trusted canEdit flag in both study GET endpoints (SEDIT-01)
+- [x] 28-01-PLAN.md — Backend: compute server-trusted canEdit flag in both study GET endpoints (SEDIT-01)
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
@@ -314,6 +314,6 @@ Plans:
 | 25. Password Reset | v1.4.0 | 5/5 | Complete   | 2026-06-29 |
 | 26. ABC Notation | v1.4.0 | 1/1 | Complete   | 2026-06-30 |
 | 27. Zip Deck Update | v1.4.0 | 2/2 | Complete    | 2026-06-30 |
-| 28. Quick-Edit in Study | v1.4.0 | 0/? | Not started | - |
+| 28. Quick-Edit in Study | v1.4.0 | 1/2 | In Progress|  |
 | 29. User Email Self-Service | v1.4.0 | 0/? | Not started | - |
 | 30. Study Timers & Stats | v1.4.0 | 0/? | Not started | - |

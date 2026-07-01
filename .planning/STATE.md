@@ -3,16 +3,16 @@ gsd_state_version: 1.0
 milestone: v1.4.0
 milestone_name: Auth Overhaul & Study UX
 current_phase: 28
-current_phase_name: Quick-Edit in Study
+current_phase_name: quick-edit-in-study
 status: executing
 stopped_at: Phase 28 UI-SPEC approved
-last_updated: "2026-07-01T09:50:04.035Z"
+last_updated: "2026-07-01T19:46:27.287Z"
 last_activity: 2026-07-01
-last_activity_desc: Phase 27 complete, transitioned to Phase 28
+last_activity_desc: Phase 28 execution resumed (wave continue)
 progress:
   total_phases: 8
   completed_phases: 5
-  total_plans: 19
+  total_plans: 21
   completed_plans: 19
   percent: 63
 ---
@@ -24,14 +24,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-06-19)
 
 **Core value:** A user can open their dashboard, see their due cards, and complete a spaced-repetition study session — that loop must always work.
-**Current focus:** Phase 27 — zip-deck-update
+**Current focus:** Phase 28 — quick-edit-in-study
 
 ## Current Position
 
-Phase: 28 — Quick-Edit in Study
-Plan: Not started
-Status: Ready to execute
-Last activity: 2026-07-01 — Phase 27 complete, transitioned to Phase 28
+Phase: 28 (quick-edit-in-study) — EXECUTING
+Plan: 1 of 2
+Status: Executing Phase 28
+Last activity: 2026-07-01 — Phase 28 execution resumed (wave continue)
 
 ## Performance Metrics
 
