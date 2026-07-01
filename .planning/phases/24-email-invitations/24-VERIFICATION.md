@@ -1,33 +1,30 @@
 ---
 phase: 24-email-invitations
-verified: 2026-06-27T19:00:00Z
-status: human_needed
-score: 4/5 must-haves verified
-behavior_unverified: 1
-overrides_applied: 0
-behavior_unverified_items:
+verified: 2026-07-01T08:29:52Z
+status: passed
+score: 5/5 must-haves verified
+behavior_unverified: 0
+overrides_applied: 1
+overrides:
   - truth: "After registration the invite link is consumed — a second click shows a clear 'already used' error page (not a crash or blank page)"
-    test: "Submit the registration form with a valid token, then navigate to /invite/<same-token> again in a second tab/window"
-    expected: "The page shows the inline error card with 'This invite has already been used.' (auth.inviteAlreadyUsed) — no crash, no form"
-    why_human: >
-      The frontend rendering of the ALREADY_USED error is covered by InviteRegisterPage.test.tsx.
-      The TOCTOU-safe consumption (two concurrent POST /api/auth/register calls racing on the same
-      token) is enforced by a prisma.$transaction + updateMany WHERE usedAt IS NULL + result.count===0
-      abort — a correct pattern whose serialisation guarantee comes from Postgres. No automated test
-      exercises two concurrent requests to verify only one wins. Presence and wiring are confirmed;
-      the race invariant cannot be confirmed without runtime concurrency.
-human_verification:
-  - test: "Submit registration, then reuse the same invite link in a fresh browser tab"
-    expected: "Second visit renders an inline error card with the 'already used' message; no registration form appears and no crash occurs"
-    why_human: "Concurrent-request TOCTOU race invariant — the $transaction logic is present and correct but no automated test fires two simultaneous requests to prove only one succeeds"
+    accepted_by: "human (UAT 24-UAT.md test 9, plus plan 06/07 auth-bypass fix verified via A1/A2 automated coverage)"
+    accepted_at: "2026-07-01T08:29:52Z"
+    reason: >
+      Sequential reuse (register, then revisit same link) was manually tested and passed
+      (24-UAT.md test 9) — matching this report's own stated sufficiency bar ("a manual
+      sequential test... is sufficient to confirm the consumed-token path works end-to-end").
+      The stricter two-simultaneous-request race was accepted without a live concurrency test:
+      the TOCTOU guard (prisma.$transaction + updateMany WHERE usedAt IS NULL +
+      result.count===0 abort) is a standard correct pattern whose exactly-once guarantee comes
+      from Postgres transaction serialisation, not application logic.
 ---
 
 # Phase 24: Email Invitations Verification Report
 
 **Phase Goal:** Admin can invite new users via email and invitees can register through the one-time link
-**Verified:** 2026-06-27T19:00:00Z
-**Status:** human_needed
-**Re-verification:** No — initial verification
+**Verified:** 2026-07-01T08:29:52Z
+**Status:** passed
+**Re-verification:** Yes — canonicalized after 24-UAT.md completed (11/11 passed, 0 issues), including coverage for plans 06/07 (auth-bypass fix) which landed after the original 2026-06-27 run
 
 ## Goal Achievement
 
@@ -37,11 +34,11 @@ human_verification:
 |---|-------|--------|----------|
 | 1 | Admin enters an email address in the admin panel and triggers an invitation; the invitee receives an email with a unique link | ✓ VERIFIED | `InviteTokensSection` in `AdminPage.tsx` calls `api.post('/api/admin/invites', { email })`; backend `POST /invites` in `admin.ts` uses `randomBytes(32).toString('hex')`, creates `InviteToken`, calls `sendMail` with link; guarded by `isConfigured()`; AdminPage.test.tsx EMAIL-03 passes |
 | 2 | Clicking the invite link opens a registration page with the email pre-filled and read-only; user sets username and password to complete registration | ✓ VERIFIED | `InviteRegisterPage.tsx` fetches `GET /api/invites/:token`, sets email from response, renders a disabled email `<Input>` not in RegisterSchema; `RegisterSchema` has `{ username, password, token }` only; confirmPassword is client-only via `useRef`; InviteRegisterPage.test.tsx EMAIL-05 (5 tests) passes |
-| 3 | After registration the invite link is consumed — a second click shows a clear "already used" error page (not a crash or blank page) | ⚠️ PRESENT_BEHAVIOR_UNVERIFIED | Code: `auth.ts` marks `usedAt = new Date()` inside `prisma.$transaction` with `updateMany WHERE usedAt IS NULL + result.count===0 throw`; `invites.ts` returns ALREADY_USED when `usedAt !== null`; `InviteRegisterPage` renders error card with `auth.inviteAlreadyUsed`; single-request ALREADY_USED rendering tested — concurrent TOCTOU race not exercised by a test |
+| 3 | After registration the invite link is consumed — a second click shows a clear "already used" error page (not a crash or blank page) | ✓ VERIFIED (override) | Code: `auth.ts` marks `usedAt = new Date()` inside `prisma.$transaction` with `updateMany WHERE usedAt IS NULL + result.count===0 throw`; `invites.ts` returns ALREADY_USED when `usedAt !== null`; `InviteRegisterPage` renders error card with `auth.inviteAlreadyUsed`; sequential reuse manually confirmed in 24-UAT.md test 9 (pass); concurrent TOCTOU race accepted on Postgres transaction-serialisation guarantee, not independently load-tested |
 | 4 | Admin can view all pending (unused, non-expired) invitations in the admin panel | ✓ VERIFIED | `admin.ts GET /invites` filters `usedAt: null, expiresAt: { gt: new Date() }`, omits `token` field from `select`; `InviteTokensSection` fetches and renders Email/Sent/Expires table; AdminPage.test.tsx EMAIL-07 (column headers + data row) passes |
 | 5 | Admin can revoke a pending invitation; revoked tokens are immediately invalid | ✓ VERIFIED | `admin.ts DELETE /invites/:id` returns 400 when `usedAt !== null`, otherwise deletes the row; `InviteTokensSection` `handleRevoke` calls `api.delete`, optimistically removes row, toasts `admin.inviteRevokeSuccess`; AdminPage.test.tsx EMAIL-08 passes; deleted row returns NOT_FOUND on next GET (code-analysis) |
 
-**Score:** 4/5 truths verified (1 present, behavior-unverified)
+**Score:** 5/5 truths verified (1 confirmed via human override — see Overrides)
 
 ### Required Artifacts
 
@@ -97,7 +94,7 @@ human_verification:
 | EMAIL-03 | 24-03, 24-05 | Admin can send email invitation | ✓ SATISFIED | `POST /api/admin/invites` in admin.ts; `InviteTokensSection` send form; AdminPage.test.tsx |
 | EMAIL-04 | 24-01, 24-03 | Invite link is one-time with 7-day expiry, cryptographically strong token | ✓ SATISFIED | `randomBytes(32).toString('hex')` (256-bit); `expiresAt = now + 7 days`; `usedAt` consumed atomically |
 | EMAIL-05 | 24-04 | Invitee registers through link with email pre-filled read-only | ✓ SATISFIED | InviteRegisterPage: disabled email input outside RegisterSchema; token in hidden field; tests verify disabled email and POST body |
-| EMAIL-06 | 24-03, 24-04 | Invite link is single-use; replay shows "already used" | ⚠️ PRESENT_BEHAVIOR_UNVERIFIED | Single-request ALREADY_USED rendering tested; TOCTOU concurrent-race invariant not exercised by automated test |
+| EMAIL-06 | 24-03, 24-04 | Invite link is single-use; replay shows "already used" | ✓ SATISFIED (override) | Sequential reuse confirmed by 24-UAT.md test 9 (pass); TOCTOU concurrent-race invariant accepted on Postgres serialisation guarantee, not independently load-tested |
 | EMAIL-07 | 24-03, 24-05 | Admin sees pending (unused, non-expired) invitations | ✓ SATISFIED | `GET /invites` active-only filter; `InviteTokensSection` table; AdminPage.test.tsx |
 | EMAIL-08 | 24-03, 24-05 | Admin can revoke a pending invitation | ✓ SATISFIED | `DELETE /invites/:id` with used-guard; Trash2 icon button; AdminPage.test.tsx |
 
@@ -114,17 +111,11 @@ No `TBD`, `FIXME`, or `XXX` markers found in any Phase 24 production files.
 
 ### Human Verification Required
 
-#### 1. TOCTOU Single-Use Guarantee (EMAIL-06)
-
-**Test:** Register a new account using a valid invite link. After successful registration, open the same `/invite/<token>` URL in a second browser tab (without any page reload on the first tab).
-
-**Expected:** The second tab shows the inline error card with the message "This invite has already been used." — no registration form is rendered, no crash occurs, no blank page.
-
-**Why human:** The frontend rendering of the ALREADY_USED error state is covered by automated tests (InviteRegisterPage.test.tsx). The TOCTOU protection — that two concurrent POST `/api/auth/register` calls on the same token cannot both succeed — is enforced by `prisma.$transaction` with `updateMany WHERE usedAt IS NULL + result.count===0 throw`. This is a correct implementation pattern whose correctness depends on Postgres transaction serialisation. No automated test fires two simultaneous requests to confirm only one wins. A manual sequential test (register, then revisit the link) is sufficient to confirm the consumed-token path works end-to-end.
+None outstanding. The TOCTOU single-use guarantee (EMAIL-06) was resolved via override — see Overrides in frontmatter.
 
 ### Gaps Summary
 
-No gaps were found. All five roadmap success criteria have implementation evidence. The one behavior-unverified truth (EMAIL-06 TOCTOU race) has correct code in place and the single-request case is tested — only the concurrent-request edge requires human confirmation.
+No gaps outstanding. All five roadmap success criteria have implementation evidence and human confirmation. The one previously behavior-unverified truth (EMAIL-06 TOCTOU race) is closed via human override: sequential reuse tested and passed (24-UAT.md test 9); the concurrent-request edge is accepted on the strength of the Postgres transaction-serialisation guarantee rather than a live concurrency test.
 
 **Notable cleanup items (not blocking):**
 
@@ -133,5 +124,5 @@ No gaps were found. All five roadmap success criteria have implementation eviden
 
 ---
 
-_Verified: 2026-06-27T19:00:00Z_
-_Verifier: Claude (gsd-verifier)_
+_Verified: 2026-07-01T08:29:52Z_
+_Verifier: Claude (gsd-verifier), canonicalized post-UAT with human override_
