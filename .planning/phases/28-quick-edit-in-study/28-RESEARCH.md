@@ -391,9 +391,9 @@ No `e.stopPropagation()` on the trigger — placement in the progress row (D-01)
 | A1 | Widening `CardEditorModal`'s `card` prop type to a `Pick<Card, ...>` is preferable to fabricating dummy `createdAt`/`updatedAt` on a `DueCard` | Pitfall 3 / Code Examples | Low — both approaches compile; this is a stylistic recommendation, not a verified requirement. Planner/executor can choose either; noted as discretion, not a locked fact. |
 | A2 | `canEdit` for `/deck/:deckId` should additionally check `share.isActive` even though the existing access-check gate at that endpoint doesn't | Pitfall 5 | Low-medium — if not applied, a deactivated-share user could see (but not successfully use) the edit menu until they reload; not a security bug (PATCH still 403s) but a minor UX inconsistency. Recommend applying it, but it's this researcher's judgment call, not directly stated in CONTEXT.md. |
 
-## Open Questions
+## Open Questions (RESOLVED)
 
-1. **Should `canEdit` also require `deck.isActive` (the deck itself being active, separate from the share)?**
+1. **RESOLVED: Should `canEdit` also require `deck.isActive` (the deck itself being active, separate from the share)?**
    - What we know: `/due`'s existing `deckFilter` already requires `isActive: true` on owned decks (and doesn't check `Deck.isActive` for shared decks — it uses `DeckShare.isActive` instead, per STATE.md `18-01` decision). Since only active-deck cards reach the response array in `/due` at all, `canEdit` doesn't need a redundant `isActive` check there.
    - What's unclear: whether `/deck/:deckId` (used for Deck Mode / Exam Mode, which loads all cards in a deck "regardless of nextReview") should block editing on an inactive deck the *owner* has deactivated. Since a deck's own owner can always edit their own (even inactive) deck's cards via `DeckDetailPage` already (no `isActive` gate there per the read of `cards.ts`), this is likely a non-issue — inactive only affects study-queue *inclusion*, not edit rights.
    - Recommendation: no extra `isActive`-on-deck check needed for `canEdit`; only the share's own `isActive` matters (Pitfall 5), consistent with how the rest of the codebase treats deck-level `isActive` as a study-queue filter, not an edit-permission gate.
