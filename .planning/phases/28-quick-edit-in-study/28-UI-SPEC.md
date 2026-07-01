@@ -1,7 +1,7 @@
 ---
 phase: 28
 slug: quick-edit-in-study
-status: draft
+status: approved
 shadcn_initialized: true
 preset: default / neutral / css-variables
 created: 2026-07-01
