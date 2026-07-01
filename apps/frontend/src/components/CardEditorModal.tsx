@@ -34,12 +34,15 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 // Use input type so zodResolver generic matches (tags has .default([]))
 type CardFormInput = z.input<typeof CreateCardSchema>
 
+type EditableCard = Pick<Card, 'id' | 'deckId' | 'frontContent' | 'backContent' | 'tags'>
+
 interface CardEditorModalProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   deckId: string
-  card?: Card
+  card?: EditableCard
   onSuccess: () => void
+  onCardUpdated?: (updated: EditableCard) => void
 }
 
 export function CardEditorModal({
@@ -48,6 +51,7 @@ export function CardEditorModal({
   deckId,
   card,
   onSuccess,
+  onCardUpdated,
 }: CardEditorModalProps) {
   const { t } = useTranslation()
   const isEdit = Boolean(card)
@@ -87,6 +91,10 @@ export function CardEditorModal({
         ? await api.patch(`/api/decks/${deckId}/cards/${card.id}`, payload)
         : await api.post(`/api/decks/${deckId}/cards`, payload)
       if (res.ok) {
+        if (isEdit) {
+          const updated = await res.json() as EditableCard
+          onCardUpdated?.(updated)
+        }
         toast.success(isEdit ? t('cardEditor.cardUpdated') : t('cardEditor.cardAdded'))
         onOpenChange(false)
         onSuccess()
