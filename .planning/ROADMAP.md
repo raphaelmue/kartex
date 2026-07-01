@@ -301,8 +301,8 @@ Plans:
 | 20. Logo & PWA Icons | v1.3.2 | 1/1 | Complete   | 2026-06-14 |
 | 21. Changelog | v1.3.2 | 1/1 | Complete   | 2026-06-14 |
 | 22. Study Session UX | v1.3.2 | 2/2 | Complete | 2026-06-15 |
-| 23. Auth Foundation | v1.4.0 | 4/4 | Complete   | 2026-06-23 |
-| 24. Email Invitations | v1.4.0 | 7/7 | Complete   | 2026-06-28 |
+| 23. Auth Foundation | v1.4.0 | 4/4 | Complete    | 2026-06-23 |
+| 24. Email Invitations | v1.4.0 | 7/7 | Complete    | 2026-06-28 |
 | 25. Password Reset | v1.4.0 | 5/5 | Complete   | 2026-06-29 |
 | 26. ABC Notation | v1.4.0 | 1/1 | Complete   | 2026-06-30 |
 | 27. Zip Deck Update | v1.4.0 | 2/2 | Complete   | 2026-06-30 |

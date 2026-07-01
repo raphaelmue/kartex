@@ -1,29 +1,36 @@
 ---
 phase: 23-auth-foundation
 verified: 2026-06-24T00:09:00Z
-status: human_needed
+status: passed
 score: 10/10
 behavior_unverified: 0
 overrides_applied: 0
 human_verification:
+
   - test: "Open the admin panel, verify the Email column shows each user's email or an em dash for null (ADMIN-05)"
     expected: "Email column visible in users table; null email renders as '—'"
     why_human: "Visual rendering and correct em-dash fallback require browser inspection; cannot be grepped"
+
   - test: "Click the 3-dot menu on a non-admin user → 'Delete user'; verify the dialog shows title 'Delete user?', description listing decks/cards/progress/review logs, and the confirm button stays DISABLED until you type the exact username (ADMIN-02, ADMIN-03)"
     expected: "Dialog appears with correct copy; confirm button enabled only after exact-username entry; deletion removes the user from the list"
     why_human: "Interactive AlertDialog + controlled Input behavior requires browser interaction"
+
   - test: "Attempt to delete your own account → expect toast 'You cannot delete your own account' (ADMIN-04 self-delete guard)"
     expected: "Toast displayed; no deletion occurs"
     why_human: "Toast rendering on server error code requires live app interaction"
+
   - test: "If only one active admin exists, attempt to delete that admin → expect toast 'Cannot delete the last admin account' (ADMIN-04 last-admin guard)"
     expected: "Toast displayed; no deletion occurs"
     why_human: "Requires a controlled admin-count database state to test"
+
   - test: "In the MailerSection, click 'Send test email' with no admin email set → expect toast 'Set your email address first' (EMAIL-02 NO_EMAIL guard)"
     expected: "Error toast shown; no email sent"
     why_human: "Requires live backend and a user account without an email address"
+
   - test: "With SMTP configured and admin email present, click 'Send test email' → expect toast 'Test email sent' and a real email delivered (EMAIL-02 happy path)"
     expected: "Success toast; email received at admin's inbox"
     why_human: "Requires a real SMTP server and a configured admin email — cannot be tested programmatically"
+
   - test: "Switch language to German and confirm all new admin.* strings are translated (no raw key strings like 'admin.deleteUser' visible)"
     expected: "All 16 new strings appear in German"
     why_human: "i18n rendering in the browser requires visual inspection"
@@ -134,6 +141,7 @@ No orphaned requirements: REQUIREMENTS.md maps exactly EMAIL-01, EMAIL-02, ADMIN
 ### Anti-Patterns Found
 
 No anti-patterns found. Scanned all 8 files modified by this phase:
+
 - No TBD, FIXME, or XXX markers
 - No TODO or HACK markers
 - No placeholder comments or hardcoded empty returns in production code paths

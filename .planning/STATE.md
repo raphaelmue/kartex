@@ -2,13 +2,13 @@
 gsd_state_version: 1.0
 milestone: v1.4.0
 milestone_name: Auth Overhaul & Study UX
-current_phase: 27
-current_phase_name: zip-deck-update
+current_phase: 25
+current_phase_name: Password Reset
 status: verifying
 stopped_at: Completed 27-01-PLAN.md
-last_updated: "2026-06-30T13:39:30.083Z"
-last_activity: 2026-06-30
-last_activity_desc: Phase 27 execution started
+last_updated: "2026-07-01T08:31:36.674Z"
+last_activity: 2026-07-01
+last_activity_desc: Phase 24 complete, transitioned to Phase 25
 progress:
   total_phases: 8
   completed_phases: 5
@@ -28,16 +28,16 @@ See: .planning/PROJECT.md (updated 2026-06-19)
 
 ## Current Position
 
-Phase: 27 (zip-deck-update) — EXECUTING
-Plan: 2 of 2
+Phase: 25 — Password Reset
+Plan: Not started
 Status: Phase complete — ready for verification
-Last activity: 2026-06-30 — Phase 27 execution started
+Last activity: 2026-07-01 — Phase 24 complete, transitioned to Phase 25
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 9
+- Total plans completed: 14
 - Average duration: ~6 min/plan
 - Total execution time: ~0.6 hours
 
@@ -53,6 +53,8 @@ Last activity: 2026-06-30 — Phase 27 execution started
 | 9 | 3/3 | ~24 min | ~8 min |
 | 10 | 4/5 | ~20 min | ~5 min |
 | 14 | 3 | - | - |
+| 23 | 4 | - | - |
+| 24 | 7 | - | - |
 
 **Recent Trend:**
 

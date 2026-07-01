@@ -46,10 +46,10 @@
 
 ### DECKU — Deck Update via .kartex.zip
 
-- [ ] **DECKU-01**: Deck update path accepts `.kartex.zip` files in addition to existing `.kartex`
-- [ ] **DECKU-02**: Media files from the zip's `media/` folder are extracted, validated (magic bytes), and stored
-- [ ] **DECKU-03**: Media references in updated card content are rewritten to new UUID filenames
-- [ ] **DECKU-04**: SM-2 progress for matched cards is untouched by the zip update
+- [x] **DECKU-01**: Deck update path accepts `.kartex.zip` files in addition to existing `.kartex`
+- [x] **DECKU-02**: Media files from the zip's `media/` folder are extracted, validated (magic bytes), and stored
+- [x] **DECKU-03**: Media references in updated card content are rewritten to new UUID filenames
+- [x] **DECKU-04**: SM-2 progress for matched cards is untouched by the zip update
 
 ### SEDIT — Quick-Edit in Study Mode
 
@@ -111,10 +111,10 @@
 | ABC-01 | Phase 26 | Pending |
 | ABC-02 | Phase 26 | Pending |
 | ABC-03 | Phase 26 | Pending |
-| DECKU-01 | Phase 27 | Pending |
-| DECKU-02 | Phase 27 | Pending |
-| DECKU-03 | Phase 27 | Pending |
-| DECKU-04 | Phase 27 | Pending |
+| DECKU-01 | Phase 27 | Complete |
+| DECKU-02 | Phase 27 | Complete |
+| DECKU-03 | Phase 27 | Complete |
+| DECKU-04 | Phase 27 | Complete |
 | SEDIT-01 | Phase 28 | Pending |
 | SEDIT-02 | Phase 28 | Pending |
 | SEDIT-03 | Phase 28 | Pending |
