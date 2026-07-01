@@ -239,7 +239,9 @@ Plans:
   3. Selecting "Jump to deck" navigates to the deck detail page
   4. The menu is completely absent (not just disabled) for users without edit permission
 
-**Plans**: TBD
+**Plans**: 2 plans
+- [ ] 28-01-PLAN.md — Backend: compute server-trusted canEdit flag in both study GET endpoints (SEDIT-01)
+- [ ] 28-02-PLAN.md — Frontend: StudyCardMenu, inline edit via CardEditorModal, jump-to-deck (SEDIT-01..04)
 **UI hint**: yes
 
 ### Phase 29: User Email Self-Service
