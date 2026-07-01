@@ -22,9 +22,14 @@ study.get('/due', async (c) => {
   // Deck IDs shared with this user where the share is active (D-03, D-10)
   const sharedRows = await prisma.deckShare.findMany({
     where: { sharedWithUserId: userId, isActive: true },
-    select: { deckId: true },
+    select: { deckId: true, permission: true },
   })
   const activeSharedDeckIds = sharedRows.map((r: { deckId: string }) => r.deckId)
+  const editableSharedDeckIds = new Set(
+    sharedRows
+      .filter((r: { permission: string }) => r.permission === 'EDIT' || r.permission === 'MANAGE')
+      .map((r: { deckId: string }) => r.deckId)
+  )
 
   const deckFilter = {
     OR: [
@@ -42,7 +47,7 @@ study.get('/due', async (c) => {
     },
     include: {
       card: {
-        include: { deck: { select: { id: true, title: true } } },
+        include: { deck: { select: { id: true, title: true, ownerId: true } } },
       },
     },
     orderBy: { nextReview: 'asc' },
@@ -57,7 +62,7 @@ study.get('/due', async (c) => {
       deck: deckFilter,
       progress: { none: { userId } },
     },
-    include: { deck: { select: { id: true, title: true } } },
+    include: { deck: { select: { id: true, title: true, ownerId: true } } },
     orderBy: { createdAt: 'asc' },
   })
 
@@ -72,6 +77,7 @@ study.get('/due', async (c) => {
     interval: p.interval,
     repetitions: p.repetitions,
     nextReview: p.nextReview.toISOString(),
+    canEdit: p.card.deck.ownerId === userId || editableSharedDeckIds.has(p.card.deckId),
   }))
 
   const newCards = neverSeen
@@ -87,6 +93,7 @@ study.get('/due', async (c) => {
       interval: 1,
       repetitions: 0,
       nextReview: undefined as string | undefined,
+      canEdit: card.deck.ownerId === userId || editableSharedDeckIds.has(card.deckId),
     }))
 
   const dueCards = [...progressCards, ...newCards]
@@ -102,12 +109,17 @@ study.get('/deck/:deckId', async (c) => {
 
   const deck = await prisma.deck.findUnique({ where: { id: deckId } })
   if (!deck) return c.json({ error: 'Not found.' }, 404)
+  let share: { permission: string; isActive: boolean } | null = null
   if (deck.ownerId !== userId) {
-    const share = await prisma.deckShare.findUnique({
+    share = await prisma.deckShare.findUnique({
       where: { deckId_sharedWithUserId: { deckId, sharedWithUserId: userId } },
+      select: { permission: true, isActive: true },
     })
     if (!share) return c.json({ error: 'Forbidden.' }, 403)
   }
+  const canEdit =
+    deck.ownerId === userId ||
+    ((share?.permission === 'EDIT' || share?.permission === 'MANAGE') && share?.isActive === true)
 
   const cards = await prisma.card.findMany({
     where: { deckId },
@@ -131,6 +143,7 @@ study.get('/deck/:deckId', async (c) => {
       interval: progress?.interval ?? 1,
       repetitions: progress?.repetitions ?? 0,
       nextReview: progress?.nextReview.toISOString(),
+      canEdit,
     }
   })
 
