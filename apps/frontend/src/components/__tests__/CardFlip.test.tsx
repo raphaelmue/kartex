@@ -19,6 +19,7 @@ const mockCard: DueCard = {
   easeFactor: 2.5,
   interval: 1,
   repetitions: 0,
+  canEdit: true,
 }
 
 describe('CardFlip', () => {
