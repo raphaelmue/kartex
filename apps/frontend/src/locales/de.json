@@ -257,7 +257,10 @@
     "backToDashboard": "Zurück zum Dashboard",
     "noActiveDecks": "Keine aktiven Decks",
     "noActiveDecksHint": "Gehen Sie zu \"Meine Decks\" und aktivieren Sie mindestens ein Deck.",
-    "deckBadgeAriaLabel": "Deck: {{deckTitle}}"
+    "deckBadgeAriaLabel": "Deck: {{deckTitle}}",
+    "cardMenuAriaLabel": "Weitere Aktionen",
+    "editThisCard": "Karte bearbeiten",
+    "jumpToDeck": "Zum Stapel springen"
   },
   "rating": {
     "again": "Nochmal",
