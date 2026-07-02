@@ -27,3 +27,23 @@ export const UpdateStudyModeSchema = z.object({
   studyMode: StudyModeSchema,
 })
 export type UpdateStudyModeInput = z.infer<typeof UpdateStudyModeSchema>
+
+export const UpdateEmailSchema = z.object({
+  email: z
+    .string()
+    .trim()
+    .toLowerCase()
+    .email('Valid email address required.'),
+})
+export type UpdateEmailInput = z.infer<typeof UpdateEmailSchema>
+
+// Combined schema for PATCH /me — mirrors admin.ts's optional-field-merge convention
+export const UpdateMeSchema = z
+  .object({
+    studyMode: StudyModeSchema.optional(),
+    email: z.string().trim().toLowerCase().email('Valid email address required.').optional(),
+  })
+  .refine((data) => data.studyMode !== undefined || data.email !== undefined, {
+    message: 'At least one field is required.',
+  })
+export type UpdateMeInput = z.infer<typeof UpdateMeSchema>
