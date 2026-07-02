@@ -414,10 +414,10 @@ function UsersSection() {
   const deleteTarget = users.find((u) => u.id === deleteTargetId)
   const editEmailTarget = users.find((u) => u.id === editEmailTargetId)
 
-  useEffect(() => {
-    adminEmailForm.reset({ email: editEmailTarget?.email ?? '' })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [editEmailTargetId])
+  const openEditEmailDialog = (targetUser: UserRecord) => {
+    adminEmailForm.reset({ email: targetUser.email ?? '' })
+    setEditEmailTargetId(targetUser.id)
+  }
 
   return (
     <Card>
@@ -530,7 +530,7 @@ function UsersSection() {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuItem
-                          onClick={() => setEditEmailTargetId(u.id)}
+                          onClick={() => openEditEmailDialog(u)}
                         >
                           {t('admin.editEmail')}
                         </DropdownMenuItem>
@@ -609,7 +609,7 @@ function UsersSection() {
             if (!open) setEditEmailTargetId(null)
           }}
         >
-          <DialogContent>
+          <DialogContent onOpenAutoFocus={(e) => e.preventDefault()}>
             <DialogHeader>
               <DialogTitle>{t('admin.editEmailDialogTitle')}</DialogTitle>
               <DialogDescription>
