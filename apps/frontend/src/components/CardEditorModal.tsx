@@ -43,6 +43,16 @@ interface CardEditorModalProps {
   card?: EditableCard
   onSuccess: () => void
   onCardUpdated?: (updated: EditableCard) => void
+  /**
+   * When true, skips Radix Dialog's default open-auto-focus behavior. Needed when this
+   * modal is opened as the direct result of a DropdownMenuItem selection (e.g. the study
+   * session's quick-edit menu): two Radix FocusScopes (the closing DropdownMenu's and this
+   * Dialog's) both trying to move focus in the same tick causes a focus/blur loop that
+   * crashes JSDOM test workers (radix-ui/primitives#1836 — not observed in real browsers).
+   * Defaults to false so other call sites (e.g. DeckDetailPage add/edit via a plain button)
+   * keep the standard accessible auto-focus-into-dialog behavior.
+   */
+  skipOpenAutoFocus?: boolean
 }
 
 export function CardEditorModal({
@@ -52,6 +62,7 @@ export function CardEditorModal({
   card,
   onSuccess,
   onCardUpdated,
+  skipOpenAutoFocus = false,
 }: CardEditorModalProps) {
   const { t } = useTranslation()
   const isEdit = Boolean(card)
@@ -108,7 +119,10 @@ export function CardEditorModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl">
+      <DialogContent
+        className="max-w-2xl"
+        onOpenAutoFocus={skipOpenAutoFocus ? (event) => event.preventDefault() : undefined}
+      >
         <DialogHeader>
           <DialogTitle>{isEdit ? t('cardEditor.editCard') : t('cardEditor.addCard')}</DialogTitle>
         </DialogHeader>

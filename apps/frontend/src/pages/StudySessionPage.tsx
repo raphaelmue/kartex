@@ -17,6 +17,8 @@ import { SessionProgress } from '@/components/SessionProgress'
 import { useStudySession, type StudyMode } from '@/hooks/useStudySession'
 import { useAuth } from '@/context/AuthContext'
 import { shuffle } from '@/lib/shuffle'
+import { StudyCardMenu } from '@/components/StudyCardMenu'
+import { CardEditorModal } from '@/components/CardEditorModal'
 
 // EXAM_DURATIONS and SIZE_OPTIONS are computed inside the component using t() — see StudySessionPage
 
@@ -28,6 +30,7 @@ function SessionRunner({
   deckId,
   studyMode,
   onRestart,
+  onCardUpdated,
 }: {
   cards: DueCard[]
   mode: StudyMode
@@ -35,12 +38,14 @@ function SessionRunner({
   deckId?: string
   studyMode: string
   onRestart: () => void
+  onCardUpdated: (updated: DueCard) => void
 }) {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const [examExpired, setExamExpired] = useState(false)
   const [startTime] = useState(() => Date.now())
   const [endTime, setEndTime] = useState<number | null>(null)
+  const [editorOpen, setEditorOpen] = useState(false)
 
   const { currentCard, face, isFlipping, sessionDone, progress, ratingCounts, flip, rate } =
     useStudySession(cards, mode)
@@ -107,6 +112,11 @@ function SessionRunner({
 
   if (!currentCard) return null
 
+  // SEDIT-03: jump to the card's own deck (not the `deckId` prop — undefined in global SR mode)
+  const handleJumpToDeck = () => {
+    navigate(`/decks/${currentCard.deckId}`)
+  }
+
   const isFlipped = face === 'back'
 
   return (
@@ -150,6 +160,9 @@ function SessionRunner({
             {t(`settings.modeNames.${studyMode}`)}
           </Badge>
         )}
+        {currentCard.canEdit && (
+          <StudyCardMenu onEdit={() => setEditorOpen(true)} onJumpToDeck={handleJumpToDeck} />
+        )}
       </div>
 
       {/* Card flip + rating buttons: fills remaining height */}
@@ -166,6 +179,19 @@ function SessionRunner({
           />
         </CardFlip>
       </div>
+
+      {/* Quick-edit modal (SEDIT-02) — reuses CardEditorModal, spread-merges the response.
+          skipOpenAutoFocus avoids a Radix DropdownMenu + Dialog FocusScope conflict — this
+          modal is opened directly from a StudyCardMenu DropdownMenuItem selection. */}
+      <CardEditorModal
+        open={editorOpen}
+        onOpenChange={setEditorOpen}
+        deckId={currentCard.deckId}
+        card={currentCard}
+        onSuccess={() => {}}
+        onCardUpdated={(updated) => onCardUpdated({ ...currentCard, ...updated })}
+        skipOpenAutoFocus
+      />
     </div>
   )
 }
@@ -730,6 +756,9 @@ export function StudySessionPage() {
       deckId={deckId}
       studyMode={user?.studyMode ?? 'normal'}
       onRestart={handlePageRestart}
+      onCardUpdated={(updated) =>
+        setCards((prev) => prev?.map((c) => (c.id === updated.id ? { ...c, ...updated } : c)) ?? prev)
+      }
     />
   )
 }

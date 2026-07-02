@@ -27,7 +27,18 @@ export function StudyCardMenu({ onEdit, onJumpToDeck }: StudyCardMenuProps) {
           <MoreVertical className="h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
+      <DropdownMenuContent
+        align="end"
+        onCloseAutoFocus={(event) => {
+          // Prevent Radix from returning focus to the trigger button when this menu
+          // closes. Without this, selecting "Edit this card" races Radix's own
+          // close-focus-return against CardEditorModal's Dialog FocusScope trying to
+          // claim focus at nearly the same moment — two FocusScopes fighting over
+          // document.activeElement in the same tick (radix-ui/primitives#1836,
+          // JSDOM-specific: no such issue observed in real browsers).
+          event.preventDefault()
+        }}
+      >
         <DropdownMenuItem onClick={onEdit}>{t('study.editThisCard')}</DropdownMenuItem>
         <DropdownMenuItem onClick={onJumpToDeck}>{t('study.jumpToDeck')}</DropdownMenuItem>
       </DropdownMenuContent>
