@@ -263,7 +263,11 @@ Plans:
   4. Settings page shows a prominent warning when email is null, explaining that password reset requires an email address
   5. Admin can set or update any user's email from the admin panel user dropdown
 
-**Plans**: TBD
+**Plans**: 4 plans
+- [ ] 29-01-PLAN.md — Backend & shared schema: UpdateEmailSchema/UpdateMeSchema, GET/PATCH /me email, admin PATCH /users/:id email + EMAIL_TAKEN
+- [ ] 29-02-PLAN.md — Foundation: AuthContext User.email, i18n keys (both locales), REQUIREMENTS.md reconciliation
+- [ ] 29-03-PLAN.md — Settings Email Card + no-email Alert banner (EMAIL-09, EMAIL-10)
+- [ ] 29-04-PLAN.md — Admin Edit Email Dialog from the per-row dropdown (EMAIL-11)
 **UI hint**: yes
 
 ### Phase 30: Study Timers & Stats

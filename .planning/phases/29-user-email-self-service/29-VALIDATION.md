@@ -2,7 +2,7 @@
 phase: 29
 slug: user-email-self-service
 status: draft
-nyquist_compliant: false
+nyquist_compliant: true
 wave_0_complete: false
 created: 2026-07-02
 ---
@@ -36,14 +36,15 @@ created: 2026-07-02
 
 ## Per-Task Verification Map
 
-*Task IDs are not yet assigned — planning (step 8) has not run. Rows below are keyed by requirement, sourced from `29-RESEARCH.md` §Validation Architecture. The planner should reconcile these into real `{phase}-{plan}-{task}` IDs when PLAN.md files are created.*
+*Task IDs reconciled to real `{plan}-{task}` IDs on 2026-07-02 after PLAN.md creation.*
 
 | Task ID | Plan | Wave | Requirement | Threat Ref | Secure Behavior | Test Type | Automated Command | File Exists | Status |
 |---------|------|------|-------------|------------|-----------------|-----------|-------------------|-------------|--------|
-| TBD | TBD | TBD | EMAIL-09 | — | `GET /me` returns `email` (null-safe) | structural (`it.todo`) | new stub in `auth-me.test.ts` | ❌ W0 — no existing `auth.ts` test file | ⬜ pending |
-| TBD | TBD | TBD | EMAIL-09 | V5 Input Validation | `PATCH /me` accepts `{ email }`, rejects duplicate (409 `EMAIL_TAKEN`), rejects bad format (400) | structural (`it.todo`) + frontend RTL | `it.todo` stubs (backend) + `SettingsPage.test.tsx` new cases | ⚠️ Partial — file exists, needs new cases | ⬜ pending |
-| TBD | TBD | TBD | EMAIL-10 | — | No-email Alert renders when `user.email == null`, hidden otherwise | frontend RTL | `SettingsPage.test.tsx` (`getByRole('alert')` / `queryByRole`) | ⚠️ Partial — file exists, needs new cases | ⬜ pending |
-| TBD | TBD | TBD | EMAIL-11 | V4 Access Control | `PATCH /users/:id` accepts `{ email }` (admin), same conflict/format handling | structural (`it.todo`) + frontend RTL | `it.todo` stubs (backend) + `AdminPage.test.tsx` new cases | ⚠️ Partial — file exists, needs new cases | ⬜ pending |
+| 29-01-T1 | 29-01 | 1 | EMAIL-09 | V5 Input Validation | Shared schema normalizes trim+lowercase before `.email()` (real unit test); route behaviors as `it.todo` | real unit + structural (`it.todo`) | `yarn workspace @kartex/backend test run auth-me` | ❌→ W0 creates `auth-me.test.ts` | ⬜ pending |
+| 29-01-T2 | 29-01 | 1 | EMAIL-09, EMAIL-10 | V5 Input Validation | `GET /me` returns `email` (null-safe); `PATCH /me` accepts `{ email }`, duplicate → 409 `EMAIL_TAKEN`, bad format → 400 | structural (`it.todo`) | `yarn workspace @kartex/backend test run auth-me` | ✅ created in 29-01-T1 | ⬜ pending |
+| 29-01-T3 | 29-01 | 1 | EMAIL-11 | V4 Access Control, T-29-01/02 | `PATCH /users/:id` accepts validated `{ email }` (admin), same conflict/format handling | structural (`it.todo`) | `yarn workspace @kartex/backend test run admin-email` | ❌→ W0 creates `admin-email.test.ts` | ⬜ pending |
+| 29-03-T2 | 29-03 | 2 | EMAIL-09, EMAIL-10 | T-29-03 | Email Card save (valid → setUser+toast, `EMAIL_TAKEN` → inline, invalid → inline, no api call); no-email Alert visibility | frontend RTL | `yarn workspace @kartex/frontend test run SettingsPage` | ⚠️ Partial — file exists, new cases added | ⬜ pending |
+| 29-04-T2 | 29-04 | 2 | EMAIL-11 | V4 Access Control, T-29-03 | Edit Email Dialog (menu order, pre-fill, valid save → patch+toast+refresh+close, `EMAIL_TAKEN` → inline) | frontend RTL | `yarn workspace @kartex/frontend test run AdminPage` | ⚠️ Partial — file exists, new cases added | ⬜ pending |
 
 *Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
 
