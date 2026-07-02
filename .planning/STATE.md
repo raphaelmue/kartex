@@ -6,14 +6,14 @@ current_phase: 29
 current_phase_name: user-email-self-service
 status: executing
 stopped_at: Phase 29 UI-SPEC approved
-last_updated: "2026-07-02T14:36:36.737Z"
+last_updated: "2026-07-02T14:47:51.873Z"
 last_activity: 2026-07-02
 last_activity_desc: Phase 29 execution started
 progress:
   total_phases: 8
   completed_phases: 6
   total_plans: 25
-  completed_plans: 22
+  completed_plans: 23
   percent: 75
 ---
 
@@ -29,7 +29,7 @@ See: .planning/PROJECT.md (updated 2026-06-19)
 ## Current Position
 
 Phase: 29 (user-email-self-service) — EXECUTING
-Plan: 2 of 4
+Plan: 3 of 4
 Status: Ready to execute
 Last activity: 2026-07-02 — Phase 29 execution started
 
@@ -96,6 +96,7 @@ Last activity: 2026-07-02 — Phase 29 execution started
 | Phase 27 P02 | 4 minutes | 2 tasks | 3 files |
 | Phase 28 P02 | ~55 min | 3 tasks | 5 files |
 | Phase 29 P01 | 15min | 3 tasks | 5 files |
+| Phase 29 P02 | 6min | 3 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -245,6 +246,8 @@ Recent decisions affecting current work:
 - [Phase 28-02]: handleJumpToDeck uses currentCard.deckId, not the SessionRunner deckId prop (undefined in global SR mode)
 - [Phase ?]: 29-01: Dropped now-unused UpdateStudyModeSchema import from auth.ts (lint no-unused-vars error) after PATCH /me switched to UpdateMeSchema
 - [Phase ?]: 29-01: admin.ts PATCH /users/:id validates email via explicit Zod one-liner rather than raw cast, preserving mass-assignment whitelist discipline (T-29-01)
+- [Phase ?]: 29-02: email: string | null added to AuthContext User interface as a type-only change — no provider logic touched
+- [Phase ?]: 29-02: REQUIREMENTS.md deferred note narrowed to only the email re-verification sub-flow; self-service + admin email edit are now enumerated as EMAIL-09/10/11
 
 ### Pending Todos
 
@@ -297,6 +300,6 @@ Items acknowledged and deferred at milestone close on 2026-05-30:
 
 **Resume file:** .planning/phases/29-user-email-self-service/29-UI-SPEC.md
 
-Last session: 2026-07-02T14:35:26.389Z
+Last session: 2026-07-02T14:45:05.682Z
 Stopped at: Phase 29 UI-SPEC approved
 Resume with: `/gsd-plan-phase 23` — Auth Foundation
