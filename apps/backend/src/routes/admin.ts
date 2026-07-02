@@ -2,6 +2,7 @@ import { randomBytes, createHash } from 'node:crypto'
 import { unlink } from 'node:fs/promises'
 import { z } from 'zod'
 import { Hono } from 'hono'
+import { Prisma } from '@prisma/client'
 import { prisma } from '../lib/prisma.js'
 import { sendMail, isConfigured, verifyConnection } from '../lib/mailer.js'
 
@@ -31,7 +32,7 @@ admin.patch('/users/:id', async (c) => {
   const { id } = c.req.param()
   const authenticatedUserId = c.get('userId')
 
-  let body: { role?: string; isActive?: boolean }
+  let body: { role?: string; isActive?: boolean; email?: string }
   try {
     body = await c.req.json()
   } catch {
@@ -48,6 +49,16 @@ admin.patch('/users/:id', async (c) => {
     return c.json({ error: 'isActive must be a boolean.' }, 400)
   }
 
+  // Validate + normalize email if provided (Pitfall 4 — explicit Zod check, not a raw cast)
+  let normalizedEmail: string | undefined
+  if (body.email !== undefined) {
+    const parsedEmail = z.string().trim().toLowerCase().email().safeParse(body.email)
+    if (!parsedEmail.success) {
+      return c.json({ error: 'Valid email address required.' }, 400)
+    }
+    normalizedEmail = parsedEmail.data
+  }
+
   // T-02-08: Prevent admin self-deactivation
   if (id === authenticatedUserId && body.isActive === false) {
     return c.json({ error: 'Cannot deactivate your own account.' }, 400)
@@ -59,23 +70,34 @@ admin.patch('/users/:id', async (c) => {
     return c.json({ error: 'User not found.' }, 404)
   }
 
-  const data: { role?: 'ADMIN' | 'USER'; isActive?: boolean } = {}
+  // T-29-01: Explicit whitelist — never spread raw ...body into the Prisma data object
+  const data: { role?: 'ADMIN' | 'USER'; isActive?: boolean; email?: string } = {}
   if (body.role !== undefined) data.role = body.role as 'ADMIN' | 'USER'
   if (body.isActive !== undefined) data.isActive = body.isActive
+  if (normalizedEmail !== undefined) data.email = normalizedEmail
 
-  const updated = await prisma.user.update({
-    where: { id },
-    data,
-    select: {
-      id: true,
-      username: true,
-      role: true,
-      isActive: true,
-      createdAt: true,
-    },
-  })
+  try {
+    const updated = await prisma.user.update({
+      where: { id },
+      data,
+      select: {
+        id: true,
+        username: true,
+        role: true,
+        isActive: true,
+        createdAt: true,
+        email: true,
+      },
+    })
 
-  return c.json(updated, 200)
+    return c.json(updated, 200)
+  } catch (err) {
+    // D-08: Duplicate email — unique index is the race-safe gate (no pre-check, no transaction)
+    if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === 'P2002') {
+      return c.json({ error: 'EMAIL_TAKEN' }, 409)
+    }
+    throw err
+  }
 })
 
 // ─── DELETE /users/:id ────────────────────────────────────────────────────────
