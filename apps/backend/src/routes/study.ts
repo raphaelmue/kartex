@@ -115,7 +115,7 @@ study.get('/deck/:deckId', async (c) => {
       where: { deckId_sharedWithUserId: { deckId, sharedWithUserId: userId } },
       select: { permission: true, isActive: true },
     })
-    if (!share) return c.json({ error: 'Forbidden.' }, 403)
+    if (!share || !share.isActive) return c.json({ error: 'Forbidden.' }, 403)
   }
   const canEdit =
     deck.ownerId === userId ||
