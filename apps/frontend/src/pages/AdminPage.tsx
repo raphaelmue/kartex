@@ -1,4 +1,7 @@
+import { zodResolver } from '@hookform/resolvers/zod'
 import { useEffect, useState } from 'react'
+import type { Resolver } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 
@@ -20,12 +23,28 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import {
   Table,
@@ -37,7 +56,8 @@ import {
 } from '@/components/ui/table'
 import { useAuth } from '@/context/AuthContext'
 import { api } from '@/lib/api'
-import { InviteTokenResponse } from '@kartex/shared'
+import type { UpdateEmailInput } from '@kartex/shared'
+import { InviteTokenResponse, UpdateEmailSchema } from '@kartex/shared'
 import { Loader2, MoreVertical, Trash2 } from 'lucide-react'
 
 // ---- Types ----
@@ -250,6 +270,26 @@ function UsersSection() {
   const [confirmDeactivateId, setConfirmDeactivateId] = useState<string | null>(null)
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null)
   const [usernameInput, setUsernameInput] = useState('')
+  const [editEmailTargetId, setEditEmailTargetId] = useState<string | null>(null)
+
+  // Wraps zodResolver so the inline format-error message renders the localized
+  // admin.emailInvalid copy instead of Zod's raw schema-level English default
+  // (mirrors the SettingsPage.tsx emailResolver pattern).
+  const adminEmailResolver: Resolver<UpdateEmailInput> = async (values, context, options) => {
+    const result = await zodResolver(UpdateEmailSchema)(values, context, options)
+    if (result.errors.email) {
+      result.errors.email = {
+        ...result.errors.email,
+        message: t('admin.emailInvalid'),
+      }
+    }
+    return result
+  }
+
+  const adminEmailForm = useForm<UpdateEmailInput>({
+    resolver: adminEmailResolver,
+    defaultValues: { email: '' },
+  })
 
   const fetchUsers = async () => {
     try {
@@ -349,7 +389,35 @@ function UsersSection() {
     }
   }
 
+  const onAdminEmailSubmit = async (values: UpdateEmailInput) => {
+    if (!editEmailTargetId) return
+    try {
+      const res = await api.patch(`/api/admin/users/${editEmailTargetId}`, values)
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}))
+        const errorCode = (body as { error?: string }).error
+        if (errorCode === 'EMAIL_TAKEN') {
+          adminEmailForm.setError('email', { message: t('admin.emailTaken') })
+        } else {
+          toast.error(t('common.somethingWrong'))
+        }
+        return
+      }
+      toast.success(t('admin.emailUpdated'))
+      setEditEmailTargetId(null)
+      await fetchUsers()
+    } catch {
+      toast.error(t('common.somethingWrong'))
+    }
+  }
+
   const deleteTarget = users.find((u) => u.id === deleteTargetId)
+  const editEmailTarget = users.find((u) => u.id === editEmailTargetId)
+
+  useEffect(() => {
+    adminEmailForm.reset({ email: editEmailTarget?.email ?? '' })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editEmailTargetId])
 
   return (
     <Card>
@@ -462,6 +530,11 @@ function UsersSection() {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuItem
+                          onClick={() => setEditEmailTargetId(u.id)}
+                        >
+                          {t('admin.editEmail')}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
                           onClick={() => void handleSendPasswordReset(u.id)}
                         >
                           {t('admin.sendPasswordReset')}
@@ -528,6 +601,58 @@ function UsersSection() {
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
+
+        {/* Single shared Dialog outside the map loop — controlled by editEmailTargetId */}
+        <Dialog
+          open={editEmailTargetId !== null}
+          onOpenChange={(open) => {
+            if (!open) setEditEmailTargetId(null)
+          }}
+        >
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>{t('admin.editEmailDialogTitle')}</DialogTitle>
+              <DialogDescription>
+                {t('admin.editEmailDialogDesc', { username: editEmailTarget?.username })}
+              </DialogDescription>
+            </DialogHeader>
+            <Form {...adminEmailForm}>
+              <form
+                onSubmit={adminEmailForm.handleSubmit(onAdminEmailSubmit)}
+                noValidate
+                className="space-y-4"
+              >
+                <FormField
+                  control={adminEmailForm.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t('admin.emailLabel')}</FormLabel>
+                      <FormControl>
+                        <Input type="email" autoComplete="email" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <DialogFooter>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setEditEmailTargetId(null)}
+                  >
+                    {t('admin.keepCurrentEmail')}
+                  </Button>
+                  <Button type="submit" disabled={adminEmailForm.formState.isSubmitting}>
+                    {adminEmailForm.formState.isSubmitting
+                      ? t('settings.emailSaving')
+                      : t('admin.saveEmail')}
+                  </Button>
+                </DialogFooter>
+              </form>
+            </Form>
+          </DialogContent>
+        </Dialog>
       </CardContent>
     </Card>
   )
