@@ -3,7 +3,8 @@ import { Hono } from 'hono'
 import { getCookie, setCookie, deleteCookie } from 'hono/cookie'
 import bcrypt from 'bcryptjs'
 import { randomBytes, createHash } from 'node:crypto'
-import { LoginSchema, RegisterSchema, UpdateStudyModeSchema, PasswordResetRequestSchema, PasswordResetSchema } from '@kartex/shared'
+import { Prisma } from '@prisma/client'
+import { LoginSchema, RegisterSchema, UpdateMeSchema, PasswordResetRequestSchema, PasswordResetSchema } from '@kartex/shared'
 import { prisma } from '../lib/prisma.js'
 import { signToken } from '../lib/jwt.js'
 import { authMiddleware } from '../middleware/auth.js'
@@ -237,7 +238,7 @@ auth.get('/me', authMiddleware, async (c) => {
   // T-02-07: Select only safe fields — no passwordHash
   const user = await prisma.user.findUnique({
     where: { id: userId },
-    select: { id: true, username: true, role: true, isActive: true, studyMode: true, createdAt: true },
+    select: { id: true, username: true, role: true, isActive: true, studyMode: true, createdAt: true, email: true },
   })
 
   if (!user) {
@@ -248,22 +249,36 @@ auth.get('/me', authMiddleware, async (c) => {
 })
 
 // ─── PATCH /me ─────────────────────────────────────────────────────────────────
+// EMAIL-10/EMAIL-11: Accepts { studyMode } and/or { email } independently.
+// Email is already trim+lowercased by UpdateMeSchema before it reaches Prisma.
 
 auth.patch('/me', authMiddleware, async (c) => {
-  const body = UpdateStudyModeSchema.safeParse(await c.req.json())
+  const body = UpdateMeSchema.safeParse(await c.req.json())
   if (!body.success) {
     return c.json({ error: 'Validation failed.', details: body.error.flatten() }, 400)
   }
 
   const userId = c.get('userId')
 
-  const updated = await prisma.user.update({
-    where: { id: userId },
-    data: { studyMode: body.data.studyMode },
-    select: { id: true, username: true, role: true, isActive: true, studyMode: true, createdAt: true },
-  })
+  const data: { studyMode?: (typeof body.data)['studyMode']; email?: string } = {}
+  if (body.data.studyMode !== undefined) data.studyMode = body.data.studyMode
+  if (body.data.email !== undefined) data.email = body.data.email
 
-  return c.json(updated, 200)
+  try {
+    const updated = await prisma.user.update({
+      where: { id: userId },
+      data,
+      select: { id: true, username: true, role: true, isActive: true, studyMode: true, createdAt: true, email: true },
+    })
+
+    return c.json(updated, 200)
+  } catch (err) {
+    // D-08: Duplicate email — unique index is the race-safe gate (no pre-check, no transaction)
+    if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === 'P2002') {
+      return c.json({ error: 'EMAIL_TAKEN' }, 409)
+    }
+    throw err
+  }
 })
 
 // ─── POST /forgot-password ────────────────────────────────────────────────────
