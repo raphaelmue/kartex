@@ -5,8 +5,8 @@ milestone_name: Auth Overhaul & Study UX
 current_phase: 29
 current_phase_name: User Email Self-Service
 status: executing
-stopped_at: Phase 29 context gathered
-last_updated: "2026-07-02T09:59:01.767Z"
+stopped_at: Phase 29 UI-SPEC approved
+last_updated: "2026-07-02T13:18:13.417Z"
 last_activity: 2026-07-02
 last_activity_desc: Phase 28 complete, transitioned to Phase 29
 progress:
@@ -292,8 +292,8 @@ Items acknowledged and deferred at milestone close on 2026-05-30:
 
 ## Session Continuity
 
-**Resume file:** .planning/phases/29-user-email-self-service/29-CONTEXT.md
+**Resume file:** .planning/phases/29-user-email-self-service/29-UI-SPEC.md
 
-Last session: 2026-07-02T09:59:01.753Z
-Stopped at: Phase 29 context gathered
+Last session: 2026-07-02T13:18:13.380Z
+Stopped at: Phase 29 UI-SPEC approved
 Resume with: `/gsd-plan-phase 23` — Auth Foundation
