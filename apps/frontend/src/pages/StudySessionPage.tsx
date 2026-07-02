@@ -188,6 +188,8 @@ function SessionRunner({
         onOpenChange={setEditorOpen}
         deckId={currentCard.deckId}
         card={currentCard}
+        // onSuccess unused here — onCardUpdated below handles the in-place update; no full
+        // list refetch is needed in a study session
         onSuccess={() => {}}
         onCardUpdated={(updated) => onCardUpdated({ ...currentCard, ...updated })}
         skipOpenAutoFocus
