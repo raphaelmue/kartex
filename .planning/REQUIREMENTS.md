@@ -18,6 +18,9 @@
 - [x] **EMAIL-06**: Invitation link is single-use; subsequent clicks show a clear "already used" error page
 - [x] **EMAIL-07**: Admin can see pending (unused, non-expired) invitations in the admin panel
 - [x] **EMAIL-08**: Admin can revoke a pending invitation
+- [ ] **EMAIL-09**: User can add/update their own email address from Settings
+- [ ] **EMAIL-10**: Settings shows a no-email warning explaining that password reset requires an email address
+- [ ] **EMAIL-11**: Admin can set/update any user's email address from the admin panel
 
 ### RESET — Password Reset
 
@@ -62,8 +65,7 @@
 
 ## Future Requirements (deferred)
 
-- **Email verification flow** — confirm ownership of email address after registration; deferred in favour of invite-trust model for small groups
-- **Self-service email update** — user changes their own email (requires re-verification sub-flow); admin update of user email is sufficient for v1.4
+- **Email verification flow** — confirm ownership of email address after a self-service or admin email change; Phase 29 ships self-service + admin email edit without a re-verification step (invite-trust model for small groups); the verification sub-flow itself remains deferred
 - **Force-logout all sessions for a user without reset** — admin security incident tool; adjacent to admin reset, deferred
 - **Return-to-study context after card edit navigation** — store session in sessionStorage for back-button restoration; deferred (inline CardEditorModal achieves same UX)
 - **ABC audio playback** — abcjs WebAudio synthesis; significant complexity + AudioContext permission; deferred to v2
@@ -100,6 +102,9 @@
 | EMAIL-06 | Phase 24 | Complete |
 | EMAIL-07 | Phase 24 | Complete |
 | EMAIL-08 | Phase 24 | Complete |
+| EMAIL-09 | Phase 29 | Pending |
+| EMAIL-10 | Phase 29 | Pending |
+| EMAIL-11 | Phase 29 | Pending |
 | RESET-01 | Phase 25 | Complete |
 | RESET-02 | Phase 25 | Complete |
 | RESET-03 | Phase 25 | Complete |
@@ -120,4 +125,4 @@
 | SEDIT-03 | Phase 28 | Complete |
 | SEDIT-04 | Phase 28 | Complete |
 
-*Traceability updated 2026-06-21 after roadmap creation. 28/28 requirements mapped.*
+*Traceability updated 2026-07-02 after Phase 29 planning. 31/31 requirements mapped.*
