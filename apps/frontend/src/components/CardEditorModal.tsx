@@ -81,6 +81,8 @@ export function CardEditorModal({
   // Refs for cursor-position media insertion (D-03)
   const frontRef = useRef<HTMLTextAreaElement | null>(null)
   const backRef = useRef<HTMLTextAreaElement | null>(null)
+  // Deferred-focus target for skipOpenAutoFocus (CR-01) — see onOpenAutoFocus below
+  const contentRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
     if (open) {
@@ -121,7 +123,22 @@ export function CardEditorModal({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         className="max-w-2xl"
-        onOpenAutoFocus={skipOpenAutoFocus ? (event) => event.preventDefault() : undefined}
+        ref={contentRef}
+        onOpenAutoFocus={
+          skipOpenAutoFocus
+            ? (event) => {
+                // Defer focus by one frame so the closing DropdownMenu's FocusScope has
+                // settled before this Dialog's FocusScope claims focus (avoids the JSDOM
+                // race in radix-ui/primitives#1836) — but still move focus into the dialog
+                // (matching Radix's default behavior) so keyboard/screen-reader users don't
+                // lose focus to document.body (CR-01).
+                event.preventDefault()
+                requestAnimationFrame(() => {
+                  contentRef.current?.focus()
+                })
+              }
+            : undefined
+        }
       >
         <DialogHeader>
           <DialogTitle>{isEdit ? t('cardEditor.editCard') : t('cardEditor.addCard')}</DialogTitle>
