@@ -12,6 +12,7 @@ export interface User {
   isActive: boolean
   studyMode: StudyMode
   createdAt: string
+  email: string | null
 }
 
 interface AuthContextValue {
