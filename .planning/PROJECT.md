@@ -11,7 +11,7 @@
 - Admin: trigger password reset — sends reset email to any user from the admin panel
 - Admin: delete user — permanent account deletion with confirmation (cascades decks + progress)
 - Deck update via `.kartex.zip` — extend import-update path to accept zip bundles with media/ folder
-- Quick-edit in study mode — 3-dot menu on study cards for owners/edit-access to edit card or jump to deck
+- Quick-edit in study mode — 3-dot menu on study cards for owners/edit-access to edit card or jump to deck ✓ (Phase 28, 2026-07-02)
 - ABC notation rendering — `#abc` fenced blocks in card content render as sheet music via abcjs
 
 ## Previous: v1.3.2 — SHIPPED 2026-06-15
@@ -199,4 +199,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-06-19 — v1.4.0 milestone started (Auth Overhaul & Study UX). Requirements in REQUIREMENTS.md.*
+*Last updated: 2026-07-02 — Phase 28 (Quick-Edit in Study) complete. Requirements in REQUIREMENTS.md.*
