@@ -89,7 +89,7 @@ Full details: [.planning/milestones/v1.3.2-ROADMAP.md](milestones/v1.3.2-ROADMAP
 - [x] **Phase 25: Password Reset** - PasswordResetToken model, forgot/reset pages, admin-triggered reset (completed 2026-06-29)
 - [x] **Phase 26: ABC Notation** - abcjs integration, AbcBlock renderer component, responsive SVG in cards (completed 2026-06-30)
 - [x] **Phase 27: Zip Deck Update** - Shared importMedia helper, deck update path accepts .kartex.zip (completed 2026-06-30)
-- [ ] **Phase 28: Quick-Edit in Study** - 3-dot study card menu for owners/editors, inline card edit, jump-to-deck
+- [x] **Phase 28: Quick-Edit in Study** - 3-dot study card menu for owners/editors, inline card edit, jump-to-deck (completed 2026-07-02)
 
 - [ ] **Phase 29: User Email Self-Service** - Email field in Settings page, no-email warning, admin email edit
 - [ ] **Phase 30: Study Timers & Stats** - Card flip timer, session duration timer, both surfaced in statistics
@@ -239,14 +239,14 @@ Plans:
   3. Selecting "Jump to deck" navigates to the deck detail page
   4. The menu is completely absent (not just disabled) for users without edit permission
 
-**Plans**: 1/2 plans executed
+**Plans**: 2/2 plans complete
 **Wave 1**
 
 - [x] 28-01-PLAN.md — Backend: compute server-trusted canEdit flag in both study GET endpoints (SEDIT-01)
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] 28-02-PLAN.md — Frontend: StudyCardMenu, inline edit via CardEditorModal, jump-to-deck (SEDIT-01..04)
+- [x] 28-02-PLAN.md — Frontend: StudyCardMenu, inline edit via CardEditorModal, jump-to-deck (SEDIT-01..04)
 
 **UI hint**: yes
 
@@ -314,6 +314,6 @@ Plans:
 | 25. Password Reset | v1.4.0 | 5/5 | Complete   | 2026-06-29 |
 | 26. ABC Notation | v1.4.0 | 1/1 | Complete   | 2026-06-30 |
 | 27. Zip Deck Update | v1.4.0 | 2/2 | Complete    | 2026-06-30 |
-| 28. Quick-Edit in Study | v1.4.0 | 1/2 | In Progress|  |
+| 28. Quick-Edit in Study | v1.4.0 | 2/2 | Complete   | 2026-07-02 |
 | 29. User Email Self-Service | v1.4.0 | 0/? | Not started | - |
 | 30. Study Timers & Stats | v1.4.0 | 0/? | Not started | - |

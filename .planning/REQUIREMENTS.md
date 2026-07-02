@@ -53,10 +53,10 @@
 
 ### SEDIT — Quick-Edit in Study Mode
 
-- [ ] **SEDIT-01**: Study cards show a 3-dot overflow menu when the current user has owner or EDIT permission on that card's deck
-- [ ] **SEDIT-02**: Menu option "Edit this card" opens the card editor inline (CardEditorModal, session continues after save)
-- [ ] **SEDIT-03**: Menu option "Jump to deck" navigates to the deck detail page
-- [ ] **SEDIT-04**: Menu is hidden (not disabled) for users without edit permission
+- [x] **SEDIT-01**: Study cards show a 3-dot overflow menu when the current user has owner or EDIT permission on that card's deck
+- [x] **SEDIT-02**: Menu option "Edit this card" opens the card editor inline (CardEditorModal, session continues after save)
+- [x] **SEDIT-03**: Menu option "Jump to deck" navigates to the deck detail page
+- [x] **SEDIT-04**: Menu is hidden (not disabled) for users without edit permission
 
 ---
 
@@ -115,9 +115,9 @@
 | DECKU-02 | Phase 27 | Complete |
 | DECKU-03 | Phase 27 | Complete |
 | DECKU-04 | Phase 27 | Complete |
-| SEDIT-01 | Phase 28 | Pending |
-| SEDIT-02 | Phase 28 | Pending |
-| SEDIT-03 | Phase 28 | Pending |
-| SEDIT-04 | Phase 28 | Pending |
+| SEDIT-01 | Phase 28 | Complete |
+| SEDIT-02 | Phase 28 | Complete |
+| SEDIT-03 | Phase 28 | Complete |
+| SEDIT-04 | Phase 28 | Complete |
 
 *Traceability updated 2026-06-21 after roadmap creation. 28/28 requirements mapped.*

@@ -5,16 +5,16 @@ milestone_name: Auth Overhaul & Study UX
 current_phase: 28
 current_phase_name: quick-edit-in-study
 status: executing
-stopped_at: Phase 28 UI-SPEC approved
-last_updated: "2026-07-01T19:46:27.287Z"
+stopped_at: Completed 28-02-PLAN.md
+last_updated: "2026-07-02T08:27:50.348Z"
 last_activity: 2026-07-01
 last_activity_desc: Phase 28 execution resumed (wave continue)
 progress:
   total_phases: 8
-  completed_phases: 5
+  completed_phases: 6
   total_plans: 21
-  completed_plans: 19
-  percent: 63
+  completed_plans: 21
+  percent: 75
 ---
 
 # Project State
@@ -29,8 +29,8 @@ See: .planning/PROJECT.md (updated 2026-06-19)
 ## Current Position
 
 Phase: 28 (quick-edit-in-study) — EXECUTING
-Plan: 1 of 2
-Status: Executing Phase 28
+Plan: 2 of 2
+Status: Ready to execute
 Last activity: 2026-07-01 — Phase 28 execution resumed (wave continue)
 
 ## Performance Metrics
@@ -93,6 +93,7 @@ Last activity: 2026-07-01 — Phase 28 execution resumed (wave continue)
 | Phase 25 P05 | 8 | 2 tasks | 2 files |
 | Phase 27 P01 | 8 minutes | 3 tasks | 5 files |
 | Phase 27 P02 | 4 minutes | 2 tasks | 3 files |
+| Phase 28 P02 | ~55 min | 3 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -238,6 +239,8 @@ Recent decisions affecting current work:
 - [Phase ?]: 27-01: storeMediaBuffers prismaClient parameter uses concrete MediaCreateData struct — avoids Prisma generic type incompatibility
 - [Phase ?]: 27-01: deckUpdate zip preview is stateless — no media extraction in preview, only deck.kartex parsed and diff computed (Pitfall 1 prevention)
 - [Phase ?]: 27-01: collectAndValidateMedia returns CollectResult discriminated union (ok:true/false) — callers use result.ok check without separate error array
+- [Phase 28-02]: DropdownMenuContent onCloseAutoFocus + CardEditorModal skipOpenAutoFocus prop (opt-in, default false) prevent a Radix DropdownMenu+Dialog FocusScope conflict that crashed the JSDOM test worker when opening the editor from a DropdownMenuItem selection (radix-ui/primitives#1836, JSDOM-only)
+- [Phase 28-02]: handleJumpToDeck uses currentCard.deckId, not the SessionRunner deckId prop (undefined in global SR mode)
 
 ### Pending Todos
 
@@ -288,8 +291,8 @@ Items acknowledged and deferred at milestone close on 2026-05-30:
 
 ## Session Continuity
 
-**Resume file:** .planning/phases/28-quick-edit-in-study/28-UI-SPEC.md
+**Resume file:** None
 
-Last session: 2026-07-01T09:30:33.756Z
-Stopped at: Phase 28 UI-SPEC approved
+Last session: 2026-07-02T08:27:50.325Z
+Stopped at: Completed 28-02-PLAN.md
 Resume with: `/gsd-plan-phase 23` — Auth Foundation
