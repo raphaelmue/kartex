@@ -29,6 +29,7 @@ const mockUser = vi.hoisted(() => ({
     isActive: true,
     studyMode: 'normal',
     createdAt: '2026-01-01',
+    email: 'test@example.com' as string | null,
   },
 }))
 vi.mock('@/context/AuthContext', () => ({
@@ -52,6 +53,7 @@ describe('SettingsPage', () => {
       isActive: true,
       studyMode: 'normal',
       createdAt: '2026-01-01',
+      email: 'test@example.com',
     }
     mockSetUser.mockClear()
     mockApiPatch.mockClear()
@@ -123,5 +125,77 @@ describe('SettingsPage', () => {
     expect(revertArg.studyMode).toBe('normal')
 
     await waitFor(() => expect(toast.error).toHaveBeenCalled())
+  })
+
+  // EMAIL-10a: no-email Alert renders when user.email is null
+  it('EMAIL-10a: renders no-email alert when user.email is null', () => {
+    mockUser.current = { ...mockUser.current, email: null }
+    renderPage()
+    expect(screen.getByRole('alert')).toBeTruthy()
+    expect(screen.getByText('No email address set')).toBeTruthy()
+  })
+
+  // EMAIL-10b: no-email Alert is absent when user.email is a string
+  it('EMAIL-10b: does not render no-email alert when user.email is set', () => {
+    mockUser.current = { ...mockUser.current, email: 'test@example.com' }
+    renderPage()
+    expect(screen.queryByRole('alert')).toBeNull()
+  })
+
+  // EMAIL-09a: submitting a valid new email saves and shows success
+  it('EMAIL-09a: valid email save calls PATCH, setUser, and success toast', async () => {
+    mockApiPatch.mockResolvedValue({
+      ok: true,
+      json: async () => ({ email: 'new@example.com' }),
+    })
+    renderPage()
+
+    const emailInput = screen.getByLabelText('Email address') as HTMLInputElement
+    fireEvent.change(emailInput, { target: { value: 'new@example.com' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Save email' }))
+
+    await waitFor(() =>
+      expect(mockApiPatch).toHaveBeenCalledWith('/api/auth/me', { email: 'new@example.com' }),
+    )
+    await waitFor(() =>
+      expect(mockSetUser).toHaveBeenCalledWith(
+        expect.objectContaining({ email: 'new@example.com' }),
+      ),
+    )
+    await waitFor(() => expect(toast.success).toHaveBeenCalled())
+  })
+
+  // EMAIL-09b: EMAIL_TAKEN conflict shows inline error, no setUser/toast.success
+  it('EMAIL-09b: EMAIL_TAKEN conflict shows inline "already in use" message', async () => {
+    mockApiPatch.mockResolvedValue({
+      ok: false,
+      status: 409,
+      json: async () => ({ error: 'EMAIL_TAKEN' }),
+    })
+    renderPage()
+
+    const emailInput = screen.getByLabelText('Email address') as HTMLInputElement
+    fireEvent.change(emailInput, { target: { value: 'taken@example.com' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Save email' }))
+
+    await waitFor(() =>
+      expect(screen.getByText('This email is already in use')).toBeTruthy(),
+    )
+    expect(mockSetUser).not.toHaveBeenCalled()
+    expect(toast.success).not.toHaveBeenCalled()
+  })
+
+  // EMAIL-09c: invalid format is blocked inline before any request is sent
+  it('EMAIL-09c: invalid email format shows inline error without calling the API', async () => {
+    renderPage()
+
+    const emailInput = screen.getByLabelText('Email address') as HTMLInputElement
+    fireEvent.change(emailInput, { target: { value: 'notanemail' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Save email' }))
+
+    await waitFor(() =>
+      expect(screen.getByText('Enter a valid email address')).toBeTruthy(),
+    )
+    expect(mockApiPatch).not.toHaveBeenCalled()
   })
 })

@@ -146,6 +146,7 @@ export function SettingsPage() {
           <Form {...emailForm}>
             <form
               onSubmit={emailForm.handleSubmit(onEmailSubmit)}
+              noValidate
               className="space-y-4"
             >
               <FormField
