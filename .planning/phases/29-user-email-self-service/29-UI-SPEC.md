@@ -170,7 +170,7 @@ CONTEXT.md "Specific Ideas").
         />
         <Button type="submit" disabled={form.formState.isSubmitting}>
           {form.formState.isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />}
-          {form.formState.isSubmitting ? t('settings.emailSaving') : t('common.save')}
+          {form.formState.isSubmitting ? t('settings.emailSaving') : t('settings.saveEmail')}
         </Button>
       </form>
     </Form>
@@ -280,10 +280,10 @@ established in `AdminPage.tsx` (D-05 cites this precedent directly):
         />
         <DialogFooter>
           <Button type="button" variant="outline" onClick={() => setEditEmailTargetId(null)}>
-            {t('common.cancel')}
+            {t('admin.keepCurrentEmail')}
           </Button>
           <Button type="submit" disabled={adminEmailForm.formState.isSubmitting}>
-            {adminEmailForm.formState.isSubmitting ? t('settings.emailSaving') : t('common.save')}
+            {adminEmailForm.formState.isSubmitting ? t('settings.emailSaving') : t('admin.saveEmail')}
           </Button>
         </DialogFooter>
       </form>
@@ -314,7 +314,7 @@ established in `AdminPage.tsx` (D-05 cites this precedent directly):
 | Settings Email Card title | "Email" | `settings.emailSection` |
 | Settings Email Card description | "Used to reset your password if you forget it." | `settings.emailDesc` |
 | Settings Email field label | "Email address" | `settings.emailLabel` |
-| Settings Save button | "Save" (reuses existing `common.save`) | `common.save` |
+| Settings Save button | "Save email" | `settings.saveEmail` |
 | Settings Save button (loading) | "Saving..." | `settings.emailSaving` |
 | Settings save success (toast) | "Email updated" | `settings.emailSaved` |
 | Settings save conflict (inline) | "This email is already in use" | `settings.emailTaken` |
@@ -325,26 +325,44 @@ established in `AdminPage.tsx` (D-05 cites this precedent directly):
 | Admin Dialog title | "Edit email" | `admin.editEmailDialogTitle` |
 | Admin Dialog description | "Update the email address for {{username}}." | `admin.editEmailDialogDesc` |
 | Admin Dialog field label | "Email address" | `admin.emailLabel` |
-| Admin Dialog Save button | "Save" (reuses `common.save`) | `common.save` |
-| Admin Dialog Cancel button | "Cancel" (reuses `common.cancel`) | `common.cancel` |
+| Admin Dialog Save button | "Save email" | `admin.saveEmail` |
+| Admin Dialog Cancel button | "Keep current email" | `admin.keepCurrentEmail` |
 | Admin save success (toast) | "Email updated" | `admin.emailUpdated` |
 | Admin save conflict (inline) | "This email is already in use" | `admin.emailTaken` |
 | Admin save generic failure (toast) | "Something went wrong" (reuses existing `common.somethingWrong`) | `common.somethingWrong` |
 | Invalid format (both forms, inline) | Handled entirely client-side by `z.string().email()` via `zodResolver` — Zod's default English message is **not** used; supply a custom `.email({ message: t(...) })`-independent i18n string via the shared schema's `errorMap` **or** a form-level override | `settings.emailInvalid` / `admin.emailInvalid` |
-| Primary CTA (phase-level) | "Save" — the only user-initiated write action on both surfaces | `common.save` |
+| Primary CTA (phase-level) | "Save email" — the only user-initiated write action on both surfaces, labeled with its object rather than the generic verb alone | `settings.saveEmail` / `admin.saveEmail` |
 | Destructive confirmation | Not applicable — no destructive action is added in this phase | — |
+
+**Claude's Discretion — resolved (button label specificity):** The ui-checker
+flagged reuse of `common.save` / `common.cancel` as BLOCK-listed generic
+labels ("Save", "Cancel"), regardless of key provenance. Both write actions
+now use dedicated, action-specific keys — `settings.saveEmail` /
+`admin.saveEmail`, rendering **"Save email"** — so the button names the
+object being saved rather than relying on context. The Admin Dialog's
+dismiss action is **not** a destructive or high-risk operation (it simply
+closes the dialog without persisting a change, leaving the user's existing
+email untouched), so instead of a bare "Cancel" it is relabeled
+**"Keep current email"** (`admin.keepCurrentEmail`) — this states the
+actual outcome of dismissing the dialog, consistent with the phase's
+plain-language, outcome-first copy style used elsewhere (e.g. the no-email
+warning body).
 
 **i18n key placement:** New keys go into the existing `settings` and
 `admin` namespaces in both `en.json` and `de.json`, added in the **same
 commit** (per STATE.md `10-05` pitfall-prevention pattern — never let one
-locale file lag). `common.save` / `common.cancel` / `settings.saveFailed`
-/ `common.somethingWrong` already exist — do not duplicate them.
+locale file lag). `settings.saveFailed` / `common.somethingWrong` already
+exist and are reused as-is (generic-failure toasts are not subject to the
+CTA-label specificity rule — only primary action button labels are).
+`common.save` / `common.cancel` remain in the shared namespace for other
+forms but are **not** used by this phase's primary actions.
 
 ```json
 // en.json, inside "settings": { ... } — new keys only
 "emailSection": "Email",
 "emailDesc": "Used to reset your password if you forget it.",
 "emailLabel": "Email address",
+"saveEmail": "Save email",
 "emailSaving": "Saving...",
 "emailSaved": "Email updated",
 "emailTaken": "This email is already in use",
@@ -359,6 +377,8 @@ locale file lag). `common.save` / `common.cancel` / `settings.saveFailed`
 "editEmailDialogTitle": "Edit email",
 "editEmailDialogDesc": "Update the email address for {{username}}.",
 "emailLabel": "Email address",
+"saveEmail": "Save email",
+"keepCurrentEmail": "Keep current email",
 "emailUpdated": "Email updated",
 "emailTaken": "This email is already in use",
 "emailInvalid": "Enter a valid email address"
@@ -370,6 +390,7 @@ locale file lag). `common.save` / `common.cancel` / `settings.saveFailed`
 "emailSection": "E-Mail",
 "emailDesc": "Wird verwendet, um dein Passwort zurückzusetzen, falls du es vergisst.",
 "emailLabel": "E-Mail-Adresse",
+"saveEmail": "E-Mail speichern",
 "emailSaving": "Wird gespeichert...",
 "emailSaved": "E-Mail-Adresse aktualisiert",
 "emailTaken": "Diese E-Mail-Adresse wird bereits verwendet",
@@ -381,6 +402,8 @@ locale file lag). `common.save` / `common.cancel` / `settings.saveFailed`
 "editEmailDialogTitle": "E-Mail bearbeiten",
 "editEmailDialogDesc": "Aktualisiere die E-Mail-Adresse für {{username}}.",
 "emailLabel": "E-Mail-Adresse",
+"saveEmail": "E-Mail speichern",
+"keepCurrentEmail": "Aktuelle E-Mail-Adresse behalten",
 "emailUpdated": "E-Mail-Adresse aktualisiert",
 "emailTaken": "Diese E-Mail-Adresse wird bereits verwendet",
 "emailInvalid": "Gib eine gültige E-Mail-Adresse ein"
