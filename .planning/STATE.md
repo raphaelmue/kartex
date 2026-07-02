@@ -6,15 +6,15 @@ current_phase: 29
 current_phase_name: user-email-self-service
 status: executing
 stopped_at: Phase 29 UI-SPEC approved
-last_updated: "2026-07-02T15:17:53.756Z"
+last_updated: "2026-07-02T22:38:15.000Z"
 last_activity: 2026-07-02
-last_activity_desc: Phase 29 execution started
+last_activity_desc: Phase 29 all plans executed — pending phase verification
 progress:
   total_phases: 8
   completed_phases: 6
   total_plans: 25
-  completed_plans: 24
-  percent: 75
+  completed_plans: 25
+  percent: 76
 ---
 
 # Project State
@@ -28,10 +28,10 @@ See: .planning/PROJECT.md (updated 2026-06-19)
 
 ## Current Position
 
-Phase: 29 (user-email-self-service) — EXECUTING
-Plan: 4 of 4
-Status: Ready to execute
-Last activity: 2026-07-02 — Phase 29 execution started
+Phase: 29 (user-email-self-service) — EXECUTED
+Plan: 4 of 4 (complete)
+Status: Awaiting phase verification
+Last activity: 2026-07-02 — Phase 29 all plans executed
 
 ## Performance Metrics
 
@@ -98,6 +98,7 @@ Last activity: 2026-07-02 — Phase 29 execution started
 | Phase 29 P01 | 15min | 3 tasks | 5 files |
 | Phase 29 P02 | 6min | 3 tasks | 4 files |
 | Phase 29 P03 | 25min | 2 tasks | 2 files |
+| Phase 29 P04 | ~45min (session-interrupted) | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -251,6 +252,8 @@ Recent decisions affecting current work:
 - [Phase ?]: 29-02: REQUIREMENTS.md deferred note narrowed to only the email re-verification sub-flow; self-service + admin email edit are now enumerated as EMAIL-09/10/11
 - [Phase ?]: 29-03: Custom Resolver<UpdateEmailInput> wrapper localizes zodResolver's email format-error message to settings.emailInvalid (UpdateEmailSchema's built-in Zod message is a fixed English string)
 - [Phase ?]: 29-03: noValidate added to the Settings email form - native type=email constraint validation silently blocks submission (and the Zod/FormMessage UX) before React Hook Form's resolver runs
+- [Phase ?]: 29-04: Reset an RHF form synchronously in the triggering onClick (not a useEffect keyed on the target id) when the form lives inside a Dialog opening on the same interaction — effect-based reset raced with Radix Dialog's default auto-focus and hung indefinitely (same class of issue as 28-02's DropdownMenu+Dialog FocusScope conflict, radix-ui/primitives#1836)
+- [Phase ?]: 29-04: onOpenAutoFocus={(e) => e.preventDefault()} added to Edit Email DialogContent as defense in depth against Radix auto-focus + RHF-controlled-input races
 
 ### Pending Todos
 

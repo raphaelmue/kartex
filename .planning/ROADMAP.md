@@ -91,7 +91,7 @@ Full details: [.planning/milestones/v1.3.2-ROADMAP.md](milestones/v1.3.2-ROADMAP
 - [x] **Phase 27: Zip Deck Update** - Shared importMedia helper, deck update path accepts .kartex.zip (completed 2026-06-30)
 - [x] **Phase 28: Quick-Edit in Study** - 3-dot study card menu for owners/editors, inline card edit, jump-to-deck (completed 2026-07-02)
 
-- [ ] **Phase 29: User Email Self-Service** - Email field in Settings page, no-email warning, admin email edit
+- [x] **Phase 29: User Email Self-Service** - Email field in Settings page, no-email warning, admin email edit (completed 2026-07-02)
 - [ ] **Phase 30: Study Timers & Stats** - Card flip timer, session duration timer, both surfaced in statistics
 
 ---
@@ -263,7 +263,7 @@ Plans:
   4. Settings page shows a prominent warning when email is null, explaining that password reset requires an email address
   5. Admin can set or update any user's email from the admin panel user dropdown
 
-**Plans**: 3/4 plans executed
+**Plans**: 4/4 plans complete
 **Wave 1**
 
 - [x] 29-01-PLAN.md — Backend & shared schema: UpdateEmailSchema/UpdateMeSchema, GET/PATCH /me email, admin PATCH /users/:id email + EMAIL_TAKEN
@@ -272,7 +272,7 @@ Plans:
 **Wave 2** *(blocked on Wave 1 completion)*
 
 - [x] 29-03-PLAN.md — Settings Email Card + no-email Alert banner (EMAIL-09, EMAIL-10)
-- [ ] 29-04-PLAN.md — Admin Edit Email Dialog from the per-row dropdown (EMAIL-11)
+- [x] 29-04-PLAN.md — Admin Edit Email Dialog from the per-row dropdown (EMAIL-11)
 
 **UI hint**: yes
 
@@ -325,5 +325,5 @@ Plans:
 | 26. ABC Notation | v1.4.0 | 1/1 | Complete   | 2026-06-30 |
 | 27. Zip Deck Update | v1.4.0 | 2/2 | Complete    | 2026-06-30 |
 | 28. Quick-Edit in Study | v1.4.0 | 2/2 | Complete    | 2026-07-02 |
-| 29. User Email Self-Service | v1.4.0 | 3/4 | In Progress|  |
+| 29. User Email Self-Service | v1.4.0 | 4/4 | Complete   | 2026-07-02 |
 | 30. Study Timers & Stats | v1.4.0 | 0/? | Not started | - |
