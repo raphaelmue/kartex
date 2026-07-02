@@ -263,10 +263,10 @@ Plans:
   4. Settings page shows a prominent warning when email is null, explaining that password reset requires an email address
   5. Admin can set or update any user's email from the admin panel user dropdown
 
-**Plans**: 4 plans
+**Plans**: 1/4 plans executed
 **Wave 1**
 
-- [ ] 29-01-PLAN.md — Backend & shared schema: UpdateEmailSchema/UpdateMeSchema, GET/PATCH /me email, admin PATCH /users/:id email + EMAIL_TAKEN
+- [x] 29-01-PLAN.md — Backend & shared schema: UpdateEmailSchema/UpdateMeSchema, GET/PATCH /me email, admin PATCH /users/:id email + EMAIL_TAKEN
 - [ ] 29-02-PLAN.md — Foundation: AuthContext User.email, i18n keys (both locales), REQUIREMENTS.md reconciliation
 
 **Wave 2** *(blocked on Wave 1 completion)*
@@ -325,5 +325,5 @@ Plans:
 | 26. ABC Notation | v1.4.0 | 1/1 | Complete   | 2026-06-30 |
 | 27. Zip Deck Update | v1.4.0 | 2/2 | Complete    | 2026-06-30 |
 | 28. Quick-Edit in Study | v1.4.0 | 2/2 | Complete    | 2026-07-02 |
-| 29. User Email Self-Service | v1.4.0 | 0/? | Not started | - |
+| 29. User Email Self-Service | v1.4.0 | 1/4 | In Progress|  |
 | 30. Study Timers & Stats | v1.4.0 | 0/? | Not started | - |

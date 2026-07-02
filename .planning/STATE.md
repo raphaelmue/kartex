@@ -3,17 +3,17 @@ gsd_state_version: 1.0
 milestone: v1.4.0
 milestone_name: Auth Overhaul & Study UX
 current_phase: 29
-current_phase_name: User Email Self-Service
+current_phase_name: user-email-self-service
 status: executing
 stopped_at: Phase 29 UI-SPEC approved
-last_updated: "2026-07-02T13:18:13.417Z"
+last_updated: "2026-07-02T14:36:36.737Z"
 last_activity: 2026-07-02
-last_activity_desc: Phase 28 complete, transitioned to Phase 29
+last_activity_desc: Phase 29 execution started
 progress:
   total_phases: 8
   completed_phases: 6
-  total_plans: 21
-  completed_plans: 21
+  total_plans: 25
+  completed_plans: 22
   percent: 75
 ---
 
@@ -24,14 +24,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-06-19)
 
 **Core value:** A user can open their dashboard, see their due cards, and complete a spaced-repetition study session — that loop must always work.
-**Current focus:** Phase 28 — quick-edit-in-study
+**Current focus:** Phase 29 — user-email-self-service
 
 ## Current Position
 
-Phase: 29 — User Email Self-Service
-Plan: Not started
+Phase: 29 (user-email-self-service) — EXECUTING
+Plan: 2 of 4
 Status: Ready to execute
-Last activity: 2026-07-02 — Phase 28 complete, transitioned to Phase 29
+Last activity: 2026-07-02 — Phase 29 execution started
 
 ## Performance Metrics
 
@@ -95,6 +95,7 @@ Last activity: 2026-07-02 — Phase 28 complete, transitioned to Phase 29
 | Phase 27 P01 | 8 minutes | 3 tasks | 5 files |
 | Phase 27 P02 | 4 minutes | 2 tasks | 3 files |
 | Phase 28 P02 | ~55 min | 3 tasks | 5 files |
+| Phase 29 P01 | 15min | 3 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -242,6 +243,8 @@ Recent decisions affecting current work:
 - [Phase ?]: 27-01: collectAndValidateMedia returns CollectResult discriminated union (ok:true/false) — callers use result.ok check without separate error array
 - [Phase 28-02]: DropdownMenuContent onCloseAutoFocus + CardEditorModal skipOpenAutoFocus prop (opt-in, default false) prevent a Radix DropdownMenu+Dialog FocusScope conflict that crashed the JSDOM test worker when opening the editor from a DropdownMenuItem selection (radix-ui/primitives#1836, JSDOM-only)
 - [Phase 28-02]: handleJumpToDeck uses currentCard.deckId, not the SessionRunner deckId prop (undefined in global SR mode)
+- [Phase ?]: 29-01: Dropped now-unused UpdateStudyModeSchema import from auth.ts (lint no-unused-vars error) after PATCH /me switched to UpdateMeSchema
+- [Phase ?]: 29-01: admin.ts PATCH /users/:id validates email via explicit Zod one-liner rather than raw cast, preserving mass-assignment whitelist discipline (T-29-01)
 
 ### Pending Todos
 
@@ -294,6 +297,6 @@ Items acknowledged and deferred at milestone close on 2026-05-30:
 
 **Resume file:** .planning/phases/29-user-email-self-service/29-UI-SPEC.md
 
-Last session: 2026-07-02T13:18:13.380Z
+Last session: 2026-07-02T14:35:26.389Z
 Stopped at: Phase 29 UI-SPEC approved
 Resume with: `/gsd-plan-phase 23` — Auth Foundation
