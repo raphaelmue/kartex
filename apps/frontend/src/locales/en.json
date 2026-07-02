@@ -386,7 +386,16 @@
     "inviteRevokeSuccess": "Invitation revoked.",
     "sendPasswordReset": "Send password reset email",
     "resetNoEmail": "This user has no email address set",
-    "resetSentSuccess": "Password reset email sent"
+    "resetSentSuccess": "Password reset email sent",
+    "editEmail": "Edit email",
+    "editEmailDialogTitle": "Edit email",
+    "editEmailDialogDesc": "Update the email address for {{username}}.",
+    "emailLabel": "Email address",
+    "saveEmail": "Save email",
+    "keepCurrentEmail": "Keep current email",
+    "emailUpdated": "Email updated",
+    "emailTaken": "This email is already in use",
+    "emailInvalid": "Enter a valid email address"
   },
   "media": {
     "imageUploaded": "Image uploaded",
@@ -414,7 +423,17 @@
     "saved": "Study mode saved",
     "saveFailed": "Failed to save — please try again",
     "languageSection": "Language",
-    "languageDesc": "Choose the interface language."
+    "languageDesc": "Choose the interface language.",
+    "emailSection": "Email",
+    "emailDesc": "Used to reset your password if you forget it.",
+    "emailLabel": "Email address",
+    "saveEmail": "Save email",
+    "emailSaving": "Saving...",
+    "emailSaved": "Email updated",
+    "emailTaken": "This email is already in use",
+    "emailInvalid": "Enter a valid email address",
+    "noEmailWarningTitle": "No email address set",
+    "noEmailWarningDesc": "Add an email address so you can reset your password if you forget it."
   },
   "lang": {
     "en": "EN",

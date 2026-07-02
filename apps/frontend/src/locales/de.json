@@ -386,7 +386,16 @@
     "inviteRevokeSuccess": "Einladung widerrufen.",
     "sendPasswordReset": "Passwort-Zurücksetzungs-E-Mail senden",
     "resetNoEmail": "Für diesen Benutzer ist keine E-Mail-Adresse hinterlegt",
-    "resetSentSuccess": "Passwort-Zurücksetzungs-E-Mail gesendet"
+    "resetSentSuccess": "Passwort-Zurücksetzungs-E-Mail gesendet",
+    "editEmail": "E-Mail bearbeiten",
+    "editEmailDialogTitle": "E-Mail bearbeiten",
+    "editEmailDialogDesc": "Aktualisiere die E-Mail-Adresse für {{username}}.",
+    "emailLabel": "E-Mail-Adresse",
+    "saveEmail": "E-Mail speichern",
+    "keepCurrentEmail": "Aktuelle E-Mail-Adresse behalten",
+    "emailUpdated": "E-Mail-Adresse aktualisiert",
+    "emailTaken": "Diese E-Mail-Adresse wird bereits verwendet",
+    "emailInvalid": "Gib eine gültige E-Mail-Adresse ein"
   },
   "media": {
     "imageUploaded": "Bild hochgeladen",
@@ -414,7 +423,17 @@
     "saved": "Lernmodus gespeichert",
     "saveFailed": "Speichern fehlgeschlagen — bitte erneut versuchen",
     "languageSection": "Sprache",
-    "languageDesc": "Wähle die Oberflächensprache."
+    "languageDesc": "Wähle die Oberflächensprache.",
+    "emailSection": "E-Mail",
+    "emailDesc": "Wird verwendet, um dein Passwort zurückzusetzen, falls du es vergisst.",
+    "emailLabel": "E-Mail-Adresse",
+    "saveEmail": "E-Mail speichern",
+    "emailSaving": "Wird gespeichert...",
+    "emailSaved": "E-Mail-Adresse aktualisiert",
+    "emailTaken": "Diese E-Mail-Adresse wird bereits verwendet",
+    "emailInvalid": "Gib eine gültige E-Mail-Adresse ein",
+    "noEmailWarningTitle": "Keine E-Mail-Adresse hinterlegt",
+    "noEmailWarningDesc": "Hinterlege eine E-Mail-Adresse, damit du dein Passwort zurücksetzen kannst, falls du es vergisst."
   },
   "lang": {
     "en": "EN",
