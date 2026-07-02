@@ -91,7 +91,7 @@ Full details: [.planning/milestones/v1.3.2-ROADMAP.md](milestones/v1.3.2-ROADMAP
 - [x] **Phase 27: Zip Deck Update** - Shared importMedia helper, deck update path accepts .kartex.zip (completed 2026-06-30)
 - [x] **Phase 28: Quick-Edit in Study** - 3-dot study card menu for owners/editors, inline card edit, jump-to-deck (completed 2026-07-02)
 
-- [x] **Phase 29: User Email Self-Service** - Email field in Settings page, no-email warning, admin email edit (completed 2026-07-02)
+- [ ] **Phase 29: User Email Self-Service** - Email field in Settings page, no-email warning, admin email edit (4/4 plans executed 2026-07-02; verification found 1 unresolved gap — see 29-VERIFICATION.md)
 - [ ] **Phase 30: Study Timers & Stats** - Card flip timer, session duration timer, both surfaced in statistics
 
 ---
@@ -325,5 +325,5 @@ Plans:
 | 26. ABC Notation | v1.4.0 | 1/1 | Complete   | 2026-06-30 |
 | 27. Zip Deck Update | v1.4.0 | 2/2 | Complete    | 2026-06-30 |
 | 28. Quick-Edit in Study | v1.4.0 | 2/2 | Complete    | 2026-07-02 |
-| 29. User Email Self-Service | v1.4.0 | 4/4 | Complete   | 2026-07-02 |
+| 29. User Email Self-Service | v1.4.0 | 4/4 | Gaps Found | 2026-07-02 |
 | 30. Study Timers & Stats | v1.4.0 | 0/? | Not started | - |
