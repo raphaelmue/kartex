@@ -314,6 +314,6 @@ Plans:
 | 25. Password Reset | v1.4.0 | 5/5 | Complete   | 2026-06-29 |
 | 26. ABC Notation | v1.4.0 | 1/1 | Complete   | 2026-06-30 |
 | 27. Zip Deck Update | v1.4.0 | 2/2 | Complete    | 2026-06-30 |
-| 28. Quick-Edit in Study | v1.4.0 | 2/2 | Complete   | 2026-07-02 |
+| 28. Quick-Edit in Study | v1.4.0 | 2/2 | Complete    | 2026-07-02 |
 | 29. User Email Self-Service | v1.4.0 | 0/? | Not started | - |
 | 30. Study Timers & Stats | v1.4.0 | 0/? | Not started | - |

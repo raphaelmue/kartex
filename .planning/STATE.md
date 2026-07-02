@@ -2,13 +2,13 @@
 gsd_state_version: 1.0
 milestone: v1.4.0
 milestone_name: Auth Overhaul & Study UX
-current_phase: 28
-current_phase_name: quick-edit-in-study
+current_phase: 29
+current_phase_name: User Email Self-Service
 status: executing
 stopped_at: Completed 28-02-PLAN.md
-last_updated: "2026-07-02T08:27:50.348Z"
-last_activity: 2026-07-01
-last_activity_desc: Phase 28 execution resumed (wave continue)
+last_updated: "2026-07-02T09:27:28.891Z"
+last_activity: 2026-07-02
+last_activity_desc: Phase 28 complete, transitioned to Phase 29
 progress:
   total_phases: 8
   completed_phases: 6
@@ -28,16 +28,16 @@ See: .planning/PROJECT.md (updated 2026-06-19)
 
 ## Current Position
 
-Phase: 28 (quick-edit-in-study) — EXECUTING
-Plan: 2 of 2
+Phase: 29 — User Email Self-Service
+Plan: Not started
 Status: Ready to execute
-Last activity: 2026-07-01 — Phase 28 execution resumed (wave continue)
+Last activity: 2026-07-02 — Phase 28 complete, transitioned to Phase 29
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 16
+- Total plans completed: 18
 - Average duration: ~6 min/plan
 - Total execution time: ~0.6 hours
 
@@ -56,6 +56,7 @@ Last activity: 2026-07-01 — Phase 28 execution resumed (wave continue)
 | 23 | 4 | - | - |
 | 24 | 7 | - | - |
 | 27 | 2 | - | - |
+| 28 | 2 | - | - |
 
 **Recent Trend:**
 
