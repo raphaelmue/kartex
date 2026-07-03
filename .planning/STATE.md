@@ -5,10 +5,10 @@ milestone_name: Auth Overhaul & Study UX
 current_phase: 29
 current_phase_name: user-email-self-service
 status: executing
-stopped_at: Phase 29 UI-SPEC approved
-last_updated: "2026-07-02T21:05:00.000Z"
-last_activity: 2026-07-02
-last_activity_desc: Phase 29 all plans executed — verification found 1 unresolved gap (CR-01 email normalization)
+stopped_at: Phase 29 gap-closure plan 29-05 created
+last_updated: "2026-07-03T00:00:00.000Z"
+last_activity: 2026-07-03
+last_activity_desc: Phase 29 gap-closure plan 29-05 created (CR-01 email normalization + EMAIL-11 doc reconciliation) — ready to execute
 progress:
   total_phases: 8
   completed_phases: 6
@@ -28,10 +28,10 @@ See: .planning/PROJECT.md (updated 2026-06-19)
 
 ## Current Position
 
-Phase: 29 (user-email-self-service) — VERIFICATION: GAPS FOUND
-Plan: 4 of 4 (all plans executed)
-Status: Blocked on gap closure — run `/gsd-plan-phase 29 --gaps` (see 29-VERIFICATION.md)
-Last activity: 2026-07-02 — Phase 29 verification found 1 unresolved gap
+Phase: 29 (user-email-self-service) — GAP-CLOSURE PLANNED
+Plan: 5 of 5 (29-01..04 executed, 29-05 gap-closure plan ready)
+Status: Ready to execute — run `/gsd-execute-phase 29` (29-05-PLAN.md closes 29-VERIFICATION.md gaps: CR-01 email normalization + EMAIL-11 doc)
+Last activity: 2026-07-03 — Phase 29 gap-closure plan 29-05 created
 
 ## Performance Metrics
 
