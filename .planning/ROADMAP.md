@@ -91,7 +91,7 @@ Full details: [.planning/milestones/v1.3.2-ROADMAP.md](milestones/v1.3.2-ROADMAP
 - [x] **Phase 27: Zip Deck Update** - Shared importMedia helper, deck update path accepts .kartex.zip (completed 2026-06-30)
 - [x] **Phase 28: Quick-Edit in Study** - 3-dot study card menu for owners/editors, inline card edit, jump-to-deck (completed 2026-07-02)
 
-- [ ] **Phase 29: User Email Self-Service** - Email field in Settings page, no-email warning, admin email edit (4/4 plans executed 2026-07-02; verification found 1 unresolved gap — see 29-VERIFICATION.md)
+- [x] **Phase 29: User Email Self-Service** - Email field in Settings page, no-email warning, admin email edit (4/4 plans executed 2026-07-02; verification found 1 unresolved gap — see 29-VERIFICATION.md) (completed 2026-07-03)
 - [ ] **Phase 30: Study Timers & Stats** - Card flip timer, session duration timer, both surfaced in statistics
 
 ---
@@ -263,7 +263,7 @@ Plans:
   4. Settings page shows a prominent warning when email is null, explaining that password reset requires an email address
   5. Admin can set or update any user's email from the admin panel user dropdown
 
-**Plans**: 5 plans (4 complete + 1 gap-closure)
+**Plans**: 5/5 plans complete
 **Wave 1**
 
 - [x] 29-01-PLAN.md — Backend & shared schema: UpdateEmailSchema/UpdateMeSchema, GET/PATCH /me email, admin PATCH /users/:id email + EMAIL_TAKEN
@@ -276,7 +276,7 @@ Plans:
 
 **Gap Closure** *(from 29-VERIFICATION.md — CR-01 + doc accuracy)*
 
-- [ ] 29-05-PLAN.md — Extract shared normalizedEmail() helper; normalize forgot-password + invite email paths (CR-01/WR-01); reconcile EMAIL-11 to Complete in REQUIREMENTS.md
+- [x] 29-05-PLAN.md — Extract shared normalizedEmail() helper; normalize forgot-password + invite email paths (CR-01/WR-01); reconcile EMAIL-11 to Complete in REQUIREMENTS.md
 
 **UI hint**: yes
 
@@ -329,5 +329,5 @@ Plans:
 | 26. ABC Notation | v1.4.0 | 1/1 | Complete   | 2026-06-30 |
 | 27. Zip Deck Update | v1.4.0 | 2/2 | Complete    | 2026-06-30 |
 | 28. Quick-Edit in Study | v1.4.0 | 2/2 | Complete    | 2026-07-02 |
-| 29. User Email Self-Service | v1.4.0 | 4/4 | Gaps Found | 2026-07-02 |
+| 29. User Email Self-Service | v1.4.0 | 5/5 | Complete   | 2026-07-02 |
 | 30. Study Timers & Stats | v1.4.0 | 0/? | Not started | - |
