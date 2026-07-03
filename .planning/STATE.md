@@ -5,16 +5,16 @@ milestone_name: Auth Overhaul & Study UX
 current_phase: 29
 current_phase_name: user-email-self-service
 status: executing
-stopped_at: Phase 29 gap-closure plan 29-05 created
-last_updated: "2026-07-03T07:16:15.988Z"
+stopped_at: Phase 29 re-verification found 1 new gap (login/refresh missing email field)
+last_updated: "2026-07-03T00:00:00.000Z"
 last_activity: 2026-07-03
-last_activity_desc: Phase 29 execution started
+last_activity_desc: Phase 29 plan 29-05 executed (normalization gap closed) — re-verification found a new gap
 progress:
   total_phases: 8
   completed_phases: 6
   total_plans: 26
-  completed_plans: 25
-  percent: 75
+  completed_plans: 26
+  percent: 76
 ---
 
 # Project State
@@ -28,10 +28,10 @@ See: .planning/PROJECT.md (updated 2026-06-19)
 
 ## Current Position
 
-Phase: 29 (user-email-self-service) — EXECUTING
-Plan: 1 of 5
-Status: Executing Phase 29
-Last activity: 2026-07-03 — Phase 29 execution started
+Phase: 29 (user-email-self-service) — VERIFICATION: GAPS FOUND
+Plan: 5 of 5 (all plans executed, including gap-closure plan 29-05)
+Status: Blocked on gap closure — run `/gsd-plan-phase 29 --gaps` (see 29-VERIFICATION.md)
+Last activity: 2026-07-03 — Re-verification found a new gap: POST /auth/login and /auth/refresh omit the email field, so freshly-logged-in users with an email see the "no email set" warning until reload
 
 ## Performance Metrics
 
