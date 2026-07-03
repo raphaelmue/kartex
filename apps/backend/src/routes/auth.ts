@@ -141,7 +141,7 @@ auth.post('/login', async (c) => {
   setAuthCookies(c, accessToken, rawRefreshToken)
 
   return c.json(
-    { id: user.id, username: user.username, role: user.role, isActive: user.isActive, studyMode: user.studyMode, createdAt: user.createdAt },
+    { id: user.id, username: user.username, role: user.role, isActive: user.isActive, studyMode: user.studyMode, createdAt: user.createdAt, email: user.email },
     200,
   )
 })
@@ -225,7 +225,7 @@ auth.post('/refresh', async (c) => {
   setAuthCookies(c, accessToken, newRawRefreshToken)
 
   return c.json(
-    { id: user.id, username: user.username, role: user.role, isActive: user.isActive, studyMode: user.studyMode, createdAt: user.createdAt },
+    { id: user.id, username: user.username, role: user.role, isActive: user.isActive, studyMode: user.studyMode, createdAt: user.createdAt, email: user.email },
     200,
   )
 })
