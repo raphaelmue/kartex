@@ -125,3 +125,12 @@ None - no external service configuration required.
 ---
 *Phase: 29-user-email-self-service*
 *Completed: 2026-07-03*
+
+## Self-Check: PASSED
+
+- FOUND: apps/backend/src/routes/__tests__/auth-login.test.ts
+- FOUND: .planning/phases/29-user-email-self-service/29-06-SUMMARY.md
+- FOUND: f283359 (Task 1 commit)
+- FOUND: ce6f2c4 (Task 2 commit)
+- FOUND: 51b6bca (Task 3 commit)
+- FOUND: db01605 (SUMMARY commit)
