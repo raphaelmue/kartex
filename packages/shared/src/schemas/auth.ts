@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { normalizedEmail } from './email'
 
 export const LoginSchema = z.object({
   username: z.string().min(1, 'Username is required.'),
@@ -23,7 +24,7 @@ export const RegisterSchema = z.object({
 export type RegisterInput = z.infer<typeof RegisterSchema>
 
 export const PasswordResetRequestSchema = z.object({
-  email: z.string().email('Valid email address required.'),
+  email: normalizedEmail(),
 })
 
 export type PasswordResetRequestInput = z.infer<typeof PasswordResetRequestSchema>

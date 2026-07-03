@@ -1,3 +1,4 @@
+export * from './schemas/email'
 export * from './schemas/inviteToken'
 export * from './schemas/user'
 export * from './schemas/auth'
