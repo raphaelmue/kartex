@@ -3,6 +3,7 @@ import { unlink } from 'node:fs/promises'
 import { z } from 'zod'
 import { Hono } from 'hono'
 import { Prisma } from '@prisma/client'
+import { normalizedEmail } from '@kartex/shared'
 import { prisma } from '../lib/prisma.js'
 import { sendMail, isConfigured, verifyConnection } from '../lib/mailer.js'
 
@@ -50,13 +51,13 @@ admin.patch('/users/:id', async (c) => {
   }
 
   // Validate + normalize email if provided (Pitfall 4 — explicit Zod check, not a raw cast)
-  let normalizedEmail: string | undefined
+  let emailToUpdate: string | undefined
   if (body.email !== undefined) {
-    const parsedEmail = z.string().trim().toLowerCase().email().safeParse(body.email)
+    const parsedEmail = normalizedEmail().safeParse(body.email)
     if (!parsedEmail.success) {
       return c.json({ error: 'Valid email address required.' }, 400)
     }
-    normalizedEmail = parsedEmail.data
+    emailToUpdate = parsedEmail.data
   }
 
   // T-02-08: Prevent admin self-deactivation
@@ -74,7 +75,7 @@ admin.patch('/users/:id', async (c) => {
   const data: { role?: 'ADMIN' | 'USER'; isActive?: boolean; email?: string } = {}
   if (body.role !== undefined) data.role = body.role as 'ADMIN' | 'USER'
   if (body.isActive !== undefined) data.isActive = body.isActive
-  if (normalizedEmail !== undefined) data.email = normalizedEmail
+  if (emailToUpdate !== undefined) data.email = emailToUpdate
 
   try {
     const updated = await prisma.user.update({
@@ -260,7 +261,7 @@ admin.post('/invites', async (c) => {
   }
 
   // Validate email address (T-24-11: Zod .email() prevents header injection)
-  const parsed = z.object({ email: z.string().email() }).safeParse(body)
+  const parsed = z.object({ email: normalizedEmail() }).safeParse(body)
   if (!parsed.success) {
     return c.json({ error: 'Valid email address required.' }, 400)
   }

@@ -11,3 +11,9 @@ describe('PATCH /api/admin/users/:id — email write (EMAIL-11)', () => {
   it.todo('returns 400 with "Valid email address required." when the email format is invalid')
   it.todo('is reachable only through requireAdmin — non-admin callers never reach this handler (access-control note)')
 })
+
+describe('POST /api/admin/invites — email normalization (CR-01, Phase 29 Plan 05)', () => {
+  it.todo(
+    'lowercases and trims a mixed-case email via normalizedEmail() before persisting InviteToken.email (real Prisma-mocked route integration out of scope — normalization itself is proven by email-normalization.test.ts)',
+  )
+})
