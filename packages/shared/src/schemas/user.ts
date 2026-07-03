@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { normalizedEmail } from './email'
 
 export const UserRole = z.enum(['ADMIN', 'USER'])
 export type UserRole = z.infer<typeof UserRole>
@@ -29,11 +30,7 @@ export const UpdateStudyModeSchema = z.object({
 export type UpdateStudyModeInput = z.infer<typeof UpdateStudyModeSchema>
 
 export const UpdateEmailSchema = z.object({
-  email: z
-    .string()
-    .trim()
-    .toLowerCase()
-    .email('Valid email address required.'),
+  email: normalizedEmail(),
 })
 export type UpdateEmailInput = z.infer<typeof UpdateEmailSchema>
 
@@ -41,7 +38,7 @@ export type UpdateEmailInput = z.infer<typeof UpdateEmailSchema>
 export const UpdateMeSchema = z
   .object({
     studyMode: StudyModeSchema.optional(),
-    email: z.string().trim().toLowerCase().email('Valid email address required.').optional(),
+    email: normalizedEmail().optional(),
   })
   .refine((data) => data.studyMode !== undefined || data.email !== undefined, {
     message: 'At least one field is required.',
