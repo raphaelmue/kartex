@@ -1,183 +1,149 @@
 ---
 phase: 29-user-email-self-service
-reviewed: 2026-07-02T00:00:00Z
+reviewed: 2026-07-03T00:00:00Z
 depth: standard
-files_reviewed: 12
+files_reviewed: 16
 files_reviewed_list:
-  - apps/backend/src/routes/__tests__/admin-email.test.ts
   - apps/backend/src/routes/__tests__/auth-me.test.ts
-  - apps/backend/src/routes/admin.ts
-  - apps/backend/src/routes/auth.ts
-  - apps/frontend/src/context/AuthContext.tsx
-  - apps/frontend/src/locales/de.json
-  - apps/frontend/src/locales/en.json
-  - apps/frontend/src/pages/AdminPage.tsx
-  - apps/frontend/src/pages/SettingsPage.tsx
-  - apps/frontend/src/pages/__tests__/AdminPage.test.tsx
-  - apps/frontend/src/pages/__tests__/SettingsPage.test.tsx
+  - apps/backend/src/routes/__tests__/admin-email.test.ts
   - packages/shared/src/schemas/user.ts
+  - apps/backend/src/routes/auth.ts
+  - apps/backend/src/routes/admin.ts
+  - apps/frontend/src/context/AuthContext.tsx
+  - apps/frontend/src/locales/en.json
+  - apps/frontend/src/locales/de.json
+  - apps/frontend/src/pages/SettingsPage.tsx
+  - apps/frontend/src/pages/__tests__/SettingsPage.test.tsx
+  - apps/frontend/src/pages/AdminPage.tsx
+  - apps/frontend/src/pages/__tests__/AdminPage.test.tsx
+  - packages/shared/src/schemas/email.ts
+  - apps/backend/src/routes/__tests__/email-normalization.test.ts
+  - packages/shared/src/index.ts
+  - packages/shared/src/schemas/auth.ts
 findings:
-  critical: 2
-  warning: 4
-  info: 2
-  total: 8
+  critical: 1
+  warning: 3
+  info: 3
+  total: 7
 status: issues_found
 ---
 
 # Phase 29: Code Review Report
 
-**Reviewed:** 2026-07-02T00:00:00Z
+**Reviewed:** 2026-07-03T00:00:00Z
 **Depth:** standard
-**Files Reviewed:** 12
+**Files Reviewed:** 16
 **Status:** issues_found
 
 ## Summary
 
-Reviewed the backend email routes (`admin.ts`, `auth.ts`), the shared `UpdateEmailSchema`/`UpdateMeSchema` schemas, the frontend `SettingsPage`/`AdminPage` email UI, `AuthContext`, locale files, and the associated test files for Phase 29 (user email self-service).
+This review covers the corrected file scope for Phase 29 (User Email Self-Service), including plan 29-05's shared `normalizedEmail()` extraction (the file list was manually reconstructed because 29-05-SUMMARY.md's CRLF line endings broke the automated frontmatter parser — see workflow note). This supersedes the prior 29-REVIEW.md, which was scoped before 29-05 landed.
 
-The frontend UI work (SettingsPage email card, AdminPage Edit Email dialog, i18n keys) is solid and well-tested with real RTL assertions. However, the review surfaced two correctness/security-adjacent defects that should block ship:
+The normalization refactor itself is sound: `normalizedEmail()` is genuinely the single source of truth and is consumed consistently by `UpdateEmailSchema`, `UpdateMeSchema`, `PasswordResetRequestSchema`, and both `admin.ts` call sites (`PATCH /users/:id`, `POST /invites`) — confirmed by executing `email-normalization.test.ts`. Admin routes are correctly gated by `requireAdmin` in `index.ts` (verified), Prisma cascade deletes correctly cover `PasswordResetToken` (verified against `schema.prisma`), and `tsc --noEmit` passes clean on both workspaces, ruling out a couple of initially-suspected type issues (UMD `React` namespace usage without an explicit `React` import, mixed type/value import from `@kartex/shared`) as non-bugs. All test files in scope pass (`yarn vitest run` on both workspaces).
 
-1. Email normalization (trim + lowercase) was added only to the self-service write paths (`UpdateEmailSchema` / `UpdateMeSchema`), but the pre-existing invite-creation and forgot-password paths were never updated to match. Combined with a case-sensitive `@unique` column and no `citext`, this breaks both the email-uniqueness invariant and the forgot-password flow for case-mismatched input.
-2. `PATCH /api/admin/users/:id` has no "last admin" guard on role changes, unlike the equivalent guard implemented for `DELETE /users/:id`. An admin (particularly the sole remaining admin) can self-demote to `USER` with no warning, locking the instance out of all admin functionality.
-
-Additional quality issues: triplicated ad-hoc email-validation logic across `admin.ts` and `packages/shared`, an unhandled Prisma error path when two invites target the same email, test files that are almost entirely `it.todo()` stubs for the exact behaviors under review, and a hand-rolled `UserRecord` type in `AdminPage.tsx` that bypasses the project's stated single-source-of-truth schema convention.
+However, one cross-file correctness bug was found and confirmed by tracing the actual data flow from `POST /api/auth/login` through to `SettingsPage.tsx`: the login (and refresh) response bodies never include the `email` field that the rest of the email-self-service feature depends on, so a user who already has an email on file will see the "no email set" warning and an empty email input immediately after logging in, until a full page reload re-triggers `GET /api/auth/me`. This directly undermines the EMAIL-09/EMAIL-10 UX contract this phase claims to deliver. There is also a real (if low-severity, and apparently deliberately accepted per the `D-08` comments) email-enumeration side channel on the self-service email-update endpoint, plus a test-coverage gap where all new backend route-level behaviors are `it.todo()` stubs rather than executed assertions.
 
 ## Critical Issues
 
-### CR-01: Email normalization is inconsistent across write paths — breaks uniqueness and silently breaks forgot-password
+### CR-01: Login/refresh responses omit `email`, causing incorrect "no email" UI state right after login
 
-**File:** `apps/backend/src/routes/admin.ts:262-267`, `apps/backend/src/routes/auth.ts:92`, `apps/backend/src/routes/auth.ts:296-299`
-**Issue:**
-This phase adds `.trim().toLowerCase()` normalization to `UpdateEmailSchema` / `UpdateMeSchema` (`packages/shared/src/schemas/user.ts:31-49`) for the *new* self-service write paths (`PATCH /api/auth/me`, `PATCH /api/admin/users/:id`). But two pre-existing paths that also write/read `user.email` were not updated to match:
+**File:** `apps/backend/src/routes/auth.ts:143-146` (POST /login) and `apps/backend/src/routes/auth.ts:227-230` (POST /refresh)
 
-- `admin.ts:263` — invite creation validates with `z.object({ email: z.string().email() }).safeParse(body)`, with no trim/lowercase. Whatever case the admin types (e.g. `"User@Example.COM"`) is stored verbatim on the `InviteToken` row.
-- `auth.ts:92` — registration copies that raw, unnormalized value straight onto the new user: `data: { username, passwordHash, role: 'USER', email: invite.email }`.
-- `auth.ts:298` (`POST /forgot-password`) looks the user up with `where: { email: body.data.email }`, where `body.data.email` comes from `PasswordResetRequestSchema` (`packages/shared/src/schemas/auth.ts:25-27`), which also has no `.trim().toLowerCase()`.
+**Issue:** `GET /api/auth/me` and both admin user endpoints select and return `email`, but the JSON bodies returned by `POST /api/auth/login` and `POST /api/auth/refresh` do not include it:
 
-The `User.email` column is `String? @unique` in `prisma/schema.prisma:42` — a case-sensitive Postgres unique index (no `citext`). The practical impact:
-
-1. **Uniqueness bypass:** an account created via invite with `"User@Example.com"` and a second account whose owner later self-service-sets `"user@example.com"` (normalized) will NOT collide at the DB level, even though both routes intend to enforce "one email, one account."
-2. **Silent forgot-password failure:** if a user's stored email is anything other than the exact case they type into "Forgot password" (very likely, since humans habitually type email addresses in lowercase regardless of how the account was provisioned), `prisma.user.findUnique({ where: { email } })` returns no row. Because `RESET-03` always returns the same generic 200 message to prevent enumeration, the user receives no error and no email — the feature fails silently with no way to detect it happened.
-
-**Fix:**
-Normalize email consistently everywhere it is read/written, not just in the new self-service paths:
 ```ts
-// packages/shared/src/schemas/auth.ts
-export const PasswordResetRequestSchema = z.object({
-  email: z.string().trim().toLowerCase().email('Valid email address required.'),
-})
-
-// admin.ts — POST /invites
-const parsed = z
-  .object({ email: z.string().trim().toLowerCase().email() })
-  .safeParse(body)
+return c.json(
+  { id: user.id, username: user.username, role: user.role, isActive: user.isActive, studyMode: user.studyMode, createdAt: user.createdAt },
+  200,
+)
 ```
-Consider also adding a case-insensitive unique index (e.g. `citext` extension or a generated lowercase column with a unique constraint) as defense in depth, since application-layer normalization alone cannot retroactively fix already-diverged rows.
 
-### CR-02: PATCH /api/admin/users/:id allows demoting the last admin — no guard, unlike DELETE
+`apps/frontend/src/pages/LoginPage.tsx:77` sets the auth-context user directly from this response (`setUser(data.user ?? data)`), and `apps/frontend/src/context/AuthContext.tsx:8-16` declares the `User.email` field as `string | null` (present, not optional). `AuthProvider`'s session hydration (`GET /api/auth/me`) only runs once on the top-level app mount (`useEffect(..., [])`), so a client-side login via `LoginPage` never re-fetches `/me` afterward.
 
-**File:** `apps/backend/src/routes/admin.ts:31-101`
-**Issue:** `DELETE /api/admin/users/:id` explicitly protects against removing the last active admin (`admin.ts:146-151`, guarded atomically inside a transaction). `PATCH /api/admin/users/:id` has no equivalent check for role changes. The only self-protection implemented is for `isActive === false` (line 63-65):
+Net effect: immediately after a user with an email on file logs in (the common path — this is not an edge case), `user.email` is `undefined`. In `SettingsPage.tsx`:
+- Line 125 (`user?.email == null`) evaluates to `true` (loose `==` treats `undefined` as `null`), so the "No email address set" warning banner renders even though the user has an email.
+- Line 76 (`defaultValues: { email: user?.email ?? '' }`) pre-fills the email form with an empty string instead of the user's actual saved email, since `useForm`'s `defaultValues` is captured once at mount and never resynced.
+
+This is a data-correctness bug directly affecting the EMAIL-09/EMAIL-10 feature this phase implements, and it reproduces on every login for every user who has an email set, not just a rare race.
+
+**Fix:** Include `email` in both response bodies, matching `GET /api/auth/me`:
 ```ts
-if (id === authenticatedUserId && body.isActive === false) {
-  return c.json({ error: 'Cannot deactivate your own account.' }, 400)
-}
+// auth.ts — POST /login and POST /refresh
+return c.json(
+  { id: user.id, username: user.username, role: user.role, isActive: user.isActive, studyMode: user.studyMode, createdAt: user.createdAt, email: user.email },
+  200,
+)
 ```
-There is no check preventing an admin (in particular the sole remaining admin) from calling `PATCH /users/:id` on their own account with `{ role: 'USER' }`. Since role assignment (lines 74-75) has no admin-count check at all, this is a straightforward, reachable path to a fully admin-less instance — with no undo short of direct database access. This directly contradicts the invariant the DELETE handler was built to protect ("D-08: Last-admin guard... closes the TOCTOU race window").
-**Fix:** Add the same guard used for deletion, ideally re-using one atomic check:
-```ts
-if (body.role === 'USER' && existing.role === 'ADMIN') {
-  const adminCount = await prisma.user.count({ where: { role: 'ADMIN', isActive: true } })
-  if (adminCount <= 1) {
-    return c.json({ error: 'LAST_ADMIN' }, 400)
-  }
-}
-```
-placed after `existing` is fetched, and ideally inside a transaction (mirroring the DELETE handler) to close the same TOCTOU window that DELETE already accounts for.
 
 ## Warnings
 
-### WR-01: Email validation logic is duplicated three times instead of using one shared schema
+### WR-01: `AuthContext.tsx` hand-rolls a `User` type instead of using the shared Zod-derived type
 
-**File:** `apps/backend/src/routes/admin.ts:55`, `packages/shared/src/schemas/user.ts:31-38`, `packages/shared/src/schemas/user.ts:44`
-**Issue:** The exact same validation chain (`trim → toLowerCase → email`) is defined independently in three places:
-1. `UpdateEmailSchema.email` (`user.ts:32-36`)
-2. `UpdateMeSchema.email` (`user.ts:44`) — a near-identical copy-paste of (1) rather than reuse
-3. `admin.ts:55` — `z.string().trim().toLowerCase().email().safeParse(body.email)`, built inline instead of importing `UpdateEmailSchema` from `@kartex/shared`
+**File:** `apps/frontend/src/context/AuthContext.tsx:8-16`
 
-This contradicts the project's own stated convention ("packages/shared is the single source of truth for all data types... no type drift possible"). If validation rules change later (e.g. a max length, a disposable-domain blocklist), it is easy to update only one or two of the three copies and leave the third inconsistent.
-**Fix:** Define the email field once and reuse it:
+**Issue:** `packages/shared/src/schemas/user.ts` already exports `UserResponseSchema` / `UserResponse` (`z.infer`) as the intended single source of truth for the user response shape (per `CLAUDE.md`: "`packages/shared` is the single source of truth for all data types ... no type drift possible"). `AuthContext.tsx` instead defines its own local `interface User` with `email: string | null` as a required, non-optional field — diverging from the canonical schema, which marks `email` as `.optional().nullable()`. CR-01 is a concrete demonstration of exactly this drift: the local type promises `email` is always present, but the actual runtime payload from `/login` and `/refresh` can omit it entirely, and TypeScript had no way to catch this because the hand-rolled type doesn't reflect the shared contract.
+
+**Fix:** Import the type from `@kartex/shared` (or derive `AuthContext`'s `User` from `UserResponse`) so response-shape mismatches surface as compile errors instead of silent runtime `undefined`s:
 ```ts
-// user.ts
-const emailField = z.string().trim().toLowerCase().email('Valid email address required.')
-export const UpdateEmailSchema = z.object({ email: emailField })
-export const UpdateMeSchema = z.object({
-  studyMode: StudyModeSchema.optional(),
-  email: emailField.optional(),
-}).refine(...)
+import type { UserResponse } from '@kartex/shared'
+export type User = UserResponse
 ```
-and have `admin.ts` import `UpdateEmailSchema` (or a shared `emailField`) instead of re-declaring the chain inline.
 
-### WR-02: Unhandled Prisma P2002 error when two invites target the same email
+### WR-02: New backend route behaviors for EMAIL-09/10/11 are untested — all `it.todo()` stubs
 
-**File:** `apps/backend/src/routes/auth.ts:75-100`, `apps/backend/src/routes/admin.ts:254-310`
-**Issue:** `POST /admin/invites` has no check for an existing invite (or existing user) with the same email, so an admin can create two separate valid `InviteToken` rows for one address (e.g. re-sending an invite). If the first is redeemed and the resulting user is created, redeeming the second later hits the `User.email` unique constraint inside the registration transaction. The `catch` block in `auth.ts:95-100` only recognizes `'TOKEN_CONSUMED'` and `'USERNAME_TAKEN'`:
-```ts
-} catch (err) {
-  const msg = (err as Error).message
-  if (msg === 'TOKEN_CONSUMED') return c.json({ error: 'ALREADY_USED' }, 400)
-  if (msg === 'USERNAME_TAKEN') return c.json({ error: 'USERNAME_TAKEN' }, 409)
-  throw err
-}
-```
-A `Prisma.PrismaClientKnownRequestError` with code `P2002` on `email` falls through to `throw err`, producing an unhandled 500 instead of a clean error response — the same pattern that `admin.ts:96-98` and `auth.ts:277-279` correctly handle for the other two email-write routes.
-**Fix:**
-```ts
-if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === 'P2002') {
-  return c.json({ error: 'EMAIL_TAKEN' }, 409)
-}
-```
-(requires importing `Prisma` from `@prisma/client` in `auth.ts`, which is already done for other purposes).
+**File:** `apps/backend/src/routes/__tests__/auth-me.test.ts:29-38`, `apps/backend/src/routes/__tests__/admin-email.test.ts:8-19`
 
-### WR-03: Backend test files provide almost no real coverage for the exact behaviors under review
+**Issue:** Both test files only exercise the Zod-schema-level normalization (real, passing assertions). Every actual route-behavior claim for this phase — `GET /api/auth/me` returning `email: null` vs a string, `PATCH /api/auth/me` accepting `{ email }` independently of `{ studyMode }`, the 409 `EMAIL_TAKEN` conflict path, the 400 validation path, and the admin equivalents — is declared with `it.todo(...)` and never actually executes. CR-01 (a real route-response bug) is exactly the class of defect these stubs were meant to catch and did not, because they were never implemented. The comment says "Fill in route stubs ... in a later pass," but as submitted this phase ships route-level email behavior with zero executable route-level test coverage.
 
-**File:** `apps/backend/src/routes/__tests__/admin-email.test.ts:8-13`, `apps/backend/src/routes/__tests__/auth-me.test.ts:29-38`
-**Issue:** `admin-email.test.ts` consists entirely of four `it.todo(...)` stubs — none of them execute any assertion. `auth-me.test.ts` has only two real, executable tests (schema-level normalization), and five `it.todo(...)` stubs covering exactly the security/correctness-sensitive behaviors this phase introduces: `EMAIL_TAKEN` 409 handling, admin-only reachability, and the PATCH `/me` happy path. Because `it.todo` reports as passing/skipped in CI, these files create the appearance of coverage for the uniqueness-conflict and access-control behavior discussed in CR-01/CR-02 above, when in fact none of it is verified at the route level.
-**Fix:** Either implement the described route tests with `vi.mock('../../../lib/prisma.js')` as the file comments themselves say is the intended next step, or remove the misleading `it.todo` placeholders and track the gap explicitly outside of the test suite so CI green doesn't imply this is covered.
+**Fix:** Implement at least the todo'd cases with `vi.mock('../../../lib/prisma.js')`, particularly a response-shape assertion for `POST /login` and `POST /refresh` that would have caught CR-01 (e.g. `expect(body).toHaveProperty('email')`).
 
-### WR-04: AdminPage.tsx duplicates the shared User type instead of importing it
+### WR-03: Self-service email update leaks account existence via 409 EMAIL_TAKEN (email enumeration)
 
-**File:** `apps/frontend/src/pages/AdminPage.tsx:65-72`
-**Issue:**
-```ts
-interface UserRecord {
-  id: string
-  username: string
-  email?: string | null
-  role: 'ADMIN' | 'USER'
-  isActive: boolean
-  createdAt: string
-}
-```
-This hand-rolled interface duplicates the shape already defined by `UserResponseSchema`/`User` in `packages/shared/src/schemas/user.ts`, which the project's CLAUDE.md explicitly designates as "the single source of truth for all data types... no type drift possible." Because it's a separate local type, any future change to the shared schema (e.g. a new required field) will not be caught by the type checker here, defeating the purpose of the shared-schema architecture.
-**Fix:** Import and reuse (or `Pick<>` from) the shared type, e.g. `Pick<User, 'id' | 'username' | 'email' | 'role' | 'isActive' | 'createdAt'>` from `@kartex/shared`.
+**File:** `apps/backend/src/routes/auth.ts:255-282` (`PATCH /api/auth/me`)
+
+**Issue:** Any authenticated user (not just an admin) can submit an arbitrary email address via `PATCH /api/auth/me` and learn — via the `409 EMAIL_TAKEN` response — whether that exact email address belongs to *some* other registered user in the system. This is a real, if low-impact, enumeration side channel; the code comment ("D-08: unique index is the race-safe gate") indicates it was a deliberate design tradeoff for the concurrency-safety win, and the route is covered by the auth router's `rateLimitMiddleware(10, 60_000)`, which meaningfully limits brute-force probing. Given the project's stated threat model (self-hosted, 2-5 invite-only users), impact is low, but it's worth recording as an accepted-risk item rather than leaving it implicit.
+
+**Fix:** No code change required if this is an accepted tradeoff (recommend noting the decision explicitly in a `D-08` doc reference near `PATCH /api/auth/me`, not just `PATCH /api/admin/users/:id`). If tightening is desired, consider a generic `error: 'UPDATE_FAILED'` response for self-service (non-admin) callers combined with tighter per-user rate limiting on this specific route.
 
 ## Info
 
-### IN-01: `InviteTokenResponse` imported as a value instead of `import type`
+### IN-01: Duplicated hardcoded email-error string instead of deriving from `normalizedEmail()`'s default message
 
-**File:** `apps/frontend/src/pages/AdminPage.tsx:60`
-**Issue:** `import { InviteTokenResponse, UpdateEmailSchema } from '@kartex/shared'` imports `InviteTokenResponse` — a type-only export — without the `type` modifier, while the same file elsewhere correctly uses `import type { UpdateEmailInput } from '@kartex/shared'` (line 59). It works today only because Vite's esbuild transform can statically determine the import is unused as a value and elides it; this is fragile and inconsistent with the rest of the file.
-**Fix:** `import type { InviteTokenResponse } from '@kartex/shared'` and keep `UpdateEmailSchema` (a runtime value) as a separate value import.
+**File:** `apps/backend/src/routes/admin.ts:58`, `apps/backend/src/routes/admin.ts:266`
 
-### IN-02: Inconsistent URL construction style
+**Issue:** Both call sites hardcode the literal string `'Valid email address required.'` as the 400 response body, duplicating (rather than reading) the default `message` parameter already defined once in `normalizedEmail(message = 'Valid email address required.')` (`packages/shared/src/schemas/email.ts:6`). They currently match, but nothing enforces that they stay in sync if the schema's default message is ever edited.
 
-**File:** `apps/frontend/src/pages/AdminPage.tsx:365`
-**Issue:** `api.post('/api/admin/users/' + id + '/reset-password', {})` uses string concatenation, while the rest of the file (and this same function's neighbors) consistently use template literals, e.g. `` api.patch(`/api/admin/users/${id}`, ...) ``.
-**Fix:** `` api.post(`/api/admin/users/${id}/reset-password`, {}) ``.
+**Fix:** Use the parsed error's own message instead of a separate literal:
+```ts
+if (!parsedEmail.success) {
+  return c.json({ error: parsedEmail.error.issues[0]?.message ?? 'Valid email address required.' }, 400)
+}
+```
+
+### IN-02: `UpdateMeSchema.refine()` doesn't set an error `path`
+
+**File:** `packages/shared/src/schemas/user.ts:38-45`
+
+**Issue:** The refine check (`at least one field is required`) doesn't pass a `path`, so on failure the Zod error attaches to the schema root rather than a specific field. `body.error.flatten()` (used in `auth.ts`'s `PATCH /me` handler) would put this message under `formErrors` rather than `fieldErrors`, which any future frontend consumer displaying inline field errors would miss. Not currently reachable from the shipped UI (both `SettingsPage` and `AdminPage` always send exactly one field), but worth hardening.
+
+**Fix:**
+```ts
+.refine((data) => data.studyMode !== undefined || data.email !== undefined, {
+  message: 'At least one field is required.',
+  path: ['studyMode'],
+})
+```
+
+### IN-03: `AdminPage.tsx`'s Edit Email dialog reuses a `settings.*` translation key
+
+**File:** `apps/frontend/src/pages/AdminPage.tsx:647-649`
+
+**Issue:** The admin Edit Email dialog's submit-button "Saving..." label uses `t('settings.emailSaving')` instead of an `admin.*`-namespaced key, even though a parallel `admin.saveEmail` key already exists for the same button's idle state one line below. This couples the admin section's copy to the settings page's wording and will silently diverge if either is edited independently.
+
+**Fix:** Add `admin.emailSaving` to both `en.json`/`de.json` and reference it here instead of `settings.emailSaving`.
 
 ---
 
-_Reviewed: 2026-07-02T00:00:00Z_
+_Reviewed: 2026-07-03T00:00:00Z_
 _Reviewer: Claude (gsd-code-reviewer)_
 _Depth: standard_
