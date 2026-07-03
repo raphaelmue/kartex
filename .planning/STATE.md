@@ -5,16 +5,16 @@ milestone_name: Auth Overhaul & Study UX
 current_phase: 29
 current_phase_name: user-email-self-service
 status: executing
-stopped_at: Phase 29 re-verification found 1 new gap (login/refresh missing email field)
-last_updated: "2026-07-03T00:00:00.000Z"
+stopped_at: Completed 29-06-PLAN.md
+last_updated: "2026-07-03T08:18:59.845Z"
 last_activity: 2026-07-03
-last_activity_desc: Phase 29 plan 29-05 executed (normalization gap closed) — re-verification found a new gap
+last_activity_desc: Phase 29 execution started
 progress:
   total_phases: 8
-  completed_phases: 6
-  total_plans: 26
-  completed_plans: 26
-  percent: 76
+  completed_phases: 7
+  total_plans: 27
+  completed_plans: 27
+  percent: 88
 ---
 
 # Project State
@@ -28,10 +28,10 @@ See: .planning/PROJECT.md (updated 2026-06-19)
 
 ## Current Position
 
-Phase: 29 (user-email-self-service) — VERIFICATION: GAPS FOUND
-Plan: 5 of 5 (all plans executed, including gap-closure plan 29-05)
-Status: Blocked on gap closure — run `/gsd-plan-phase 29 --gaps` (see 29-VERIFICATION.md)
-Last activity: 2026-07-03 — Re-verification found a new gap: POST /auth/login and /auth/refresh omit the email field, so freshly-logged-in users with an email see the "no email set" warning until reload
+Phase: 29 (user-email-self-service) — EXECUTING
+Plan: 2 of 6
+Status: Ready to execute
+Last activity: 2026-07-03 — Phase 29 execution started
 
 ## Performance Metrics
 
@@ -99,6 +99,7 @@ Last activity: 2026-07-03 — Re-verification found a new gap: POST /auth/login 
 | Phase 29 P02 | 6min | 3 tasks | 4 files |
 | Phase 29 P03 | 25min | 2 tasks | 2 files |
 | Phase 29 P04 | ~45min (session-interrupted) | 2 tasks | 2 files |
+| Phase 29 P06 | 12min | 3 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -254,6 +255,7 @@ Recent decisions affecting current work:
 - [Phase ?]: 29-03: noValidate added to the Settings email form - native type=email constraint validation silently blocks submission (and the Zod/FormMessage UX) before React Hook Form's resolver runs
 - [Phase ?]: 29-04: Reset an RHF form synchronously in the triggering onClick (not a useEffect keyed on the target id) when the form lives inside a Dialog opening on the same interaction — effect-based reset raced with Radix Dialog's default auto-focus and hung indefinitely (same class of issue as 28-02's DropdownMenu+Dialog FocusScope conflict, radix-ui/primitives#1836)
 - [Phase ?]: 29-04: onOpenAutoFocus={(e) => e.preventDefault()} added to Edit Email DialogContent as defense in depth against Radix auto-focus + RHF-controlled-input races
+- [Phase ?]: 29-06: AuthContext User type is now Omit<UserResponse, 'createdAt'> & { createdAt: string } — single-sourced from shared's Zod schema instead of a hand-rolled duplicate interface
 
 ### Pending Todos
 
@@ -306,6 +308,6 @@ Items acknowledged and deferred at milestone close on 2026-05-30:
 
 **Resume file:** .planning/phases/29-user-email-self-service/29-UI-SPEC.md
 
-Last session: 2026-07-02T15:16:43.673Z
-Stopped at: Phase 29 UI-SPEC approved
+Last session: 2026-07-03T08:18:59.824Z
+Stopped at: Completed 29-06-PLAN.md
 Resume with: `/gsd-plan-phase 23` — Auth Foundation
