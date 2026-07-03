@@ -3,17 +3,13 @@ import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 
 import { api, setAuthFailureHandler } from '@/lib/api'
-import type { StudyMode } from '@kartex/shared'
+import type { UserResponse } from '@kartex/shared'
 
-export interface User {
-  id: string
-  username: string
-  role: 'ADMIN' | 'USER'
-  isActive: boolean
-  studyMode: StudyMode
-  createdAt: string
-  email: string | null
-}
+// Single-sourced from shared's UserResponse. createdAt is overridden to string
+// because the wire response is JSON (Date is coerced server-side but serialized
+// as an ISO string over HTTP), and existing consumers (AdminPage's formatDate,
+// test mocks) rely on it being a string.
+export type User = Omit<UserResponse, 'createdAt'> & { createdAt: string }
 
 interface AuthContextValue {
   user: User | null
