@@ -20,7 +20,7 @@
 - [x] **EMAIL-08**: Admin can revoke a pending invitation
 - [x] **EMAIL-09**: User can add/update their own email address from Settings
 - [x] **EMAIL-10**: Settings shows a no-email warning explaining that password reset requires an email address
-- [ ] **EMAIL-11**: Admin can set/update any user's email address from the admin panel
+- [x] **EMAIL-11**: Admin can set/update any user's email address from the admin panel
 
 ### RESET — Password Reset
 
@@ -104,7 +104,7 @@
 | EMAIL-08 | Phase 24 | Complete |
 | EMAIL-09 | Phase 29 | Complete |
 | EMAIL-10 | Phase 29 | Complete |
-| EMAIL-11 | Phase 29 | Pending |
+| EMAIL-11 | Phase 29 | Complete |
 | RESET-01 | Phase 25 | Complete |
 | RESET-02 | Phase 25 | Complete |
 | RESET-03 | Phase 25 | Complete |
