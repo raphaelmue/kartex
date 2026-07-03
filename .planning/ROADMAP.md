@@ -263,7 +263,7 @@ Plans:
   4. Settings page shows a prominent warning when email is null, explaining that password reset requires an email address
   5. Admin can set or update any user's email from the admin panel user dropdown
 
-**Plans**: 5/5 plans complete
+**Plans**: 6 plans (5 complete, 1 gap-closure pending)
 **Wave 1**
 
 - [x] 29-01-PLAN.md — Backend & shared schema: UpdateEmailSchema/UpdateMeSchema, GET/PATCH /me email, admin PATCH /users/:id email + EMAIL_TAKEN
@@ -277,6 +277,10 @@ Plans:
 **Gap Closure** *(from 29-VERIFICATION.md — CR-01 + doc accuracy)*
 
 - [x] 29-05-PLAN.md — Extract shared normalizedEmail() helper; normalize forgot-password + invite email paths (CR-01/WR-01); reconcile EMAIL-11 to Complete in REQUIREMENTS.md
+
+**Gap Closure 2** *(from 29-VERIFICATION.md re-verification — truth 6 regression)*
+
+- [ ] 29-06-PLAN.md — Add `email` to POST /login + /refresh responses; single-source AuthContext User type from shared UserResponse; real route test guarding response shape (EMAIL-09, EMAIL-10)
 
 **UI hint**: yes
 
