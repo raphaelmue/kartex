@@ -115,7 +115,15 @@
       "goodLabel": "Gut",
       "hardLabel": "Schwer",
       "againLabel": "Nochmal",
-      "noDecksYet": "Noch keine Stapel."
+      "noDecksYet": "Noch keine Stapel.",
+      "avgFlipTimeColumn": "Ø Umdrehzeit",
+      "recentSessions": "Letzte Lernsitzungen",
+      "sessionDateColumn": "Datum",
+      "sessionDeckColumn": "Stapel",
+      "sessionDurationColumn": "Dauer",
+      "sessionCardsColumn": "Karten",
+      "noSessionsYet": "Noch keine Lernsitzungen.",
+      "incompleteSession": "Unvollständig"
     }
   },
   "decks": {
@@ -260,7 +268,8 @@
     "deckBadgeAriaLabel": "Deck: {{deckTitle}}",
     "cardMenuAriaLabel": "Weitere Aktionen",
     "editThisCard": "Karte bearbeiten",
-    "jumpToDeck": "Zum Stapel springen"
+    "jumpToDeck": "Zum Stapel springen",
+    "sessionElapsedAriaLabel": "Verstrichene Zeit: {{time}}"
   },
   "rating": {
     "again": "Nochmal",

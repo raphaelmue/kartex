@@ -115,7 +115,15 @@
       "goodLabel": "Good",
       "hardLabel": "Hard",
       "againLabel": "Again",
-      "noDecksYet": "No decks yet."
+      "noDecksYet": "No decks yet.",
+      "avgFlipTimeColumn": "Avg. Flip Time",
+      "recentSessions": "Recent Sessions",
+      "sessionDateColumn": "Date",
+      "sessionDeckColumn": "Deck(s)",
+      "sessionDurationColumn": "Duration",
+      "sessionCardsColumn": "Cards",
+      "noSessionsYet": "No sessions yet.",
+      "incompleteSession": "Incomplete"
     }
   },
   "decks": {
@@ -260,7 +268,8 @@
     "deckBadgeAriaLabel": "Deck: {{deckTitle}}",
     "cardMenuAriaLabel": "More actions",
     "editThisCard": "Edit this card",
-    "jumpToDeck": "Jump to deck"
+    "jumpToDeck": "Jump to deck",
+    "sessionElapsedAriaLabel": "Elapsed time: {{time}}"
   },
   "rating": {
     "again": "Again",
