@@ -5,15 +5,15 @@ milestone_name: Auth Overhaul & Study UX
 current_phase: 30
 current_phase_name: study-timers-stats
 status: executing
-stopped_at: Completed 30-03-PLAN.md
-last_updated: "2026-07-04T09:30:20.466Z"
+stopped_at: Completed 30-04-PLAN.md
+last_updated: "2026-07-04T09:39:02.364Z"
 last_activity: 2026-07-04
 last_activity_desc: Phase 30 execution started
 progress:
   total_phases: 8
   completed_phases: 7
   total_plans: 32
-  completed_plans: 30
+  completed_plans: 31
   percent: 88
 ---
 
@@ -29,7 +29,7 @@ See: .planning/PROJECT.md (updated 2026-06-19)
 ## Current Position
 
 Phase: 30 (study-timers-stats) — EXECUTING
-Plan: 4 of 5
+Plan: 5 of 5
 Status: Ready to execute
 Last activity: 2026-07-04 — Phase 30 execution started
 
@@ -104,6 +104,7 @@ Last activity: 2026-07-04 — Phase 30 execution started
 | Phase 30 P01 | 9min | 3 tasks | 6 files |
 | Phase 30-study-timers-stats P02 | 3min | 1 tasks | 2 files |
 | Phase 30 P03 | 12min | 2 tasks | 4 files |
+| Phase 30-study-timers-stats P04 | 15min | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -265,6 +266,8 @@ Recent decisions affecting current work:
 - [Phase ?]: 30-02: sessionElapsedAriaLabel placed directly under study namespace (no a11y prefix) matching study.deckBadgeAriaLabel convention
 - [Phase ?]: 30-02: Existing dashboard.stats.noData key reused for avg-flip-time empty cell — no new key added
 - [Phase ?]: 30-03: session/start batches deck authorization into two queries (findMany decks, findMany shares for unowned decks) instead of per-deckId looping — avoids N+1 queries for multi-deck Global SR sessions
+- [Phase ?]: 30-04: cardShownAtRef initialized to 0 in useRef() (not Date.now()) to satisfy react-hooks/purity ESLint rule; actual timestamp set inside the existing [currentIndex] mount/advance effect
+- [Phase ?]: 30-04: SessionTimer is a new sibling component to ExamTimer, not a mode extension — copies mm:ss/a11y verbatim, drops color-shift thresholds, adds Page Visibility API pause (D-02/D-05)
 
 ### Pending Todos
 
@@ -317,6 +320,6 @@ Items acknowledged and deferred at milestone close on 2026-05-30:
 
 **Resume file:** None
 
-Last session: 2026-07-04T09:30:20.449Z
-Stopped at: Completed 30-03-PLAN.md
+Last session: 2026-07-04T09:39:02.352Z
+Stopped at: Completed 30-04-PLAN.md
 Resume with: `/gsd-plan-phase 23` — Auth Foundation
