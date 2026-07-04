@@ -1,6 +1,6 @@
 import { Hono } from 'hono'
 import { prisma } from '../lib/prisma.js'
-import { RateCardSchema } from '@kartex/shared'
+import { RateCardSchema, StudySessionCompleteSchema, StudySessionStartSchema } from '@kartex/shared'
 import { calculateSM2, RATING_TO_QUALITY } from '../lib/sm2.js'
 
 const study = new Hono<{ Variables: { userId: string } }>()
@@ -158,7 +158,7 @@ study.post('/rate', async (c) => {
     return c.json({ error: 'Validation failed.', details: body.error.flatten() }, 400)
   }
 
-  const { cardId, rating } = body.data
+  const { cardId, rating, thinkingTimeMs } = body.data
   const userId = c.get('userId')
 
   // T-4-01: Verify card exists and belongs to the authenticated user's deck
@@ -236,6 +236,7 @@ study.post('/rate', async (c) => {
         cardId,
         deckId: card.deckId,
         rating,
+        thinkingTimeMs,
         reviewedAt: new Date(),
       },
     })
@@ -249,6 +250,86 @@ study.post('/rate', async (c) => {
       interval: updated.interval,
       easeFactor: updated.easeFactor,
       repetitions: updated.repetitions,
+    },
+    200
+  )
+})
+
+// POST /api/study/session/start — begin a StudySession spanning one or more decks (TIMER-03)
+// Security: T-30-02 every deckId must be owned or actively shared with the user
+study.post('/session/start', async (c) => {
+  const body = StudySessionStartSchema.safeParse(await c.req.json())
+  if (!body.success) {
+    return c.json({ error: 'Validation failed.', details: body.error.flatten() }, 400)
+  }
+
+  const { deckIds } = body.data
+  const userId = c.get('userId')
+
+  const decks = await prisma.deck.findMany({
+    where: { id: { in: deckIds } },
+  })
+  if (decks.length !== deckIds.length) return c.json({ error: 'Forbidden.' }, 403)
+
+  const unownedDeckIds = decks
+    .filter((deck: (typeof decks)[number]) => deck.ownerId !== userId)
+    .map((deck: (typeof decks)[number]) => deck.id)
+
+  if (unownedDeckIds.length > 0) {
+    const shares = await prisma.deckShare.findMany({
+      where: { deckId: { in: unownedDeckIds }, sharedWithUserId: userId, isActive: true },
+    })
+    const sharedDeckIds = new Set(shares.map((share: (typeof shares)[number]) => share.deckId))
+    const isFullyAuthorized = unownedDeckIds.every((deckId: string) => sharedDeckIds.has(deckId))
+    if (!isFullyAuthorized) return c.json({ error: 'Forbidden.' }, 403)
+  }
+
+  const session = await prisma.studySession.create({
+    data: {
+      userId,
+      decks: { create: deckIds.map((deckId) => ({ deckId })) },
+    },
+  })
+
+  return c.json({ id: session.id }, 201)
+})
+
+// POST /api/study/session/complete — mark a StudySession finished, computing duration server-side (TIMER-03)
+// Security: T-30-01 ownership check before update; T-30-03 durationSeconds never client-supplied
+study.post('/session/complete', async (c) => {
+  const body = StudySessionCompleteSchema.safeParse(await c.req.json())
+  if (!body.success) {
+    return c.json({ error: 'Validation failed.', details: body.error.flatten() }, 400)
+  }
+
+  const { sessionId, cardsReviewed } = body.data
+  const userId = c.get('userId')
+
+  const session = await prisma.studySession.findUnique({ where: { id: sessionId } })
+  if (!session) return c.json({ error: 'Not found.' }, 404)
+  if (session.userId !== userId) return c.json({ error: 'Forbidden.' }, 403)
+
+  const durationSeconds = Math.max(
+    0,
+    Math.round((Date.now() - session.startedAt.getTime()) / 1000)
+  )
+
+  const updated = await prisma.studySession.update({
+    where: { id: sessionId },
+    data: {
+      completedAt: new Date(),
+      durationSeconds,
+      cardsReviewed,
+    },
+  })
+
+  return c.json(
+    {
+      id: updated.id,
+      startedAt: updated.startedAt.toISOString(),
+      completedAt: updated.completedAt ? updated.completedAt.toISOString() : null,
+      durationSeconds: updated.durationSeconds,
+      cardsReviewed: updated.cardsReviewed,
     },
     200
   )
