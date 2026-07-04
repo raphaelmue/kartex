@@ -298,12 +298,12 @@ Plans:
 
 **Requirements**: TIMER-01, TIMER-02, TIMER-03, TIMER-04
 
-**Plans**: 1/5 plans executed
+**Plans**: 2/5 plans executed
 
 **Wave 1**
 
 - [x] 30-01-PLAN.md — Schema (ReviewLog.thinkingTimeMs + StudySession/StudySessionDeck) + hand-written migration + shared Zod contract + [BLOCKING] live-DB apply (TIMER-02/03/04)
-- [ ] 30-02-PLAN.md — i18n keys (study + dashboard.stats) in en.json + de.json (TIMER-01/04)
+- [x] 30-02-PLAN.md — i18n keys (study + dashboard.stats) in en.json + de.json (TIMER-01/04)
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
@@ -348,4 +348,4 @@ Plans:
 | 27. Zip Deck Update | v1.4.0 | 2/2 | Complete    | 2026-06-30 |
 | 28. Quick-Edit in Study | v1.4.0 | 2/2 | Complete    | 2026-07-02 |
 | 29. User Email Self-Service | v1.4.0 | 6/6 | Complete    | 2026-07-02 |
-| 30. Study Timers & Stats | v1.4.0 | 1/5 | In Progress|  |
+| 30. Study Timers & Stats | v1.4.0 | 2/5 | In Progress|  |
