@@ -48,6 +48,7 @@ model User {
   sharedDecks    DeckShare[]
   progress       CardProgress[]
   reviewLogs     ReviewLog[]
+  studySessions  StudySession[]
 }
 
 model RefreshToken {
@@ -89,8 +90,9 @@ model Deck {
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
 
-  cards  Card[]
-  shares DeckShare[]
+  cards             Card[]
+  shares            DeckShare[]
+  studySessionDecks StudySessionDeck[]
 }
 
 model DeckShare {
@@ -138,16 +140,40 @@ model CardProgress {
 }
 
 model ReviewLog {
-  id          String   @id @default(cuid())
-  userId      String
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  cardId      String
-  card        Card     @relation(fields: [cardId], references: [id], onDelete: Cascade)
-  deckId      String
-  rating      Int
-  reviewedAt  DateTime @default(now())
+  id             String   @id @default(cuid())
+  userId         String
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  cardId         String
+  card           Card     @relation(fields: [cardId], references: [id], onDelete: Cascade)
+  deckId         String
+  rating         Int
+  thinkingTimeMs Int?
+  reviewedAt     DateTime @default(now())
 
   @@index([userId, reviewedAt])
+}
+
+model StudySession {
+  id              String             @id @default(cuid())
+  userId          String
+  user            User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  startedAt       DateTime           @default(now())
+  completedAt     DateTime?
+  durationSeconds Int?
+  cardsReviewed   Int                @default(0)
+  decks           StudySessionDeck[]
+
+  @@index([userId, startedAt])
+}
+
+model StudySessionDeck {
+  id             String       @id @default(cuid())
+  studySessionId String
+  studySession   StudySession @relation(fields: [studySessionId], references: [id], onDelete: Cascade)
+  deckId         String
+  deck           Deck         @relation(fields: [deckId], references: [id], onDelete: Cascade)
+
+  @@unique([studySessionId, deckId])
 }
 
 model Media {
