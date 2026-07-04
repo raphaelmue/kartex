@@ -1,41 +1,26 @@
 ---
 phase: 29-user-email-self-service
-verified: 2026-07-03T07:48:23Z
-status: gaps_found
-score: 5/6 truths verified
+verified: 2026-07-04T00:00:00Z
+status: passed
+score: 6/6 truths verified
 behavior_unverified: 0
 overrides_applied: 0
 re_verification:
   previous_status: gaps_found
-  previous_score: "5/5 roadmap truths verified (1 blocker anti-pattern found separately)"
+  previous_score: "5/6 truths verified"
   gaps_closed:
-    - "CR-01 (email normalization): PasswordResetRequestSchema and POST /api/admin/invites now normalize via a single shared normalizedEmail() helper (packages/shared/src/schemas/email.ts), consumed by all 5 read/write sites (UpdateEmailSchema, UpdateMeSchema, PasswordResetRequestSchema, admin PATCH /users/:id, admin POST /invites)."
-    - "Documentation gap: REQUIREMENTS.md EMAIL-11 flipped to [x]/Complete in both the checklist and Traceability table; no residual 'Pending' remains."
+    - "Truth 6 (login/refresh email regression): POST /api/auth/login and POST /api/auth/refresh response bodies now include `email: user.email`, matching GET /api/auth/me's shape (apps/backend/src/routes/auth.ts:144, :228). AuthContext's User type is now single-sourced from @kartex/shared's UserResponse (Omit<UserResponse, 'createdAt'> & { createdAt: string }) instead of a hand-rolled interface, so the response shape can no longer silently drift from the frontend type. A real (non-todo) route-level regression test (apps/backend/src/routes/__tests__/auth-login.test.ts) asserts both responses include `email`; ran directly — 2/2 pass."
   gaps_remaining: []
-  regressions:
-    - "New critical finding surfaced by 29-REVIEW.md (its own CR-01, unrelated to the prior VERIFICATION.md's CR-01) and independently confirmed here: POST /api/auth/login and POST /api/auth/refresh response bodies omit the `email` field, while GET /api/auth/me and the admin endpoints include it. AuthContext hydrates from the login/refresh response directly (no follow-up /me call), so a user who already has an email set sees `user.email === undefined` immediately after logging in (until a full page reload re-triggers the one-time /me hydration in AuthProvider's mount effect). This is not a pre-existing issue — 29-01 (ab7b8ab) introduced `email` to GET/PATCH /me but, unlike the phase-11 precedent for `studyMode` (which required a follow-up fix commit fc7b3b9 for the exact same omission class), never extended login/refresh to include it."
-gaps:
-  - truth: "A user who already has an email on file sees it correctly reflected in Settings immediately after logging in (accurate no-email warning state, accurate pre-filled email input) without requiring a full page reload"
-    status: failed
-    reason: "POST /api/auth/login (auth.ts:143-146) and POST /api/auth/refresh (auth.ts:227-230) return { id, username, role, isActive, studyMode, createdAt } — no `email` key at all, unlike GET /api/auth/me (auth.ts:241, select includes email:true) and the admin PATCH endpoints. LoginPage.tsx:77 sets the AuthContext user directly from the login response (setUser(data.user ?? data)); AuthProvider's session-hydration effect (AuthContext.tsx:32-72, calling GET /api/auth/me) only runs once on top-level app mount, and client-side navigate('/dashboard') (LoginPage.tsx:78) does not remount AuthProvider, so no follow-up /me call ever happens. Net effect in SettingsPage.tsx: line 125 `user?.email == null` is true for `undefined` (loose equality), so the amber 'No email address set' warning renders even though the user has an email; line 76 `defaultValues: { email: user?.email ?? '' }` pre-fills the form empty instead of the real saved address (react-hook-form captures defaultValues once at mount, never resynced). Reproduces on every login for every user with an email set — not an edge case. Confirmed directly by reading auth.ts, AuthContext.tsx, LoginPage.tsx, and SettingsPage.tsx; also confirmed SettingsPage.test.tsx mocks useAuth() directly (bypassing the real login->AuthContext->SettingsPage integration path), so no existing test would catch this."
-    artifacts:
-      - path: "apps/backend/src/routes/auth.ts"
-        issue: "POST /login (line ~143-146) and POST /refresh (line ~227-230) response bodies omit `email`, unlike GET /me (line 241) and admin.ts's PATCH /users/:id (select includes email: true)"
-      - path: "apps/frontend/src/context/AuthContext.tsx"
-        issue: "Session hydration (GET /api/auth/me) only runs once on mount; no re-fetch after a client-side login/refresh sets user from a partial response"
-    missing:
-      - "Add `email: user.email` to both response bodies in apps/backend/src/routes/auth.ts (POST /login and POST /refresh), matching GET /api/auth/me's shape"
-      - "Consider deriving AuthContext's User type from the shared @kartex/shared UserResponse (z.infer) instead of a hand-rolled interface, so a future response-shape mismatch is a compile error, not a silent runtime undefined (this is 29-REVIEW.md's WR-01, the proximate cause of this bug recurring after phase 11 already fixed the identical class of omission for studyMode)"
-      - "Add a route-level test (e.g. in auth-me.test.ts or a login/refresh test) asserting the login/refresh response has an `email` key, so this class of regression is caught going forward (29-REVIEW.md's WR-02)"
+  regressions: []
 deferred: []
 ---
 
 # Phase 29: User Email Self-Service Verification Report
 
 **Phase Goal:** Users can add or update their email address from Settings, and see a warning when no email is set (since password reset requires one)
-**Verified:** 2026-07-03T07:48:23Z
-**Status:** gaps_found
-**Re-verification:** Yes — after gap closure (29-05-PLAN.md, executed to close the prior VERIFICATION.md's CR-01/WR-01/doc gaps)
+**Verified:** 2026-07-04T00:00:00Z
+**Status:** passed
+**Re-verification:** Yes — after gap-closure plan 29-06 (login/refresh email regression)
 
 ## Goal Achievement
 
@@ -43,14 +28,14 @@ deferred: []
 
 | # | Truth | Status | Evidence |
 |---|-------|--------|----------|
-| 1 | GET /auth/me returns the email field (null for users who have none) | ✓ VERIFIED | `apps/backend/src/routes/auth.ts:239-242` — `select` includes `email: true`; unchanged since prior verification. |
-| 2 | Settings page shows an Email section with an input and save button | ✓ VERIFIED | `apps/frontend/src/pages/SettingsPage.tsx:140-185` — Card, `Input type="email"` bound to RHF, submit button present and wired to `PATCH /api/auth/me`. Structurally unchanged and correct; see truth 6 below for a data-correctness caveat that affects what value this input shows on first render after login. |
-| 3 | Submitting a duplicate email shows a clear conflict error; an invalid format is rejected at the schema level | ✓ VERIFIED (caveat closed) | `PATCH /api/auth/me` and `PATCH /api/admin/users/:id` both catch Prisma `P2002` → `409 EMAIL_TAKEN`. **The prior verification's caveat is now closed:** all 5 email read/write sites (`UpdateEmailSchema`, `UpdateMeSchema`, `PasswordResetRequestSchema`, admin `PATCH /users/:id`, admin `POST /invites`) consume one shared `normalizedEmail()` helper (`packages/shared/src/schemas/email.ts`), confirmed by reading `auth.ts`, `user.ts`, and `admin.ts` (lines 6-9, 262-266) and by running `email-normalization.test.ts` directly (5/5 pass). |
-| 4 | Settings page shows a prominent warning when email is null, explaining that password reset requires an email address | ✓ VERIFIED (structurally) | `SettingsPage.tsx:125-138` — amber `Alert role="alert"` renders when `user?.email == null`. Structurally correct; note truth 6's finding that this condition is also (incorrectly) satisfied by a real-but-unset value of `undefined` right after login. |
-| 5 | Admin can set or update any user's email from the admin panel user dropdown | ✓ VERIFIED | `AdminPage.tsx` Edit Email dropdown item + dialog, `PATCH /api/admin/users/:id`, unchanged since prior verification and unaffected by this phase's login/refresh gap (admin user list is fetched via `GET /users`, which includes `email`). |
-| 6 | A user who already has an email on file sees it correctly reflected in Settings immediately after logging in (accurate warning state, accurate pre-filled input), not only after a full page reload | ✗ FAILED | New finding, independently confirmed (see Gaps below): `POST /login`/`POST /refresh` omit `email`; `AuthContext` never re-fetches `/me` after a client-side login. Reproduces every login for every user with an email set. |
+| 1 | GET /auth/me returns the email field (null for users who have none) | ✓ VERIFIED | `apps/backend/src/routes/auth.ts:239-242` — `select` includes `email: true`. Unchanged, regression-checked. |
+| 2 | Settings page shows an Email section with an input and save button | ✓ VERIFIED | `apps/frontend/src/pages/SettingsPage.tsx:140-185` — Card, `Input type="email"` bound to RHF, submit button wired to `PATCH /api/auth/me`. Regression-checked, unchanged. |
+| 3 | Submitting a duplicate email shows a clear conflict error; an invalid format is rejected at the schema level | ✓ VERIFIED | `PATCH /api/auth/me` and `PATCH /api/admin/users/:id` both catch Prisma `P2002` → `409 EMAIL_TAKEN` (`auth.ts:276-278`, `admin.ts:96`). All 5 email read/write sites consume the shared `normalizedEmail()` helper (`packages/shared/src/schemas/email.ts`, re-confirmed in `user.ts:2,33,41` and `admin.ts`). Regression-checked, unchanged since prior re-verification. |
+| 4 | Settings page shows a prominent warning when email is null, explaining that password reset requires an email address | ✓ VERIFIED | `SettingsPage.tsx:125-138` — amber `Alert role="alert"` renders when `user?.email == null`. Now correctly reflects real state on first render after login (see truth 6). |
+| 5 | Admin can set or update any user's email from the admin panel user dropdown | ✓ VERIFIED | `AdminPage.tsx` Edit-email dialog (lines ~273-399) + `PATCH /api/admin/users/:id` (`admin.ts:36-96`, normalizes via shared helper, handles `EMAIL_TAKEN`). Unaffected by this round's changes (admin list sourced from `GET /users`, which already includes `email`). Regression-checked. |
+| 6 | A user who already has an email on file sees it correctly reflected in Settings immediately after logging in (accurate no-email warning state, accurate pre-filled email input), without requiring a full page reload | ✓ VERIFIED | **Gap closed by 29-06.** `apps/backend/src/routes/auth.ts:144` (POST /login) and `:228` (POST /refresh) now include `email: user.email`, matching GET /me's shape exactly. `apps/frontend/src/context/AuthContext.tsx:12` — `User` type is now `Omit<UserResponse, 'createdAt'> & { createdAt: string }`, single-sourced from `@kartex/shared`'s `UserResponse` (no more hand-rolled duplicate that could silently drop fields). `LoginPage.tsx:77` — `setUser(data.user ?? data)` now receives a payload that includes `email`, so `SettingsPage.tsx`'s `user?.email == null` check and `defaultValues: { email: user?.email ?? '' }` (lines 76, 125) both reflect the real value immediately after login. A real, non-todo route-level test (`apps/backend/src/routes/__tests__/auth-login.test.ts`) asserts both login and refresh responses contain the correct `email` value; ran directly — **2/2 pass**. |
 
-**Score:** 5/6 truths verified (truth 6 added this round — derived from the phase goal and from 29-REVIEW.md's independently-confirmed new CR-01 finding; the original 5 roadmap success criteria are literally still satisfied in isolation, but truth 6 is necessary for the phase's stated goal — "Users can add or update their email address from Settings, and see a warning when no email is set" — to actually hold for a real user session, not just a cold-loaded page).
+**Score:** 6/6 truths verified.
 
 ### Deferred Items
 
@@ -60,71 +45,63 @@ None.
 
 | Artifact | Expected | Status | Details |
 |----------|----------|--------|---------|
-| `packages/shared/src/schemas/email.ts` | `normalizedEmail()` factory, single source of truth | ✓ VERIFIED | New file, exports `normalizedEmail(message?)` returning `z.string().trim().toLowerCase().email(message)`. |
-| `packages/shared/src/schemas/auth.ts` | `PasswordResetRequestSchema` normalized | ✓ VERIFIED | Line 26-28: `email: normalizedEmail()`, replacing the prior bare `z.string().email()`. |
-| `apps/backend/src/routes/admin.ts` | Both email sites (`PATCH /users/:id`, `POST /invites`) normalized via shared helper | ✓ VERIFIED | Line 6 imports `normalizedEmail` from `@kartex/shared`; line ~55 (`PATCH /users/:id`) and line ~263 (`POST /invites`) both call `normalizedEmail()`/`normalizedEmail().safeParse`; the old bare `z.object({ email: z.string().email() })` invite validator is gone (grep confirms 0 matches). |
-| `apps/backend/src/routes/__tests__/email-normalization.test.ts` | Real cross-schema normalization test | ✓ VERIFIED | New file, 5 real (non-todo) assertions; ran directly — 5/5 pass. |
-| `.planning/REQUIREMENTS.md` | EMAIL-11 reconciled to Complete | ✓ VERIFIED | Line 23 checklist `[x]`, line 107 Traceability `Complete`; no residual "Pending" for EMAIL-11 (grep confirms). |
-| `apps/backend/src/routes/auth.ts` (POST /login, POST /refresh) | Response bodies should include `email` to match GET /me | ✗ MISSING | Lines 143-146 and 227-230 omit `email`; this is the truth-6 gap. Not a must-have this phase's plans claimed to touch, but required for the phase goal to hold end-to-end. |
+| `apps/backend/src/routes/auth.ts` (POST /login, POST /refresh) | Response bodies include `email`, matching GET /me | ✓ VERIFIED | Lines 144 and 228 both contain `email: user.email` in the `c.json(...)` literal. Confirmed via direct file read and `grep -c 'email: user.email' apps/backend/src/routes/auth.ts` → 2. |
+| `apps/frontend/src/context/AuthContext.tsx` | `User` type single-sourced from shared `UserResponse` | ✓ VERIFIED | Line 12: `export type User = Omit<UserResponse, 'createdAt'> & { createdAt: string }`, imported from `@kartex/shared` (line 6). No hand-rolled `interface User` remains. |
+| `apps/backend/src/routes/__tests__/auth-login.test.ts` | Real (non-todo) route-level test guarding the response shape | ✓ VERIFIED | New file, 2 real `it(...)` assertions (no `it.todo`). Ran directly: `yarn workspace @kartex/backend test run auth-login` → 2/2 pass. |
+| `packages/shared/src/schemas/email.ts` | `normalizedEmail()` factory, single source of truth | ✓ VERIFIED (unchanged, regression-checked) | Consumed by `UpdateEmailSchema`, `UpdateMeSchema`, `PasswordResetRequestSchema`, admin `PATCH /users/:id`, admin `POST /invites`. |
+| `.planning/REQUIREMENTS.md` | EMAIL-09/10/11 marked Complete | ✓ VERIFIED | Lines 21-23 checklist `[x]` all three; lines 105-107 Traceability table `Complete` for all three. |
 
 ### Key Link Verification
 
 | From | To | Via | Status | Details |
 |------|-----|-----|--------|---------|
-| `normalizedEmail()` (shared) | `UpdateEmailSchema`/`UpdateMeSchema`/`PasswordResetRequestSchema` | direct import from `./email` | ✓ WIRED | Confirmed in `packages/shared/src/schemas/user.ts` and `auth.ts`. |
-| `normalizedEmail()` (shared) | `admin.ts` PATCH /users/:id + POST /invites | `import { normalizedEmail } from '@kartex/shared'` | ✓ WIRED | Confirmed at both call sites; shared package rebuilt (`yarn workspace @kartex/shared build` per plan) so backend resolves it at runtime. |
-| `POST /login` / `POST /refresh` response | `AuthContext.User.email` | `setUser(data.user ?? data)` (LoginPage) / hydrateSession `setUser(data)` (AuthContext) | ✗ NOT_WIRED (for email specifically) | The response object simply lacks the key; `User.email: string \| null` (non-optional in the hand-rolled type) silently becomes `undefined` at runtime. This is the truth-6 gap. |
-| `user.email == null` | No-email Alert | JSX conditional | ⚠️ PARTIAL | Wired correctly for the true-null case (confirmed by `EMAIL-10a/b` RTL tests, which mock `useAuth()` directly and never exercise the real login response), but the condition is also satisfied by the unrelated `undefined` state produced by the truth-6 gap — the link is technically "wired" but produces a false positive for a subset of real user sessions. |
+| `POST /login` / `POST /refresh` response | `AuthContext.User.email` | `setUser(data.user ?? data)` (LoginPage) / `hydrateSession` `setUser(data)` (AuthContext) | ✓ WIRED | Response now includes `email`; `User` type derives it from `UserResponse` (no field can be silently typed-but-absent). Confirmed by reading `auth.ts:144,228`, `AuthContext.tsx:12`, `LoginPage.tsx:77`. |
+| `user.email == null` | No-email Alert (`SettingsPage.tsx`) | JSX conditional | ✓ WIRED | Now correctly reflects the true email state immediately after login (previously produced a false positive due to the login-response gap; that gap is closed). |
+| `normalizedEmail()` (shared) | 5 email read/write sites | direct import | ✓ WIRED | Unchanged from prior re-verification; regression-checked in `user.ts` and `admin.ts`. |
+| Admin `PATCH /users/:id` | `EMAIL_TAKEN` conflict handling | Prisma `P2002` catch | ✓ WIRED | `admin.ts:96` and `auth.ts:277-278`, unchanged. |
 
 ### Behavioral Spot-Checks
 
 | Behavior | Command | Result | Status |
 |----------|---------|--------|--------|
-| Shared package typecheck | `yarn workspace @kartex/shared typecheck` | Clean, no errors | PASS |
-| Backend typecheck | `yarn workspace @kartex/backend typecheck` | Clean, no errors | PASS |
-| email-normalization test file | `yarn workspace @kartex/backend test run email-normalization` | 5/5 passed (ran directly) | PASS |
-| Bare invite validator removed | `grep -n "z.object({ email: z.string().email() })" apps/backend/src/routes/admin.ts` | 0 matches | PASS |
-| Login/refresh response shape | Direct code read of `auth.ts:143-146`, `227-230` vs. `241` | `email` key absent from login/refresh, present in /me | FAIL (this is the truth-6 gap; no server needed to run to observe — it's a static response-shape mismatch confirmed by reading the handler source) |
-| AuthProvider re-hydration on client nav | Direct code read of `AuthContext.tsx:32-72` and `LoginPage.tsx:58-62,71-78` | `hydrateSession` only in a `useEffect(..., [])` on `AuthProvider` mount; `navigate('/dashboard')` is client-side (no remount) | Confirms no follow-up `/me` call after login |
+| Login/refresh regression test | `yarn workspace @kartex/backend test run auth-login` | 2/2 passed (ran directly) | ✓ PASS |
+| Backend typecheck | `yarn workspace @kartex/backend typecheck` | Clean, 0 errors | ✓ PASS |
+| Frontend typecheck | `yarn workspace @kartex/frontend typecheck` | Clean, 0 errors | ✓ PASS |
+| Login response includes `email` | Direct code read of `auth.ts:144` vs. `241` (GET /me) | Identical key set: id, username, role, isActive, studyMode, createdAt, email | ✓ PASS |
+| Refresh response includes `email` | Direct code read of `auth.ts:228` | Same shape as login/`/me` | ✓ PASS |
+| No debt markers introduced | `grep -n -E "TBD\|FIXME\|XXX\|TODO\|HACK\|PLACEHOLDER"` across `auth.ts`, `AuthContext.tsx`, `auth-login.test.ts` | 0 matches | ✓ PASS |
 
 ### Requirements Coverage
 
 | Requirement | Source Plan | Description | Status | Evidence |
 |-------------|------------|-------------|--------|----------|
-| EMAIL-09 | 29-01, 29-02, 29-03, 29-05 | User can add/update their own email from Settings | ⚠️ SATISFIED with a caveat | Backend + Settings UI fully wired and tested for the cold-load / already-hydrated case; the truth-6 gap means the Settings page can show stale/incorrect email state for one browser session immediately after login (self-heals on full reload). |
-| EMAIL-10 | 29-01, 29-02, 29-03, 29-05 | Settings shows a no-email warning | ⚠️ SATISFIED with a caveat | Same as above — warning logic itself is correct, but can false-positive right after login due to the truth-6 gap. |
-| EMAIL-11 | 29-01, 29-02, 29-04, 29-05 | Admin can set/update any user's email | ✓ SATISFIED | Unaffected by the truth-6 gap (admin list is sourced from `GET /users`, which includes `email`). REQUIREMENTS.md now correctly reflects `Complete`. |
+| EMAIL-09 | 29-01, 29-02, 29-03, 29-05, 29-06 | User can add/update their own email from Settings | ✓ SATISFIED | Backend + Settings UI fully wired and tested; the truth-6 login/refresh gap that previously undermined this for the immediately-post-login case is now closed. |
+| EMAIL-10 | 29-01, 29-02, 29-03, 29-05, 29-06 | Settings shows a no-email warning | ✓ SATISFIED | Warning logic correct and now accurate immediately after login (no more false positive from the login-response gap). |
+| EMAIL-11 | 29-01, 29-02, 29-04, 29-05 | Admin can set/update any user's email | ✓ SATISFIED | Unaffected by this round's changes; `REQUIREMENTS.md` reflects `Complete`. |
 
-No orphaned requirements — REQUIREMENTS.md maps only EMAIL-09/10/11 to Phase 29, all three claimed by plans in this phase (including 29-05's gap-closure requirements list).
+No orphaned requirements — `REQUIREMENTS.md` maps only EMAIL-09/10/11 to Phase 29, all three claimed across plans (including 29-06's gap-closure requirements list `[EMAIL-09, EMAIL-10]`).
 
 ### Anti-Patterns Found
 
+None in files modified by 29-06 (`auth.ts`, `AuthContext.tsx`, `auth-login.test.ts`) — no `TBD`/`FIXME`/`XXX`/`TODO`/`HACK`/`PLACEHOLDER` markers, no empty implementations, no hardcoded empty stubs. The two prior warnings from the last re-verification are now resolved or were informational-only and remain unchanged in disposition:
+
 | File | Line | Pattern | Severity | Impact |
 |------|------|---------|----------|--------|
-| `apps/backend/src/routes/auth.ts` | 143-146 (POST /login), 227-230 (POST /refresh) | Response body omits `email`, inconsistent with `GET /me`'s select | 🛑 Blocker | Causes truth-6 failure — incorrect Settings UI state (false "no email" warning, empty pre-filled input) for every user with an email set, immediately after login, until a full reload. Confirmed as this phase's own regression (29-01 added `email` to GET/PATCH /me but not login/refresh; codebase has direct precedent for this exact omission class with `studyMode`, fixed in phase 11 by commit `fc7b3b9`). Reported independently in `29-REVIEW.md` as its own CR-01 (distinct from the prior VERIFICATION.md's CR-01, which is now closed). |
-| `apps/frontend/src/context/AuthContext.tsx` | 8-16 | Hand-rolled `User` interface (`email: string \| null`, non-optional) instead of deriving from `@kartex/shared`'s `UserResponse` | ⚠️ Warning | Proximate cause of the blocker above going undetected by TypeScript — the type promises `email` is always present, but real login/refresh payloads can omit it entirely. (29-REVIEW.md WR-01.) |
-| `apps/backend/src/routes/__tests__/auth-me.test.ts`, `admin-email.test.ts` | various | All new route-behavior assertions (beyond schema normalization) are `it.todo()` stubs | ⚠️ Warning | Established repo convention per the prior verification, but concretely meant this class of defect (a route response missing a field) was not caught by any test in this phase. (29-REVIEW.md WR-02.) |
-| `apps/backend/src/routes/auth.ts` | 255-282 (`PATCH /me`) | Any authenticated (non-admin) user can probe whether an arbitrary email belongs to another account via the `409 EMAIL_TAKEN` response | ℹ️ Info (accepted low-severity tradeoff) | Deliberate design choice per the `D-08` code comment (unique-index race-safe gate); rate-limited by the existing `rateLimitMiddleware`. Not a Phase 29 blocker for a 2-5-user self-hosted deployment. (29-REVIEW.md WR-03.) |
-
-No `TBD`/`FIXME`/`XXX`/`TODO`/`HACK`/`PLACEHOLDER` debt markers in any file touched by 29-05 or found in the re-scanned auth/admin routes.
+| `apps/backend/src/routes/auth.ts` | 255-282 (`PATCH /me`) | Any authenticated (non-admin) user can probe whether an arbitrary email belongs to another account via the `409 EMAIL_TAKEN` response | ℹ️ Info (accepted, pre-existing, out of scope for this phase) | Deliberate design choice per the `D-08` code comment (unique-index race-safe gate); rate-limited by `rateLimitMiddleware`. Not a Phase 29 blocker for a 2-5-user self-hosted deployment. |
 
 ### Human Verification Required
 
-None — the truth-6 gap is fully demonstrable by static code reading (response shape vs. type contract vs. one-time hydration effect); no runtime server needed to establish it's reachable and reproducible.
+None. The truth-6 fix is fully demonstrable by static code reading (response shape now matches the type contract, and the type contract is now single-sourced from the shared schema) plus a real, passing, non-mocked-integration route test that would fail if the fix were reverted (confirmed empirically per 29-06-SUMMARY.md's revert-and-restore check).
 
 ### Gaps Summary
 
-Plan 29-05 successfully closed both items from the prior verification: (1) the CR-01 email-normalization gap — all 5 `User.email`/`InviteToken.email` read/write sites now converge on a single shared `normalizedEmail()` helper, proven by a real, passing cross-schema test; and (2) the REQUIREMENTS.md EMAIL-11 documentation gap, now correctly marked `Complete`.
+No gaps. Plan 29-06 closed the only remaining gap from the prior re-verification: `POST /api/auth/login` and `POST /api/auth/refresh` now return `email` in their response bodies, matching `GET /api/auth/me`. `AuthContext`'s `User` type is single-sourced from `@kartex/shared`'s `UserResponse`, eliminating the hand-rolled-interface drift risk that let this class of bug occur (and recur — this is the same omission class previously fixed once for `studyMode` in phase 11). A real route-level test (`auth-login.test.ts`, 2/2 passing) guards the response shape going forward.
 
-However, this re-verification surfaces a **new, unrelated, unresolved critical defect** — independently confirmed here after being flagged as this phase's own `29-REVIEW.md` CR-01 (a fresh code review run after 29-05 landed, whose own numbering happens to also start at CR-01, distinct from the prior VERIFICATION.md's CR-01): `POST /api/auth/login` and `POST /api/auth/refresh` never return the `email` field, while `GET /api/auth/me` and the admin endpoints do. Because `AuthContext` hydrates the user object directly from the login/refresh response and only re-fetches `/me` once, on the app's initial mount (never again after a client-side login), any user who already has an email on file will see an incorrect "no email set" warning and an empty email input in Settings immediately after logging in — until they perform a full page reload. This reproduces on every login for every user with an email, directly undermining the observable behavior the phase goal promises ("...see a warning when no email is set").
+All 6 observable truths for the phase goal are verified. All 5 required artifacts pass all three levels (exist, substantive, wired). All key links are wired correctly. Requirements EMAIL-09, EMAIL-10, and EMAIL-11 are all satisfied with no orphans. No blocker or warning-level anti-patterns remain. No human verification items are outstanding.
 
-This is not a hypothetical: I traced the exact code path (auth.ts response bodies -> LoginPage.tsx `setUser` -> AuthContext's one-shot hydration effect -> SettingsPage's `== null` check and RHF `defaultValues`) and confirmed no existing test exercises this integration path (`SettingsPage.test.tsx` mocks `useAuth()` directly, bypassing it entirely).
-
-**Recommended fix (small, well-scoped, matches existing precedent):** add `email: user.email` to both response bodies in `apps/backend/src/routes/auth.ts` (POST /login, POST /refresh), matching `GET /api/auth/me`'s shape — the same fix pattern already used once before in this codebase for an identical `studyMode` omission (phase 11, commit `fc7b3b9`). A route-level test asserting the response includes `email` would prevent recurrence.
-
-I'm reporting `status: gaps_found` because this defect is real, reproducible, and directly breaks the phase's stated user-facing promise for the common case of an already-logged-in user with an email on file — not because any of the plan 29-05 gap-closure work failed (it succeeded completely).
+**Phase goal achieved: users can add or update their email address from Settings, and see an accurate warning when no email is set — including immediately after logging in, without needing a full page reload.**
 
 ---
 
-_Verified: 2026-07-03T07:48:23Z_
+_Verified: 2026-07-04T00:00:00Z_
 _Verifier: Claude (gsd-verifier)_
