@@ -22,9 +22,10 @@ const fullSummary: StatsSummary = {
   retentionRate: 0.87,
   difficultyBreakdown: { easy: 5, good: 4, hard: 3, again: 2 },
   perDeck: [
-    { deckId: 'deck-1', deckTitle: 'Spanish Basics', dueCount: 3, masteredCount: 10, inLearningCount: 5 },
-    { deckId: 'deck-2', deckTitle: 'Math Zero', dueCount: 0, masteredCount: 0, inLearningCount: 0 },
+    { deckId: 'deck-1', deckTitle: 'Spanish Basics', dueCount: 3, masteredCount: 10, inLearningCount: 5, avgThinkingTimeMs: null },
+    { deckId: 'deck-2', deckTitle: 'Math Zero', dueCount: 0, masteredCount: 0, inLearningCount: 0, avgThinkingTimeMs: null },
   ],
+  recentSessions: [],
 }
 
 describe('StatsSummaryPanel (STATS-01..04)', () => {
