@@ -15,8 +15,18 @@ export interface StatsSummaryPanelProps {
   loading: boolean
 }
 
+function formatDuration(totalSeconds: number): string {
+  const mins = String(Math.floor(totalSeconds / 60)).padStart(2, '0')
+  const secs = String(totalSeconds % 60).padStart(2, '0')
+  return `${mins}:${secs}`
+}
+
+function formatDate(iso: string, language: string): string {
+  return new Date(iso).toLocaleDateString(language)
+}
+
 export function StatsSummaryPanel({ summary, loading }: StatsSummaryPanelProps) {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
 
   if (loading) {
     return (
@@ -36,6 +46,7 @@ export function StatsSummaryPanel({ summary, loading }: StatsSummaryPanelProps) 
   const retentionRate = summary?.retentionRate ?? null
   const diff = summary?.difficultyBreakdown ?? null
   const perDeck = summary?.perDeck ?? []
+  const recentSessions = summary?.recentSessions ?? []
 
   const difficultyKeys = [
     { key: 'easy', labelKey: 'dashboard.stats.easyLabel' },
@@ -140,13 +151,16 @@ export function StatsSummaryPanel({ summary, loading }: StatsSummaryPanelProps) 
               <TableHead className="hidden sm:table-cell text-xs font-normal uppercase tracking-wide text-muted-foreground text-right">
                 {t('dashboard.stats.inLearningColumn')}
               </TableHead>
+              <TableHead className="hidden sm:table-cell text-xs font-normal uppercase tracking-wide text-muted-foreground text-right">
+                {t('dashboard.stats.avgFlipTimeColumn')}
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {perDeck.length === 0 ? (
               <TableRow>
                 <TableCell
-                  colSpan={4}
+                  colSpan={5}
                   className="text-center text-sm text-muted-foreground py-6"
                 >
                   {t('dashboard.stats.noDecksYet')}
@@ -171,11 +185,78 @@ export function StatsSummaryPanel({ summary, loading }: StatsSummaryPanelProps) 
                   <TableCell className="hidden sm:table-cell text-right">
                     <span className="text-sm text-foreground">{d.inLearningCount}</span>
                   </TableCell>
+                  <TableCell className="hidden sm:table-cell text-right">
+                    {d.avgThinkingTimeMs === null ? (
+                      <span className="text-sm text-muted-foreground">{t('dashboard.stats.noData')}</span>
+                    ) : (
+                      <span className="text-sm text-foreground">{(d.avgThinkingTimeMs / 1000).toFixed(1)}s</span>
+                    )}
+                  </TableCell>
                 </TableRow>
               ))
             )}
           </TableBody>
         </Table>
+        </div>
+      </div>
+
+      {/* Row 4: Recent Sessions table */}
+      <div className="mt-6">
+        <p className="text-sm font-semibold text-foreground mb-2">
+          {t('dashboard.stats.recentSessions')}
+        </p>
+        <div className="overflow-x-auto" role="region" aria-label={t('dashboard.stats.recentSessions')}>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="text-xs font-normal uppercase tracking-wide text-muted-foreground">
+                  {t('dashboard.stats.sessionDateColumn')}
+                </TableHead>
+                <TableHead className="text-xs font-normal uppercase tracking-wide text-muted-foreground">
+                  {t('dashboard.stats.sessionDeckColumn')}
+                </TableHead>
+                <TableHead className="text-xs font-normal uppercase tracking-wide text-muted-foreground text-right">
+                  {t('dashboard.stats.sessionDurationColumn')}
+                </TableHead>
+                <TableHead className="hidden sm:table-cell text-xs font-normal uppercase tracking-wide text-muted-foreground text-right">
+                  {t('dashboard.stats.sessionCardsColumn')}
+                </TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {recentSessions.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={4} className="text-center text-sm text-muted-foreground py-6">
+                    {t('dashboard.stats.noSessionsYet')}
+                  </TableCell>
+                </TableRow>
+              ) : (
+                recentSessions.map((s) => (
+                  <TableRow key={s.id}>
+                    <TableCell className="text-sm text-foreground">{formatDate(s.startedAt, i18n.language)}</TableCell>
+                    <TableCell>
+                      <div className="flex flex-wrap gap-1">
+                        {s.deckTitles.map((title) => (
+                          <Badge key={title} variant="secondary" className="text-xs">{title}</Badge>
+                        ))}
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-right text-sm text-foreground">
+                      {formatDuration(s.durationSeconds)}
+                      {!s.completed && (
+                        <Badge variant="outline" className="ml-2 text-xs">
+                          {t('dashboard.stats.incompleteSession')}
+                        </Badge>
+                      )}
+                    </TableCell>
+                    <TableCell className="hidden sm:table-cell text-right text-sm text-foreground">
+                      {s.cardsReviewed}
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
         </div>
       </div>
     </div>

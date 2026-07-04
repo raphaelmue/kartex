@@ -10,7 +10,7 @@ const mockT = vi.fn((key: string, opts?: { count?: number }) => {
   return key
 })
 vi.mock('react-i18next', () => ({
-  useTranslation: () => ({ t: mockT }),
+  useTranslation: () => ({ t: mockT, i18n: { language: 'en' } }),
 }))
 
 // Import AFTER mock setup
@@ -22,10 +22,27 @@ const fullSummary: StatsSummary = {
   retentionRate: 0.87,
   difficultyBreakdown: { easy: 5, good: 4, hard: 3, again: 2 },
   perDeck: [
-    { deckId: 'deck-1', deckTitle: 'Spanish Basics', dueCount: 3, masteredCount: 10, inLearningCount: 5, avgThinkingTimeMs: null },
+    { deckId: 'deck-1', deckTitle: 'Spanish Basics', dueCount: 3, masteredCount: 10, inLearningCount: 5, avgThinkingTimeMs: 3400 },
     { deckId: 'deck-2', deckTitle: 'Math Zero', dueCount: 0, masteredCount: 0, inLearningCount: 0, avgThinkingTimeMs: null },
   ],
-  recentSessions: [],
+  recentSessions: [
+    {
+      id: 'session-1',
+      startedAt: '2026-07-01T10:00:00.000Z',
+      durationSeconds: 125,
+      cardsReviewed: 12,
+      completed: true,
+      deckTitles: ['Spanish Basics', 'Math Zero'],
+    },
+    {
+      id: 'session-2',
+      startedAt: '2026-07-02T10:00:00.000Z',
+      durationSeconds: 45,
+      cardsReviewed: 4,
+      completed: false,
+      deckTitles: ['Spanish Basics'],
+    },
+  ],
 }
 
 describe('StatsSummaryPanel (STATS-01..04)', () => {
@@ -82,7 +99,8 @@ describe('StatsSummaryPanel (STATS-01..04)', () => {
 
   it('renders per-deck rows for every deck including zero-card decks with zero counts (STATS-04)', () => {
     render(<StatsSummaryPanel summary={fullSummary} loading={false} />)
-    expect(screen.getByText('Math Zero')).toBeTruthy()
+    // "Math Zero" also appears as a Recent Sessions deck badge — use getAllByText
+    expect(screen.getAllByText('Math Zero').length).toBeGreaterThanOrEqual(1)
     // The zero-card deck row should have three zeros
     const cells = screen.getAllByText('0')
     expect(cells.length).toBeGreaterThanOrEqual(3)
@@ -105,5 +123,44 @@ describe('StatsSummaryPanel (STATS-01..04)', () => {
     // Both retention and difficulty show noData
     const statuses = document.querySelectorAll('[role="status"]')
     expect(statuses.length).toBeGreaterThanOrEqual(2)
+  })
+
+  it('renders "3.4s" for a deck with avgThinkingTimeMs = 3400 and noData for a deck with avgThinkingTimeMs = null (TIMER-04)', () => {
+    render(<StatsSummaryPanel summary={fullSummary} loading={false} />)
+    expect(screen.getByText('3.4s')).toBeTruthy()
+    // deck-2 has avgThinkingTimeMs: null — must render noData key, never "0.0s"
+    expect(screen.queryByText('0.0s')).toBeNull()
+    const noDataCells = screen.getAllByText('dashboard.stats.noData')
+    expect(noDataCells.length).toBeGreaterThanOrEqual(1)
+  })
+
+  it('renders a single noSessionsYet row when recentSessions is empty', () => {
+    const summary: StatsSummary = { ...fullSummary, recentSessions: [] }
+    render(<StatsSummaryPanel summary={summary} loading={false} />)
+    expect(screen.getByText('dashboard.stats.noSessionsYet')).toBeTruthy()
+  })
+
+  it('renders an Incomplete badge for a session with completed = false, and not for a completed session', () => {
+    render(<StatsSummaryPanel summary={fullSummary} loading={false} />)
+    const incompleteBadges = screen.getAllByText('dashboard.stats.incompleteSession')
+    expect(incompleteBadges.length).toBe(1)
+  })
+
+  it('renders one secondary Badge per deck for a multi-deck session', () => {
+    render(<StatsSummaryPanel summary={fullSummary} loading={false} />)
+    // session-1 has two deckTitles: Spanish Basics, Math Zero
+    const spanishBadges = screen.getAllByText('Spanish Basics')
+    const mathBadges = screen.getAllByText('Math Zero')
+    expect(spanishBadges.length).toBeGreaterThanOrEqual(1)
+    expect(mathBadges.length).toBeGreaterThanOrEqual(1)
+  })
+
+  it('renders session duration in mm:ss and card counts', () => {
+    render(<StatsSummaryPanel summary={fullSummary} loading={false} />)
+    // 125 seconds -> 02:05
+    expect(screen.getByText('02:05')).toBeTruthy()
+    // 45 seconds -> 00:45
+    expect(screen.getByText('00:45')).toBeTruthy()
+    expect(screen.getByText('12')).toBeTruthy()
   })
 })
