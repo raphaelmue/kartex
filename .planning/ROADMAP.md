@@ -298,7 +298,7 @@ Plans:
 
 **Requirements**: TIMER-01, TIMER-02, TIMER-03, TIMER-04
 
-**Plans**: 2/5 plans executed
+**Plans**: 3/5 plans executed
 
 **Wave 1**
 
@@ -307,7 +307,7 @@ Plans:
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] 30-03-PLAN.md — Backend: thinkingTimeMs on POST /rate + session start/complete routes + stats summary avg-flip + recent sessions (TIMER-02/03/04)
+- [x] 30-03-PLAN.md — Backend: thinkingTimeMs on POST /rate + session start/complete routes + stats summary avg-flip + recent sessions (TIMER-02/03/04)
 - [ ] 30-04-PLAN.md — Frontend: SessionTimer count-up component + first-flip capture in useStudySession + session lifecycle wiring (TIMER-01/02/03)
 - [ ] 30-05-PLAN.md — Frontend: StatsSummaryPanel avg-flip column + Recent Sessions section (TIMER-04)
 
@@ -348,4 +348,4 @@ Plans:
 | 27. Zip Deck Update | v1.4.0 | 2/2 | Complete    | 2026-06-30 |
 | 28. Quick-Edit in Study | v1.4.0 | 2/2 | Complete    | 2026-07-02 |
 | 29. User Email Self-Service | v1.4.0 | 6/6 | Complete    | 2026-07-02 |
-| 30. Study Timers & Stats | v1.4.0 | 2/5 | In Progress|  |
+| 30. Study Timers & Stats | v1.4.0 | 3/5 | In Progress|  |
