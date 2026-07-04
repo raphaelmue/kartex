@@ -296,7 +296,21 @@ Plans:
   3. Total session duration is stored in a `StudySession` record when a session completes
   4. Stats page shows average card flip time and a list of recent sessions with duration and card count
 
-**Plans**: TBD
+**Requirements**: TIMER-01, TIMER-02, TIMER-03, TIMER-04
+
+**Plans**: 5 plans
+
+**Wave 1**
+
+- [ ] 30-01-PLAN.md — Schema (ReviewLog.thinkingTimeMs + StudySession/StudySessionDeck) + hand-written migration + shared Zod contract + [BLOCKING] live-DB apply (TIMER-02/03/04)
+- [ ] 30-02-PLAN.md — i18n keys (study + dashboard.stats) in en.json + de.json (TIMER-01/04)
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
+- [ ] 30-03-PLAN.md — Backend: thinkingTimeMs on POST /rate + session start/complete routes + stats summary avg-flip + recent sessions (TIMER-02/03/04)
+- [ ] 30-04-PLAN.md — Frontend: SessionTimer count-up component + first-flip capture in useStudySession + session lifecycle wiring (TIMER-01/02/03)
+- [ ] 30-05-PLAN.md — Frontend: StatsSummaryPanel avg-flip column + Recent Sessions section (TIMER-04)
+
 **UI hint**: yes
 
 ---
