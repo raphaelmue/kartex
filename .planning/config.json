@@ -10,7 +10,9 @@
     "verifier": true,
     "nyquist_validation": true,
     "auto_advance": false,
-    "_auto_chain_active": false
+    "_auto_chain_active": false,
+    "build_command": "yarn build",
+    "test_command": "yarn workspaces foreach -A run test --run"
   },
   "ship": {
     "pr_body_sections": [
