@@ -4,17 +4,17 @@ milestone: v1.4.0
 milestone_name: Auth Overhaul & Study UX
 current_phase: 30
 current_phase_name: study-timers-stats
-status: executing
+status: verifying
 stopped_at: Completed 30-04-PLAN.md
-last_updated: "2026-07-04T09:39:02.364Z"
+last_updated: "2026-07-04T13:49:50.928Z"
 last_activity: 2026-07-04
 last_activity_desc: Phase 30 execution started
 progress:
   total_phases: 8
-  completed_phases: 7
+  completed_phases: 8
   total_plans: 32
-  completed_plans: 31
-  percent: 88
+  completed_plans: 32
+  percent: 100
 ---
 
 # Project State
@@ -30,7 +30,7 @@ See: .planning/PROJECT.md (updated 2026-06-19)
 
 Phase: 30 (study-timers-stats) — EXECUTING
 Plan: 5 of 5
-Status: Ready to execute
+Status: Phase complete — ready for verification
 Last activity: 2026-07-04 — Phase 30 execution started
 
 ## Performance Metrics
@@ -105,6 +105,7 @@ Last activity: 2026-07-04 — Phase 30 execution started
 | Phase 30-study-timers-stats P02 | 3min | 1 tasks | 2 files |
 | Phase 30 P03 | 12min | 2 tasks | 4 files |
 | Phase 30-study-timers-stats P04 | 15min | 2 tasks | 4 files |
+| Phase 30 P05 | 12min | 1 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -268,6 +269,7 @@ Recent decisions affecting current work:
 - [Phase ?]: 30-03: session/start batches deck authorization into two queries (findMany decks, findMany shares for unowned decks) instead of per-deckId looping — avoids N+1 queries for multi-deck Global SR sessions
 - [Phase ?]: 30-04: cardShownAtRef initialized to 0 in useRef() (not Date.now()) to satisfy react-hooks/purity ESLint rule; actual timestamp set inside the existing [currentIndex] mount/advance effect
 - [Phase ?]: 30-04: SessionTimer is a new sibling component to ExamTimer, not a mode extension — copies mm:ss/a11y verbatim, drops color-shift thresholds, adds Page Visibility API pause (D-02/D-05)
+- [Phase ?]: 30-05: formatDuration/formatDate extracted to module scope in StatsSummaryPanel.tsx -- formatDate takes i18n.language as an explicit argument since module-scope functions cannot call the useTranslation hook
 
 ### Pending Todos
 
@@ -320,6 +322,6 @@ Items acknowledged and deferred at milestone close on 2026-05-30:
 
 **Resume file:** None
 
-Last session: 2026-07-04T09:39:02.352Z
+Last session: 2026-07-04T13:49:13.281Z
 Stopped at: Completed 30-04-PLAN.md
 Resume with: `/gsd-plan-phase 23` — Auth Foundation

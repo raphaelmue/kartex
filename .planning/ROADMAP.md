@@ -92,7 +92,7 @@ Full details: [.planning/milestones/v1.3.2-ROADMAP.md](milestones/v1.3.2-ROADMAP
 - [x] **Phase 28: Quick-Edit in Study** - 3-dot study card menu for owners/editors, inline card edit, jump-to-deck (completed 2026-07-02)
 
 - [x] **Phase 29: User Email Self-Service** - Email field in Settings page, no-email warning, admin email edit (4/4 plans executed 2026-07-02; verification found 1 unresolved gap — see 29-VERIFICATION.md) (completed 2026-07-03)
-- [ ] **Phase 30: Study Timers & Stats** - Card flip timer, session duration timer, both surfaced in statistics
+- [x] **Phase 30: Study Timers & Stats** - Card flip timer, session duration timer, both surfaced in statistics (completed 2026-07-04)
 
 ---
 
@@ -298,7 +298,7 @@ Plans:
 
 **Requirements**: TIMER-01, TIMER-02, TIMER-03, TIMER-04
 
-**Plans**: 4/5 plans executed
+**Plans**: 5/5 plans complete
 
 **Wave 1**
 
@@ -309,7 +309,7 @@ Plans:
 
 - [x] 30-03-PLAN.md — Backend: thinkingTimeMs on POST /rate + session start/complete routes + stats summary avg-flip + recent sessions (TIMER-02/03/04)
 - [x] 30-04-PLAN.md — Frontend: SessionTimer count-up component + first-flip capture in useStudySession + session lifecycle wiring (TIMER-01/02/03)
-- [ ] 30-05-PLAN.md — Frontend: StatsSummaryPanel avg-flip column + Recent Sessions section (TIMER-04)
+- [x] 30-05-PLAN.md — Frontend: StatsSummaryPanel avg-flip column + Recent Sessions section (TIMER-04)
 
 **UI hint**: yes
 
@@ -348,4 +348,4 @@ Plans:
 | 27. Zip Deck Update | v1.4.0 | 2/2 | Complete    | 2026-06-30 |
 | 28. Quick-Edit in Study | v1.4.0 | 2/2 | Complete    | 2026-07-02 |
 | 29. User Email Self-Service | v1.4.0 | 6/6 | Complete    | 2026-07-02 |
-| 30. Study Timers & Stats | v1.4.0 | 4/5 | In Progress|  |
+| 30. Study Timers & Stats | v1.4.0 | 5/5 | Complete   | 2026-07-04 |
