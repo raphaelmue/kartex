@@ -19,8 +19,20 @@ export const PerDeckProgressSchema = z.object({
   dueCount: z.number().int().nonnegative(),
   masteredCount: z.number().int().nonnegative(),
   inLearningCount: z.number().int().nonnegative(),
+  // null-on-empty convention — a deck with zero captured values is null, never 0
+  avgThinkingTimeMs: z.number().nullable(),
 })
 export type PerDeckProgress = z.infer<typeof PerDeckProgressSchema>
+
+export const RecentSessionSchema = z.object({
+  id: z.string(),
+  startedAt: z.string(),
+  durationSeconds: z.number().int().nonnegative(),
+  cardsReviewed: z.number().int().nonnegative(),
+  completed: z.boolean(),
+  deckTitles: z.array(z.string()),
+})
+export type RecentSession = z.infer<typeof RecentSessionSchema>
 
 export const StatsSummarySchema = z.object({
   totalReviewed: z.number().int().nonnegative(),
@@ -28,5 +40,7 @@ export const StatsSummarySchema = z.object({
   retentionRate: z.number().min(0).max(1).nullable(),
   difficultyBreakdown: DifficultyBreakdownSchema.nullable(),
   perDeck: z.array(PerDeckProgressSchema),
+  // always an array — empty when no sessions, never null
+  recentSessions: z.array(RecentSessionSchema),
 })
 export type StatsSummary = z.infer<typeof StatsSummarySchema>
