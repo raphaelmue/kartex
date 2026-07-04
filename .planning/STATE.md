@@ -3,17 +3,17 @@ gsd_state_version: 1.0
 milestone: v1.4.0
 milestone_name: Auth Overhaul & Study UX
 current_phase: 30
-current_phase_name: Study Timers & Stats
+current_phase_name: study-timers-stats
 status: executing
-stopped_at: Phase 30 UI-SPEC approved
-last_updated: "2026-07-04T08:39:11.435Z"
+stopped_at: Completed 30-01-PLAN.md
+last_updated: "2026-07-04T09:17:02.652Z"
 last_activity: 2026-07-04
-last_activity_desc: Phase 29 complete, transitioned to Phase 30
+last_activity_desc: Phase 30 execution started
 progress:
   total_phases: 8
   completed_phases: 7
-  total_plans: 27
-  completed_plans: 27
+  total_plans: 32
+  completed_plans: 28
   percent: 88
 ---
 
@@ -24,14 +24,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-06-19)
 
 **Core value:** A user can open their dashboard, see their due cards, and complete a spaced-repetition study session — that loop must always work.
-**Current focus:** Phase 29 — user-email-self-service
+**Current focus:** Phase 30 — study-timers-stats
 
 ## Current Position
 
-Phase: 30 — Study Timers & Stats
-Plan: Not started
+Phase: 30 (study-timers-stats) — EXECUTING
+Plan: 2 of 5
 Status: Ready to execute
-Last activity: 2026-07-04 — Phase 29 complete, transitioned to Phase 30
+Last activity: 2026-07-04 — Phase 30 execution started
 
 ## Performance Metrics
 
@@ -101,6 +101,7 @@ Last activity: 2026-07-04 — Phase 29 complete, transitioned to Phase 30
 | Phase 29 P03 | 25min | 2 tasks | 2 files |
 | Phase 29 P04 | ~45min (session-interrupted) | 2 tasks | 2 files |
 | Phase 29 P06 | 12min | 3 tasks | 3 files |
+| Phase 30 P01 | 9min | 3 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -257,6 +258,8 @@ Recent decisions affecting current work:
 - [Phase ?]: 29-04: Reset an RHF form synchronously in the triggering onClick (not a useEffect keyed on the target id) when the form lives inside a Dialog opening on the same interaction — effect-based reset raced with Radix Dialog's default auto-focus and hung indefinitely (same class of issue as 28-02's DropdownMenu+Dialog FocusScope conflict, radix-ui/primitives#1836)
 - [Phase ?]: 29-04: onOpenAutoFocus={(e) => e.preventDefault()} added to Edit Email DialogContent as defense in depth against Radix auto-focus + RHF-controlled-input races
 - [Phase ?]: 29-06: AuthContext User type is now Omit<UserResponse, 'createdAt'> & { createdAt: string } — single-sourced from shared's Zod schema instead of a hand-rolled duplicate interface
+- [Phase ?]: 30-01: Migration apply requires Docker image rebuild (docker compose build backend) since prisma/migrations is baked into the image, not volume-mounted — a plain container restart finds 0 pending migrations
+- [Phase ?]: 30-01: StudySessionCompleteSchema intentionally omits durationSeconds — server computes it from startedAt/completedAt to prevent client-supplied duration tampering
 
 ### Pending Todos
 
@@ -307,8 +310,8 @@ Items acknowledged and deferred at milestone close on 2026-05-30:
 
 ## Session Continuity
 
-**Resume file:** .planning/phases/30-study-timers-stats/30-UI-SPEC.md
+**Resume file:** None
 
-Last session: 2026-07-04T08:39:11.426Z
-Stopped at: Phase 30 UI-SPEC approved
+Last session: 2026-07-04T09:17:02.643Z
+Stopped at: Completed 30-01-PLAN.md
 Resume with: `/gsd-plan-phase 23` — Auth Foundation
