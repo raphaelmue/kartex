@@ -85,6 +85,13 @@ stats.get('/summary', async (c) => {
     },
   })
 
+  // ─── TIMER-04: per-deck average flip time from ReviewLog.thinkingTimeMs ─────
+  const avgThinkingTimeByDeck = await prisma.reviewLog.groupBy({
+    by: ['deckId'],
+    where: { userId, thinkingTimeMs: { not: null } },
+    _avg: { thinkingTimeMs: true },
+  })
+
   const perDeck = decks.map((deck: (typeof decks)[number]) => {
     let dueCount = 0
     let masteredCount = 0
@@ -108,16 +115,43 @@ stats.get('/summary', async (c) => {
       }
     }
 
+    // CRITICAL: null on empty — never 0 when no thinkingTimeMs values captured (T-15-02 convention)
+    const avgGroup = avgThinkingTimeByDeck.find(
+      (g: (typeof avgThinkingTimeByDeck)[number]) => g.deckId === deck.id
+    )
+    const avgThinkingTimeMs = avgGroup?._avg.thinkingTimeMs ?? null
+
     return {
       deckId: deck.id,
       deckTitle: deck.title,
       dueCount,
       masteredCount,
       inLearningCount,
+      avgThinkingTimeMs,
     }
   })
 
-  return c.json({ totalReviewed, weekReviewed, retentionRate, difficultyBreakdown, perDeck }, 200)
+  // ─── TIMER-04: last 10 recent sessions (D-11), each with deck titles + completed flag ──
+  const sessions = await prisma.studySession.findMany({
+    where: { userId },
+    orderBy: { startedAt: 'desc' },
+    take: 10,
+    include: { decks: { include: { deck: { select: { title: true } } } } },
+  })
+
+  const recentSessions = sessions.map((session: (typeof sessions)[number]) => ({
+    id: session.id,
+    startedAt: session.startedAt.toISOString(),
+    durationSeconds: session.durationSeconds ?? 0,
+    cardsReviewed: session.cardsReviewed,
+    completed: session.completedAt !== null,
+    deckTitles: session.decks.map((d: (typeof session.decks)[number]) => d.deck.title),
+  }))
+
+  return c.json(
+    { totalReviewed, weekReviewed, retentionRate, difficultyBreakdown, perDeck, recentSessions },
+    200
+  )
 })
 
 export { stats as statsRouter }
