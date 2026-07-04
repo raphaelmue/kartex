@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'sonner'
@@ -13,6 +13,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { CardFlip } from '@/components/CardFlip'
 import { RatingButtons } from '@/components/RatingButtons'
 import { ExamTimer } from '@/components/ExamTimer'
+import { SessionTimer } from '@/components/SessionTimer'
 import { SessionProgress } from '@/components/SessionProgress'
 import { useStudySession, type StudyMode } from '@/hooks/useStudySession'
 import { useAuth } from '@/context/AuthContext'
@@ -47,11 +48,52 @@ function SessionRunner({
   const [endTime, setEndTime] = useState<number | null>(null)
   const [editorOpen, setEditorOpen] = useState(false)
 
+  // Session lifecycle (TIMER-03, D-06/D-07): started once on mount for every mode
+  // (including exam, D-07), completed once sessionDone fires. Both calls are wrapped
+  // in try/catch with DEV-only logging so a failure never breaks the study loop.
+  const sessionIdRef = useRef<string | null>(null)
+  const sessionStartCalledRef = useRef(false)
+
   const { currentCard, face, isFlipping, sessionDone, progress, ratingCounts, flip, rate } =
     useStudySession(cards, mode)
 
   useEffect(() => {
-    if (sessionDone) setEndTime(prev => prev ?? Date.now())
+    if (sessionStartCalledRef.current) return
+    sessionStartCalledRef.current = true
+    const deckIds = [...new Set(cards.map((c) => c.deckId))]
+    void (async () => {
+      try {
+        const res = await api.post('/api/study/session/start', { deckIds })
+        if (res.ok) {
+          const data = await res.json() as { id: string }
+          sessionIdRef.current = data.id
+        }
+      } catch (err) {
+        if (import.meta.env.DEV) {
+          console.error('[StudySessionPage] session start failed:', err)
+        }
+      }
+    })()
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- fires once per session, guarded by sessionStartCalledRef
+  }, [])
+
+  useEffect(() => {
+    if (!sessionDone) return
+    setEndTime(prev => prev ?? Date.now())
+    const sessionId = sessionIdRef.current
+    if (sessionId) {
+      const cardsReviewed = ratingCounts.again + ratingCounts.hard + ratingCounts.good + ratingCounts.easy
+      void (async () => {
+        try {
+          await api.post('/api/study/session/complete', { sessionId, cardsReviewed })
+        } catch (err) {
+          if (import.meta.env.DEV) {
+            console.error('[StudySessionPage] session complete failed:', err)
+          }
+        }
+      })()
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- only re-run when sessionDone flips true
   }, [sessionDone])
 
   const handleLeave = () => {
@@ -132,11 +174,13 @@ function SessionRunner({
           <ArrowLeft className="h-4 w-4 mr-1" aria-hidden="true" />
           {t('study.leaveSession')}
         </Button>
-        {mode === 'exam' && examDurationSeconds !== null && (
+        {mode === 'exam' && examDurationSeconds !== null ? (
           <ExamTimer
             durationSeconds={examDurationSeconds}
             onExpire={() => setExamExpired(true)}
           />
+        ) : (
+          <SessionTimer startedAt={startTime} />
         )}
       </div>
 

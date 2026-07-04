@@ -37,8 +37,43 @@ export function useStudySession(cards: DueCard[], mode: StudyMode): UseStudySess
   const faceRef = useRef<CardFace>('front')
   const isFlippingRef = useRef(false)
 
+  // First-flip thinking-time capture (TIMER-02, D-03/D-04/D-05): the stopwatch starts
+  // when a card becomes current, pauses while the tab is hidden, and only the FIRST
+  // front->back flip's elapsed value is ever stored.
+  const cardShownAtRef = useRef(0)
+  const hiddenAccumMsRef = useRef(0)
+  const hiddenSinceRef = useRef<number | null>(null)
+  const capturedThinkingMsRef = useRef<number | null>(null)
+
+  // Reset the per-card stopwatch whenever a new card becomes current (including mount)
+  useEffect(() => {
+    cardShownAtRef.current = Date.now()
+    hiddenAccumMsRef.current = 0
+    hiddenSinceRef.current = null
+    capturedThinkingMsRef.current = null
+  }, [currentIndex])
+
+  // Accrue hidden time for the current card's stopwatch (D-05)
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        hiddenSinceRef.current = Date.now()
+      } else if (hiddenSinceRef.current !== null) {
+        hiddenAccumMsRef.current += Date.now() - hiddenSinceRef.current
+        hiddenSinceRef.current = null
+      }
+    }
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange)
+  }, [])
+
   const flip = useCallback(() => {
     if (faceRef.current !== 'front' || isFlippingRef.current) return
+    // First (and only, per the guard above) front->back flip — capture thinking time (D-04)
+    capturedThinkingMsRef.current = Math.max(
+      0,
+      Math.round(Date.now() - cardShownAtRef.current - hiddenAccumMsRef.current)
+    )
     isFlippingRef.current = true
     setIsFlipping(true)
     // Content switch: both faces always in DOM (backface-visibility handles hiding)
@@ -67,7 +102,11 @@ export function useStudySession(cards: DueCard[], mode: StudyMode): UseStudySess
       // T-4-04: Exam mode skips POST /api/study/rate entirely — progress NOT saved (STDY-05)
       if (mode !== 'exam') {
         try {
-          const res = await api.post('/api/study/rate', { cardId: card.id, rating })
+          const res = await api.post('/api/study/rate', {
+            cardId: card.id,
+            rating,
+            thinkingTimeMs: capturedThinkingMsRef.current ?? undefined,
+          })
           if (!res.ok) {
             toast.error('Failed to save your rating. Please try again.')
             // Do not advance — let user try again
