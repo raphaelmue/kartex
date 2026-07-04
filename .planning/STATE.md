@@ -5,8 +5,8 @@ milestone_name: Auth Overhaul & Study UX
 current_phase: 30
 current_phase_name: Study Timers & Stats
 status: executing
-stopped_at: Phase 30 context gathered
-last_updated: "2026-07-04T08:30:44.025Z"
+stopped_at: Phase 30 UI-SPEC approved
+last_updated: "2026-07-04T08:39:11.435Z"
 last_activity: 2026-07-04
 last_activity_desc: Phase 29 complete, transitioned to Phase 30
 progress:
@@ -307,8 +307,8 @@ Items acknowledged and deferred at milestone close on 2026-05-30:
 
 ## Session Continuity
 
-**Resume file:** .planning/phases/30-study-timers-stats/30-CONTEXT.md
+**Resume file:** .planning/phases/30-study-timers-stats/30-UI-SPEC.md
 
-Last session: 2026-07-04T08:30:44.015Z
-Stopped at: Phase 30 context gathered
+Last session: 2026-07-04T08:39:11.426Z
+Stopped at: Phase 30 UI-SPEC approved
 Resume with: `/gsd-plan-phase 23` — Auth Foundation
