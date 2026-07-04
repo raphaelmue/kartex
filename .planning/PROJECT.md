@@ -118,9 +118,15 @@ A user can open their dashboard, see their due cards, and complete a spaced-repe
 - ✓ Study cards display a deck badge (source deck name) on both card faces; consistent design with study mode badge — v1.3.2 Phase 22
 - ✓ Global /study session cross-deck shuffle confirmed correct via statistical test (1000 runs, >95% cross-deck mixing) — v1.3.2 Phase 22
 
+### Validated in v1.4.0
+
+- ✓ User can add/update their own email address from Settings — v1.4.0 Phase 29
+- ✓ Settings shows a no-email warning explaining that password reset requires an email address — v1.4.0 Phase 29
+- ✓ Admin can set/update any user's email address from the admin panel — v1.4.0 Phase 29
+
 ### Active
 
-*(v1.4.0 — requirements defined in REQUIREMENTS.md)*
+*(v1.4.0 — remaining requirements defined in REQUIREMENTS.md)*
 
 ### Out of Scope
 
@@ -199,4 +205,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-07-02 — Phase 28 (Quick-Edit in Study) complete. Requirements in REQUIREMENTS.md.*
+*Last updated: 2026-07-04 — Phase 29 (User Email Self-Service) complete. Requirements in REQUIREMENTS.md.*
