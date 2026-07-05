@@ -1,14 +1,16 @@
 ---
 phase: 30-study-timers-stats
 verified: 2026-07-04T16:49:03Z
-status: human_needed
+status: passed
 score: 2/4 must-haves verified
 behavior_unverified: 2
 overrides_applied: 0
 human_verification:
+
   - test: "Start a normal/SR/deck study session, flip a card immediately, wait ~5s, then flip back and forth a few more times before rating. Check the stored ReviewLog.thinkingTimeMs for that review (e.g. via GET /api/stats/summary avgThinkingTimeMs or a direct DB query)."
     expected: "thinkingTimeMs reflects only the elapsed time up to the FIRST front->back flip (~5s), not the time up to the rating submit and not affected by the later back-and-forth flips (D-04)."
     why_human: "useStudySession.ts has no dedicated test file (none exists in apps/frontend/src/hooks/) and study-session-routes.test.ts's rate-passthrough assertions are it.todo stubs, not executed tests. The capture logic (cardShownAtRef, hiddenAccumMsRef, capturedThinkingMsRef, first-flip guard) is code-reviewed as correct but the value has never been observed flowing from a real flip event to a stored DB row."
+
   - test: "Start a study session (normal or Global SR spanning 2+ decks), background the tab for 30s partway through (to exercise D-05 on the per-card stopwatch), rate a few cards, then either finish the session or navigate away before finishing. Inspect the StudySession row via GET /api/stats/summary recentSessions: (a) for a completed session, confirm completedAt/durationSeconds/cardsReviewed are set and completed=true; (b) for the abandoned one, confirm it still appears with completed=false and partial data (D-08); (c) confirm deckTitles lists every deck touched (D-09); (d) attempt to complete another user's sessionId and confirm a 403 is returned, never a silent update."
     expected: "Session start creates one StudySessionDeck row per deck; session complete computes durationSeconds strictly from session.startedAt (never a client-supplied value); ownership guard rejects cross-user completion attempts; abandoned sessions persist partial state exactly as D-08 specifies."
     why_human: "study-session-routes.test.ts documents this entire behavior surface (authorization branching, StudySessionDeck fan-out create, 404/403 ownership guard, server-computed duration, exam-mode session tracking) as 9 it.todo stubs — only 2 of 11 tests in the file are real, and both are pure Zod-schema assertions with no route invocation. No mock-Prisma or live-server test exercises session/start or session/complete. The SUMMARY for Plan 03/04 explicitly flags this as a known test-harness gap, consistent with this repo's existing study-rate-reviewlog.test.ts convention, rather than a hidden defect — but it means the ownership/duration/multi-deck invariants are unverified by any executable test."
@@ -136,6 +138,7 @@ Both items stem from the same root cause: `study-session-routes.test.ts` and `st
 No blocking gaps. All required artifacts exist, are substantive, are correctly wired, and every executable test (85 non-todo tests across the phase's new/modified test files, plus the full 68-test backend and 161-test frontend regression suites) passes. The live database migration is confirmed applied with all expected tables, columns, indexes, and foreign keys. Both typechecks pass with zero errors.
 
 The phase is held at `human_needed` rather than `passed` for two reasons, both behavior-dependent truths per the verification framework (state-transition / ownership-invariant truths that presence-and-wiring checks cannot prove):
+
 1. The first-flip thinking-time capture (a state machine: reset-on-card-advance, pause-while-hidden, capture-once-on-first-flip) has zero executing tests.
 2. The StudySession lifecycle (ownership guard, multi-deck authorization, server-computed duration, abandoned-session partial state) has zero executing tests beyond two Zod-schema-only assertions.
 

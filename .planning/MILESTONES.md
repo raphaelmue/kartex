@@ -1,5 +1,31 @@
 # Milestones: Kartex
 
+## v1.4.0 Auth Overhaul & Study UX — Shipped 2026-07-05
+
+**Phases:** 23–30 (8 phases) | **Plans:** 32 | **Tasks:** 49 | **Timeline:** 14 days (2026-06-21 → 2026-07-05)
+**Files:** 187 changed, +26,102/-1,134 lines | **TypeScript LOC:** 19,221
+**Requirements:** 31/31 checked off | **Known verification overrides:** 3 (see STATE.md Deferred Items)
+
+### Delivered
+
+Replaced invite-code-only registration with a full email-based auth stack (SMTP invitations, self-service password reset, admin user management), added inline ABC notation rendering, `.kartex.zip` deck updates, quick-edit-in-study, and study session timers/stats.
+
+### Key Accomplishments
+
+1. Email-based auth overhaul — SMTP-backed invitations replace invite codes, self-service + admin email management (Phases 23, 24, 29)
+2. Self-service password reset with no-enumeration protection and admin-triggered reset for any user (Phase 25)
+3. Admin user management — two-step confirm hard-delete with cascade-safe transaction and last-admin/self-delete guards (Phase 23)
+4. Inline ABC notation rendering — `#abc` blocks render as responsive SVG sheet music via abcjs (Phase 26)
+5. `.kartex.zip` deck update support with media validation and SM-2 progress preservation (Phase 27)
+6. Quick-edit in study mode + session timers & stats — thinking-time capture, session lifecycle tracking, Recent Sessions dashboard (Phases 28, 30)
+
+### Archive
+
+- [v1.4.0 Roadmap](milestones/v1.4.0-ROADMAP.md)
+- [v1.4.0 Requirements](milestones/v1.4.0-REQUIREMENTS.md)
+
+---
+
 ## v1.0 MVP — Shipped 2026-05-30
 
 **Phases:** 1–6 | **Plans:** 18 | **Timeline:** 5 days (2026-05-25 → 2026-05-30)

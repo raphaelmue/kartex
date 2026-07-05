@@ -1,32 +1,23 @@
 # Kartex
 
-## Current Milestone: v1.4.0 — Auth Overhaul & Study UX
+## Current Milestone: Planning next milestone
 
-**Goal:** Replace invite codes with email-based invitations, add self-service and admin-triggered password reset, improve admin user management, extend zip import-update, add a quick-edit shortcut in study mode, and add ABC music notation rendering in card content.
+No active milestone. Run `/gsd-new-milestone` to define the next one.
 
-**Target features:**
-- Email invitations — admin enters email → SMTP invite link → user clicks, sets username + password
-- User email field — required for invite delivery and password reset
-- Self-service password reset — forgot-password flow via email link
-- Admin: trigger password reset — sends reset email to any user from the admin panel
-- Admin: delete user — permanent account deletion with confirmation (cascades decks + progress)
-- Deck update via `.kartex.zip` — extend import-update path to accept zip bundles with media/ folder
-- Quick-edit in study mode — 3-dot menu on study cards for owners/edit-access to edit card or jump to deck ✓ (Phase 28, 2026-07-02)
-- ABC notation rendering — `#abc` fenced blocks in card content render as sheet music via abcjs
+## Previous: v1.4.0 — SHIPPED 2026-07-05
 
-## Previous: v1.3.2 — SHIPPED 2026-06-15
+**Last milestone:** v1.4.0 Auth Overhaul & Study UX — SHIPPED 2026-07-05
+**Phases shipped:** 1–30 (v1.0: 1–6, v1.1: 7–9, v1.2: 10–13, v1.3.0: 14–16, v1.3.1: 17–18, v1.3.2: 19–22, v1.4.0: 23–30)
+**Total plans shipped:** 93 (18 + 8 + 16 + 10 + 4 + 5 + 32)
+**TypeScript LOC:** 19,221 (+~7,700 in v1.4.0)
 
-**Last milestone:** v1.3.2 UX Polish & Changelog — SHIPPED 2026-06-15
-**Phases shipped:** 1–22 (v1.0: 1–6, v1.1: 7–9, v1.2: 10–13, v1.3.0: 14–16, v1.3.1: 17–18, v1.3.2: 19–22)
-**Total plans shipped:** 61 (18 + 8 + 16 + 10 + 4 + 5)
-**TypeScript LOC:** ~11,500 (estimate; +~500 in v1.3.2)
-
-**v1.3.2 shipped:**
-- Library deck removal: users can permanently remove public/shared decks from their library (LIB-02)
-- New K-on-card SVG logo; PWA icons regenerated (BRAND-01, BRAND-02)
-- CHANGELOG.md backfilled for all past milestones v1.0–v1.3.2 in Keep a Changelog format (CHNG-01, CHNG-02)
-- Deck badge on study cards showing source deck name on both card faces (STUDY-04)
-- Cross-deck shuffle statistically verified correct — Fisher-Yates confirmed (STUDY-05)
+**v1.4.0 shipped:**
+- Email-based auth overhaul — SMTP-backed invitations replace invite codes, self-service + admin email management (EMAIL-01–11)
+- Self-service password reset with no-enumeration protection and admin-triggered reset for any user (RESET-01–08)
+- Admin user management — two-step confirm hard-delete with cascade-safe transaction and last-admin/self-delete guards (ADMIN-01–05)
+- Inline ABC notation rendering — `#abc` blocks render as responsive SVG sheet music via abcjs (ABC-01–03)
+- `.kartex.zip` deck update support with media validation and SM-2 progress preservation (DECKU-01–04)
+- Quick-edit in study mode + session timers & stats — thinking-time capture, session lifecycle tracking, Recent Sessions dashboard (SEDIT-01–04, TIMER)
 
 ## What This Is
 
@@ -120,13 +111,34 @@ A user can open their dashboard, see their due cards, and complete a spaced-repe
 
 ### Validated in v1.4.0
 
+- ✓ User.email field exists on User model, nullable for existing users, unique per user — v1.4.0 Phase 23
+- ✓ SMTP configured via env vars (SMTP_HOST/PORT/SECURE/USER/PASS/FROM, APP_URL) — v1.4.0 Phase 23
+- ✓ Admin can send an email invitation to a specific address from the admin panel — v1.4.0 Phase 24
+- ✓ Invitation email contains a one-time link (valid 7 days) to registration — v1.4.0 Phase 24
+- ✓ User registers via invite link — email pre-filled (read-only), sets username/password — v1.4.0 Phase 24
+- ✓ Invitation link is single-use; subsequent clicks show a clear "already used" error — v1.4.0 Phase 24
+- ✓ Admin can see and revoke pending (unused, non-expired) invitations — v1.4.0 Phase 24
 - ✓ User can add/update their own email address from Settings — v1.4.0 Phase 29
 - ✓ Settings shows a no-email warning explaining that password reset requires an email address — v1.4.0 Phase 29
 - ✓ Admin can set/update any user's email address from the admin panel — v1.4.0 Phase 29
+- ✓ Login page has a "Forgot password?" link — v1.4.0 Phase 25
+- ✓ User enters email, receives a reset link (valid 1 hour); no enumeration on request — v1.4.0 Phase 25
+- ✓ Reset link navigates to a set-new-password page; successful reset invalidates all sessions — v1.4.0 Phase 25
+- ✓ Expired/used reset links show a clear human-readable error page — v1.4.0 Phase 25
+- ✓ Admin can trigger a password reset email for any user, with a clear no-email error — v1.4.0 Phase 25
+- ✓ Admin can permanently delete a user account via two-step confirmation (type username) — v1.4.0 Phase 23
+- ✓ Confirmation dialog lists what will be deleted (decks, cards, progress, review logs) — v1.4.0 Phase 23
+- ✓ Admin cannot delete their own account or the last admin account — v1.4.0 Phase 23
+- ✓ Admin can see each user's email address in the user list — v1.4.0 Phase 23
+- ✓ `#abc` fenced blocks render as SVG sheet music inline, responsive, with error fallback — v1.4.0 Phase 26
+- ✓ Deck update path accepts `.kartex.zip` in addition to `.kartex`; media validated and rewritten, SM-2 progress untouched — v1.4.0 Phase 27
+- ✓ Study cards show a 3-dot menu (owner/EDIT permission) to edit inline or jump to deck — v1.4.0 Phase 28
+- ✓ Study sessions capture first-flip thinking time and track session lifecycle (start/complete, ownership-guarded) — v1.4.0 Phase 30
+- ✓ Dashboard shows per-deck avg flip time and a Recent Sessions table (deck badges, duration, completion) — v1.4.0 Phase 30
 
 ### Active
 
-*(v1.4.0 — remaining requirements defined in REQUIREMENTS.md)*
+*(none — awaiting next milestone; run `/gsd-new-milestone` to define)*
 
 ### Out of Scope
 
@@ -135,8 +147,13 @@ A user can open their dashboard, see their due cards, and complete a spaced-repe
 - **OIDC / LDAP** — institutional auth not needed for 2-5 user self-hosted setup
 - **Advanced statistics** — learning curves, retention rate charts; dashboard basics shipped in v1
 - **AI-generated quiz mode** — multiple choice AI generation is v2; manual exam mode (time limit, no SM-2) shipped in v1
-- **Open sign-up** — invite-only by design; prevents abuse on self-hosted instance
+- **Open sign-up** — invite-only by design; no open registration even with email verification
 - **Self-hosted video storage** — external YouTube/Vimeo embeds are sufficient
+- **Email verification flow** — confirming ownership of an email after self-service/admin change; deferred, invite-trust model sufficient for 2-5 users (v1.4.0)
+- **Force-logout all sessions without reset** — admin security incident tool; adjacent to admin reset, deferred (v1.4.0)
+- **ABC audio playback** — abcjs WebAudio synthesis adds ~400KB + AudioContext permission; deferred to v2 (v1.4.0)
+- **Orphaned media cleanup on deck update/user delete** — background cleanup endpoint; disk space not a concern for 2-5 users (v1.4.0)
+- **Soft-delete / anonymize user** or **deck reassignment on delete** — hard delete with confirmation is correct for 2-5 users; reassignment deferred to v2 (v1.4.0)
 
 ## Context
 
@@ -150,6 +167,8 @@ A user can open their dashboard, see their due cards, and complete a spaced-repe
 - Shipped v1.1 with ~9,531 TypeScript LOC (46 files changed, +2,854 / -486 lines) in 2 days
 - Shipped v1.3.1 with ~11,000 TypeScript LOC estimated (16 files changed, +1,317 / -23 lines in 1 day)
 - Shipped v1.3.2 with ~11,500 TypeScript LOC estimated (4 phases, 5 plans, 3 days, 2026-06-13 → 2026-06-15)
+- Shipped v1.4.0 with 19,221 TypeScript LOC (8 phases, 32 plans, 187 files changed, 14 days, 2026-06-21 → 2026-07-05)
+- Email/token security patterns established in v1.4.0: PasswordResetToken and InviteToken both store hash-only (SHA-256), never raw token; TOCTOU-safe atomic consumption via `updateMany` + count check; nodemailer singleton soft-fails on missing SMTP config (server still starts)
 - i18n: react-i18next v26, 254+ keys, `apps/frontend/src/locales/{en,de}.json` — de.json is placeholder-quality; needs native speaker review before shipping to German users
 - Uses yarn@4.15.0 workspaces (not pnpm despite original design doc — discovered in Phase 7)
 - Hand-written SQL migrations pattern established (Phases 10, 18) — `prisma migrate deploy` unavailable without `DATABASE_URL` in dev; migrations applied via Docker Compose entrypoint on deploy
@@ -186,6 +205,11 @@ A user can open their dashboard, see their due cards, and complete a spaced-repe
 | i18next v26 synchronous init (v1.1) | initImmediate removed from InitOptions in v26; init is synchronous by default without async backend plugin | ✓ Good — no need for Suspense wrapper in tests |
 | labelKey pattern for hook-rule compliance (v1.1) | navItems/RATINGS arrays at module scope store key strings; t(key) called inside component render — avoids hooks-outside-component violation | ✓ Good — clean pattern for translated constant arrays |
 | User content as interpolation values only (v1.1) | Deck titles, tags, usernames passed as `{{value}}` interpolations, never as translation keys — prevents i18n injection (T-09-05) | ✓ Good — explicit D-07 rule followed throughout all 254 keys |
+| InviteToken replaces InviteCode entirely (v1.4.0) | Email-linked, one-time, 7-day expiry token model needed for email invitations; raw invite-code surface removed rather than kept alongside | ✓ Good — single invite path, no dual-maintenance |
+| Hash-only token storage for resets/invites (v1.4.0) | SHA-256 hash stored in DB, raw token only ever in the email link (OWASP pattern) — a DB leak can't be used to reset accounts | ✓ Good — no incidents, pattern reused across InviteToken and PasswordResetToken |
+| No email re-verification after self-service change (v1.4.0) | Full email verification flow (confirm ownership via token) deferred; invite-trust model accepted for 2-5 user self-hosted deployments | ✓ Good — simpler UX, acceptable risk at this scale; flagged as deferred requirement if trust model changes |
+| Hard delete only, no soft-delete (v1.4.0) | 2-5 users; SELF_DELETE/LAST_ADMIN guards plus two-step username-confirm dialog make hard delete safe enough | ✓ Good — no accidental deletions reported |
+| abcjs lazy-loaded via dynamic import (v1.4.0) | Mirrors the existing Typst WASM pattern — keeps ~400KB+ notation renderer out of the initial bundle | ✓ Good — consistent DOM-mutation + useRef pattern across Typst and ABC blocks |
 
 ## Evolution
 
@@ -205,4 +229,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-07-04 — Phase 29 (User Email Self-Service) complete. Requirements in REQUIREMENTS.md.*
+*Last updated: 2026-07-05 — v1.4.0 milestone shipped and archived. Awaiting next milestone (`/gsd-new-milestone`).*

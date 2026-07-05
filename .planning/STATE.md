@@ -2,19 +2,19 @@
 gsd_state_version: 1.0
 milestone: v1.4.0
 milestone_name: Auth Overhaul & Study UX
-current_phase: 30
-current_phase_name: study-timers-stats
-status: verifying
+current_phase: 4.0
+status: Awaiting next milestone
 stopped_at: Completed 30-04-PLAN.md
-last_updated: "2026-07-04T13:49:50.928Z"
-last_activity: 2026-07-04
-last_activity_desc: Phase 30 execution started
+last_updated: "2026-07-05T09:49:54.211Z"
+last_activity: 2026-07-05
+last_activity_desc: Milestone v1.4.0 completed and archived
 progress:
   total_phases: 8
   completed_phases: 8
   total_plans: 32
   completed_plans: 32
   percent: 100
+current_phase_name: study-timers-stats
 ---
 
 # Project State
@@ -28,16 +28,16 @@ See: .planning/PROJECT.md (updated 2026-06-19)
 
 ## Current Position
 
-Phase: 30 (study-timers-stats) — EXECUTING
-Plan: 5 of 5
-Status: Phase complete — ready for verification
-Last activity: 2026-07-04 — Phase 30 execution started
+Phase: Milestone v1.4.0 complete
+Plan: —
+Status: Awaiting next milestone
+Last activity: 2026-07-05 — Milestone v1.4.0 completed and archived
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 24
+- Total plans completed: 29
 - Average duration: ~6 min/plan
 - Total execution time: ~0.6 hours
 
@@ -58,6 +58,7 @@ Last activity: 2026-07-04 — Phase 30 execution started
 | 27 | 2 | - | - |
 | 28 | 2 | - | - |
 | 29 | 6 | - | - |
+| 30 | 5 | - | - |
 
 **Recent Trend:**
 
@@ -318,6 +319,14 @@ Items acknowledged and deferred at milestone close on 2026-05-30:
 | todo | 2026-05-30-add-i18n | resolved — maps to Phase 9 (I18N-01/02/03) |
 | todo | 2026-05-30-add-to-library-for-public-decks | removed — implemented (SHAR-06) |
 
+Items acknowledged and deferred at milestone close on 2026-07-05:
+
+| Category | Item | Status |
+|----------|------|--------|
+| quick_task | 20260607-001-study-card-scrollable-text | resolved — shipped 2026-06-07 (commit 048f4fe); on-disk folder empty but change is live |
+| quick_task | 260530-004-add-to-library-explore | superseded — feature already implemented as SHAR-06; this plan was never executed |
+| todo | 2026-06-19-improve-user-management-and-email-based-auth-flows | resolved — maps to Phases 23-25 (admin delete/reset, email invitations, password reset all shipped) |
+
 ## Session Continuity
 
 **Resume file:** None
@@ -325,3 +334,7 @@ Items acknowledged and deferred at milestone close on 2026-05-30:
 Last session: 2026-07-04T13:49:13.281Z
 Stopped at: Completed 30-04-PLAN.md
 Resume with: `/gsd-plan-phase 23` — Auth Foundation
+
+## Operator Next Steps
+
+- Start the next milestone with /gsd-new-milestone
