@@ -31,7 +31,7 @@ See: .planning/PROJECT.md (updated 2026-07-05)
 Phase: Milestone v1.4.0 complete
 Plan: —
 Status: Awaiting next milestone
-Last activity: 2026-07-05 — Milestone v1.4.0 completed and archived
+Last activity: 2026-07-05 — Completed quick task 260705-hcf: Bump package versions to 1.4.0 for the v1.4.0 milestone release and add a CHANGELOG.md entry for v1.4.0
 
 ## Performance Metrics
 
@@ -308,6 +308,7 @@ None.
 | 260604-001 | Move language switcher to settings; fix CI lint (unused ComingSoon) | 2026-06-04 | 0a96ef8 | [260604-001-lang-switcher-to-settings](.planning/quick/260604-001-lang-switcher-to-settings/) |
 | 260607-001 | Study card: cap card height, make back content scrollable, bump v1.2.1 | 2026-06-07 | 048f4fe | [260607-001-study-card-scrollable-text](.planning/quick/20260607-001-study-card-scrollable-text/) |
 | 20260611-001 | Mobile: wrap stats tables in overflow-x-auto to prevent layout overflow | 2026-06-11 | faf3973 | [20260611-001-mobile-stats-table-fix](.planning/quick/20260611-001-mobile-stats-table-fix/) |
+| 260705-hcf | Bump package versions to 1.4.0 and add v1.4.0 CHANGELOG entry | 2026-07-05 | d974a30 | [260705-hcf-bump-package-versions-to-1-4-0-for-the-v](.planning/quick/260705-hcf-bump-package-versions-to-1-4-0-for-the-v/) |
 
 ## Deferred Items
 
