@@ -5,6 +5,36 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ---
 
+## [v1.4.0] — 2026-07-05
+
+*Milestone: Auth Overhaul & Study UX (Phases 23–30)*
+
+### Added
+
+- Admins can permanently delete a user account from the admin panel with a two-step confirmation (modal plus typing the username); the confirmation dialog lists exactly what will be removed (decks, cards, progress, review logs); admins cannot delete their own account or the last remaining admin; the user list now shows each user's email address
+- Registration is now email-invitation based — admins send a one-time invite link (valid 7 days) to a specific address; the recipient registers with the email pre-filled and read-only while choosing their own username and password; invite links are single-use and show a clear "already used" page on re-click; admins can view pending invitations and revoke them
+- The login page has a "Forgot password?" link; users request a reset by email and receive a reset link (valid 1 hour); the request always reports success so email existence is never revealed; a successful reset invalidates all existing sessions; expired or used links show a clear error page; admins can trigger a reset email for any user and get a clear error when that user has no email on file
+- `#abc` fenced blocks in card content render inline as SVG sheet music; invalid notation shows an error fallback instead of crashing or leaving blank space; the rendered score scales responsively to card width on mobile and desktop
+- Deck update now accepts `.kartex.zip` files in addition to `.kartex`; media in the zip's `media/` folder is extracted, validated by magic bytes, and stored; media references in updated cards are rewritten to new UUID filenames; SM-2 progress for matched cards is preserved through the update
+- Study cards show a 3-dot overflow menu when the current user owns or has EDIT permission on the card's deck; "Edit this card" opens the editor inline and the session continues after saving; "Jump to deck" navigates to the deck detail page; the menu is hidden for users without edit permission
+- Users can add or update their own email address from Settings; Settings shows a no-email warning explaining that password reset requires an email; admins can set or update any user's email from the admin panel
+- Study sessions now track thinking time per card and full session lifecycle; the dashboard surfaces average flip time and a Recent Sessions list
+
+### Requirement IDs
+
+EMAIL-01, EMAIL-02, EMAIL-03, EMAIL-04, EMAIL-05, EMAIL-06, EMAIL-07, EMAIL-08, EMAIL-09, EMAIL-10, EMAIL-11, RESET-01, RESET-02, RESET-03, RESET-04, RESET-05, RESET-06, RESET-07, RESET-08, ADMIN-01, ADMIN-02, ADMIN-03, ADMIN-04, ADMIN-05, ABC-01, ABC-02, ABC-03, DECKU-01, DECKU-02, DECKU-03, DECKU-04, SEDIT-01, SEDIT-02, SEDIT-03, SEDIT-04
+
+### Breaking Changes
+
+None
+
+### Migration Notes
+
+**DB migrations:** Append-only additions — a nullable unique `User.email` column; a new `InviteToken` table; a new `PasswordResetToken` table (stores a SHA-256 token hash only); user cascade-delete foreign keys; a `ReviewLog.thinkingTimeMs` column; new `StudySession` and `StudySessionDeck` tables; and a unique index on `RefreshToken.tokenHash`. Applied automatically on `docker compose up` (rebuild required since migrations are baked into the backend image).
+**Env var changes:** New required SMTP configuration and app URL — SMTP_HOST, SMTP_PORT, SMTP_SECURE, SMTP_USER, SMTP_PASS, SMTP_FROM, and APP_URL. Email invitations and password reset are disabled until these are set (mailer soft-fails without them).
+
+---
+
 ## [v1.3.3] — 2026-06-20
 
 *Hotfix: concurrent logout/refresh token race condition*
