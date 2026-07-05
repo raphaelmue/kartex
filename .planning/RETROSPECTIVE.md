@@ -173,6 +173,55 @@
 
 ---
 
+## Milestone: v1.4.0 — Auth Overhaul & Study UX
+
+**Shipped:** 2026-07-05
+**Phases:** 8 (23–30) | **Plans:** 32 | **Tasks:** 49 | **Timeline:** 14 days (2026-06-21 → 2026-07-05)
+
+### What Was Built
+
+- Email-based auth overhaul — SMTP-backed invitations replace invite codes, self-service + admin email management (Phases 23, 24, 29)
+- Self-service password reset with no-enumeration protection and admin-triggered reset for any user (Phase 25)
+- Admin user management — two-step confirm hard-delete with cascade-safe transaction and last-admin/self-delete guards (Phase 23)
+- Inline ABC notation rendering — `#abc` blocks render as responsive SVG sheet music via abcjs (Phase 26)
+- `.kartex.zip` deck update support with media validation and SM-2 progress preservation (Phase 27)
+- Quick-edit in study mode + session timers & stats — thinking-time capture, session lifecycle tracking, Recent Sessions dashboard (Phases 28, 30)
+
+### What Worked
+
+- **Hash-only token pattern reused across features** — `PasswordResetToken` and `InviteToken` both store SHA-256 hashes only, raw token only in the email link, with TOCTOU-safe atomic consumption (`updateMany` + count check). Established once in Phase 23/24, reused without rediscovery in Phase 25.
+- **abcjs mirrored the existing Typst WASM pattern exactly** — same lazy-`import()`-inside-`useEffect`, always-mounted-ref-div DOM-mutation approach. Phase 26 shipped a complete new rendering feature in ~15 minutes because the pattern was already proven.
+- **Plan-time threat modeling paid off at security gate** — all 5 plans in Phase 30 carried a `<threat_model>` STRIDE register with clear dispositions. At milestone close, `/gsd-secure-phase` verified all 13 threats mitigated via direct code inspection (ASVS L1, no auditor spawn needed) — the register being authored at plan time made the L1 grep-depth check sufficient.
+- **Gap-closure re-verification loop caught a real regression** — Phase 29's first verification pass scored 5/6 and flagged a login/refresh response missing the new `email` field; the gap-closure cycle fixed it and added a route-level regression test before the phase was marked complete.
+
+### What Was Inefficient
+
+- **`it.todo` stubs counted as test coverage until UAT caught it** — Phase 30's `study-session-routes.test.ts` documented 9 of 11 session-lifecycle behaviors (ownership guard, server-computed duration, multi-deck fan-out) as `it.todo` stubs, not executed tests. Verification correctly scored this 2/4 and flagged both truths `behavior_unverified`; the gap was only closed by manual UAT at milestone verification, not by the test suite. Worth flagging `it.todo` counts explicitly in future phase verification passes rather than discovering it at UAT time.
+- **REQUIREMENTS.md checkboxes still not updated inline** — ABC-01/02/03 shipped and passed verification (5/5) in Phase 26 on 2026-06-30, but stayed unchecked in REQUIREMENTS.md until milestone close on 2026-07-05 — caught only because the milestone-close readiness check cross-referenced `init.manager`'s per-phase `verification_status` against the traceability table. This is the same pattern flagged in the v1.0, v1.1, v1.3.1, and v1.3.2 retrospectives; still unresolved after 5 milestones.
+- **Phase 24 accepted an override on a race-condition test** — the invite-token TOCTOU guard's exactly-once behavior under two *simultaneous* requests was accepted on code-pattern grounds (Postgres transaction serialization) rather than a live concurrency test. Reasonable given the guarantee comes from the DB, but it's the second consecutive milestone with an accepted concurrency-behavior override rather than an executed test.
+
+### Patterns Established
+
+- Hash-only token storage (SHA-256) for any single-use, time-limited link — reused for both invites and password resets
+- `normalizedEmail()` shared Zod helper — single validation site for all `User.email`/`InviteToken.email` inputs across 5 route handlers
+- Nodemailer singleton soft-fails on missing SMTP env vars — server still starts without email configured
+- Radix Dialog/RHF auto-focus race — reset the form synchronously in the triggering `onClick`, not a `useEffect` keyed on the target id, when the form lives inside a Dialog opening on the same interaction (same class of issue as the Phase 28 DropdownMenu+Dialog FocusScope conflict)
+- Server-computed duration/timestamps — never trust a client-supplied duration; compute from persisted `startedAt` → `now()` server-side
+
+### Key Lessons
+
+- **`it.todo` is invisible test debt** — a test file with `it.todo()` stubs passes CI and looks like coverage in a diff, but verification tooling (and eventually UAT) has to actually distinguish stub count from real assertion count. Treat a high `it.todo` ratio in a SUMMARY's own self-report as a verification-priority signal, not a footnote.
+- **Threat models authored at plan time compound** — because Phase 30's plans each shipped a STRIDE register with file-level mitigation evidence, the milestone-close security gate resolved in minutes via code inspection instead of a full auditor pass. Retroactive threat modeling (phases without a plan-time register) costs much more at close.
+- **Milestone-close traceability cross-check catches shipped-but-unchecked requirements** — cross-referencing `init.manager`'s phase completion data against REQUIREMENTS.md's checkboxes found ABC-01/02/03 shipped-but-unchecked. This should probably run automatically after every phase's verification passes, not just at milestone close.
+
+### Cost Observations
+
+- Sessions: multiple sessions across 14 days (2026-06-21 → 2026-07-05)
+- Model mix: Sonnet 5 throughout (balanced model profile)
+- Notable: Phase 26 (ABC Notation) was the fastest single-plan phase (~15 min) — reusing an established rendering pattern (Typst WASM lazy-load) end-to-end eliminated most design decisions
+
+---
+
 ## Cross-Milestone Trends
 
 | Milestone | Phases | Plans | LOC | Days | Avg Plans/Day |
@@ -181,3 +230,4 @@
 | v1.1 Study & Polish | 3 | 8 | 9,531 TS | 2 | 4.0 |
 | v1.3.1 Bug Fixes | 2 | 4 | ~11,000 TS | 1 | 4.0 |
 | v1.3.2 UX Polish & Changelog | 4 | 5 | ~11,500 TS | 3 | 1.7 |
+| v1.4.0 Auth Overhaul & Study UX | 8 | 32 | 19,221 TS | 14 | 2.3 |
