@@ -126,9 +126,13 @@ auth.post('/login', async (c) => {
   // Sign access token
   const accessToken = await signToken({ sub: user.id, role: user.role }, '15m')
 
-  // Generate raw refresh token, store hash in DB (T-02-04: rotation)
+  // Generate raw refresh token, store SHA-256 hash in DB (T-02-04: rotation).
+  // SHA-256 (not bcrypt) — the raw token is a high-entropy random value, not a
+  // low-entropy secret, so a fast deterministic hash is correct here (same
+  // pattern as PasswordResetToken/InviteToken) and enables an O(1) indexed
+  // lookup on refresh instead of a linear bcrypt.compare scan.
   const rawRefreshToken = crypto.randomUUID()
-  const tokenHash = await bcrypt.hash(rawRefreshToken, 10)
+  const tokenHash = createHash('sha256').update(rawRefreshToken).digest('hex')
 
   await prisma.refreshToken.create({
     data: {
@@ -152,17 +156,9 @@ auth.post('/logout', async (c) => {
   const rawRefreshToken = getCookie(c, 'refresh_token')
 
   if (rawRefreshToken) {
-    // Find and delete the refresh token record by comparing against all tokens for cleanup
-    // We search by brute-force comparison since bcrypt hashes can't be reversed-queried
-    const tokens = await prisma.refreshToken.findMany({
-      where: { expiresAt: { gt: new Date() } },
-    })
-    for (const token of tokens) {
-      if (await bcrypt.compare(rawRefreshToken, token.tokenHash)) {
-        await prisma.refreshToken.deleteMany({ where: { id: token.id } })
-        break
-      }
-    }
+    // SHA-256 hash matches the stored tokenHash directly — O(1) indexed delete.
+    const tokenHash = createHash('sha256').update(rawRefreshToken).digest('hex')
+    await prisma.refreshToken.deleteMany({ where: { tokenHash } })
   }
 
   const prod = isProd()
@@ -181,20 +177,13 @@ auth.post('/refresh', async (c) => {
     return c.json({ error: 'Unauthorized.' }, 401)
   }
 
-  // Find all non-expired refresh tokens and check against the cookie value
-  const tokens = await prisma.refreshToken.findMany({
-    where: { expiresAt: { gt: new Date() } },
-  })
+  // O(1) indexed lookup — SHA-256 hash matches the stored tokenHash directly
+  // (see POST /login). Expiry is checked explicitly since findUnique cannot
+  // filter on it.
+  const tokenHash = createHash('sha256').update(rawRefreshToken).digest('hex')
+  const matchedToken = await prisma.refreshToken.findUnique({ where: { tokenHash } })
 
-  let matchedToken: (typeof tokens)[number] | null = null
-  for (const token of tokens) {
-    if (await bcrypt.compare(rawRefreshToken, token.tokenHash)) {
-      matchedToken = token
-      break
-    }
-  }
-
-  if (!matchedToken) {
+  if (!matchedToken || matchedToken.expiresAt < new Date()) {
     return c.json({ error: 'Unauthorized.' }, 401)
   }
 
@@ -209,7 +198,7 @@ auth.post('/refresh', async (c) => {
   // (if create failed after delete, the browser's cookie would have no matching DB row).
   const accessToken = await signToken({ sub: user.id, role: user.role }, '15m')
   const newRawRefreshToken = crypto.randomUUID()
-  const newTokenHash = await bcrypt.hash(newRawRefreshToken, 10)
+  const newTokenHash = createHash('sha256').update(newRawRefreshToken).digest('hex')
 
   await prisma.$transaction([
     prisma.refreshToken.deleteMany({ where: { id: matchedToken.id } }),

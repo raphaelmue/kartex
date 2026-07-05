@@ -11,7 +11,7 @@ import { Hono } from 'hono'
 vi.mock('../../lib/prisma.js', () => ({
   prisma: {
     user: { findUnique: vi.fn() },
-    refreshToken: { create: vi.fn(), findMany: vi.fn(), deleteMany: vi.fn() },
+    refreshToken: { create: vi.fn(), findUnique: vi.fn(), deleteMany: vi.fn() },
     $transaction: vi.fn(),
   },
 }))
@@ -82,14 +82,12 @@ describe('POST /api/auth/refresh — response includes email (29-06 regression g
   })
 
   it('returns 200 with an email key in the response body', async () => {
-    ;(prisma.refreshToken.findMany as ReturnType<typeof vi.fn>).mockResolvedValue([
-      {
-        id: 'token-1',
-        userId: baseUser.id,
-        tokenHash: 'hashed',
-        expiresAt: new Date(Date.now() + 1000 * 60 * 60),
-      },
-    ])
+    ;(prisma.refreshToken.findUnique as ReturnType<typeof vi.fn>).mockResolvedValue({
+      id: 'token-1',
+      userId: baseUser.id,
+      tokenHash: 'hashed',
+      expiresAt: new Date(Date.now() + 1000 * 60 * 60),
+    })
     ;(prisma.user.findUnique as ReturnType<typeof vi.fn>).mockResolvedValue(baseUser)
     ;(prisma.$transaction as ReturnType<typeof vi.fn>).mockResolvedValue([{}, {}])
 
