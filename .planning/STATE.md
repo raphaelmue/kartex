@@ -21,10 +21,10 @@ current_phase_name: study-timers-stats
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-06-19)
+See: .planning/PROJECT.md (updated 2026-07-05)
 
 **Core value:** A user can open their dashboard, see their due cards, and complete a spaced-repetition study session — that loop must always work.
-**Current focus:** Phase 30 — study-timers-stats
+**Current focus:** Planning next milestone (run `/gsd-new-milestone`)
 
 ## Current Position
 
